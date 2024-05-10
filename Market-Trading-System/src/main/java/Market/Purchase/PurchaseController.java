@@ -1,14 +1,15 @@
 package Market.Purchase;
 
-public class PurchaseController {
+public class PurchaseController implements IPurchaseFacade{
     private static PurchaseController instance;
 
     private PurchaseController() {}
 
-    public static PurchaseController getInstance() {
+    public PurchaseController getInstance() {
         if (instance == null) {
             instance = new PurchaseController();
         }
         return instance;
     }
+
 }
