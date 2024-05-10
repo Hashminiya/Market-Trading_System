@@ -1,4 +1,4 @@
-package Market;
+package DomainLayer.Market;
 
 import java.util.List;
 
