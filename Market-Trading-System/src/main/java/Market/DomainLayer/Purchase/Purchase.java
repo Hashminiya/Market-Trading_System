@@ -1,6 +1,4 @@
-package Market.Purchase;
-
-import jdk.jshell.spi.ExecutionControl;
+package Market.DomainLayer.Purchase;
 
 public class Purchase implements IPurchase{
         private PaymentManagement paymentManagement;

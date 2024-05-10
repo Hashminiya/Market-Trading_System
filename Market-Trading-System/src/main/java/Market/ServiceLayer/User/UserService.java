@@ -1,6 +1,8 @@
-package Market.User;
+package Market.ServiceLayer.User;
 
-public class UserService implements IUserService{
+import Market.DomainLayer.User.IUserFacade;
+
+public class UserService implements IUserService {
     IUserFacade facade;
 
     public void GuestEntry(){

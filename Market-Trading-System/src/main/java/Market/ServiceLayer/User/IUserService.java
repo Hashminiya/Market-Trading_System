@@ -1,4 +1,4 @@
-package Market.User;
+package Market.ServiceLayer.User;
 
 public interface IUserService{
     public void GuestEntry();
