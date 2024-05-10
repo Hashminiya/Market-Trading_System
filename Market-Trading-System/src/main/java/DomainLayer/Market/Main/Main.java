@@ -1,4 +1,4 @@
-package Market.Main;
+package DomainLayer.Market.Main;
 
 public class Main {
 
