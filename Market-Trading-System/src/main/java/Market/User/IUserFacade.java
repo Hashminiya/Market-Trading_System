@@ -1,6 +1,6 @@
 package Market.User;
 
-public interface UserFacade {
+public interface IUserFacade {
     public void createGuestSession();
     public void terminateGuestSession();
     public void register(String userName, String password);
