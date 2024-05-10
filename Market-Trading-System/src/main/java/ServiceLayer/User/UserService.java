@@ -1,6 +1,6 @@
 package ServiceLayer.User;
 
-import DomainLayer.User.IUserFacade;
+import DomainLayer.Market.User.IUserFacade;
 
 public class UserService implements IUserService {
     IUserFacade facade;

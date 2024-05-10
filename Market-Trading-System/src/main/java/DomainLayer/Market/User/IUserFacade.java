@@ -1,4 +1,4 @@
-package DomainLayer.User;
+package DomainLayer.Market.User;
 
 public interface IUserFacade {
     public void createGuestSession();
