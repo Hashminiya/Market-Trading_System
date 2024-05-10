@@ -1,10 +1,10 @@
-package Market.User;
+package ServiceLayer.User;
 
-public interface IUserFacade {
-    public void createGuestSession();
-    public void terminateGuestSession();
+public interface IUserService{
+    public void GuestEntry();
+    public void GuestExit(int GuestID);
     public void register(String userName, String password);
-    public boolean login(String userName, String password);
+    public void login(String userName, String password);
     public void logout(String userName);
     public String viewShoppingCart(String token);
     public void modifyShoppingCart(String token);
