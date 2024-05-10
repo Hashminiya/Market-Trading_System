@@ -1,4 +1,4 @@
-package Market.DomainLayer.Purchase;
+package DomainLayer.Purchase;
 
 public interface IPurchase {
     void purchaseProduct();

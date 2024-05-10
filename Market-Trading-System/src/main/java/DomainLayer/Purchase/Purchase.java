@@ -1,4 +1,4 @@
-package Market.DomainLayer.Purchase;
+package DomainLayer.Purchase;
 
 public class Purchase implements IPurchase{
         private PaymentManagement paymentManagement;
