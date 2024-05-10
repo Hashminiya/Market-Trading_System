@@ -1,6 +1,6 @@
 package DomainLayer.Market.User;
 
-import IRepository;
+import DomainLayer.Market.IRepository;
 
 import java.util.HashMap;
 import java.util.List;

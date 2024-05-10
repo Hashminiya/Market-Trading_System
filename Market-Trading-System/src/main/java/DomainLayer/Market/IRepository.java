@@ -1,3 +1,5 @@
+package DomainLayer.Market;
+
 import java.util.List;
 
 public interface IRepository<T> {
