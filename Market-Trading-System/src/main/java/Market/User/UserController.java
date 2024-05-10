@@ -3,7 +3,7 @@ package Market.User;
 import Market.IRepository;
 
 public class UserController implements IUserFacade{
-    IRepository<User> users;
+    private IRepository<User> users;
 
     public UserController() {
         users = new UsersRepository();
