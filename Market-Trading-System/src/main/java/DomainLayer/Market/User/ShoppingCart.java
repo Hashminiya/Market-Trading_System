@@ -8,7 +8,6 @@ public class ShoppingCart {
     }
 
     public String viewShoppingCart(){
-        String res = "Your shopping cart contains the following baskets:\n";
         List<ShoppingBasket> l = baskets.findAll();
         for(ShoppingBasket s : l){
             res += s.getStoreName();
