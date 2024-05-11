@@ -1,14 +1,21 @@
 package ServiceLayer.Store;
 
+import java.util.List;
+
 public interface IStoreManagementService {
-    String createStore();
-    String viewInventory();
-    String modifyItem(Long storeId, Long itemId);
-    String deleteItem(Long storeId, Long itemId);
-    String changePolicy(Long storeId);
-    String assignOwner(Long storeId, Long newOwnerId);
-    String changeManagerPermissions(Long storeId, Long managerId);
-    String removeStore(Long storeId);
-    String viewManagementInfo(Long storeId);
-    String viewPurchasesHistory(Long storeId);
+    public String createStore(long userId, long founderId, String storeName, String storeDescription);
+    public String addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categoryChain);
+    public String updateItemName(long userId, long storeId, long itemId, String newName);
+    public String updateItemPrice(long userId, long storeId, long  itemId, double newPrice);
+    public String decreaseItemAmount(long userId, long storeId, long itemId, int count);
+    public String deleteItem(long userId, long storeId, long itemId);
+    public String changeStorePolicy(long userId, long storeId);
+    public String changeDiscountType(long userId, long storeId, String newType);
+    public String assignOwner(long userId, long storeId, Long newOwnerId);
+    public String changeManagerPermissions(long userId, long storeId, long managerId);
+    public String removeStore(long userId, long storeId);
+    public String viewManagementInfo(long userId, Long storeId);
+    public String viewPurchasesHistory(long userId, Long storeId);
+    public String assignStoreOwner(long userId, long newOwnerId);
+    public String assignStoreManager(long userId ,long newManagerId);
 }
