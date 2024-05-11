@@ -1,4 +1,4 @@
-package Market.User;
+package DomainLayer.Market.User;
 
 import Market.IRepository;
 
