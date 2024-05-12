@@ -18,6 +18,7 @@ public interface IStoreFacade {
     public void viewStoreManagementInfo(long userId, long storeId);
     public void viewPurchaseHistory(long userId, long storeId);
     public void getAllProductsInfoByStore(long storeId);
+    public void getAllStoreInfo(long storeId);
     public void searchStoreByName(String name);
     public void searchItemByName(String name);
     public void searchStoreByCategory(long category);
