@@ -8,21 +8,27 @@ import java.util.List;
 import java.util.Map;
 
 public class Store implements DataItem {
+    private final String ROOT_CATEGORY_NAME = "All products";
     private final Long id;
     private String name;
     private final List<Long> owners;
     private final List<Long> managers;
-    private IRepository<IProduct> products;
+    private IProduct rootCategory;
     private Map<Long,IProduct> productMap;/*Allows quick access by id to item or category*/
     private IRepository<Item.Discount> discounts;
     public Store(Long id, String name, IRepository<Item.Discount> discounts, IRepository<IProduct> products){
         this.id = id;
         this.name = name;
         this.discounts = discounts;
-        this.products = products;
+        this.rootCategory = new Category(genrateId(),ROOT_CATEGORY_NAME,products);
         owners = new ArrayList<>();
         managers = new ArrayList<>();
 
+    }
+
+    private Long genrateId() {
+        return null;
+        //TODO implement this
     }
 
     @Override
@@ -45,10 +51,9 @@ public class Store implements DataItem {
     public List<Long> getManagers(){
         return managers;
     }
-    public void addItem(Item item,Long categoryId){
-        products.save(item);
-        productMap.put(categoryId,item);
-        ///TODO think how to implement right now not good.
+    public void addProduct(IProduct product,Long categoryId){
+        rootCategory.addProduct(product,categoryId);
+        productMap.put(product.getId(),product);
     }
     public void addDiscount(IProduct product ,Item.Discount discount){
         /*A method for adding regular discount, un conditional, assign to an item or a category.*/
