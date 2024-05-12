@@ -1,18 +1,20 @@
 package DomainLayer.Market.User;
 
+import DomainLayer.Market.InMemoryRepository;
+
 public class ShoppingCart {
-    private InMemory<ShoppingBasket> baskets;
+    private InMemoryRepository<ShoppingBasket> baskets;
 
     public ShoppingCart(){
-        baskets = new InMemory<ShoppingBasket>();
+        baskets = new InMemoryRepository<ShoppingBasket>();
     }
 
     public String viewShoppingCart(){
+        String res = "";
         List<ShoppingBasket> l = baskets.findAll();
         for(ShoppingBasket s : l){
-            res += s.getStoreName();
-            res += s.getItems();
-            //TODO: replace with s.toString and to overwrite the toString method in shoppingBasket class
+            res += s.toString();
+            //TODO: overwrite the toString method in shoppingBasket class
         }
         return res;
     }

@@ -28,7 +28,7 @@ public class UserController implements IUserFacade{
         User u = users.findById(id);
         u.changeState(r);
     }
-    public boolean login(String token, String userName, String password){
+    public boolean login(String userName, String password){
         id = token.extractId();
         User u = users.findById(id);
         return u.login(userName,password);
