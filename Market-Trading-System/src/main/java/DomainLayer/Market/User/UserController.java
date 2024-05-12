@@ -41,9 +41,9 @@ public class UserController implements IUserFacade{
         return u.login(userName,password);
     }
 
-    public void logout(String userName){
-        int id = token.extractId();
-        User u = users.findById(id);
+    public void logout(String token){
+        String userName = token.extractUserName();
+        User u = users.get(userName);
         return u.logout(userName);
     }
     public String viewShoppingCart(String token){
