@@ -16,31 +16,33 @@ public class UserController implements IUserFacade{
         users.save(id,u,null,null);
     }
     public void terminateGuestSession(String token){
-        id = token.extractId();
+        int id = token.extractId();
         User u = users.findById(id);
         users.delete(u);
     }
 
     public void register(String token, String userName, String password){
         //TODO: check if the username already exist?
-        id = token.extractId();
+        int id = token.extractId();
         State r = new Registered();
         User u = users.findById(id);
         u.changeState(r);
     }
     public boolean login(String token, String userName, String password){
-        id = token.extractId();
+        int id = token.extractId();
         User u = users.findById(id);
         return u.login(userName,password);
     }
 
     public void logout(String userName){
-        id = token.extractId();
+        int id = token.extractId();
         User u = users.findById(id);
         return u.logout(userName);
     }
     public String viewShoppingCart(String token){
-
+        int id = token.extractId();
+        ShoppingCart sc = //TODO: get ShoppingCart
+        return sc.viewShoppingCart();
     }
     public void modifyShoppingCart(String token){
 
