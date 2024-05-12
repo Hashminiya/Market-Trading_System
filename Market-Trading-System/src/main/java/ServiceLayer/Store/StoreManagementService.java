@@ -22,7 +22,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String addItemToStore(long storeId, String itemName, double itemPrice, int stockAmount, List<String> categoryChain) {
+    public String addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categoryChain) {
         try {
             storeFacade.addItemToStore(storeId,itemName,itemPrice,stockAmount,categoryChain);
         }
@@ -33,7 +33,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String updateItemName(long storeId, long itemId, String newName) {
+    public String updateItemName(long userId, long storeId, long itemId, String newName) {
         try {
             storeFacade.updateItemName(storeId, itemId, newName);
         }
@@ -44,7 +44,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String updateItemPrice(long storeId, long itemId, double newPrice) {
+    public String updateItemPrice(long userId, long storeId, long itemId, double newPrice) {
         try {
             storeFacade.updateItemPrice(storeId, itemId, newPrice);
         }
@@ -55,7 +55,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String decreaseItemAmount(long storeId, long itemId, int count) {
+    public String decreaseItemAmount(long userId, long storeId, long itemId, int count) {
         try {
             storeFacade.decreaseItemAmount(storeId, itemId, count);
         }
@@ -66,7 +66,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String deleteItem(long storeId, long itemId) {
+    public String deleteItem(long userId, long storeId, long itemId) {
         try {
             storeFacade.deleteItem(storeId, itemId);
         }
@@ -77,7 +77,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String changeStorePolicy(long storeId) {
+    public String changeStorePolicy(long userId, long storeId) {
         try {
             storeFacade.changeStorePolicy(storeId);
         }
@@ -87,7 +87,7 @@ public class StoreManagementService implements IStoreManagementService{
         return null;    }
 
     @Override
-    public String changeDiscountType(long storeId, String newType) {
+    public String changeDiscountType(long userId, long storeId, String newType) {
         try {
             storeFacade.changeDiscountType(storeId, newType);
         }
@@ -98,9 +98,10 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String assignOwner(long storeId, Long newOwnerId) {
+    public String changeManagerPermissions(long userId, long storeId, long managerId) {
+        ///TODO what to send as 'new_permissions'?
         try {
-            storeFacade.assignStoreOwner(storeId, newOwnerId);
+            storeFacade.changePermission(storeId, newOwnerId);
         }
         catch (Exception e){
             throw new RuntimeException(e.getMessage());
@@ -109,18 +110,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String changeManagerPermissions(long storeId, long managerId) {
-        try {
-            storeFacade.(storeId, newOwnerId);
-        }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public String removeStore(long storeId) {
+    public String removeStore(long userId, long storeId) {
         try {
             storeFacade.removeStore(storeId);
         }
@@ -131,22 +121,46 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String viewManagementInfo(Long storeId) {
+    public String viewManagmentInfo(long userId, Long storeId) {
+        try {
+            storeFacade.viewManagementInfo(userId, storeId);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
         return null;
     }
 
     @Override
-    public String viewPurchasesHistory(Long storeId) {
+    public String viewPurchasesHistory(long userId, Long storeId) {
+        try {
+            storeFacade.viewPurchaseHistory(userId, storeId);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
         return null;
     }
 
     @Override
-    public void assignStoreOwner(long userId) {
-
+    public String assignStoreOwner(long userId, long storeId, long newOwnerId) {
+        try {
+            storeFacade.assignStoreOwner(userId, storeId, newOwnerId);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+        return null;
     }
 
     @Override
-    public void assignStoreManager(long userId) {
-
+    public String assignStoreManager(long userId, long storeId, long newManagerId) {
+        try {
+            storeFacade.assignStoreManager(userId, storeId, newManagerId);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+        return null;
     }
 }
