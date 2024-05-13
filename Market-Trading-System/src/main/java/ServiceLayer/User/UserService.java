@@ -2,6 +2,8 @@ package ServiceLayer.User;
 
 import DomainLayer.Market.User.IUserFacade;
 
+import javax.ws.rs.core.Response;
+
 public class UserService implements IUserService {
     IUserFacade facade;
 
