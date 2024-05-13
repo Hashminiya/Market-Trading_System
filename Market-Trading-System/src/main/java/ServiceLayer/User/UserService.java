@@ -12,15 +12,19 @@ public class UserService implements IUserService {
         facade.terminateGuest(GuestID);
     }
 
-    public void register(String userName, String password){
-        facade.register(userName,password);
+    public Response<String> register(String userName, String password){
+        try{
+            facade.register(userName,password);
+            return Response.ok();
+        }
+        catch (Exception e){
+            return Response.error(e);
+        }
     }
 
     public Response<String> login(String userName, String password){
         try{
-            boolean valid = facade.login(userName,password);
-            if(!valid)
-                throw new Exception("login failed");
+            facade.login(userName,password);
             String token = TokenService.generateToken(userName);
             return Response.ok(token);
         }
