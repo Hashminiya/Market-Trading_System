@@ -41,10 +41,19 @@ public class UserService implements IUserService {
         }
     }
 
-    public String viewShoppingCart(String token){
-        //TODO: Authentication
-        facade.viewShoppingCart(token);
-        return "";
+    public Response<String> viewShoppingCart(String token){
+        try{
+            if(TokenService.validateToken(token)){
+                String res = facade.viewShoppingCart(token);
+                return Response.ok(res);
+            }
+            else{
+                return Response.unauthorized();
+            }
+        }
+        catch (Exception e){
+            return Response.error(e.getMessage());
+        }
     }
 
     public void modifyShoppingCart(String token){
