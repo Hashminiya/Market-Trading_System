@@ -56,9 +56,19 @@ public class UserService implements IUserService {
         }
     }
 
-    public void modifyShoppingCart(String token){
-        //TODO: Authentication
-        facade.modifyShoppingCart(token);
+    public Response<String> modifyShoppingCart(String token){
+        try{
+            if(TokenService.validateToken(token)){
+                facade.modifyShoppingCart(token);
+                return Response.ok();
+            }
+            else{
+                return Response.unauthorized();
+            }
+        }
+        catch (Exception e){
+            return Response.error(e.getMessage());
+        }
     }
     public void checkoutShoppingCart(String token) {
         //TODO: Authentication
