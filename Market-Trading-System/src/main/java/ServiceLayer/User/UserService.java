@@ -5,11 +5,11 @@ import DomainLayer.Market.User.IUserFacade;
 import javax.ws.rs.core.Response;
 
 public class UserService implements IUserService {
-    IUserFacade facade;
+    IUserFacade userFacade;
 
     public Response GuestEntry(){
         try{
-            facade.CreateGuestSession();
+            userFacade.CreateGuestSession();
             return Response.ok().build();
         }
         catch (Exception e){
@@ -19,7 +19,7 @@ public class UserService implements IUserService {
 
     public Response GuestExit(int GuestID){
         try{
-            facade.terminateGuest(GuestID);
+            userFacade.terminateGuest(GuestID);
             return Response.ok().build();
         }
         catch (Exception e){
@@ -29,7 +29,7 @@ public class UserService implements IUserService {
 
     public Response register(String userName, String password){
         try{
-            facade.register(userName,password);
+            userFacade.register(userName,password);
             return Response.ok().build();
         }
         catch (Exception e){
@@ -39,7 +39,7 @@ public class UserService implements IUserService {
 
     public Response login(String userName, String password){
         try{
-            facade.login(userName,password);
+            userFacade.login(userName,password);
             String token = TokenService.generateToken(userName);
             return Response.ok(token).build();
         }
@@ -52,7 +52,7 @@ public class UserService implements IUserService {
         try{
             if(TokenService.validateToken(token)){
                 String userName = TokenService.extractUserName(token);
-                facade.logout(userName);
+                userFacade.logout(userName);
                 return Response.ok().build();
             }
             else{
@@ -67,7 +67,7 @@ public class UserService implements IUserService {
     public Response viewShoppingCart(String token){
         try{
             if(TokenService.validateToken(token)){
-                String res = facade.viewShoppingCart(token);
+                String res = userFacade.viewShoppingCart(token);
                 return Response.ok(res).build();
             }
             else{
@@ -82,7 +82,7 @@ public class UserService implements IUserService {
     public Response modifyShoppingCart(String token){
         try{
             if(TokenService.validateToken(token)){
-                facade.modifyShoppingCart(token);
+                userFacade.modifyShoppingCart(token);
                 return Response.ok().build();
             }
             else{
@@ -96,7 +96,7 @@ public class UserService implements IUserService {
     public Response checkoutShoppingCart(String token) {
         try{
             if(TokenService.validateToken(token)){
-                facade.checkoutShoppingCart(token);
+                userFacade.checkoutShoppingCart(token);
                 return Response.ok().build();
             }
             else{
