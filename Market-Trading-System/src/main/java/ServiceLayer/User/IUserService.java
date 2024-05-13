@@ -1,12 +1,14 @@
 package ServiceLayer.User;
 
+import javax.ws.rs.core.Response;
+
 public interface IUserService{
-    public void GuestEntry();
-    public void GuestExit(int GuestID);
-    public void register(String userName, String password);
-    public void login(String userName, String password);
-    public void logout(String userName);
-    public String viewShoppingCart(String token);
-    public void modifyShoppingCart(String token);
-    public void checkoutShoppingCart(String token);
+    public Response GuestEntry();
+    public Response GuestExit(int GuestID);
+    public Response register(String userName, String password);
+    public Response login(String userName, String password);
+    public Response logout(String userName);
+    public Response viewShoppingCart(String token);
+    public Response modifyShoppingCart(String token);
+    public Response checkoutShoppingCart(String token);
 }
