@@ -57,7 +57,7 @@ public class UserController implements IUserFacade{
 
     }
     public void checkoutShoppingCart(String token){
-        //TODO: call to IStoreFacade to receive the price
+        //TODO: call to IStoreFacade to receive the price for basket
         //TODO: call checkout function in purchase
     }
 }
