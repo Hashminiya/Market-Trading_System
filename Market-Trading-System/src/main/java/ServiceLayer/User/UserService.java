@@ -22,8 +22,13 @@ public class UserService implements IUserService {
         return Response.ok(token);
     }
 
-    public void logout(String userName){
-        facade.logout(userName);
+    public void logout(String token){
+        if(TokenService.validateToken(token)){
+            facade.logout(userName);
+        }
+        else{
+            return Response.unauthorized();
+        }
     }
 
     public String viewShoppingCart(String token){
