@@ -7,10 +7,19 @@ import java.util.HashMap;
 public class ShoppingBasket {
 
     private HashMap<Integer,Integer> items;
+    private long id;
     private int storeId;
 
     public ShoppingBasket(){
         items = new HashMap<>();
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public void addItem(int itemId, int quantity){
