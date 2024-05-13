@@ -7,14 +7,14 @@ import javax.ws.rs.core.Response;
 public class UserService implements IUserService {
     IUserFacade facade;
 
-    public void GuestEntry(){
+    public Response GuestEntry(){
         facade.CreateGuestSession();
     }
-    public void GuestExit(int GuestID){
+    public Response GuestExit(int GuestID){
         facade.terminateGuest(GuestID);
     }
 
-    public Response<String> register(String userName, String password){
+    public Response register(String userName, String password){
         try{
             facade.register(userName,password);
             return Response.ok();
@@ -24,7 +24,7 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response<String> login(String userName, String password){
+    public Response login(String userName, String password){
         try{
             facade.login(userName,password);
             String token = TokenService.generateToken(userName);
@@ -35,7 +35,7 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response<String> logout(String token){
+    public Response logout(String token){
         try{
             if(TokenService.validateToken(token)){
                 facade.logout(userName);
@@ -50,7 +50,7 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response<String> viewShoppingCart(String token){
+    public Response viewShoppingCart(String token){
         try{
             if(TokenService.validateToken(token)){
                 String res = facade.viewShoppingCart(token);
@@ -65,7 +65,7 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response<String> modifyShoppingCart(String token){
+    public Response modifyShoppingCart(String token){
         try{
             if(TokenService.validateToken(token)){
                 facade.modifyShoppingCart(token);
@@ -79,7 +79,7 @@ public class UserService implements IUserService {
             return Response.error(e.getMessage());
         }
     }
-    public Response<String> checkoutShoppingCart(String token) {
+    public Response checkoutShoppingCart(String token) {
         try{
             if(TokenService.validateToken(token)){
                 facade.checkoutShoppingCart(token);
