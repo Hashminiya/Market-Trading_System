@@ -17,9 +17,15 @@ public class UserService implements IUserService {
     }
 
     public void login(String userName, String password){
-        boolean valid = facade.login(userName,password);
-        String token = TokenService.generateToken(userName);
-        return Response.ok(token);
+        try{
+            boolean valid = facade.login(userName,password);
+            String token = TokenService.generateToken(userName);
+            return Response.ok(token);
+        }
+        catch (Exception e){
+            return Response.error(e);
+        }
+
     }
 
     public void logout(String token){
