@@ -16,7 +16,7 @@ public class UserService implements IUserService {
         facade.register(userName,password);
     }
 
-    public void login(String userName, String password){
+    public Response<String> login(String userName, String password){
         try{
             boolean valid = facade.login(userName,password);
             if(!valid)
@@ -29,10 +29,11 @@ public class UserService implements IUserService {
         }
     }
 
-    public void logout(String token){
+    public Response<String> logout(String token){
         try{
             if(TokenService.validateToken(token)){
                 facade.logout(userName);
+                return Response.ok();
             }
             else{
                 return Response.unauthorized();
