@@ -1,5 +1,7 @@
 package DomainLayer.Market.Store;
 
+import java.util.HashMap;
+
 public class StoreController implements IStoreFacade{
 
     @Override
@@ -63,38 +65,51 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void getAllProductsInfoByStore(long storeId) {
+    public HashMap<Long, HashMap<String, String>> getAllProductsInfoByStore(long storeId) {
 
+        return null;
     }
 
     @Override
-    public void searchStoreByName(String name) {
+    public HashMap<Long, HashMap<String, String>> getAllStoreInfo(long storeId) {
 
+        return null;
     }
 
     @Override
-    public void searchItemByName(String name) {
+    public HashMap<Long, String> searchStoreByName(String name) {
 
+        return null;
     }
 
     @Override
-    public void searchStoreByCategory(long category) {
+    public HashMap<Long, String> searchItemByName(String name) {
 
+        return null;
     }
 
     @Override
-    public void searchItemByCategory(long category) {
+    public HashMap<Long, String> searchStoreByCategory(long category) {
 
+        return null;
     }
 
     @Override
-    public void searchStoreByKeyWord(String keyWord) {
+    public HashMap<Long, String> searchItemByCategory(long category) {
 
+        return null;
     }
 
     @Override
-    public void searchItemByKeyWord(String keyWord) {
+    public HashMap<Long, String> searchStoreByKeyWord(String keyWord) {
 
+        return null;
+    }
+
+    @Override
+    public HashMap<Long, String> searchItemByKeyWord(String keyWord) {
+
+        return null;
     }
 
     @Override
