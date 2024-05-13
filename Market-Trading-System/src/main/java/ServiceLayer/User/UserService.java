@@ -25,15 +25,19 @@ public class UserService implements IUserService {
         catch (Exception e){
             return Response.error(e);
         }
-
     }
 
     public void logout(String token){
-        if(TokenService.validateToken(token)){
-            facade.logout(userName);
+        try{
+            if(TokenService.validateToken(token)){
+                facade.logout(userName);
+            }
+            else{
+                return Response.unauthorized();
+            }
         }
-        else{
-            return Response.unauthorized();
+        catch (Exception e){
+            return Response.error(e);
         }
     }
 
