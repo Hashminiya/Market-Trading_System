@@ -70,8 +70,18 @@ public class UserService implements IUserService {
             return Response.error(e.getMessage());
         }
     }
-    public void checkoutShoppingCart(String token) {
-        //TODO: Authentication
-        facade.checkoutShoppingCart(token);
+    public Response<String> checkoutShoppingCart(String token) {
+        try{
+            if(TokenService.validateToken(token)){
+                facade.checkoutShoppingCart(token);
+                return Response.ok();
+            }
+            else{
+                return Response.unauthorized();
+            }
+        }
+        catch (Exception e){
+            return Response.error(e.getMessage());
+        }
     }
 }
