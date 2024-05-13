@@ -17,8 +17,9 @@ public class UserService implements IUserService {
     }
 
     public void login(String userName, String password){
-        facade.login(userName,password);
-        //TODO: if username and passwords are valid, create and return a token
+        boolean valid = facade.login(userName,password);
+        String token = TokenService.generateToken(userName);
+        return Response.ok(token);
     }
 
     public void logout(String userName){
