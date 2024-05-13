@@ -1,15 +1,17 @@
 package DomainLayer.Market.User;
 
+import DomainLayer.Market.IRepository;
 import Market.IRepository;
 
 import java.util.HashMap;
 
 public class UserController implements IUserFacade{
-    //private IRepository<User> users;
-    HashMap<String,User> users;
+
+    private IRepository<User> users;
+    private IRepository<ShoppingCart> carts;
 
     public UserController() {
-        users = new HashMap<>();
+        users = new InMemoryUsersRepository<User>()
     }
 
     public void createGuestSession(){
@@ -55,6 +57,7 @@ public class UserController implements IUserFacade{
 
     }
     public void checkoutShoppingCart(String token){
-
+        //TODO: call to IStoreFacade to receive the price for basket
+        //TODO: call checkout function in purchase
     }
 }

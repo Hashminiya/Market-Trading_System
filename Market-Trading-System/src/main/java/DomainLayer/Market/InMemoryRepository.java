@@ -3,12 +3,12 @@ package DomainLayer.Market;
 import java.util.HashMap;
 import java.util.List;
 
-public class InMemoryRepository<T extends DataItem> implements IRepository<T> {
+public class InMemoryRepository<K,T extends DataItem> implements IRepository<K,T> {
 
     HashMap<Long,T> data = new HashMap<Long,T>();
 
     @Override
-    public T findById(long id) {
+    public T findById(K id) {
         return data.getOrDefault(id, null);
     }
 
@@ -38,8 +38,8 @@ public class InMemoryRepository<T extends DataItem> implements IRepository<T> {
     }
 
     @Override
-    public void delete(T entity) {
+    public void delete(K key) {
         //TODO return an error if does not exist?
-        data.remove(entity.getId());
+        data.remove(key);
     }
 }
