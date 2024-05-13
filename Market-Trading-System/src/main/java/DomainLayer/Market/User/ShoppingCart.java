@@ -1,28 +1,33 @@
 package DomainLayer.Market.User;
 
+import DomainLayer.Market.IRepository;
 import DomainLayer.Market.InMemoryRepository;
 
 public class ShoppingCart {
-    private InMemoryRepository<ShoppingBasket> baskets;
+    private IRepository<ShoppingBasket> baskets;
 
     public ShoppingCart(){
-        baskets = new InMemoryRepository<ShoppingBasket>();
+        baskets = new InMemoryShoppingBasketsRepository<ShoppingBasket>();
     }
 
     public String viewShoppingCart(){
-        String res = "";
+        StringBuilder res = new StringBuilder();
         List<ShoppingBasket> l = baskets.findAll();
         for(ShoppingBasket s : l){
-            res += s.toString();
+            res.append(s.toString());
             //TODO: overwrite the toString method in shoppingBasket class
         }
-        return res;
+        return res.toString();
     }
 
     public void modifyShoppingCart(Item i, long basketId){
         ShoppingBasket sb = baskets.findById(basketId);
         sb.modifyItem(i);
         //TODO: replace the item? or maybe better to create few function for the different modification options?
+    }
+
+    public void removeBasket(long id){
+        baskets.delete(id);
     }
 
     public void checkoutShoppingCart(){

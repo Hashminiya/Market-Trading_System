@@ -44,7 +44,7 @@ public class InMemoryShoppingBasketsRepository<ShoppingBasket> implements IRepos
     }
 
     @Override
-    public void delete(ShoppingBasket entity) {
-        shoppingBaskets.remove(ShoppingBasket.getId());
+    public void delete(long entityId) {
+        shoppingBaskets.remove(entityId);
     }
 }
