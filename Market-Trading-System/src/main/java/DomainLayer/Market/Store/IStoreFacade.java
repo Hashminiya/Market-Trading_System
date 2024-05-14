@@ -1,6 +1,8 @@
 package DomainLayer.Market.Store;
 
 
+import DomainLayer.Market.ShoppingBasket;
+
 public interface IStoreFacade {
     public static IStoreFacade create() {
         return new StoreController();
@@ -25,5 +27,5 @@ public interface IStoreFacade {
     public void searchItemByCategory(long category);
     public void searchStoreByKeyWord(String keyWord);
     public void searchItemByKeyWord(String keyWord);
-    public void addItemToShoppingBasket(long userId, long storeId, long itemId);
+    public void addItemToShoppingBasket(ShoppingBasket basket, long userId, long storeId, long itemId);
 }

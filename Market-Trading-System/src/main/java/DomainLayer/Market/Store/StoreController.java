@@ -1,20 +1,47 @@
 package DomainLayer.Market.Store;
 
+import DomainLayer.Market.IRepository;
+import DomainLayer.Market.InMemoryRepository;
+import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.User.IUserFacade;
+
 public class StoreController implements IStoreFacade{
 
-    @Override
-    public void createStore(long founderId, String storeName, String storeDescription) {
+    private IRepository<Long, Store> storesRepo;
+    private long  idCounter;
 
+    public StoreController(IRepository<Long, Store> storesRepo) {
+        this.storesRepo = storesRepo;
+        this.idCounter = 0;
+    }
+
+    private synchronized long generateStoreId(){
+        idCounter++;
+        return idCounter;
+    }
+
+    @Override
+    public void createStore(long founderId, String storeName, String storeDescription, IRepository<Long, Item.Discount> discounts, IRepository<Long, IProduct> products) {
+        //TODO: check the user is registered
+        long storeId = generateStoreId();
+        Store newStore = new Store(storeId, storeName, discounts, products);
+        //TODO: assign the user as owner
+        //TODO: set the store description
+        storesRepo.save(newStore);
     }
 
     @Override
     public void viewInventoryByStoreOwner(long userId, long storeId) {
-
+        //TODO: check the user is the store owner- decide if he must be store owner
+        Store store = storesRepo.findById(storeId);
+        //TODO: store.viewInventory()
     }
 
     @Override
     public void addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, long categoryId) {
-
+        //TODO: check the user is the store owner
+        Store store = storesRepo.findById(storeId);
+        store.addProduct(itemName, itemPrice, stockAmount, categoryId);
     }
 
     @Override
@@ -68,6 +95,11 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
+    public void getAllStoreInfo(long storeId) {
+
+    }
+
+    @Override
     public void searchStoreByName(String name) {
 
     }
@@ -98,7 +130,7 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void addItemToShoppingBasket(long userId, long storeId, long itemId) {
+    public void addItemToShoppingBasket(ShoppingBasket basket, long userId, long storeId, long itemId) {
 
     }
 }
