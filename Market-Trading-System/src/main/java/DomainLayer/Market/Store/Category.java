@@ -9,8 +9,8 @@ import java.util.List;
 public class Category implements IProduct {
     private Long id;
     private String name;
-    private final IRepository<IProduct> products;
-    public Category(Long id, String name, IRepository<IProduct> productRepository){
+    private final IRepository<Long,IProduct> products;
+    public Category(Long id, String name, IRepository<Long,IProduct> productRepository){
         this.id = id;
         this.name = name;
         products = productRepository;
@@ -39,7 +39,7 @@ public class Category implements IProduct {
         throw new UnsupportedOperationException("findCategory method is not implemented yet");
     }
 
-    public void setDiscount(Item.Discount discount){
+    public void setDiscount(Discount discount){
         List<IProduct> nodes = products.findAll();
         for (IProduct p:nodes) {
             p.setDiscount(discount);
