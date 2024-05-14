@@ -1,13 +1,16 @@
 package DomainLayer.Market.Store;
 
 
+import DomainLayer.Market.IRepository;
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.Store;
 
 public interface IStoreFacade {
-    public static IStoreFacade create() {
-        return new StoreController();
+
+    public static IStoreFacade create(IRepository<Long, Store> storesRepo) {
+        return new StoreController(storesRepo);
     }
-    public void createStore(long founderId, String storeName, String storeDescription);
+    public void createStore(long founderId, String storeName, String storeDescription, IRepository<Long, Item.Discount> discounts, IRepository<Long, IProduct> products);
     public void viewInventoryByStoreOwner(long userId, long storeId);
     public void addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, long categoryId);
     public void updateItem(long userId, long storeId, long itemId, String newName, double newPrice, int stockAmount);//25
