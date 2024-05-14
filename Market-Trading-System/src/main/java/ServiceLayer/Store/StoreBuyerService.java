@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class StoreBuyerService implements IStoreBuyerService{
 
     private IStoreFacade storeFacade;
+    private final String EMPTY_RESULT_ERROR = "Error: 0 results for search";
 
     public StoreBuyerService(IStoreFacade storeFacade) {
         this.storeFacade = storeFacade;
@@ -46,7 +47,7 @@ public class StoreBuyerService implements IStoreBuyerService{
         catch(Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-        return Response.status(204).entity("Error: 0 results for search").build();
+        return Response.status(204).entity(EMPTY_RESULT_ERROR).build();
 
     }
 
@@ -61,7 +62,7 @@ public class StoreBuyerService implements IStoreBuyerService{
         catch(Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-        return Response.status(204).entity("Error: 0 results for search").build();
+        return Response.status(204).entity(EMPTY_RESULT_ERROR).build();
     }
 
     @Override
@@ -75,7 +76,7 @@ public class StoreBuyerService implements IStoreBuyerService{
         catch(Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-        return Response.status(204).entity("Error: 0 results for search").build();
+        return Response.status(204).entity(EMPTY_RESULT_ERROR).build();
     }
 
     @Override
@@ -89,7 +90,7 @@ public class StoreBuyerService implements IStoreBuyerService{
         catch(Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-        return Response.status(204).entity("Error: 0 results for search").build();
+        return Response.status(204).entity(EMPTY_RESULT_ERROR).build();
     }
 
     @Override
@@ -103,7 +104,7 @@ public class StoreBuyerService implements IStoreBuyerService{
         catch(Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-        return Response.status(204).entity("Error: 0 results for search").build();
+        return Response.status(204).entity(EMPTY_RESULT_ERROR).build();
     }
 
     @Override
@@ -117,7 +118,7 @@ public class StoreBuyerService implements IStoreBuyerService{
         catch(Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-        return Response.status(204).entity("Error: 0 results for search").build();
+        return Response.status(204).entity(EMPTY_RESULT_ERROR).build();
     }
 
 }
