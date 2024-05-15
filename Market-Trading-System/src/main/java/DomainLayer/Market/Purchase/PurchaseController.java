@@ -1,5 +1,8 @@
 package DomainLayer.Market.Purchase;
 
+import DAL.ItemDTO;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,8 +10,11 @@ public class PurchaseController implements IPurchaseFacade{
     private List<Purchase> purchaseList;
     private boolean isPaymentServiceConnected;
     private boolean isSupplyServiceConnected;
-    public PurchaseController(){
 
+    public PurchaseController(){
+        isPaymentServiceConnected =false;
+        isSupplyServiceConnected=false;
+        purchaseList = new ArrayList<>();
     }
 
     @Override
@@ -18,12 +24,13 @@ public class PurchaseController implements IPurchaseFacade{
 
     @Override
     public boolean isValidServices() {
-        return false;
+        return isPaymentServiceConnected & isSupplyServiceConnected;
     }
 
     @Override
     public boolean checkout(int userID, int creditCard, Date expiryDate, int cvv, List<ItemDTO> purchaseItemsList) {
-        return false;
+        //TODO: IMPLEMENT
+            return false;
     }
 
     @Override
