@@ -1,29 +1,29 @@
 package DAL;
 
 public class ItemDTO {
-    private int storeId;
-    private int totalPrice;
+    private String storeId;
+    private double totalPrice;
     private int quantity;
-    private int itemName;
-    private int itemId;
+    private String itemName;
+    private String itemId;
 
-    public int getStoreId() {
+    public String getStoreId() {
         return storeId;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
-    }
-
-    public int getItemName() {
-        return itemName;
-    }
-
-    public int getItemId() {
-        return itemId;
     }
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public String getItemId() {
+        return itemId;
     }
 }
