@@ -27,25 +27,6 @@ public class Item implements IProduct {
         return this.name;
     }
 
-    @Override
-    public void addProduct(IProduct newProduct, Long categoryId) {
-        /*
-        This Function Not suppose to be activated,
-        implemented here for interface reasons.
-         */
-        throw new RuntimeException(String.format("Adding product '%s' failed", newProduct.getName()));
-    }
-
-    public void setDiscount(Discount discount){
-        this.discounts.save(discount);
-    }
-    public void setQuantity(int quantity){
-        this.quantity = quantity;
-    }
-    public  void setPrice(double price){
-        this.price = price;
-    }
-
     public double getPrice() {
         return price;
     }
@@ -57,7 +38,30 @@ public class Item implements IProduct {
         }
         return price;
     }
+
     public int getQuantity() {
         return quantity;
     }
+    public void setDiscount(Discount discount){
+        this.discounts.save(discount);
+    }
+
+    public void setQuantity(int quantity){
+        this.quantity = quantity;
+    }
+    public  void setPrice(double price){
+        this.price = price;
+    }
+    w
+
+
+    @Override
+    public void addProduct(IProduct newProduct) {
+        /*
+        This Function Not suppose to be activated,
+        implemented here for interface reasons.
+         */
+        throw new RuntimeException(String.format("Adding product '%s' failed", newProduct.getName()));
+    }
+
 }
