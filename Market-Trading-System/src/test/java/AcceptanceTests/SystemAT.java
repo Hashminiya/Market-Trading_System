@@ -4,6 +4,7 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.StoreController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -11,13 +12,20 @@ import org.mockito.MockitoAnnotations;
 // 1.1
 public class InitializeTradingSystemTest {
 
+    private MockUserService userService;
+    private TradingSystem tradingSystem;
+
+    @Before
+    public void setUp() {
+        userService = new MockUserService();
+        tradingSystem = new TradingSystem(userService);
+    }
+
     @Test
     public void testSuccessfulInitialization() {
         // Arrange
-        MockUserService userService = new MockUserService();
         userService.setUserLoggedIn(true);
         userService.setIsUserAdmin(true); // User is system manager
-        TradingSystem tradingSystem = new TradingSystem(userService);
 
         // Act
         boolean result = tradingSystem.initialize();
@@ -31,10 +39,8 @@ public class InitializeTradingSystemTest {
     @Test
     public void testFailedInitializationNotManager() {
         // Arrange
-        MockUserService userService = new MockUserService();
         userService.setUserLoggedIn(true);
         userService.setIsUserAdmin(false); // User is not system manager
-        TradingSystem tradingSystem = new TradingSystem(userService);
 
         // Act
         boolean result = tradingSystem.initialize();
@@ -45,6 +51,8 @@ public class InitializeTradingSystemTest {
         assertFalse(tradingSystem.isConnectedToPaymentService());
     }
 }
+
+// 1.2 - if needed
 
 // 1.3
 public class PaymentTest {

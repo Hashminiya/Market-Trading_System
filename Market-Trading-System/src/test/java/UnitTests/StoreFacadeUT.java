@@ -1,28 +1,39 @@
 package UnitTests;
 
+import DomainLayer.Market.IRepository;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.User.UserController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class StoreFacadeUT {
 
     @Mock
-    private StoreController storeControllerMock;
+    IUserFacade userFacadeMock;
+
+    @Mock
+    IRepository<Store> stores;
+
 
     @InjectMocks
-    private IStoreFacade storeFacade;
+    private IStoreFacade storeFacade = new StoreController();
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this); // Initializes annotated fields
-        storeFacade = new StoreController();
     }
+
 
     @Test
     void testCreateStore() {
@@ -33,6 +44,26 @@ public class StoreFacadeUT {
         storeFacade.createStore(founderId, storeName, storeDescription);
 
         verify(storeControllerMock).createStore(founderId, storeName, storeDescription);
+    }
+
+    void testCreateStore() {
+        // Arrange
+        long founderId = 1;
+        String storeName = "Test Store";
+        String storeDescription = "Test Store Description";
+
+        // Mock behavior of userFacadeMock if needed
+        // For example, if you expect getUserById to return a user object
+        when(userFacadeMock.getUserById(founderId)).thenReturn(new User(founderId, "Founder", "Founder@example.com"));
+
+        // Act
+        storeFacade.createStore(founderId, storeName, storeDescription);
+
+        // Assert
+        assertNotNull(createdStore); // Ensure a store object is returned
+        assertEquals(founderId, createdStore.getFounderId()); // Ensure correct founder ID
+        assertEquals(storeName, createdStore.getName()); // Ensure correct store name
+        assertEquals(storeDescription, createdStore.getDescription()); // Ensure correct store description
     }
 
     @Test
@@ -53,6 +84,24 @@ public class StoreFacadeUT {
         double itemPrice = 10.99;
         int stockAmount = 20;
         long categoryId = 3;
+
+        when(storeControllerMock.itemIsExists(storeId, itemName)).thenReturn(false);
+
+        storeFacade.addItemToStore(userId, storeId, itemName, itemPrice, stockAmount, categoryId);
+
+        verify(storeControllerMock).addItemToStore(userId, storeId, itemName, itemPrice, stockAmount, categoryId);
+    }
+
+    @Test
+    void testFailureAddItemToStore() {
+        long userId = 1;
+        long storeId = 2;
+        String itemName = "Test Item";
+        double itemPrice = 10.99;
+        int stockAmount = 20;
+        long categoryId = 3;
+
+        when(storeControllerMock.itemIsExists(storeId, itemName)).thenReturn(true);
 
         storeFacade.addItemToStore(userId, storeId, itemName, itemPrice, stockAmount, categoryId);
 
