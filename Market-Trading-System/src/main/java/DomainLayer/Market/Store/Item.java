@@ -1,20 +1,24 @@
 package DomainLayer.Market.Store;
 
-
+import DomainLayer.Market.Discount;
 import DomainLayer.Market.DataItem;
 import DomainLayer.Market.IRepository;
 
 public class Item implements IProduct {
     private final Long id;
     private String name;
+    private String description;
     private int quantity;
     private double price;
     private final IRepository<Long,Discount> discounts;
+    private String[] categories;
 
-    public Item(Long id, String name, IRepository<Long, Discount> discounts){
+    public Item(Long id, String name,String description ,IRepository<Long, Discount> discounts, String[] categories){
         this.id = id;
         this.name = name;
+        this.description = description;
         this.discounts = discounts;
+        this.categories = categories;
     }
 
     @Override
@@ -31,6 +35,10 @@ public class Item implements IProduct {
         return price;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public double getCurrentPrice(){
         double price = this.price;
         for (Discount discount :discounts.findAll()){
@@ -42,6 +50,7 @@ public class Item implements IProduct {
     public int getQuantity() {
         return quantity;
     }
+
     public void setDiscount(Discount discount){
         this.discounts.save(discount);
     }
@@ -52,8 +61,10 @@ public class Item implements IProduct {
     public  void setPrice(double price){
         this.price = price;
     }
-    w
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Override
     public void addProduct(IProduct newProduct) {
@@ -64,4 +75,7 @@ public class Item implements IProduct {
         throw new RuntimeException(String.format("Adding product '%s' failed", newProduct.getName()));
     }
 
+    public String[] getCategories() {
+        return this.categories;
+    }
 }

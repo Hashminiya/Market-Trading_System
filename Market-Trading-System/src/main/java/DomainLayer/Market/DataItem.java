@@ -1,6 +1,6 @@
 package DomainLayer.Market;
 
-public interface DataItem {
-    Long getId();
+public interface DataItem<K> {
+    K getId();
     String getName();
 }

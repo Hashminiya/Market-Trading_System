@@ -1,31 +1,30 @@
 package DomainLayer.Market.Store;
 
 import DomainLayer.Market.DataItem;
+import DomainLayer.Market.Discount;
 import DomainLayer.Market.IRepository;
 import DomainLayer.Market.InMemoryRepository;
+import DomainLayer.Market.Discount;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Store implements DataItem {
+public class Store implements DataItem<Long> {
     private final Long id;
     private String name;
     private String description;
     private final List<Long> owners;
     private final List<Long> managers;
-    private final IRepository<Long,IProduct> rootCategories;
-    private final IRepository<Long,IProduct> productsMap;/*Allows quick access by id to item or category*/
-    private IRepository<Long ,Discount> discounts;
+    private final InMemoryRepositoryStore products;
+    private IRepository<Long , Discount> discounts;
     public Store(Long id, String name, IRepository<Long, Discount> discounts,
-                 IRepository<Long, IProduct> rootCategories, IRepository<Long,IProduct> productsMap){
+                 InMemoryRepositoryStore products){
         this.id = id;
         this.name = name;
         this.discounts = discounts;
-        this.rootCategories = rootCategories;
-        this.productsMap = productsMap;
+        this.products = products;
         owners = new ArrayList<>();
         managers = new ArrayList<>();
-
     }
 
     private long genrateId() {
@@ -59,20 +58,20 @@ public class Store implements DataItem {
     }
 
 
-    public void addProduct(IProduct product,Long categoryId){
-        productsMap.save(product);
-        IProduct category = productsMap.findById(categoryId);
-        category.addProduct(product);
-    }
-    public void addItem(String name, double price, int quantity, long categoryId){
+//    public void addProduct(IProduct product,Long categoryId){
+//        products.save(product);
+//    }
+    public void addItem(String name, double price, int quantity, String description, String[] categories){
         long itemId = genrateId();
-        Item newItem = new Item(itemId, name, new InMemoryRepository<Long,Discount>());
-        productsMap.findById(categoryId).addProduct(newItem);
+        Item newItem = new Item(itemId, name, description ,new InMemoryRepository<>(), categories);
+        newItem.setPrice(price);
+        newItem.setQuantity(quantity);
+        products.save(newItem);
 
     }
     public void addDiscount(IProduct product, Discount discount){
         /*A method for adding regular discount, un conditional, assign to an item or a category.*/
-        productsMap.findById(product.getId()).setDiscount(discount);
+        products.findById(product.getId()).setDiscount(discount);
     }
     public void addDiscount(Discount discount){
         /*A method for adding store discount, can be conditional.*/
@@ -82,12 +81,17 @@ public class Store implements DataItem {
 //        productsMap.update(new Item(itemId,newName,newPrice, quantity));
     }
     void deleteItem(long itemId){
-        productsMap.delete(itemId);
+        products.delete(itemId);
     }
     public void changeDiscountPolicy(){
         ///TODO
         throw new UnsupportedOperationException("changeDiscountPolicy method is not implemented yet");
     }
-
+    public List<Item> search(String keyWord){
+        return products.search(keyWord);
+    }
+    public List<String> getAllCategories(){
+        return products.getAllCategoryValues();
+    }
 
 }
