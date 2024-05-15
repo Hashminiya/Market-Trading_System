@@ -25,13 +25,8 @@ public class Category implements IProduct {
         return this.name;
     }
 
-    public void addProduct(IProduct newProduct, Long categoryId){
-        if(this.id.longValue() == categoryId.longValue())
-            products.save(newProduct);
-        else {
-            IProduct category = findCategory(newProduct, categoryId);
-            category.addProduct(newProduct, categoryId);
-        }
+    public void addProduct(IProduct newProduct){
+        products.save(newProduct);
     }
 
     private IProduct findCategory(IProduct newProduct, Long categoryId) {
