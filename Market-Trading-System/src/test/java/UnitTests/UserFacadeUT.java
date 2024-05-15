@@ -15,6 +15,9 @@ import static org.mockito.Mockito.*;
 
 public class UserFacadeUT {
 
+    final String username = "username";
+    final String token = "token";
+
 //    @Mock
 //    private IRepository<Long, ShoppingCart> carts;
 
@@ -32,7 +35,6 @@ public class UserFacadeUT {
     @Test
     void testRegister() {
 //        // Arrange
-//        String username = "newUser";
 //        String password = "newPassword";
 //
 //        // Mock behavior of users repository to return null for findByUsername (indicating user doesn't exist)
@@ -86,8 +88,7 @@ public class UserFacadeUT {
     @Test
     void testLogout() {
 //        // Arrange
-//        String username = "testUser";
-//
+
 //        // Act
 //        userFacade.logout(username);
 //
@@ -100,24 +101,18 @@ public class UserFacadeUT {
 
     @Test
     void testViewShoppingCart() {
-//        String token = "testToken";
-//
 //        userFacade.viewShoppingCart(token);
 //        verify(users).findByToken(token); // Assuming findByToken method in UserRepository
     }
 
     @Test
     void testModifyShoppingCart() {
-//        String token = "testToken";
-//
 //        userFacade.modifyShoppingCart(token);
 //        verify(carts).findByName(token); // Assuming findByToken method in CartRepository
     }
 
     @Test
     void testCheckoutShoppingCart() {
-//        String token = "testToken";
-//
 //        userFacade.checkoutShoppingCart(token);
 //        verify(carts).checkoutShoppingCart(token); // Assuming checkoutShoppingCart method in ShoppingCartRepository
     }

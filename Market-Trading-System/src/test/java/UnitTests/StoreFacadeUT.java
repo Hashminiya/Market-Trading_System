@@ -19,6 +19,11 @@ import static org.mockito.Mockito.when;
 
 public class StoreFacadeUT {
 
+    final long userId = 1;
+    final long actorId = 2;
+    final long storeId = 1;
+    final String token = "token";
+
     @Mock
     IUserFacade userFacadeMock;
 
@@ -80,9 +85,7 @@ public class StoreFacadeUT {
     @Test
     void testViewInventoryByStoreOwner() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
-//        String token = "testToken";
+
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.viewShoppingCart(token)).thenReturn("shoppingCartData");
@@ -97,8 +100,6 @@ public class StoreFacadeUT {
     @Test
     void testAddItemToStore() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //        String itemName = "Test Item";
 //        double itemPrice = 10.99;
 //        int stockAmount = 20;
@@ -117,8 +118,6 @@ public class StoreFacadeUT {
     @Test
     void testUpdateItem() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //        long itemId = 1;
 //        String newName = "Updated Item";
 //        double newPrice = 15.99;
@@ -137,8 +136,6 @@ public class StoreFacadeUT {
     @Test
     void testDeleteItem() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //        long itemId = 1;
 //
 //        // Mock behavior if needed
@@ -154,8 +151,6 @@ public class StoreFacadeUT {
     @Test
     void testChangeStorePolicy() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
@@ -170,8 +165,6 @@ public class StoreFacadeUT {
     @Test
     void testChangeDiscountType() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //        String newType = "New Type";
 //
 //        // Mock behavior if needed
@@ -188,13 +181,13 @@ public class StoreFacadeUT {
     void testAssignStoreOwner() {
 //        // Arrange
 //        long actorId = 1;
-//        long userId = 2;
+//        long otherUserId = 2;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.assignStoreOwner(actorId, userId);
+//        storeFacade.assignStoreOwner(actorId, otherUserId);
 //
 //        // Assert
 //        // Implement assertions
@@ -203,8 +196,6 @@ public class StoreFacadeUT {
     @Test
     void testAssignStoreManager() {
 //        // Arrange
-//        long actorId = 1;
-//        long userId = 2;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
@@ -219,8 +210,6 @@ public class StoreFacadeUT {
     @Test
     void testRemoveStore() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
@@ -235,8 +224,6 @@ public class StoreFacadeUT {
     @Test
     void testViewStoreManagementInfo() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
@@ -251,8 +238,6 @@ public class StoreFacadeUT {
     @Test
     void testViewPurchaseHistory() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
@@ -267,7 +252,6 @@ public class StoreFacadeUT {
     @Test
     void testGetAllProductsInfoByStore() {
 //        // Arrange
-//        long storeId = 1;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
@@ -282,7 +266,6 @@ public class StoreFacadeUT {
     @Test
     void testGetAllStoreInfo() {
 //        // Arrange
-//        long storeId = 1;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
@@ -387,8 +370,6 @@ public class StoreFacadeUT {
     @Test
     void testAddItemToShoppingBasket() {
 //        // Arrange
-//        long userId = 1;
-//        long storeId = 1;
 //        long itemId = 1;
 //
 //        // Mock behavior if needed

@@ -12,6 +12,7 @@ public class UserAT {
     // 1.1
     @Nested
     class GuestMemberExitTest {
+
         @Test
         public void testGuestExits() {
 //        // Arrange
