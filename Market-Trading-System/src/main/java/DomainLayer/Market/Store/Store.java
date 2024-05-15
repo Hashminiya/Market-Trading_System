@@ -8,19 +8,20 @@ import java.util.List;
 import java.util.Map;
 
 public class Store implements DataItem {
-    private final String ROOT_CATEGORY_NAME = "All products";
     private final Long id;
     private String name;
     private final List<Long> owners;
     private final List<Long> managers;
-    private IProduct rootCategory;
-    private Map<Long,IProduct> productMap;/*Allows quick access by id to item or category*/
-    private IRepository<Item.Discount> discounts;
-    public Store(Long id, String name, IRepository<Item.Discount> discounts, IRepository<IProduct> products){
+    private final IRepository<Long,IProduct> rootCategories;
+    private final IRepository<Long,IProduct> prooductsMap;/*Allows quick access by id to item or category*/
+    private IRepository<Long ,Discount> discounts;
+    public Store(Long id, String name, IRepository<Long, Discount> discounts,
+                 IRepository<Long, IProduct> rootCategories, IRepository<Long,IProduct> productsMap){
         this.id = id;
         this.name = name;
         this.discounts = discounts;
-        this.rootCategory = new Category(genrateId(),ROOT_CATEGORY_NAME,products);
+        this.rootCategories = rootCategories;
+        this.prooductsMap = productsMap;
         owners = new ArrayList<>();
         managers = new ArrayList<>();
 
