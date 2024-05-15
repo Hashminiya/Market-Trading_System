@@ -1,6 +1,4 @@
 package DomainLayer.Market.Store;
-import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.DataItem;
 import DomainLayer.Market.InMemoryRepository;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
