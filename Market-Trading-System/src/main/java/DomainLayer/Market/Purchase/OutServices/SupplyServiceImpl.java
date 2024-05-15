@@ -4,7 +4,7 @@ import DomainLayer.Market.Purchase.Abstractions.ISupplyService;
 
 public class SupplyServiceImpl implements ISupplyService {
     @Override
-    public boolean validateItemSupply(String itemId, int quantity) {
+    public boolean validateItemSupply(String storeId, String itemId, int quantity) {
         // Logic to check item supply
         if (itemId != null && !itemId.isEmpty() && quantity > 0) {
             System.out.println("Validating supply for item: " + itemId + " with quantity: " + quantity);
@@ -14,7 +14,7 @@ public class SupplyServiceImpl implements ISupplyService {
     }
 
     @Override
-    public boolean PerformItemSupply(String itemId, int quantity) {
+    public boolean performItemSupply(String storeId,String itemId, int quantity) {
         //make supply
         return true;
     }
