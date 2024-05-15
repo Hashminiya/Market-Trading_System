@@ -1,20 +1,19 @@
 package ServiceLayer.Store;
 
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 public interface IStoreManagementService {
-    public String createStore(long founderId, String storeName, String storeDescription);
-    public String addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categoryChain);
-    public String updateItemName(long userId, long storeId, long itemId, String newName);
-    public String updateItemPrice(long userId, long storeId, long  itemId, double newPrice);
-    public String decreaseItemAmount(long userId, long storeId, long itemId, int count);
-    public String deleteItem(long userId, long storeId, long itemId);
-    public String changeStorePolicy(long userId, long storeId);
-    public String changeDiscountType(long userId, long storeId, String newType);
-    public String changeManagerPermissions(long userId, long storeId, long managerId);
-    public String removeStore(long userId, long storeId);
-    public String viewManagmentInfo(long userId, Long storeId);
-    public String viewPurchasesHistory(long userId, Long storeId);
-    public String assignStoreOwner(long userId, long storeId, long newOwnerId);
-    public String assignStoreManager(long userId, long storeId ,long newManagerId);
+    public Response createStore(long founderId, String storeName, String storeDescription);
+    public Response addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categoryChain);
+    public Response updateItem(long userId, long storeId, long itemId, String newName, double newPrice, int newAmount);
+    public Response deleteItem(long userId, long storeId, long itemId);
+    public Response changeStorePolicy(long userId, long storeId);
+    public Response changeDiscountType(long userId, long storeId, String newType);
+    public Response changeManagerPermissions(long userId, long storeId, long managerId);
+    public Response removeStore(long userId, long storeId);
+    public Response viewManagmentInfo(long userId, Long storeId);
+    public Response viewPurchasesHistory(long userId, Long storeId);
+    public Response assignStoreOwner(long userId, long storeId, long newOwnerId);
+    public Response assignStoreManager(long userId, long storeId ,long newManagerId);
 }

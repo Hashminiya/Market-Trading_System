@@ -2,6 +2,7 @@ package ServiceLayer.Store;
 
 import DomainLayer.Market.Store.IStoreFacade;
 
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class StoreManagementService implements IStoreManagementService{
@@ -11,94 +12,75 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String createStore(long founderId, String storeName, String storeDescription) {
+    public Response createStore(long founderId, String storeName, String storeDescription) {
         try {
             storeFacade.createStore(founderId,storeName,storeDescription);
+            return Response.ok().build();
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
         }
-        return null;
     }
 
     @Override
-    public String addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categoryChain) {
+    public Response addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categoryChain) {
         try {
             storeFacade.addItemToStore(storeId,itemName,itemPrice,stockAmount,categoryChain);
+            return Response.ok().build();
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public String updateItemName(long userId, long storeId, long itemId, String newName) {
-        try {
-            storeFacade.updateItemName(storeId, itemId, newName);
-        }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
         }
         return null;
     }
 
     @Override
-    public String updateItemPrice(long userId, long storeId, long itemId, double newPrice) {
+    public Response updateItem(long userId, long storeId, long itemId, String newName, double newPrice, int newAmount) {
         try {
-            storeFacade.updateItemPrice(storeId, itemId, newPrice);
+            storeFacade.updateItem(userId,storeId,itemId,newName,newPrice, newAmount);
+            return Response.ok().build();
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
         }
-        return null;
+    }
+
+
+    @Override
+    public Response deleteItem(long userId, long storeId, long itemId) {
+        try {
+            storeFacade.deleteItem(userId, storeId, itemId);
+            return Response.ok().build();
+        }
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
+        }
     }
 
     @Override
-    public String decreaseItemAmount(long userId, long storeId, long itemId, int count) {
+    public Response changeStorePolicy(long userId, long storeId) {
         try {
-            storeFacade.decreaseItemAmount(storeId, itemId, count);
+            storeFacade.changeStorePolicy(userId, storeId);
+            return Response.ok().build();
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
         }
-        return null;
     }
 
     @Override
-    public String deleteItem(long userId, long storeId, long itemId) {
+    public Response changeDiscountType(long userId, long storeId, String newType) {
         try {
-            storeFacade.deleteItem(storeId, itemId);
+            storeFacade.changeDiscountType(userId ,storeId, newType);
+            return Response.ok().build();
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
         }
-        return null;
     }
 
     @Override
-    public String changeStorePolicy(long userId, long storeId) {
-        try {
-            storeFacade.changeStorePolicy(storeId);
-        }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-        return null;    }
-
-    @Override
-    public String changeDiscountType(long userId, long storeId, String newType) {
-        try {
-            storeFacade.changeDiscountType(storeId, newType);
-        }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public String changeManagerPermissions(long userId, long storeId, long managerId) {
+    public Response changeManagerPermissions(long userId, long storeId, long managerId) {
         ///TODO what to send as 'new_permissions'?
         try {
             storeFacade.changePermission(storeId, newOwnerId);
@@ -110,9 +92,31 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String removeStore(long userId, long storeId) {
+    public Response removeStore(long userId, long storeId) {
         try {
-            storeFacade.removeStore(storeId);
+            storeFacade.removeStore(userId ,storeId);
+            return Response.ok().build();
+        }
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response viewManagmentInfo(long userId, Long storeId) {
+        try {
+            return Response.ok().entity(storeFacade.viewStoreManagementInfo(userId, storeId)).build();
+        }
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
+        }
+        return null;
+    }
+
+    @Override
+    public Response viewPurchasesHistory(long userId, Long storeId) {
+        try {
+            return Response.ok().entity(storeFacade.viewPurchaseHistory(userId, storeId)).build();
         }
         catch (Exception e){
             throw new RuntimeException(e.getMessage());
@@ -121,46 +125,24 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public String viewManagmentInfo(long userId, Long storeId) {
-        try {
-            storeFacade.viewManagementInfo(userId, storeId);
-        }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public String viewPurchasesHistory(long userId, Long storeId) {
-        try {
-            storeFacade.viewPurchaseHistory(userId, storeId);
-        }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public String assignStoreOwner(long userId, long storeId, long newOwnerId) {
+    public Response assignStoreOwner(long userId, long storeId, long newOwnerId) {
         try {
             storeFacade.assignStoreOwner(userId, storeId, newOwnerId);
+            return Response.ok().build();
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
         }
-        return null;
     }
 
     @Override
-    public String assignStoreManager(long userId, long storeId, long newManagerId) {
+    public Response assignStoreManager(long userId, long storeId, long newManagerId) {
         try {
             storeFacade.assignStoreManager(userId, storeId, newManagerId);
+            return Response.ok().build();
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
         }
-        return null;
     }
 }
