@@ -12,4 +12,10 @@ public class SupplyServiceImpl implements ISupplyService {
         }
         return false;
     }
+
+    @Override
+    public boolean PerformItemSupply(String itemId, int quantity) {
+        //make supply
+        return true;
+    }
 }
