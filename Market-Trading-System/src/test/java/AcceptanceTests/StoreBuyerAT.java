@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class StoreBuyerAT {
-    final long category = 1;
-    final long storeId = 1;
-    final String keyWord = "testKeyword";
-    final String name = "testItemName";
+    final long CATEGORY = 1;
+    final long STORE_ID = 1;
+    final String KEY_WORD = "testKeyword";
+    final String NAME = "testItemName";
 
     @Mock
     private IStoreFacade storeFacadeMock;
@@ -37,9 +37,9 @@ public class StoreBuyerAT {
     void testGetAllProductsInfoByStore() {
         HashMap<Long, HashMap<String, String>> expectedResult = new HashMap<>();
 
-        when(storeFacadeMock.getAllProductsInfoByStore(storeId)).thenReturn(expectedResult);
+        when(storeFacadeMock.getAllProductsInfoByStore(STORE_ID)).thenReturn(expectedResult);
 
-        Response response = storeBuyerService.getAllProductsInfoByStore(storeId);
+        Response response = storeBuyerService.getAllProductsInfoByStore(STORE_ID);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(expectedResult, response.getEntity());
@@ -50,9 +50,9 @@ public class StoreBuyerAT {
     void testGetAllStoreInfo() {
         HashMap<Long, HashMap<String, String>> expectedResult = new HashMap<>();
 
-        when(storeFacadeMock.getAllStoreInfo(storeId)).thenReturn(expectedResult);
+        when(storeFacadeMock.getAllStoreInfo(STORE_ID)).thenReturn(expectedResult);
 
-        Response response = storeBuyerService.getAllStoreInfo(storeId);
+        Response response = storeBuyerService.getAllStoreInfo(STORE_ID);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(expectedResult, response.getEntity());
@@ -63,9 +63,9 @@ public class StoreBuyerAT {
     void testSearchStoreByCategory() {
         HashMap<Long, String> expectedResult = new HashMap<>();
 
-        when(storeFacadeMock.searchStoreByCategory(category)).thenReturn(expectedResult);
+        when(storeFacadeMock.searchStoreByCategory(CATEGORY)).thenReturn(expectedResult);
 
-        Response response = storeBuyerService.searchStoreByCategory(category);
+        Response response = storeBuyerService.searchStoreByCategory(CATEGORY);
 
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -77,9 +77,9 @@ public class StoreBuyerAT {
     void testSearchItemByCategory() {
         HashMap<Long, String> expectedResult = new HashMap<>();
 
-        when(storeFacadeMock.searchItemByCategory(category)).thenReturn(expectedResult);
+        when(storeFacadeMock.searchItemByCategory(CATEGORY)).thenReturn(expectedResult);
 
-        Response response = storeBuyerService.searchItemByCategory(category);
+        Response response = storeBuyerService.searchItemByCategory(CATEGORY);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(expectedResult, response.getEntity());
@@ -90,9 +90,9 @@ public class StoreBuyerAT {
     void testSearchStoreByKeyWord() {
         HashMap<Long, String> expectedResult = new HashMap<>();
 
-        when(storeFacadeMock.searchStoreByKeyWord(keyWord)).thenReturn(expectedResult);
+        when(storeFacadeMock.searchStoreByKeyWord(KEY_WORD)).thenReturn(expectedResult);
 
-        Response response = storeBuyerService.searchStoreByKeyWord(keyWord);
+        Response response = storeBuyerService.searchStoreByKeyWord(KEY_WORD);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(expectedResult, response.getEntity());
@@ -103,9 +103,9 @@ public class StoreBuyerAT {
     void testSearchItemByKeyWord() {
         HashMap<Long, String> expectedResult = new HashMap<>();
 
-        when(storeFacadeMock.searchItemByKeyWord(keyWord)).thenReturn(expectedResult);
+        when(storeFacadeMock.searchItemByKeyWord(KEY_WORD)).thenReturn(expectedResult);
 
-        Response response = storeBuyerService.searchItemByKeyWord(keyWord);
+        Response response = storeBuyerService.searchItemByKeyWord(KEY_WORD);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(expectedResult, response.getEntity());
@@ -116,9 +116,9 @@ public class StoreBuyerAT {
     void testSearchStoreByName() {
         HashMap<Long, String> expectedResult = new HashMap<>();
 
-        when(storeFacadeMock.searchStoreByName(name)).thenReturn(expectedResult);
+        when(storeFacadeMock.searchStoreByName(NAME)).thenReturn(expectedResult);
 
-        Response response = storeBuyerService.searchStoreByName(name);
+        Response response = storeBuyerService.searchStoreByName(NAME);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(expectedResult, response.getEntity());
@@ -129,9 +129,9 @@ public class StoreBuyerAT {
     void testSearchItemByName() {
         HashMap<Long, String> expectedResult = new HashMap<>();
 
-        when(storeFacadeMock.searchItemByName(name)).thenReturn(expectedResult);
+        when(storeFacadeMock.searchItemByName(NAME)).thenReturn(expectedResult);
 
-        Response response = storeBuyerService.searchItemByName(name);
+        Response response = storeBuyerService.searchItemByName(NAME);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(expectedResult, response.getEntity());

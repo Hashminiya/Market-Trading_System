@@ -1,11 +1,10 @@
-package UnitTests;
+package UnitTests.DomainLayer.Store;
 
 import DomainLayer.Market.IRepository;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
-import DomainLayer.Market.User.UserController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,15 +14,15 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class StoreFacadeUT {
 
-    final long userId = 1;
-    final long actorId = 2;
-    final long storeId = 1;
-    final String token = "token";
-
+    private final long USER_ID = 1;
+    private final long ACTOR_ID = 2;
+    private final long STORE_ID = 1;
+    private final long FOUNDER_ID = 1;
+    private final String TOKEN = "TOKEN";
+    private String STORE_NAME = "Test Store";
     @Mock
     IUserFacade userFacadeMock;
 
@@ -41,21 +40,19 @@ public class StoreFacadeUT {
     @Test
     void testCreateStore() {
 //        // Arrange
-//        long founderId = 1;
-//        String storeName = "Test Store";
 //        String storeDescription = "Test Store Description";
-//        User founder = new User(founderId, "Founder", "founder@example.com");
+//        User founder = new User(FOUNDER_ID, "Founder", "founder@example.com");
 //        Store mockStore = new Store(/*pass appropriate parameters*/);
 //
 //        // Mock behavior of userFacadeMock to return a user object
-//        when(userFacadeMock.getUserById(founderId)).thenReturn(founder);
+//        when(userFacadeMock.getUserById(FOUNDER_ID)).thenReturn(founder);
 //        when(stores.save(any())).thenReturn(mockStore);
 //
 //        // Act
-//        storeFacade.createStore(founderId, storeName, storeDescription);
+//        storeFacade.createStore(FOUNDER_ID, STORE_NAME, storeDescription);
 //
 //        // Assert
-//        verify(userFacadeMock).getUserById(founderId); // Ensure getUserById is called with the correct parameter
+//        verify(userFacadeMock).getUserById(FOUNDER_ID); // Ensure getUserById is called with the correct parameter
 //        verify(stores).save(mockStore); // Ensure store is saved
     }
 
@@ -63,21 +60,19 @@ public class StoreFacadeUT {
     @Test
     void testCreateStore2() {
 //        // Arrange
-//        long founderId = 1;
-//        String storeName = "Test Store";
 //        String storeDescription = "Test Store Description";
 //
 //        // Mock behavior of userFacadeMock if needed
 //        // For example, if you expect getUserById to return a user object
-//        when(userFacadeMock.getUserById(founderId)).thenReturn(new User(founderId, "Founder", "Founder@example.com"));
+//        when(userFacadeMock.getUserById(FOUNDER_ID)).thenReturn(new User(FOUNDER_ID, "Founder", "Founder@example.com"));
 //
 //        // Act
-//        storeFacade.createStore(founderId, storeName, storeDescription);
+//        storeFacade.createStore(FOUNDER_ID, STORE_NAME, storeDescription);
 //
 //        // Assert
 //        assertNotNull(createdStore); // Ensure a store object is returned
-//        assertEquals(founderId, createdStore.getFounderId()); // Ensure correct founder ID
-//        assertEquals(storeName, createdStore.getName()); // Ensure correct store name
+//        assertEquals(FOUNDER_ID, createdStore.getFounderId()); // Ensure correct founder ID
+//        assertEquals(STORE_NAME, createdStore.getName()); // Ensure correct store name
 //        assertEquals(storeDescription, createdStore.getDescription()); // Ensure correct store description
     }
 
@@ -88,10 +83,10 @@ public class StoreFacadeUT {
 
 //
 //        // Mock behavior if needed
-//        when(userFacadeMock.viewShoppingCart(token)).thenReturn("shoppingCartData");
+//        when(userFacadeMock.viewShoppingCart(TOKEN)).thenReturn("shoppingCartData");
 //
 //        // Act
-//        storeFacade.viewInventoryByStoreOwner(userId, storeId);
+//        storeFacade.viewInventoryByStoreOwner(USER_ID, STORE_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -109,7 +104,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.addItemToStore(userId, storeId, itemName, itemPrice, stockAmount, categoryId);
+//        storeFacade.addItemToStore(USER_ID, STORE_ID, itemName, itemPrice, stockAmount, categoryId);
 //
 //        // Assert
 //        // Implement assertions
@@ -127,7 +122,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.updateItem(userId, storeId, itemId, newName, newPrice, stockAmount);
+//        storeFacade.updateItem(USER_ID, STORE_ID, itemId, newName, newPrice, stockAmount);
 //
 //        // Assert
 //        // Implement assertions
@@ -142,7 +137,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.deleteItem(userId, storeId, itemId);
+//        storeFacade.deleteItem(USER_ID, STORE_ID, itemId);
 //
 //        // Assert
 //        // Implement assertions
@@ -156,7 +151,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.changeStorePolicy(userId, storeId);
+//        storeFacade.changeStorePolicy(USER_ID, STORE_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -171,7 +166,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.changeDiscountType(userId, storeId, newType);
+//        storeFacade.changeDiscountType(USER_ID, STORE_ID, newType);
 //
 //        // Assert
 //        // Implement assertions
@@ -180,14 +175,12 @@ public class StoreFacadeUT {
     @Test
     void testAssignStoreOwner() {
 //        // Arrange
-//        long actorId = 1;
-//        long otherUserId = 2;
 //
 //        // Mock behavior if needed
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.assignStoreOwner(actorId, otherUserId);
+//        storeFacade.assignStoreOwner(ACTOR_ID, USER_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -201,7 +194,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.assignStoreManager(actorId, userId);
+//        storeFacade.assignStoreManager(ACTOR_ID, USER_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -215,7 +208,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.removeStore(userId, storeId);
+//        storeFacade.removeStore(USER_ID, STORE_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -229,7 +222,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.viewStoreManagementInfo(userId, storeId);
+//        storeFacade.viewStoreManagementInfo(USER_ID, STORE_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -243,7 +236,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.viewPurchaseHistory(userId, storeId);
+//        storeFacade.viewPurchaseHistory(USER_ID, STORE_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -257,7 +250,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.getAllProductsInfoByStore(storeId);
+//        storeFacade.getAllProductsInfoByStore(STORE_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -271,7 +264,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.getAllStoreInfo(storeId);
+//        storeFacade.getAllStoreInfo(STORE_ID);
 //
 //        // Assert
 //        // Implement assertions
@@ -376,7 +369,7 @@ public class StoreFacadeUT {
 //        when(userFacadeMock.isLoggedIn()).thenReturn(true);
 //
 //        // Act
-//        storeFacade.addItemToShoppingBasket(userId, storeId, itemId);
+//        storeFacade.addItemToShoppingBasket(USER_ID, STORE_ID, itemId);
 //
 //        // Assert
 //        // Implement assertions

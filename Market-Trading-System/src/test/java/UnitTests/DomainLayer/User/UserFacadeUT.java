@@ -1,22 +1,18 @@
-package UnitTests;
+package UnitTests.DomainLayer.User;
 
-import DomainLayer.Market.IRepository;
 import DomainLayer.Market.User.IUserFacade;
-import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.User.UserController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class UserFacadeUT {
 
-    final String username = "username";
-    final String token = "token";
+    final String USER_NAME = "USER_NAME";
+    final String TOKEN = "TOKEN";
 
 //    @Mock
 //    private IRepository<Long, ShoppingCart> carts;
@@ -38,10 +34,10 @@ public class UserFacadeUT {
 //        String password = "newPassword";
 //
 //        // Mock behavior of users repository to return null for findByUsername (indicating user doesn't exist)
-//        when(users.findByName(username)).thenReturn(null);
+//        when(users.findByName(USER_NAME)).thenReturn(null);
 //
 //        // Act
-//        userFacade.register(username, password);
+//        userFacade.register(USER_NAME, password);
 //
 //        // Assert
 //        // Optionally, you can add assertions here to verify the behavior of registration,
@@ -56,7 +52,7 @@ public class UserFacadeUT {
 //        String existingUsername = "existingUser";
 //        String password = "newPassword";
 //
-//        // Mock behavior of users repository to return a user with the existing username
+//        // Mock behavior of users repository to return a user with the existing USER_NAME
 //        when(users.findByName(existingUsername)).thenReturn(new User(existingUsername, "existingPassword"));
 //
 //        // Act
@@ -72,14 +68,14 @@ public class UserFacadeUT {
     @Test
     void testLogin() {
 //        // Arrange
-//        String username = "testUser";
+//        String USER_NAME = "testUser";
 //        String password = "testPassword";
 //
-//        // Mock behavior of users repository to return a user with the provided username
-//        when(users.findByName(username)).thenReturn(new User(username, password)); // Mock findByUsername method
+//        // Mock behavior of users repository to return a user with the provided USER_NAME
+//        when(users.findByName(USER_NAME)).thenReturn(new User(USER_NAME, password)); // Mock findByUsername method
 //
 //        // Act
-//        boolean loginResult = userFacade.login(username, password);
+//        boolean loginResult = userFacade.login(USER_NAME, password);
 //
 //        // Assert
 //        assertTrue(loginResult); // Check if login is successful
@@ -90,31 +86,31 @@ public class UserFacadeUT {
 //        // Arrange
 
 //        // Act
-//        userFacade.logout(username);
+//        userFacade.logout(USER_NAME);
 //
 //        // Assert
 //        // Optionally, you can add assertions here to verify the behavior of logout,
 //        // such as checking if the user is effectively logged out by checking some state in the system.
 //        // For example:
-//        verify(users, times(1)).logoutUser(username); // Assuming you have a method like logoutUser in your UserRepository that marks the user as logged out
+//        verify(users, times(1)).logoutUser(USER_NAME); // Assuming you have a method like logoutUser in your UserRepository that marks the user as logged out
     }
 
     @Test
     void testViewShoppingCart() {
-//        userFacade.viewShoppingCart(token);
-//        verify(users).findByToken(token); // Assuming findByToken method in UserRepository
+//        userFacade.viewShoppingCart(TOKEN);
+//        verify(users).findByToken(TOKEN); // Assuming findByToken method in UserRepository
     }
 
     @Test
     void testModifyShoppingCart() {
-//        userFacade.modifyShoppingCart(token);
-//        verify(carts).findByName(token); // Assuming findByToken method in CartRepository
+//        userFacade.modifyShoppingCart(TOKEN);
+//        verify(carts).findByName(TOKEN); // Assuming findByToken method in CartRepository
     }
 
     @Test
     void testCheckoutShoppingCart() {
-//        userFacade.checkoutShoppingCart(token);
-//        verify(carts).checkoutShoppingCart(token); // Assuming checkoutShoppingCart method in ShoppingCartRepository
+//        userFacade.checkoutShoppingCart(TOKEN);
+//        verify(carts).checkoutShoppingCart(TOKEN); // Assuming checkoutShoppingCart method in ShoppingCartRepository
     }
 
     @Test
