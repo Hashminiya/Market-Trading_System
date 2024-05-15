@@ -6,7 +6,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -18,14 +18,12 @@ import java.util.List;
 import java.util.*;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.document.DoublePoint;
 import org.apache.lucene.util.BytesRef;
 
 
 public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
+    private int SEARCH_LIMIT = 15;
     private Directory index;
     private IndexWriter writer;
     public InMemoryRepositoryStore(){
@@ -39,14 +37,25 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
             throw new RuntimeException(e);
         }
     }
-    @Override
-    public List<Item> search(String queryString) {
+    public List<Item> search(String category, String queryString, boolean withCategory) {
         List<Item> items = new ArrayList<>();
         try {
             IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(index));
-            QueryParser parser = new QueryParser("name", new StandardAnalyzer());
-            Query query = parser.parse(queryString);
-            TopDocs results = searcher.search(query, 10);
+            QueryParser nameParser = new QueryParser("name", new StandardAnalyzer());
+            QueryParser descParser = new QueryParser("description", new StandardAnalyzer());
+
+            Query nameQuery = nameParser.parse(queryString);
+            Query descQuery = descParser.parse(queryString);
+
+            BooleanQuery.Builder builder = new BooleanQuery.Builder();
+            builder.add(nameQuery, BooleanClause.Occur.SHOULD);
+            builder.add(descQuery, BooleanClause.Occur.SHOULD);
+            if(withCategory){
+                builder.add(new TermQuery(new Term("category", category)), BooleanClause.Occur.FILTER);
+            }
+            Query finalQuery = builder.build();
+
+            TopDocs results = searcher.search(finalQuery, SEARCH_LIMIT);
             for (ScoreDoc scoreDoc : results.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
                 Long itemId = Long.parseLong(doc.get("id"));

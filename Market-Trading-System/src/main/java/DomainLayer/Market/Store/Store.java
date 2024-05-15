@@ -57,10 +57,6 @@ public class Store implements DataItem<Long> {
         this.description = description;
     }
 
-
-//    public void addProduct(IProduct product,Long categoryId){
-//        products.save(product);
-//    }
     public void addItem(String name, double price, int quantity, String description, String[] categories){
         long itemId = genrateId();
         Item newItem = new Item(itemId, name, description ,new InMemoryRepository<>(), categories);
@@ -69,16 +65,20 @@ public class Store implements DataItem<Long> {
         products.save(newItem);
 
     }
-    public void addDiscount(IProduct product, Discount discount){
+
+    public void addDiscount(List<Long> items, Discount discount){
         /*A method for adding regular discount, un conditional, assign to an item or a category.*/
-        products.findById(product.getId()).setDiscount(discount);
+        for(Long item : items){
+            products.findById(item).setDiscount(discount);
+        }
     }
+
     public void addDiscount(Discount discount){
         /*A method for adding store discount, can be conditional.*/
         discounts.save(discount);
     }
     void updateItem(long itemId, String newName, double newPrice, int quantity){
-//        productsMap.update(new Item(itemId,newName,newPrice, quantity));
+//        products.update(new Item(itemId));
     }
     void deleteItem(long itemId){
         products.delete(itemId);
@@ -88,7 +88,10 @@ public class Store implements DataItem<Long> {
         throw new UnsupportedOperationException("changeDiscountPolicy method is not implemented yet");
     }
     public List<Item> search(String keyWord){
-        return products.search(keyWord);
+        return products.search(null ,keyWord,false);
+    }
+    public List<Item> searchWithCategory(String category,String keyWord){
+        return products.search(category ,keyWord,true);
     }
     public List<String> getAllCategories(){
         return products.getAllCategoryValues();

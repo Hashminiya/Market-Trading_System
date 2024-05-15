@@ -4,7 +4,7 @@ import DomainLayer.Market.Discount;
 import DomainLayer.Market.DataItem;
 import DomainLayer.Market.IRepository;
 
-public class Item implements IProduct {
+public class Item implements DataItem<Long>{
     private final Long id;
     private String name;
     private String description;
@@ -58,21 +58,13 @@ public class Item implements IProduct {
     public void setQuantity(int quantity){
         this.quantity = quantity;
     }
+
     public  void setPrice(double price){
         this.price = price;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public void addProduct(IProduct newProduct) {
-        /*
-        This Function Not suppose to be activated,
-        implemented here for interface reasons.
-         */
-        throw new RuntimeException(String.format("Adding product '%s' failed", newProduct.getName()));
     }
 
     public String[] getCategories() {
