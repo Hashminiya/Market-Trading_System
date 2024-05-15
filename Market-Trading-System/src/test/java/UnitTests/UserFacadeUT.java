@@ -16,10 +16,10 @@ import static org.mockito.Mockito.*;
 public class UserFacadeUT {
 
     @Mock
-    private IRepository<ShoppingCart> carts;
+    private IRepository<Long, ShoppingCart> carts;
 
     @Mock
-    private IRepository<User> users;
+    private IRepository<Long, User> users;
 
     @InjectMocks
     private IUserFacade userFacade = new UserController();
