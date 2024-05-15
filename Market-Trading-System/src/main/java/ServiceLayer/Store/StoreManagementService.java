@@ -23,9 +23,9 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categoryChain) {
+    public Response addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categories) {
         try {
-            storeFacade.addItemToStore(storeId,itemName,itemPrice,stockAmount,categoryChain);
+            storeFacade.addItemToStore(storeId,itemName,itemPrice,stockAmount,categories);
             return Response.ok().build();
         }
         catch (Exception ex){
@@ -77,18 +77,6 @@ public class StoreManagementService implements IStoreManagementService{
         catch (Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-    }
-
-    @Override
-    public Response changeManagerPermissions(long userId, long storeId, long managerId) {
-        ///TODO what to send as 'new_permissions'?
-        try {
-            storeFacade.changePermission(storeId, newOwnerId);
-        }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-        return null;
     }
 
     @Override

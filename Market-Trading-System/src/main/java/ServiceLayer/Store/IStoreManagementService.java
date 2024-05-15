@@ -10,7 +10,6 @@ public interface IStoreManagementService {
     public Response deleteItem(long userId, long storeId, long itemId);
     public Response changeStorePolicy(long userId, long storeId);
     public Response changeDiscountType(long userId, long storeId, String newType);
-    public Response changeManagerPermissions(long userId, long storeId, long managerId);
     public Response removeStore(long userId, long storeId);
     public Response viewManagmentInfo(long userId, Long storeId);
     public Response viewPurchasesHistory(long userId, Long storeId);
