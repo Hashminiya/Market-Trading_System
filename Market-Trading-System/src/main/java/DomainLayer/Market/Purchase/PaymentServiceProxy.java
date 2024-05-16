@@ -11,8 +11,8 @@ public class PaymentServiceProxy implements IPaymentService {
     }
 
     @Override
-    public boolean validateCreditCard(String cardNumber, String expiryDate, String cvv) {
-        return paymentService.validateCreditCard(cardNumber, expiryDate, cvv);
+    public boolean validateCreditCard(String cardNumber, String expiryDate, String cvv, double amount) {
+        return paymentService.validateCreditCard(cardNumber, expiryDate, cvv, amount);
     }
 
     @Override
