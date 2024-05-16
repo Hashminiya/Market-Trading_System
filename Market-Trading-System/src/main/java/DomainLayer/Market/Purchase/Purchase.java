@@ -27,6 +27,7 @@ public class Purchase implements IPurchase{
             double amount = calculateAmount(itemList);
             paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,amount);
             supplyServiceProxy.supplyCart(itemList);
+            //create new Purchase and save it
             return true;
         }
         return false;

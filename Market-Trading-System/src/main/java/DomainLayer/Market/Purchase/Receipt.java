@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Receipt {
     private String userName;
-    private List<ItemDTO> itemstoQuantity ;
+    private List<ItemDTO> itemList;
     private Date purchseDateAndTime;
     private int totalSum;
 }

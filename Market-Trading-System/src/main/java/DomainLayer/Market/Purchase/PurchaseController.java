@@ -29,17 +29,20 @@ public class PurchaseController implements IPurchaseFacade{
 
     @Override
     public boolean checkout(int userID, int creditCard, Date expiryDate, int cvv, List<ItemDTO> purchaseItemsList) {
+        //shopping cart calls this method
         //TODO: IMPLEMENT
             return false;
     }
 
     @Override
-    public List<Purchase> getPurchaseByStore(int storeId) {
+    public List<Purchase> getPurchasesByStore(int storeId) {
+        //TODO: IMPLEMENT
         return null;
     }
 
     @Override
-    public List<Purchase> getPurchaseByUser(int UserId) {
+    public List<Purchase> getPurchasesByUser(int UserId) {
+        //TODO: IMPLEMENT
         return null;
     }
 }
