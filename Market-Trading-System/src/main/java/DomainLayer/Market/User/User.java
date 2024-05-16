@@ -1,22 +1,34 @@
 package DomainLayer.Market.User;
 
-import java.util.List;
+import DomainLayer.Market.DataItem;
 
-public class User {
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class User implements DataItem {
     private int userID;
     private String userName;
     private int userAge;
     private List<Istate> userStates;
     private boolean loggedIn;
     private ShoppingCart shoppingCart;
+    private String hashedPassword;
+    private String salt;
+    private Set<String> roles;
+    private Set<String> permissions;
 
-    public User(int userID, String userName, int userAge, List<Istate> userStates, boolean loggedIn, ShoppingCart shoppingCart) {
+    public User(int userID, String userName, int userAge, List<Istate> userStates, boolean loggedIn, ShoppingCart shoppingCart, String hashedPassword, String salt) {
         this.userID = userID;
         this.userName = userName;
         this.userAge = userAge;
         this.userStates = userStates;
         this.loggedIn = loggedIn;
         this.shoppingCart = shoppingCart;
+        this.hashedPassword = hashedPassword;
+        this.salt = salt;
+        this.roles = new HashSet<>();
+        this.permissions = new HashSet<>();
     }
 
     public void setUserID(int userID) {
@@ -93,5 +105,56 @@ public class User {
 
     public boolean checkOutShoppingCart(){
 
+    }
+
+    // Add role and permission methods
+    public void addRole(String role) {
+        roles.add(role);
+    }
+
+    public void addPermission(String permission) {
+        permissions.add(permission);
+    }
+
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
+    public Set<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<String> permissions) {
+        this.permissions = permissions;
+    }
+
+    @Override
+    public Long getId() {
+        return userID;
+    }
+
+    @Override
+    public String getName() {
+        return "";
     }
 }
