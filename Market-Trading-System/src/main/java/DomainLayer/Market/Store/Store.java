@@ -8,28 +8,31 @@ import DomainLayer.Market.Discount;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Store implements DataItem<Long> {
     private final Long id;
+    private Long founderId;
     private String name;
     private String description;
     private final List<Long> owners;
     private final List<Long> managers;
     private final InMemoryRepositoryStore products;
     private IRepository<Long , Discount> discounts;
-    public Store(Long id, String name, IRepository<Long, Discount> discounts,
-                 InMemoryRepositoryStore products){
+    public Store(Long id, Long founderId, String name, String description,IRepository<Long, Discount> discounts){
         this.id = id;
+        this.founderId = founderId;
         this.name = name;
+        this.description = description;
         this.discounts = discounts;
-        this.products = products;
+        this.products = new InMemoryRepositoryStore();
         owners = new ArrayList<>();
         managers = new ArrayList<>();
     }
 
     private long genrateId() {
         return 0;
-        //TODO implement this
+        UUID id = new UUID().;
     }
 
     @Override
@@ -96,5 +99,4 @@ public class Store implements DataItem<Long> {
     public List<String> getAllCategories(){
         return products.getAllCategoryValues();
     }
-
 }
