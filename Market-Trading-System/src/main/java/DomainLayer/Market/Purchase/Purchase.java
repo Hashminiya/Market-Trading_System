@@ -1,6 +1,7 @@
 package DomainLayer.Market.Purchase;
 
 import DAL.ItemDTO;
+import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 
@@ -10,12 +11,11 @@ import java.util.List;
 public class Purchase implements IPurchase{
         private PaymentServiceProxy paymentServiceProxy;
         private SupplyServiceProxy supplyServiceProxy;
-        private Receipt receipt;
 
-        public Purchase(PaymentServiceImpl paymentService,SupplyServiceImpl supplyService) {
-            paymentServiceProxy = new PaymentServiceProxy(paymentService);
-            supplyServiceProxy = new SupplyServiceProxy(supplyService);
-            receipt = new Receipt();
+        public Purchase(PaymentServiceProxy paymentService, SupplyServiceProxy supplyService) {
+            paymentServiceProxy = paymentService;
+            supplyServiceProxy = supplyService;
+
         }
 
 
@@ -26,8 +26,7 @@ public class Purchase implements IPurchase{
         if(isValidCard & canBeSupplied){
             double amount = calculateAmount(itemList);
             paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,amount);
-            supplyServiceProxy.supplyCart(itemList);
-            //create new Purchase and save it
+            supplyServiceProxy.performCartSupply(itemList);
             return true;
         }
         return false;
