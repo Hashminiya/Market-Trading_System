@@ -1,20 +1,27 @@
 package DomainLayer.Market.Store;
 
+import DAL.ItemDTO;
 import DomainLayer.Market.IRepository;
-import DomainLayer.Market.InMemoryRepository;
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class StoreController implements IStoreFacade{
 
     private IRepository<Long, Store> storesRepo;
     private long  idCounter;
+    private IPurchaseFacade purchaseFacade;
+    private IUserFacade userFacade;
 
-    public StoreController(IRepository<Long, Store> storesRepo) {
+    public StoreController(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
         this.storesRepo = storesRepo;
         this.idCounter = 0;
+        this.purchaseFacade = purchaseFacade;
+        this.userFacade = userFacade;
     }
 
     private synchronized long generateStoreId(){
@@ -23,77 +30,91 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void createStore(long founderId, String storeName, String storeDescription, IRepository<Long, Item.Discount> discounts, IRepository<Long, IProduct> products) {
+    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Item.Discount> discounts) {
         //TODO: check the user is registered
         long storeId = generateStoreId();
-        Store newStore = new Store(storeId, storeName, discounts, products);
-
-        //TODO: set the store description
+        Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
         storesRepo.save(newStore);
     }
 
     @Override
-    public void viewInventoryByStoreOwner(long userId, long storeId) {
+    public List<String> viewInventoryByStoreOwner(String userId, long storeId) {
         //TODO: check the user is the store owner- decide if he must be store owner
         Store store = storesRepo.findById(storeId);
-        store.viewInventory();
+        List<Item> inventory = store.viewInventory();
+        List<String> itemsInfo = new ArrayList<>();
+        for( Item item: inventory){
+            itemsInfo.add(item.getName());
+        }
+        return itemsInfo;
     }
 
     @Override
-    public void addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, long categoryId) {
+    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, long categoryId) {
         //TODO: check the user is the store owner
         Store store = storesRepo.findById(storeId);
-        store.addItemToStore(itemName, itemPrice, stockAmount, categoryId);
+        store.addItem(itemName, itemPrice, stockAmount, categoryId);
     }
 
     @Override
-    public void updateItem(long userId, long storeId, long itemId, String newName, double newPrice, int stockAmount) {
+    public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount) {
         //TODO: check the user is the store owner/manager with permissions
         Store store = storesRepo.findById(storeId);
         store.updateItem(itemId, newName, newPrice, stockAmount);
     }
 
     @Override
-    public void deleteItem(long userId, long storeId, long itemId) {
+    public void deleteItem(String userId, long storeId, long itemId) {
         //TODO: check the user is the store owner/manager with permissions
         Store store = storesRepo.findById(storeId);
         store.deleteItem(itemId);
     }
 
     @Override
-    public void changeStorePolicy(long userId, long storeId) {
+    public void changeStorePolicy(String userId, long storeId) {
         //TODO: implement in the next version
     }
 
     @Override
-    public void changeDiscountType(long userId, long storeId, String newType) {
+    public void changeDiscountType(String userId, long storeId, String newType) {
         //TODO: implement in the next version
+        Store store = storesRepo.findById(storeId);
     }
 
     @Override
-    public void assignStoreOwner(long actorId, long userId) {
+    public void assignStoreOwner(String userId, long storeId, String newOwnerId){
         //TODO: check the user is the store owner
+        Store store = storesRepo.findById(storeId);
+        userFacade.assignStoreOwner(userId, storeId);
+        store.assignOwner(newOwnerId);
+    }
+
+    @Override
+    public void assignStoreManager(String userId, long storeId, String newManagerId){
+        //TODO: check the user is the store owner/manager with permissions
+        Store store = storesRepo.findById(storeId);
+        userFacade.assignStoreManager(userId, storeId);
+        store.assignManager(newManagerId);
+    }
+
+    @Override
+    public void removeStore(String userId, long storeId) {
 
     }
 
     @Override
-    public void assignStoreManager(long actorId, long userId) {
-
+    public List<String> viewStoreManagementInfo(String userId, long storeId) {
+        //TODO: check the user is the store owner
+        Store store = storesRepo.findById(storeId);
+        List<Long> management = store.getManagers();
+        management.addAll(store.getOwners());
+        return management;
     }
 
     @Override
-    public void removeStore(long userId, long storeId) {
-
-    }
-
-    @Override
-    public void viewStoreManagementInfo(long userId, long storeId) {
-
-    }
-
-    @Override
-    public void viewPurchaseHistory(long userId, long storeId) {
-
+    public void viewPurchaseHistory(String userId, long storeId) {
+        //TODO: check the user is the store owner
+        purchaseFacade.getPurchaseByStore(storeId);
     }
 
     @Override
@@ -145,7 +166,21 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void addItemToShoppingBasket(ShoppingBasket basket, long userId, long storeId, long itemId) {
+    public boolean addItemToShoppingBasket(ShoppingBasket basket, long storeId, long itemId, int quantity) {
+        Store store = storesRepo.findById(storeId);
+        boolean isAvailable = store.isItemsAvailable(itemId, quantity);
+        if(isAvailable) {
+            basket.addItem(itemId, quantity);
+            return true;
+        }
+        return false;
+    }
 
+    public void purchaseOccurs(){
+        List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
+        for (ItemDTO item: purchasedItems){
+            Store store = storesRepo.findById(item.getStoreId());
+            store.removeFromInventory(item.getItemId(), item.getQuantity());
+        }
     }
 }
