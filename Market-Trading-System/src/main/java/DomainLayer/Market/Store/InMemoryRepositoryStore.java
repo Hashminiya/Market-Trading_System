@@ -11,6 +11,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.RAMDirectory;
 
+
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
@@ -21,7 +22,7 @@ import org.apache.lucene.util.BytesRef;
 
 
 public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
-    private int SEARCH_LIMIT = 15;
+    private final int SEARCH_LIMIT = 15;
     private Directory index;
     private IndexWriter writer;
     public InMemoryRepositoryStore(){
