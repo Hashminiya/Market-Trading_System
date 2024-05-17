@@ -1,17 +1,21 @@
 package DomainLayer.Market.User;
 
 import DomainLayer.Market.IRepository;
+import DomainLayer.Market.ShoppingBasket;
 import Market.IRepository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class UserController implements IUserFacade{
 
-    private IRepository<User> users;
-    private IRepository<ShoppingCart> carts;
+    private IRepository<String,User> users;
+    private HashMap<String,ShoppingCart> carts;
 
-    public UserController() {
-        users = new InMemoryUsersRepository<User>()
+    public UserController(IRepository<String,User> users) {
+        this.users = users;
+        carts = new HashMap<>();
     }
 
     public void createGuestSession(){
@@ -22,15 +26,14 @@ public class UserController implements IUserFacade{
 
         // users.save(id,u,null,null);
     }
-    public void terminateGuestSession(String token){
-        int id = token.extractId();
-        User u = users.findById(id);
-        users.delete(u);
+
+    @Override
+    public void terminateGuestSession() {
+        //TODO implement
     }
 
     public void register(String userName, String password) throws Exception {
-        //TODO: check if the username already exist?
-        if(users.containsKey(userName)){
+        if(users.findById(userName) != null){
             throw new Exception("username already exist");
         }
         //TODO: encrypt password
@@ -39,25 +42,53 @@ public class UserController implements IUserFacade{
         user.changeState(registered);
     }
     public boolean login(String userName, String password){
-        User u = users.get(userName);
-        return u.login(userName,password);
+        User user = users.findById(userName);
+        return user.login(userName,password);
     }
 
     public void logout(String token){
         String userName = token.extractUserName();
-        User u = users.get(userName);
-        return u.logout(userName);
+        User user = users.findById(userName);
+        return user.logout(userName);
     }
     public String viewShoppingCart(String token){
-        int id = token.extractId();
-        ShoppingCart sc = //TODO: get ShoppingCart
+        String userName = token.extractUserName();
+        ShoppingCart sc = carts.get(userName);
         return sc.viewShoppingCart();
     }
     public void modifyShoppingCart(String token){
 
     }
     public void checkoutShoppingCart(String token){
-        //TODO: call to IStoreFacade to receive the price for basket
+        String userName = token.extractUserName();
+        ShoppingCart shoppingCart = carts.get(userName);
+        List<ItemDTO> items = new ArrayList<ItemDTO>();
+        List<ShoppingBasket> baskets = shoppingCart.getBaskets();
+        for(ShoppingBasket shoppingBasket: baskets){
+            //TODO: call to IStoreFacade to receive the price for basket and add itemDTOs
+        }
         //TODO: call checkout function in purchase
+
+        //TODO delegate to ShoppingCart?
+    }
+
+    @Override
+    public boolean checkPermission(String userName) {
+        return false;
+    }
+
+    @Override
+    public void assignStoreOwner(String userName, long storeId) {
+
+    }
+
+    @Override
+    public void assignStoreManager(String userName, long storeId) {
+
+    }
+
+    @Override
+    public List<Permission> getUserPermission(String userName) {
+        return null;
     }
 }
