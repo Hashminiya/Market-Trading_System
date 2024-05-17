@@ -1,10 +1,10 @@
 package DomainLayer.Market.Store;
 
 import DomainLayer.Market.Discount;
-import DomainLayer.Market.DataItem;
-import DomainLayer.Market.IRepository;
+import DomainLayer.Market.Util.DataItem;
+import DomainLayer.Market.Util.IRepository;
 
-public class Item implements DataItem<Long>{
+public class Item implements DataItem<Long> {
     private final Long id;
     private String name;
     private String description;
@@ -69,5 +69,9 @@ public class Item implements DataItem<Long>{
 
     public String[] getCategories() {
         return this.categories;
+    }
+
+    public void setName(String newName) {
+        this.name = newName;
     }
 }

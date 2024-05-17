@@ -1,10 +1,13 @@
 package DomainLayer.Market.Store;
 
-import DomainLayer.Market.DataItem;
+
 import DomainLayer.Market.Discount;
-import DomainLayer.Market.IRepository;
-import DomainLayer.Market.InMemoryRepository;
-import DomainLayer.Market.Discount;
+
+
+import DomainLayer.Market.Util.DataItem;
+import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Market.Util.IdGenerator;
+import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,7 @@ public class Store implements DataItem<Long> {
     private final List<Long> managers;
     private final InMemoryRepositoryStore products;
     private IRepository<Long , Discount> discounts;
-    public Store(Long id, Long founderId, String name, String description,IRepository<Long, Discount> discounts){
+    public Store(Long id, Long founderId, String name, String description, IRepository<Long, Discount> discounts){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
@@ -31,8 +34,7 @@ public class Store implements DataItem<Long> {
     }
 
     private long genrateId() {
-        return 0;
-        UUID id = new UUID().;
+        return IdGenerator.generateId();
     }
 
     @Override
@@ -59,10 +61,13 @@ public class Store implements DataItem<Long> {
     public void setDescription(String description) {
         this.description = description;
     }
+    public List<Item> viewInventory(){
+        return products.findAll();
+    }
 
     public void addItem(String name, double price, int quantity, String description, String[] categories){
         long itemId = genrateId();
-        Item newItem = new Item(itemId, name, description ,new InMemoryRepository<>(), categories);
+        Item newItem = new Item(itemId, name, description ,new InMemoryRepository<Long,Discount>(), categories);
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
         products.save(newItem);
@@ -81,7 +86,11 @@ public class Store implements DataItem<Long> {
         discounts.save(discount);
     }
     void updateItem(long itemId, String newName, double newPrice, int quantity){
-//        products.update(new Item(itemId));
+        Item toEdit = products.findById(itemId);
+        toEdit.setName(newName);
+        toEdit.setPrice(newPrice);
+        toEdit.setQuantity(quantity);
+        products.update(toEdit);
     }
     void deleteItem(long itemId){
         products.delete(itemId);

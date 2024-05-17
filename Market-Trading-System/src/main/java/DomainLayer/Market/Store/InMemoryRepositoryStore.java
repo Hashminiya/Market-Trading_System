@@ -1,5 +1,6 @@
 package DomainLayer.Market.Store;
-import DomainLayer.Market.InMemoryRepository;
+
+import DomainLayer.Market.Util.InMemoryRepository;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
