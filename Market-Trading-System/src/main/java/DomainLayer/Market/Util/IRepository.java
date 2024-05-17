@@ -1,4 +1,6 @@
-package DomainLayer.Market;
+package DomainLayer.Market.Util;
+
+import DomainLayer.Market.Util.DataItem;
 
 import java.util.List;
 

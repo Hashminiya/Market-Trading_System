@@ -1,4 +1,4 @@
-package DomainLayer.Market;
+package DomainLayer.Market.Util;
 
 import java.util.HashMap;
 import java.util.List;
