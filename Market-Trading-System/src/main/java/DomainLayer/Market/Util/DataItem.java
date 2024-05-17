@@ -1,4 +1,4 @@
-package DomainLayer.Market;
+package DomainLayer.Market.Util;
 
 public interface DataItem {
     Long getId();

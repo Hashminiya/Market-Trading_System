@@ -1,8 +1,7 @@
 package DomainLayer.Market.Store;
 
 
-import DomainLayer.Market.DataItem;
-import DomainLayer.Market.IRepository;
+import DomainLayer.Market.Util.IRepository;
 
 public class Item implements IProduct {
     private final Long id;

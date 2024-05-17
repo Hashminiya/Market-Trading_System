@@ -1,6 +1,6 @@
 package DomainLayer.Market.Store;
 
-import DomainLayer.Market.DataItem;
+import DomainLayer.Market.Util.DataItem;
 
 public interface IProduct extends DataItem {
     public void addProduct(IProduct newProduct);
