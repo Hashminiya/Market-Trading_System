@@ -1,8 +1,9 @@
 package DomainLayer.Market.Store;
 
-import DomainLayer.Market.DataItem;
-import DomainLayer.Market.IRepository;
-import DomainLayer.Market.InMemoryRepository;
+import DomainLayer.Market.Util.DataItem;
+import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Market.Util.IdGenerator;
+import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class Store implements DataItem {
     }
 
     private long genrateId() {
-        return 0;
+        return IdGenerator.generateId();
         //TODO implement this
     }
 

@@ -1,6 +1,6 @@
 package UnitTests.DomainLayer.Store;
 
-import DomainLayer.Market.IRepository;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.StoreController;

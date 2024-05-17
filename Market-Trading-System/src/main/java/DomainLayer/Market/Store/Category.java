@@ -1,7 +1,7 @@
 package DomainLayer.Market.Store;
 
 
-import DomainLayer.Market.IRepository;
+import DomainLayer.Market.Util.IRepository;
 
 import java.util.List;
 
