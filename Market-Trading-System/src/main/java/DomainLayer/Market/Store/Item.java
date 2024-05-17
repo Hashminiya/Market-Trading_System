@@ -1,8 +1,9 @@
 package DomainLayer.Market.Store;
 
-import DomainLayer.Market.Discount;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
+
+import java.util.List;
 
 public class Item implements DataItem<Long> {
     private final Long id;
@@ -11,9 +12,9 @@ public class Item implements DataItem<Long> {
     private int quantity;
     private double price;
     private final IRepository<Long,Discount> discounts;
-    private String[] categories;
+    private List<String> categories;
 
-    public Item(Long id, String name,String description ,IRepository<Long, Discount> discounts, String[] categories){
+    public Item(Long id, String name,String description ,IRepository<Long, Discount> discounts, List<String> categories){
         this.id = id;
         this.name = name;
         this.description = description;
@@ -67,7 +68,7 @@ public class Item implements DataItem<Long> {
         this.description = description;
     }
 
-    public String[] getCategories() {
+    public List<String> getCategories() {
         return this.categories;
     }
 

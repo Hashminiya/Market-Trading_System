@@ -1,9 +1,6 @@
 package DomainLayer.Market.Store;
 
 
-import DomainLayer.Market.Discount;
-
-
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
@@ -11,7 +8,6 @@ import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Store implements DataItem<Long> {
     private final Long id;
@@ -65,7 +61,7 @@ public class Store implements DataItem<Long> {
         return products.findAll();
     }
 
-    public void addItem(String name, double price, int quantity, String description, String[] categories){
+    public void addItem(String name, double price, int quantity, String description, List<String> categories){
         long itemId = genrateId();
         Item newItem = new Item(itemId, name, description ,new InMemoryRepository<Long,Discount>(), categories);
         newItem.setPrice(price);
