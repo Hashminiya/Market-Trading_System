@@ -3,9 +3,10 @@ package DomainLayer.Market.Util;
 import java.util.HashMap;
 import java.util.List;
 
-public class InMemoryRepository<K,T extends DataItem> implements IRepository<K,T> {
+public class InMemoryRepository<K,T extends DataItem<K>> implements IRepository<K,T> {
 
-    HashMap<Long,T> data = new HashMap<Long,T>();
+    protected HashMap<K,T> data = new HashMap<K,T>();
+
 
     @Override
     public T findById(K id) {
@@ -13,7 +14,7 @@ public class InMemoryRepository<K,T extends DataItem> implements IRepository<K,T
     }
 
     @Override
-    public T findByName(String name) {
+    public List<T> search(String query) {
         //TODO implement search by name
         throw new UnsupportedOperationException("findByName method is not implemented yet");
     }
