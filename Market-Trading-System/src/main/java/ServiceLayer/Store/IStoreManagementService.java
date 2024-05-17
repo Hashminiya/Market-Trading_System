@@ -15,4 +15,5 @@ public interface IStoreManagementService {
     public Response viewPurchasesHistory(long userId, Long storeId);
     public Response assignStoreOwner(long userId, long storeId, long newOwnerId);
     public Response assignStoreManager(long userId, long storeId ,long newManagerId);
+    public Response viewInventory(long userId, long storeId);
 }

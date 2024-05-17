@@ -133,4 +133,14 @@ public class StoreManagementService implements IStoreManagementService{
             return Response.status(500).entity(ex.getMessage()).build();
         }
     }
+
+    @Override
+    public Response viewInventory(long userId, long storeId){
+        try {
+            return Response.ok().entity(storeFacade.viewInventoryByStoreOwner(userId,storeId)).build();
+        }
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
+        }
+    }
 }
