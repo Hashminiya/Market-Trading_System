@@ -5,6 +5,8 @@ import DomainLayer.Market.IRepository;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Store;
 
+import java.util.HashMap;
+
 public interface IStoreFacade {
 
     public static IStoreFacade create(IRepository<Long, Store> storesRepo) {
@@ -22,13 +24,13 @@ public interface IStoreFacade {
     public void removeStore(long userId, long storeId);
     public void viewStoreManagementInfo(long userId, long storeId);
     public void viewPurchaseHistory(long userId, long storeId);
-    public void getAllProductsInfoByStore(long storeId);
-    public void getAllStoreInfo(long storeId);
-    public void searchStoreByName(String name);
-    public void searchItemByName(String name);
-    public void searchStoreByCategory(long category);
-    public void searchItemByCategory(long category);
-    public void searchStoreByKeyWord(String keyWord);
-    public void searchItemByKeyWord(String keyWord);
-    public void addItemToShoppingBasket(ShoppingBasket basket, long userId, long storeId, long itemId);
+    public HashMap<Long, HashMap<String, String>> getAllProductsInfoByStore(long storeId);
+    public HashMap<Long, HashMap<String, String>> getAllStoreInfo(long storeId);
+    public HashMap<Long,String> searchStoreByName(String name);
+    public HashMap<Long,String> searchItemByName(String name);
+    public HashMap<Long,String> searchStoreByCategory(long category);
+    public HashMap<Long,String> searchItemByCategory(long category);
+    public HashMap<Long,String> searchStoreByKeyWord(String keyWord);
+    public HashMap<Long,String> searchItemByKeyWord(String keyWord);
+    public void addItemToShoppingBasket(long userId, long storeId, long itemId);
 }

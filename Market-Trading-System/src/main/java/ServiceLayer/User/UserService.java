@@ -107,4 +107,34 @@ public class UserService implements IUserService {
             return Response.serverError().build();
         }
     }
+
+    public Response addItemToBasket(String token,long itemId,long quantity) {
+        try{
+            if(TokenService.validateToken(token)){
+                userFacade.addItemToBasket(token, itemId, quantity);
+                return Response.ok().build();
+            }
+            else{
+                return Response.status(401).build();
+            }
+        }
+        catch (Exception e){
+            return Response.serverError().build();
+        }
+    }
+
+    public Response changeUserPermission(String token, int permission) {
+        try{
+            if(TokenService.validateToken(token)){
+                userFacade.changeUserPermission(token, permission);
+                return Response.ok().build();
+            }
+            else{
+                return Response.status(401).build();
+            }
+        }
+        catch (Exception e){
+            return Response.serverError().build();
+        }
+    }
 }

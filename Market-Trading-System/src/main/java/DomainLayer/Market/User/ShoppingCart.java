@@ -27,6 +27,6 @@ public class ShoppingCart {
 
     public void checkoutShoppingCart(){
         //TODO: what data the purchase need to perform the checkout?
-        purchase.checkout();
+
     }
 }

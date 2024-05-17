@@ -5,27 +5,16 @@ import DomainLayer.Market.DataItem;
 import DomainLayer.Market.IRepository;
 
 public class Item implements IProduct {
-    public static class Discount implements DataItem {
-
-        @Override
-        public Long getId() {
-            return null;
-        }
-
-        @Override
-        public String getName() {
-            return null;
-        }
-    }
-    private Long id;
+    private final Long id;
     private String name;
     private int quantity;
     private double price;
-    private IRepository<Discount> discounts;
+    private final IRepository<Long,Discount> discounts;
 
-    public Item(Long id, String name){
+    public Item(Long id, String name, IRepository<Long, Discount> discounts){
         this.id = id;
         this.name = name;
+        this.discounts = discounts;
     }
 
     @Override
@@ -38,8 +27,36 @@ public class Item implements IProduct {
         return this.name;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public double getCurrentPrice(){
+        double price = this.price;
+        for (Discount discount :discounts.findAll()){
+            ///TODO decide if discount nee to be activated and calculate new price accordingly
+        }
+        return price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+    public void setDiscount(Discount discount){
+        this.discounts.save(discount);
+    }
+
+    public void setQuantity(int quantity){
+        this.quantity = quantity;
+    }
+    public  void setPrice(double price){
+        this.price = price;
+    }
+    w
+
+
     @Override
-    public void addProduct(IProduct newProduct, Long categoryId) {
+    public void addProduct(IProduct newProduct) {
         /*
         This Function Not suppose to be activated,
         implemented here for interface reasons.
@@ -47,21 +64,4 @@ public class Item implements IProduct {
         throw new RuntimeException(String.format("Adding product '%s' failed", newProduct.getName()));
     }
 
-    public void setDiscount(Discount discount){
-        this.discounts.save(discount);
-    }
-    public void setQuantity(int quantity){
-        this.quantity = quantity;
-    }
-    public  void setPrice(double price){
-        this.price = price;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
 }
