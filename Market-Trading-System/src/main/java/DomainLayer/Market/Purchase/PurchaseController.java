@@ -16,7 +16,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class PurchaseController implements IPurchaseFacade{
-    private HashMap<String,List<ItemDTO>> storeIDtoItems;
+    private HashMap<Long,List<ItemDTO>> storeIDtoItems;
     private HashMap<String,List<ItemDTO>> userIDtoItems;
     private BlockingQueue<ItemDTO> purchasedItems;
 
@@ -74,7 +74,7 @@ public class PurchaseController implements IPurchaseFacade{
     }
 
     @Override
-    public List<ItemDTO> getPurchasesByStore(String storeId) {
+    public List<ItemDTO> getPurchasesByStore(long storeId) {
         if(!storeIDtoItems.containsKey(storeId))
             return null;
         return storeIDtoItems.get(storeId);

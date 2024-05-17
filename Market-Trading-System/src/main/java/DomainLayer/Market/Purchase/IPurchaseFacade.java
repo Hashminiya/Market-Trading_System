@@ -10,7 +10,7 @@ public interface IPurchaseFacade {
     void initServices();
     boolean isValidServices();
     boolean checkout(String userID, String creditCard, Date expiryDate , String cvv , List<ItemDTO> purchaseItemsList);
-    List<ItemDTO> getPurchasesByStore(String storeId);
+    List<ItemDTO> getPurchasesByStore(long storeId);
     List<ItemDTO> getPurchasesByUser(String UserId);
     List<ItemDTO> getPurchasedItems();
 
