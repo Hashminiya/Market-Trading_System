@@ -21,10 +21,10 @@ public class Purchase implements IPurchase{
 
     @Override
     public boolean checkout(List<ItemDTO> itemList, String creditCard, Date expiryDate, String CVV) {
-        Boolean isValidCard = paymentServiceProxy.validateCreditCard(creditCard,expiryDate,CVV);
+        double amount = calculateAmount(itemList);
+        Boolean isValidCard = paymentServiceProxy.validateCreditCard(creditCard,expiryDate,CVV,amount);
         Boolean canBeSupplied = supplyServiceProxy.validateCartSupply(itemList);
         if(isValidCard & canBeSupplied){
-            double amount = calculateAmount(itemList);
             paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,amount);
             supplyServiceProxy.performCartSupply(itemList);
             return true;
