@@ -1,6 +1,7 @@
 package DomainLayer.Market.User;
 
 import DomainLayer.Market.DataItem;
+import DomainLayer.Market.Util.DataItem;
 import jdk.jshell.spi.ExecutionControl;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 

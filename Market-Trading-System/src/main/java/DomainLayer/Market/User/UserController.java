@@ -88,6 +88,11 @@ public class UserController implements IUserFacade{
     }
 
     @Override
+    public boolean isPermitted(String permission) {
+        return false;
+    }
+
+    @Override
     public List<Permission> getUserPermission(String userName) {
         return null;
     }

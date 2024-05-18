@@ -1,16 +1,19 @@
 package DomainLayer.Market;
 
+import DAL.ItemDTO;
 import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Util.DataItem;
+import DomainLayer.Market.Util.IRepository;
 
 import java.util.HashMap;
 
-public class ShoppingBasket {
+public class ShoppingBasket implements DataItem<Long> {
 
-    private HashMap<Integer,Integer> items;
+    private IRepository<Long, ItemDTO> items;
     private int storeId;
 
-    public ShoppingBasket(){
-        items = new HashMap<>();
+    public ShoppingBasket(IRepository iRepository) {
+        items = iRepository;
     }
 
     public void addItem(int itemId, int quantity){
@@ -35,5 +38,15 @@ public class ShoppingBasket {
     @Override
     public String toString() {
         return super.toString(); //TODO: overwrite to return the shopping basket items
+    }
+
+    @Override
+    public Object getId() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 }

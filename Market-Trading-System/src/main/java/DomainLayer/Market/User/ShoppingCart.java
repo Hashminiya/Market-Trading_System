@@ -1,12 +1,14 @@
 package DomainLayer.Market.User;
 
+import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
 
 public class ShoppingCart {
-    private InMemoryRepository<ShoppingBasket> baskets;
+    private IRepository<Long, ShoppingBasket> baskets;//long is the storeID
 
-    public ShoppingCart(){
-        baskets = new InMemoryRepository<ShoppingBasket>();
+    public ShoppingCart(IRepository iRepository){
+        baskets = iRepository;
     }
 
     public String viewShoppingCart(){

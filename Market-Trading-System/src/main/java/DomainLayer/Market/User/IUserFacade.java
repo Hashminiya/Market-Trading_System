@@ -9,8 +9,7 @@ public interface IUserFacade {
     public String viewShoppingCart(String token);
     public void modifyShoppingCart(String token);
     public void checkoutShoppingCart(String token);
-    public boolean checkPermission(String userName);
     public void assignStoreOwner(String userName, long storeId);
     public void assignStoreManager(String userName, long storeId);
-    public List<Permission> getUserPermission(String userName);
+    public boolean isPermitted(String permission, String userID);
 }
