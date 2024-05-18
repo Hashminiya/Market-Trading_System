@@ -1,10 +1,12 @@
 package DomainLayer.Market.Store;
 
 import DAL.ItemDTO;
-import DomainLayer.Market.IRepository;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.Util.IdGenerator;
+import DomainLayer.Market.Store.Item;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,24 +15,21 @@ import java.util.List;
 public class StoreController implements IStoreFacade{
 
     private IRepository<Long, Store> storesRepo;
-    private long  idCounter;
     private IPurchaseFacade purchaseFacade;
     private IUserFacade userFacade;
 
     public StoreController(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
         this.storesRepo = storesRepo;
-        this.idCounter = 0;
         this.purchaseFacade = purchaseFacade;
         this.userFacade = userFacade;
     }
 
     private synchronized long generateStoreId(){
-        idCounter++;
-        return idCounter;
+        return IdGenerator.generateId();
     }
 
     @Override
-    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Item.Discount> discounts) {
+    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts) {
         //TODO: check the user is registered
         long storeId = generateStoreId();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
@@ -50,10 +49,10 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, long categoryId) {
+    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories) {
         //TODO: check the user is the store owner
         Store store = storesRepo.findById(storeId);
-        store.addItem(itemName, itemPrice, stockAmount, categoryId);
+        store.addItem(itemName, itemPrice, stockAmount, description, categories);
     }
 
     @Override
@@ -131,45 +130,81 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public HashMap<Long, String> searchStoreByName(String name) {
-
-        return null;
+    public HashMap<Long, String> searchInStoreByCategory(long storeId, String category) {
+        Store store = storesRepo.findById(storeId);
+        List<Item> items = store.searchByCategory(category);
+        HashMap<Long, String> result = new HashMap<>();
+        for(Item item: items){
+            result.put(item.getId(), item.getName());
+        }
+        return result;
     }
 
     @Override
-    public HashMap<Long, String> searchItemByName(String name) {
-
-        return null;
+    public HashMap<Long, String> searchInStoreByKeyWord(long storeId, String keyWord) {
+        Store store = storesRepo.findById(storeId);
+        List<Item> items = store.search(keyWord);
+        HashMap<Long, String> result = new HashMap<>();
+        for(Item item: items){
+            result.put(item.getId(), item.getName());
+        }
+        return result;
     }
 
     @Override
-    public HashMap<Long, String> searchStoreByCategory(long category) {
-
-        return null;
+    public HashMap<Long, String> searchInStoreByKeyWordAndCategory(long storeId, String category, String keyWord) {
+        Store store = storesRepo.findById(storeId);
+        List<Item> items = store.searchKeyWordWithCategory(category, keyWord);
+        HashMap<Long, String> result = new HashMap<>();
+        for(Item item: items){
+            result.put(item.getId(), item.getName());
+        }
+        return result;
     }
 
     @Override
-    public HashMap<Long, String> searchItemByCategory(long category) {
-
-        return null;
+    public HashMap<Long, String> searchGenerallyByCategory(String category) {
+        List<Store> stores = storesRepo.findAll();
+        HashMap<Long, String> result = new HashMap<>();
+        for(Store store: stores) {
+            List<Item> items = store.searchByCategory(category);
+            for (Item item : items) {
+                result.put(item.getId(), item.getName());
+            }
+        }
+        return result;
     }
 
     @Override
-    public HashMap<Long, String> searchStoreByKeyWord(String keyWord) {
-
-        return null;
+    public HashMap<Long, String> searchGenerallyByKeyWord(String keyWord) {
+        List<Store> stores = storesRepo.findAll();
+        HashMap<Long, String> result = new HashMap<>();
+        for(Store store: stores) {
+            List<Item> items = store.search(keyWord);
+            for (Item item : items) {
+                result.put(item.getId(), item.getName());
+            }
+        }
+        return result;
     }
 
     @Override
-    public HashMap<Long, String> searchItemByKeyWord(String keyWord) {
-
-        return null;
+    public HashMap<Long, String> searchGenerallyByKeyWordAndCategory(String category, String keyWord) {
+        List<Store> stores = storesRepo.findAll();
+        HashMap<Long, String> result = new HashMap<>();
+        for(Store store: stores) {
+            List<Item> items = store.searchKeyWordWithCategory(category, keyWord);
+            for (Item item : items) {
+                result.put(item.getId(), item.getName());
+            }
+        }
+        return result;
     }
 
     @Override
     public boolean addItemToShoppingBasket(ShoppingBasket basket, long storeId, long itemId, int quantity) {
         Store store = storesRepo.findById(storeId);
-        boolean isAvailable = store.isItemsAvailable(itemId, quantity);
+        boolean isAvailable = store.isAvailable(itemId, quantity);
         if(isAvailable) {
             basket.addItem(itemId, quantity);
             return true;
@@ -179,9 +214,9 @@ public class StoreController implements IStoreFacade{
 
     public void purchaseOccurs(){
         List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
-        for (ItemDTO item: purchasedItems){
-            Store store = storesRepo.findById(item.getStoreId());
-            store.removeFromInventory(item.getItemId(), item.getQuantity());
+        for (ItemDTO itemDto: purchasedItems){
+            Store store = storesRepo.findById(itemDto.getStoreId());
+            store.updateAmount(itemDto.getItemId(), itemDto.getQuantity());
         }
     }
 }
