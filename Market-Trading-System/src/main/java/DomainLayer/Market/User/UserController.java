@@ -1,6 +1,6 @@
 package DomainLayer.Market.User;
 
-import DomainLayer.Market.IRepository;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
 import Market.IRepository;
 
