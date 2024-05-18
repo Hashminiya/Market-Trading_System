@@ -1,6 +1,6 @@
 package DomainLayer.Market.User;
 
-public class SystemManager extend User{
+public class SystemManager extends User{
 
     private SystemManager systemManager;
 

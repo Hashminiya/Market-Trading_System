@@ -25,6 +25,8 @@ public class ShoppingCart {
         //TODO: replace the item? or maybe better to create few function for the different modification options?
     }
 
+    public void addShoppingBasket()
+
     public void checkoutShoppingCart(){
         //TODO: what data the purchase need to perform the checkout?
 

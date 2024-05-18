@@ -1,16 +1,17 @@
 package DomainLayer.Market.User;
 
 import DomainLayer.Market.DataItem;
+import jdk.jshell.spi.ExecutionControl;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class User implements DataItem {
-    private int userID;
+    private long userID;
     private String userName;
     private int userAge;
-    private List<Istate> userStates;
     private boolean loggedIn;
     private ShoppingCart shoppingCart;
     private String hashedPassword;
@@ -18,17 +19,18 @@ public class User implements DataItem {
     private Set<String> roles;
     private Set<String> permissions;
 
-    public User(int userID, String userName, int userAge, List<Istate> userStates, boolean loggedIn, ShoppingCart shoppingCart, String hashedPassword, String salt) {
+    public User(){}
+
+    public User(long userID, String userName, int userAge, String hashedPassword, String salt) {
         this.userID = userID;
         this.userName = userName;
         this.userAge = userAge;
-        this.userStates = userStates;
-        this.loggedIn = loggedIn;
-        this.shoppingCart = shoppingCart;
+        this.shoppingCart = new ShoppingCart();
         this.hashedPassword = hashedPassword;
         this.salt = salt;
         this.roles = new HashSet<>();
         this.permissions = new HashSet<>();
+        this.loggedIn = true;
     }
 
     public void setUserID(int userID) {
@@ -43,10 +45,6 @@ public class User implements DataItem {
         this.userAge = userAge;
     }
 
-    public void setUserStates(List<Istate> userStates) {
-        this.userStates = userStates;
-    }
-
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
@@ -55,7 +53,7 @@ public class User implements DataItem {
         this.shoppingCart = shoppingCart;
     }
 
-    public int getUserID() {
+    public long getUserID() {
         return userID;
     }
 
@@ -67,9 +65,6 @@ public class User implements DataItem {
         return userAge;
     }
 
-    public List<Istate> getUserStates() {
-        return userStates;
-    }
 
     public boolean isLoggedIn() {
         return loggedIn;
@@ -79,32 +74,30 @@ public class User implements DataItem {
         return shoppingCart;
     }
 
-    public boolean changeState(Istate state){
 
-    }
-
-    public boolean login(String userName, String password){
-
-    }
-
+//    public boolean login(String userName, String password){
+//        return true;
+//    }
+//
+    @RequiresRoles("registered")
     public boolean logout(String userName){
 
     }
 
-    public boolean addToShoppingCart(int storeNum, int productNum, int quantity){
+    public boolean addToShoppingCart(int storeID, int productNum, int quantity){
 
     }
 
     public boolean deleteFromShoppingCart(int storeNum, int productNum){
-
+        return false;
     }
 
     public boolean editShoppingCart(int storeNum, int productNum, int newQuantity){
-
+        return false;
     }
 
     public boolean checkOutShoppingCart(){
-
+        return false;
     }
 
     // Add role and permission methods

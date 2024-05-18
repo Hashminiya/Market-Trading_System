@@ -17,11 +17,11 @@ public class UserService {
     }
 
     // Method to create a new user with hashed password and salt
-    public void createUser(String username, String plainTextPassword) {
+    public void createUser(long userID, String username, int userAge, String plainTextPassword) {
         String salt = generateSalt();
         String hashedPassword = hashPassword(plainTextPassword, salt);
 
-        User user = new User(username, hashedPassword, salt);
+        User user = new User(userID, username,userAge, hashedPassword, salt);
         userRepository.save(user);
     }
 
