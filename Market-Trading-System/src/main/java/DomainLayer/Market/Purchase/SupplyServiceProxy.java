@@ -19,7 +19,7 @@ public class SupplyServiceProxy implements ISupplyService {
     }
 
     @Override
-    public boolean performItemSupply(String storeId,,String itemId, int quantity) {
+    public boolean performItemSupply(String storeId,String itemId, int quantity) {
         return supplyService.performItemSupply(storeId,itemId, quantity);
     }
 

@@ -7,6 +7,10 @@ import javax.ws.rs.core.Response;
 public class UserService implements IUserService {
     IUserFacade userFacade;
 
+    public UserService(IUserFacade userFacade) {
+        this.userFacade = userFacade;
+    }
+
     public Response GuestEntry(){
         try{
             userFacade.CreateGuestSession();

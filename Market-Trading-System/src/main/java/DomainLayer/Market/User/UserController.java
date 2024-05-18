@@ -8,10 +8,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class UserController implements IUserFacade{
-
+public final class UserController implements IUserFacade{
+    private static UserController userControllerInstance;
     private IRepository<String,User> users;
     private HashMap<String,ShoppingCart> carts;
+
+    private UserController() {
+        // private constructor to prevent instantiation
+    }
+
+    public static synchronized UserController getInstance() {
+        if (userControllerInstance == null) {
+            userControllerInstance = new UserController();
+        }
+        return userControllerInstance;
+    }
 
     public UserController(IRepository<String,User> users) {
         this.users = users;

@@ -2,7 +2,20 @@ package DomainLayer.Market.Store;
 
 import java.util.HashMap;
 
-public class StoreController implements IStoreFacade{
+public final class StoreController implements IStoreFacade{
+
+    private static StoreController storeControllerInstance;
+
+    private StoreController() {
+        // private constructor to prevent instantiation
+    }
+
+    public static synchronized StoreController getInstance() {
+        if (storeControllerInstance == null) {
+            storeControllerInstance = new StoreController();
+        }
+        return storeControllerInstance;
+    }
 
     @Override
     public void createStore(long founderId, String storeName, String storeDescription) {
