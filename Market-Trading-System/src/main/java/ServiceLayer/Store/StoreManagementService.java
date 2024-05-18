@@ -12,7 +12,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response createStore(long founderId, String storeName, String storeDescription) {
+    public Response createStore(String founderId, String storeName, String storeDescription) {
         try {
             storeFacade.createStore(founderId,storeName,storeDescription);
             return Response.ok().build();
@@ -23,7 +23,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response addItemToStore(long userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categories) {
+    public Response addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categories) {
         try {
             storeFacade.addItemToStore(storeId,itemName,itemPrice,stockAmount,categories);
             return Response.ok().build();
@@ -35,7 +35,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response updateItem(long userId, long storeId, long itemId, String newName, double newPrice, int newAmount) {
+    public Response updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int newAmount) {
         try {
             storeFacade.updateItem(userId,storeId,itemId,newName,newPrice, newAmount);
             return Response.ok().build();
@@ -47,7 +47,7 @@ public class StoreManagementService implements IStoreManagementService{
 
 
     @Override
-    public Response deleteItem(long userId, long storeId, long itemId) {
+    public Response deleteItem(String userId, long storeId, long itemId) {
         try {
             storeFacade.deleteItem(userId, storeId, itemId);
             return Response.ok().build();
@@ -58,7 +58,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response changeStorePolicy(long userId, long storeId) {
+    public Response changeStorePolicy(String userId, long storeId) {
         try {
             storeFacade.changeStorePolicy(userId, storeId);
             return Response.ok().build();
@@ -69,7 +69,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response changeDiscountType(long userId, long storeId, String newType) {
+    public Response changeDiscountType(String userId, long storeId, String newType) {
         try {
             storeFacade.changeDiscountType(userId ,storeId, newType);
             return Response.ok().build();
@@ -80,7 +80,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response removeStore(long userId, long storeId) {
+    public Response removeStore(String userId, long storeId) {
         try {
             storeFacade.removeStore(userId ,storeId);
             return Response.ok().build();
@@ -91,7 +91,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response viewManagmentInfo(long userId, Long storeId) {
+    public Response viewManagmentInfo(String userId, Long storeId) {
         try {
             return Response.ok().entity(storeFacade.viewStoreManagementInfo(userId, storeId)).build();
         }
@@ -102,7 +102,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response viewPurchasesHistory(long userId, Long storeId) {
+    public Response viewPurchasesHistory(String userId, Long storeId) {
         try {
             return Response.ok().entity(storeFacade.viewPurchaseHistory(userId, storeId)).build();
         }
@@ -113,7 +113,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response assignStoreOwner(long userId, long storeId, long newOwnerId) {
+    public Response assignStoreOwner(String userId, long storeId, long newOwnerId) {
         try {
             storeFacade.assignStoreOwner(userId, storeId, newOwnerId);
             return Response.ok().build();
@@ -124,7 +124,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response assignStoreManager(long userId, long storeId, long newManagerId) {
+    public Response assignStoreManager(String userId, long storeId, long newManagerId) {
         try {
             storeFacade.assignStoreManager(userId, storeId, newManagerId);
             return Response.ok().build();
