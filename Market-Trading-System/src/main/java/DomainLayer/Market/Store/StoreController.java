@@ -99,16 +99,17 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void removeStore(String userId, long storeId) {
-
+        //TODO: check the user is the founder
+        storesRepo.delete(storeId);
     }
 
     @Override
     public List<String> viewStoreManagementInfo(String userId, long storeId) {
         //TODO: check the user is the store owner
         Store store = storesRepo.findById(storeId);
-        List<Long> management = store.getManagers();
-        management.addAll(store.getOwners());
-        return management;
+        List<String> managementIds = store.getManagers();
+        managementIds.addAll(store.getOwners());
+        return managementIds;
     }
 
     @Override
