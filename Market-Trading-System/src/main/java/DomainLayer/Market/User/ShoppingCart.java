@@ -1,6 +1,6 @@
 package DomainLayer.Market.User;
 
-import DomainLayer.Market.InMemoryRepository;
+import DomainLayer.Market.Util.InMemoryRepository;
 
 public class ShoppingCart {
     private InMemoryRepository<ShoppingBasket> baskets;
