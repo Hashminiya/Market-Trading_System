@@ -104,4 +104,12 @@ public class Store implements DataItem<Long> {
     public List<String> getAllCategories(){
         return products.getAllCategoryValues();
     }
+
+    public boolean isAvailable(long itemId, int amount){
+        return products.findById(itemId).getQuantity() >= amount;
+    }
+
+    public void updateAmount(long itemId, int toDecrease){
+        products.findById(itemId).decrease(toDecrease);
+    }
 }

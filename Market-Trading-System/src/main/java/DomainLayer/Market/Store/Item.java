@@ -75,4 +75,11 @@ public class Item implements DataItem<Long> {
     public void setName(String newName) {
         this.name = newName;
     }
+
+    public void decrease(int toDecrease) {
+        if(this.quantity < toDecrease){
+            throw new RuntimeException(String.format("failed to update %s amount",name));
+        }
+        else {this.quantity -= toDecrease;}
+    }
 }
