@@ -56,10 +56,12 @@ public class PurchaseController implements IPurchaseFacade {
 
     @Override
     public boolean checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList) {
+        if(purchaseItemsList.size()==0)
+            throw new RuntimeException("No items for checkout");
         Purchase purchase = new Purchase(paymentServiceProxy, supplyServiceProxy);
         boolean success = purchase.checkout(purchaseItemsList, creditCard, expiryDate, cvv);
         if (!success)
-            return false;
+            throw new RuntimeException("Checkout Failed");
         for (ItemDTO item : purchaseItemsList) { // save all the purchased items
             if (!userIDtoItems.containsKey(userID))
                 userIDtoItems.put(userID, new ArrayList<>());

@@ -29,6 +29,10 @@ public class Purchase implements IPurchase{
             supplyServiceProxy.performCartSupply(itemList);
             return true;
         }
+        if(!isValidCard)
+            throw new RuntimeException("Checkout Failed\nTransaction cannot be made with that credit card");
+        if(!canBeSupplied)
+            throw new RuntimeException("Checkout Failed\nOne of the items can not be supplied");
         return false;
     }
 
