@@ -14,12 +14,12 @@ public class SupplyServiceProxy implements ISupplyService {
     }
 
     @Override
-    public boolean validateItemSupply(String storeId,String itemId, int quantity) {
+    public boolean validateItemSupply(long storeId,long itemId, int quantity) {
         return supplyService.validateItemSupply(storeId,itemId, quantity);
     }
 
     @Override
-    public boolean performItemSupply(String storeId,String itemId, int quantity) {
+    public boolean performItemSupply(long storeId,long itemId, int quantity) {
         return supplyService.performItemSupply(storeId,itemId, quantity);
     }
 
