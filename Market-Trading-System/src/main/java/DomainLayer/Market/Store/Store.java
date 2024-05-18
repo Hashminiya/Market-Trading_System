@@ -61,8 +61,7 @@ public class Store implements DataItem<Long> {
         return products.findAll();
     }
 
-    public void addItem(String name, double price, int quantity, String description, List<String> categories){
-        long itemId = genrateId();
+    public void addItem(Long itemId,String name, double price, int quantity, String description, List<String> categories){
         Item newItem = new Item(itemId, name, description ,new InMemoryRepository<Long,Discount>(), categories);
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
@@ -81,14 +80,14 @@ public class Store implements DataItem<Long> {
         /*A method for adding store discount, can be conditional.*/
         discounts.save(discount);
     }
-    void updateItem(long itemId, String newName, double newPrice, int quantity){
+    public void updateItem(long itemId, String newName, double newPrice, int quantity){
         Item toEdit = products.findById(itemId);
         toEdit.setName(newName);
         toEdit.setPrice(newPrice);
         toEdit.setQuantity(quantity);
         products.update(toEdit);
     }
-    void deleteItem(long itemId){
+    public void deleteItem(long itemId){
         products.delete(itemId);
     }
     public void changeDiscountPolicy(){
@@ -111,5 +110,13 @@ public class Store implements DataItem<Long> {
 
     public void updateAmount(long itemId, int toDecrease){
         products.findById(itemId).decrease(toDecrease);
+    }
+
+    public Item getById(long itemId) {
+        return products.findById(itemId);
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
