@@ -1,5 +1,6 @@
 package ServiceLayer;
 
+import DomainLayer.Market.Purchase.PurchaseController;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.User.UserService;
@@ -9,6 +10,7 @@ import DomainLayer.Market.User.UserController;
 public class ServiceFactory {
     private static StoreController storeControllerInstance;
     private static UserController userControllerInstance;
+    private static PurchaseController purchaseControllerInstance;
     private static StoreManagementService storeManagementServiceInstance;
     private static StoreBuyerService storeBuyerServiceInstance;
     private static UserService userServiceInstance;
@@ -18,8 +20,10 @@ public class ServiceFactory {
         // Create singleton instances of controllers
         storeControllerInstance = StoreController.getInstance();
         userControllerInstance = UserController.getInstance();
-
+//        purchaseControllerInstance = ...
         // Create services
+
+        // TODO : Service.getInstance(conteroller); ...
         storeManagementServiceInstance = new StoreManagementService(storeControllerInstance);
         storeBuyerServiceInstance = new StoreBuyerService(storeControllerInstance);
         userServiceInstance = new UserService(userControllerInstance);

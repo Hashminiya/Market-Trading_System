@@ -1,6 +1,7 @@
 package AcceptanceTests;
 
 import DomainLayer.Market.Store.IStoreFacade;
+import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreBuyerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ public class StoreBuyerAT {
 
     @BeforeEach
     void setUp() {
+        ServiceFactory.initFactory();
         MockitoAnnotations.openMocks(this);
     }
 
@@ -141,6 +143,14 @@ public class StoreBuyerAT {
     @Test
     void testSavingItemsInShoppingCat()
     {
+
+    }
+
+    //
+    @Test
+    void testParallelRequests()
+    {
+        // run few threads...
 
     }
 }

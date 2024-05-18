@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SystemManager extends User{
-    private static int USER_ID = 1;
-    private static String USER_NAME = "SystemManager";
-    private static int USER_AGE = 35;
-    private static List<Istate> USER_STATES = new ArrayList<>(); // Assuming Istate is the correct type
-    private static boolean LOGGED_IN = true; // Assuming the SystemManager is logged in by default
-    private static ShoppingCart SHOPPING_CART = new ShoppingCart(); // Assuming ShoppingCart is the correct type
+    private static final int USER_ID = 1;
+    private static final String USER_NAME = "SystemManager";
+    private static final int USER_AGE = 35;
+    private static final List<Istate> USER_STATES = new ArrayList<>(); // Assuming Istate is the correct type
+    private static final boolean LOGGED_IN = true; // Assuming the SystemManager is logged in by default
+    private static final ShoppingCart SHOPPING_CART = new ShoppingCart(); // Assuming ShoppingCart is the correct type
 
     private static SystemManager systemManager;
 
@@ -27,6 +27,7 @@ public class SystemManager extends User{
     }
 
     public void InitializeTradingSystem(){
+        // TODO : Check with DB that the system is un-initialized.
         ServiceFactory.initFactory();
     }
 
