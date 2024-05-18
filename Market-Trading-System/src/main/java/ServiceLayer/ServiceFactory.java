@@ -9,32 +9,41 @@ import DomainLayer.Market.User.UserController;
 public class ServiceFactory {
     private static StoreController storeControllerInstance;
     private static UserController userControllerInstance;
+    private static StoreManagementService storeManagementServiceInstance;
+    private static StoreBuyerService storeBuyerServiceInstance;
+    private static UserService userServiceInstance;
+
+    // Initialize method to create singleton instances of controllers and services
+    public static void initFactory() {
+        // Create singleton instances of controllers
+        storeControllerInstance = StoreController.getInstance();
+        userControllerInstance = UserController.getInstance();
+
+        // Create services
+        storeManagementServiceInstance = new StoreManagementService(storeControllerInstance);
+        storeBuyerServiceInstance = new StoreBuyerService(storeControllerInstance);
+        userServiceInstance = new UserService(userControllerInstance);
+    }
 
     // Factory methods for singleton instances of controllers
-    public static StoreController getStoreController() {
-        if (storeControllerInstance == null) {
-            storeControllerInstance = StoreController.getInstance();
-        }
+    public static synchronized StoreController getStoreController() {
         return storeControllerInstance;
     }
 
-    public static UserController getUserController() {
-        if (userControllerInstance == null) {
-            userControllerInstance = UserController.getInstance();
-        }
+    public static synchronized UserController getUserController() {
         return userControllerInstance;
     }
 
     // Factory methods for services
-    public static StoreManagementService createStoreManagementService() {
-        return new StoreManagementService(getStoreController());
+    public static synchronized StoreManagementService getStoreManagementService() {
+        return storeManagementServiceInstance;
     }
 
-    public static StoreBuyerService createStoreBuyerService() {
-        return new StoreBuyerService(getStoreController());
+    public static synchronized StoreBuyerService getStoreBuyerService() {
+        return storeBuyerServiceInstance;
     }
 
-    public static UserService createUserService() {
-        return new UserService(getUserController());
+    public static synchronized UserService getUserService() {
+        return userServiceInstance;
     }
 }
