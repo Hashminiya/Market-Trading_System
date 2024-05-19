@@ -1,22 +1,26 @@
 package DomainLayer.Market.User;
 
 import DomainLayer.Market.Util.DataItem;
-
+import DomainLayer.Market.Util.StorePermission;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public class User implements DataItem {
+
+public class User implements DataItem<String> {
     private String userName;
     private String password;
     private int userAge;
-    private List<Istate> userStates;
+    private Istate state;
     private boolean loggedIn;
     private ShoppingCart shoppingCart;
+    private Map<Long, Set<StorePermission>> storePermissions;
 
-    public User(String userName,String password, int userAge, List<Istate> userStates, boolean loggedIn, ShoppingCart shoppingCart) {
+    public User(String userName,String password, int userAge, Istate state, boolean loggedIn, ShoppingCart shoppingCart) {
         this.userName = userName;
         this.password = password;
         this.userAge = userAge;
-        this.userStates = userStates;
+        this.state = state;
         this.loggedIn = loggedIn;
         this.shoppingCart = shoppingCart;
     }
@@ -90,7 +94,17 @@ public class User implements DataItem {
 
     }
 
+
     public String getPassword() {
         return password;
+
+    @Override
+    public String getId() {
+        return userName;
+    }
+
+    @Override
+    public String getName() {
+        return userName;
     }
 }

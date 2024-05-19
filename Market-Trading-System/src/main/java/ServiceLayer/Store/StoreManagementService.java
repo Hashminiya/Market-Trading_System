@@ -1,6 +1,7 @@
 package ServiceLayer.Store;
 
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Util.IRepository;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -12,9 +13,9 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response createStore(String founderId, String storeName, String storeDescription) {
+    public Response createStore(String founderId, String storeName, String storeDescription, IRepository<Long,Discount> repository) {
         try {
-            storeFacade.createStore(founderId,storeName,storeDescription);
+            storeFacade.createStore(founderId,storeName,storeDescription,repository);
             return Response.ok().build();
         }
         catch (Exception ex){
@@ -23,15 +24,14 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, List<String> categories) {
+    public Response addItemToStore(String userId, long storeId, String itemName, String description ,double itemPrice, int stockAmount, List<String> categories) {
         try {
-            storeFacade.addItemToStore(storeId,itemName,itemPrice,stockAmount,categories);
+            storeFacade.addItemToStore(userId,storeId,itemName,itemPrice,stockAmount, description,categories);
             return Response.ok().build();
         }
         catch (Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-        return null;
     }
 
     @Override
@@ -98,7 +98,6 @@ public class StoreManagementService implements IStoreManagementService{
         catch (Exception ex){
             return Response.status(500).entity(ex.getMessage()).build();
         }
-        return null;
     }
 
     @Override
@@ -109,11 +108,10 @@ public class StoreManagementService implements IStoreManagementService{
         catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
-        return null;
     }
 
     @Override
-    public Response assignStoreOwner(String userId, long storeId, long newOwnerId) {
+    public Response assignStoreOwner(String userId, long storeId, String newOwnerId) {
         try {
             storeFacade.assignStoreOwner(userId, storeId, newOwnerId);
             return Response.ok().build();
@@ -124,7 +122,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response assignStoreManager(String userId, long storeId, long newManagerId) {
+    public Response assignStoreManager(String userId, long storeId, String newManagerId) {
         try {
             storeFacade.assignStoreManager(userId, storeId, newManagerId);
             return Response.ok().build();

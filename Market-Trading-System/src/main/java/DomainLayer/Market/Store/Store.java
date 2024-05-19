@@ -14,8 +14,8 @@ public class Store implements DataItem<Long> {
     private Long founderId;
     private String name;
     private String description;
-    private final List<Long> owners;
-    private final List<Long> managers;
+    private final List<String> owners;
+    private final List<String> managers;
     private final InMemoryRepositoryStore products;
     private IRepository<Long , Discount> discounts;
     public Store(Long id, Long founderId, String name, String description, IRepository<Long, Discount> discounts){
@@ -41,16 +41,16 @@ public class Store implements DataItem<Long> {
     public String getName() {
         return name;
     }
-    public List<Long> getOwners(){
+    public List<String> getOwners(){
         return owners;
     }
-    public List<Long> getManagers(){
+    public List<String> getManagers(){
         return managers;
     }
-    public void assignOwner(Long newOwnerId){
+    public void assignOwner(String newOwnerId){
         owners.add(newOwnerId);
     }
-    public void assignManager(Long newManagerId){
+    public void assignManager(String newManagerId){
         managers.add(newManagerId);
     }
 

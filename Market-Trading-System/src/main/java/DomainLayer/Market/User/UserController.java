@@ -1,16 +1,20 @@
 package DomainLayer.Market.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import DomainLayer.Market.Util.StorePermission;
+import static DomainLayer.Market.Util.IdGenerator.generateId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class UserController implements IUserFacade {
 
-    private IRepository<String, User> users;
-    private HashMap<String, ShoppingCart> carts;
-    private BCryptPasswordEncoder passwordEncoder;
+    private final IRepository<String, User> users;
+    private final HashMap<String, ShoppingCart> carts;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public UserController(IRepository<String, User> users) {
         this.users = users;
@@ -18,15 +22,17 @@ public class UserController implements IUserFacade {
         passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public void createGuestSession() {
-        int id = generateId();
-        //TODO: save guest
-        // users.save(id, u, null, null);
+    public void createGuestSession(){
+        Long id = generateId();
+        String userName = "guest" + id;
+        Istate guest = new Guest();
+        User user = new User(userName, null,null,guest,false,new ShoppingCart());
+        users.save(user);
     }
 
     @Override
-    public void terminateGuestSession() {
-        //TODO implement
+    public void terminateGuestSession(String userName) {
+        users.delete(userName);
     }
 
     @Override
@@ -39,8 +45,10 @@ public class UserController implements IUserFacade {
             throw new Exception("username already exists");
         }
         String encodedPassword = passwordEncoder.encode(password);
-        User user = new User(userName, encodedPassword, userAge, new ArrayList<>(), false, new ShoppingCart());
+        Istate registered = new Registered();
+        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart());
         users.save(user);
+        //TODO: delete guest when register
     }
 
     public boolean login(String userName, String rawPassword) throws Exception {
@@ -88,6 +96,10 @@ public class UserController implements IUserFacade {
         return false;
     }
 
+    public boolean checkPermission(String userName, Long storeId) {
+        return false;
+    }
+
     @Override
     public void assignStoreOwner(String userName, long storeId) {
         //TODO implement
@@ -99,7 +111,7 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public List<Permission> getUserPermission(String userName) {
+    public List<StorePermission> getUserPermission(String userName) {
         return null;
     }
 

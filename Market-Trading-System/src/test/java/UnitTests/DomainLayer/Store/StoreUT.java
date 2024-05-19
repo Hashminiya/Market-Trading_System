@@ -58,14 +58,14 @@ public class StoreUT {
 
     @Test
     void testAssignOwner() {
-        long newOwnerId = 2L;
+        String newOwnerId = "owner@mail.com";
         store.assignOwner(newOwnerId);
         assertTrue(store.getOwners().contains(newOwnerId));
     }
 
     @Test
     void testAssignManager() {
-        long newManagerId = 2L;
+        String newManagerId = "manager@mail.com";
         store.assignManager(newManagerId);
         assertTrue(store.getManagers().contains(newManagerId));
     }

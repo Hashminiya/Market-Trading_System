@@ -1,9 +1,13 @@
 package DomainLayer.Market.User;
 
+import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
 
+import java.util.List;
+
 public class ShoppingCart {
-    private InMemoryRepository<ShoppingBasket> baskets;
+    private IRepository<Long,ShoppingBasket> baskets;
 
     public ShoppingCart(){
         baskets = new InMemoryRepository<ShoppingBasket>();
@@ -28,5 +32,8 @@ public class ShoppingCart {
     public void checkoutShoppingCart(){
         //TODO: what data the purchase need to perform the checkout?
 
+    }
+
+    public List<ShoppingBasket> getBaskets() {
     }
 }
