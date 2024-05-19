@@ -5,6 +5,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -23,13 +24,14 @@ import org.apache.lucene.util.BytesRef;
 
 
 public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
-    private final int SEARCH_LIMIT = 15;
-    private Directory index;
-    private IndexWriter writer;
+    private final int SEARCH_LIMIT = 30;
+    private final Directory index;
+    private final IndexWriter writer;
+    private final StandardAnalyzer analyzer;
     public InMemoryRepositoryStore(){
         super();
         index = new RAMDirectory();
-        StandardAnalyzer analyzer = new StandardAnalyzer();
+        this.analyzer = new StandardAnalyzer();
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         try {
             writer = new IndexWriter(index, config);
@@ -37,35 +39,30 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
             throw new RuntimeException(e);
         }
     }
+
     public List<Item> search(String category, String queryString, boolean withCategory) {
-        List<Item> items = new ArrayList<>();
         try {
             IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(index));
-            QueryParser nameParser = new QueryParser("name", new StandardAnalyzer());
-            QueryParser descParser = new QueryParser("description", new StandardAnalyzer());
-
-            Query nameQuery = nameParser.parse(queryString);
-            Query descQuery = descParser.parse(queryString);
-
-            BooleanQuery.Builder builder = new BooleanQuery.Builder();
-            builder.add(nameQuery, BooleanClause.Occur.SHOULD);
-            builder.add(descQuery, BooleanClause.Occur.SHOULD);
-            if(withCategory){
-                builder.add(new TermQuery(new Term("category", category)), BooleanClause.Occur.FILTER);
-            }
-            Query finalQuery = builder.build();
-
+            QueryParser multiFieldParser = new MultiFieldQueryParser(new String[]{"name", "description"}, analyzer);
+            Query query = multiFieldParser.parse(queryString);
+            Query finalQuery = buildQuery(query,withCategory,category);
             TopDocs results = searcher.search(finalQuery, SEARCH_LIMIT);
-            for (ScoreDoc scoreDoc : results.scoreDocs) {
-                Document doc = searcher.doc(scoreDoc.doc);
-                Long itemId = Long.parseLong(doc.get("id"));
-                Item item = this.data.get(itemId);
-                if (item != null) {
-                    items.add(item);
-                }
-            }
+            return asItemsList(results, searcher);
         } catch (Exception e) {
             e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    private List<Item> asItemsList(TopDocs results, IndexSearcher searcher) throws IOException {
+        List<Item> items = new ArrayList<>();
+        for (ScoreDoc scoreDoc : results.scoreDocs) {
+            Document doc = searcher.doc(scoreDoc.doc);
+            Long itemId = Long.parseLong(doc.get("id"));
+            Item item = this.data.get(itemId);
+            if (item != null) {
+                items.add(item);
+            }
         }
         return items;
     }
@@ -134,4 +131,12 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
         return categoryValues;
     }
 
+    private Query buildQuery(Query query, boolean withCategory, String category){
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
+        builder.add(query, BooleanClause.Occur.MUST);
+        if (withCategory) {
+            builder.add(new TermQuery(new Term("category", category)), BooleanClause.Occur.MUST);
+        }
+        return builder.build();
+    }
 }
