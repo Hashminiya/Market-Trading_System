@@ -1,17 +1,20 @@
 package DomainLayer.Market.User;
 
+import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
-import Market.IRepository;
+import DomainLayer.Market.Util.StorePermission;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static DomainLayer.Market.Util.IdGenerator.generateId;
+
 public class UserController implements IUserFacade{
 
-    private IRepository<String,User> users;
-    private HashMap<String,ShoppingCart> carts;
+    private final IRepository<String,User> users;
+    private final HashMap<String,ShoppingCart> carts;
 
     public UserController(IRepository<String,User> users) {
         this.users = users;
@@ -19,17 +22,16 @@ public class UserController implements IUserFacade{
     }
 
     public void createGuestSession(){
-        int id = generateId();
-        State g = new Guest();
-        User u = new User(id,g);
-        //TODO: save guest
-
-        // users.save(id,u,null,null);
+        Long id = generateId();
+        String userName = "guest" + id;
+        Istate guest = new Guest();
+        User user = new User(userName, null,null,guest,false,new ShoppingCart());
+        users.save(user);
     }
 
     @Override
-    public void terminateGuestSession() {
-        //TODO implement
+    public void terminateGuestSession(String userName) {
+        users.delete(userName);
     }
 
     public void register(String userName, String password) throws Exception {
@@ -37,7 +39,7 @@ public class UserController implements IUserFacade{
             throw new Exception("username already exist");
         }
         //TODO: encrypt password
-        State registered = new Registered();
+        Istate registered = new Registered();
         User user = users.get(userName);
         user.changeState(registered);
     }
@@ -77,6 +79,10 @@ public class UserController implements IUserFacade{
         return false;
     }
 
+    public boolean checkPermission(String userName, Long storeId) {
+        return false;
+    }
+
     @Override
     public void assignStoreOwner(String userName, long storeId) {
 
@@ -88,7 +94,7 @@ public class UserController implements IUserFacade{
     }
 
     @Override
-    public List<Permission> getUserPermission(String userName) {
+    public List<StorePermission> getUserPermission(String userName) {
         return null;
     }
 }

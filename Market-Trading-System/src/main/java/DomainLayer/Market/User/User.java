@@ -1,14 +1,20 @@
 package DomainLayer.Market.User;
 
-import java.util.List;
+import DomainLayer.Market.Util.DataItem;
+import DomainLayer.Market.Util.StorePermission;
 
-public class User {
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class User implements DataItem<String> {
     private int userID;
     private String userName;
     private int userAge;
-    private List<Istate> userStates;
+    private List<Istate> userStates;    //TODO: CHANGE TO SINGLE STATE(GUEST/REGISTERED)?
     private boolean loggedIn;
     private ShoppingCart shoppingCart;
+    private Map<Long, Set<StorePermission>> storePermissions;
 
     public User(int userID, String userName, int userAge, List<Istate> userStates, boolean loggedIn, ShoppingCart shoppingCart) {
         this.userID = userID;
@@ -93,5 +99,15 @@ public class User {
 
     public boolean checkOutShoppingCart(){
 
+    }
+
+    @Override
+    public String getId() {
+        return userName;
+    }
+
+    @Override
+    public String getName() {
+        return userName;
     }
 }
