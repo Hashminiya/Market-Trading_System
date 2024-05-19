@@ -1,11 +1,13 @@
 package ServiceLayer.User;
 
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.Util.JwtService;
 
 import javax.ws.rs.core.Response;
 
 public class UserService implements IUserService {
     IUserFacade userFacade;
+    private JwtService JwtService;
 
     public Response GuestEntry(){
         try{
@@ -40,7 +42,7 @@ public class UserService implements IUserService {
     public Response login(String userName, String password){
         try{
             userFacade.login(userName,password);
-            String token = TokenService.generateToken(userName);
+            String token = JwtService.generateToken(userName);
             return Response.ok(token).build();
         }
         catch (Exception e){
