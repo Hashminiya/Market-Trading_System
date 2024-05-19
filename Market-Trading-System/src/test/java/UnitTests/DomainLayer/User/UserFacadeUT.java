@@ -21,7 +21,7 @@ public class UserFacadeUT {
 //    private IRepository<Long, User> users;
 
     @InjectMocks
-    private IUserFacade userFacade = new UserController();
+    private IUserFacade userFacade = new UserController(null);
 
     @BeforeEach
     void setUp() {
