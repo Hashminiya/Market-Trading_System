@@ -7,30 +7,47 @@ import java.util.HashMap;
 
 public class ShoppingBasket implements DataItem<Long> {
 
-    private HashMap<Integer,Integer> items;     //map<itemId,quantity>
+    private long id;
+    private HashMap<Long,Integer> itemsQuantity;     //map<itemId,quantity>
+    private HashMap<Long, Double> itemsPrice;
+    private double price;
     private long storeId;
 
-    public ShoppingBasket(){
-        items = new HashMap<>();
+    public ShoppingBasket(long id, Long storeId){
+        this.storeId = storeId;
+        this.itemsQuantity = new HashMap<>();
+        this.itemsPrice = new HashMap<>();
     }
 
-    public void addItem(int itemId, int quantity){
-        items.put(itemId,quantity);
+    public void addItem(long itemId, int quantity){
+        itemsQuantity.put(itemId,quantity);
     }
 
-    public void removeItem(int itemId){
-        items.remove(itemId);
+    public void removeItem(long itemId){
+        itemsQuantity.remove(itemId);
     }
 
     public void purchaseShoppingBasket(){
         //TODO: implement
     }
 
-    public void updateItemQuantity(int itemId, int quantity){
+    public HashMap<Long, Integer> getItems(){
+        return itemsQuantity;
+    }
+
+    public void updateItemQuantity(long itemId, int quantity){
         if(quantity == 0)
             removeItem(itemId);
         //TODO: check stock?
-        items.put(itemId,quantity);
+        itemsQuantity.put(itemId,quantity);
+    }
+
+    public void setItemsPrice(HashMap<Long, Double> itemsPrice){
+        this.itemsPrice = itemsPrice;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     @Override
