@@ -28,6 +28,7 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
     private final Directory index;
     private final IndexWriter writer;
     private final StandardAnalyzer analyzer;
+
     public InMemoryRepositoryStore(){
         super();
         index = new RAMDirectory();
@@ -70,8 +71,12 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
     @Override
     public void save(Item item) {
         indexItem(item);
-        super.save(item);
-        //TODO return an error if exist?
+        try {
+            writer.commit();
+            super.save(item);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -80,6 +85,7 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
             Term term = new Term("id", String.valueOf(item.getId()));
             writer.deleteDocuments(term);
             indexItem(item);
+            writer.commit();
             super.update(item);
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,6 +97,7 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
         try {
             Term term = new Term("id", String.valueOf(key));
             writer.deleteDocuments(term);
+            writer.commit();
             super.delete(key);
         } catch (Exception e) {
             e.printStackTrace();
