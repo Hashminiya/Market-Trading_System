@@ -2,12 +2,15 @@ package ServiceLayer.User;
 
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.JwtService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import javax.ws.rs.core.Response;
 
 public class UserService implements IUserService {
     IUserFacade userFacade;
     private JwtService JwtService;
+    private UserDetailsService userDetailsService;
 
     public Response GuestEntry(){
         try{
@@ -52,8 +55,9 @@ public class UserService implements IUserService {
 
     public Response logout(String token){
         try{
-            if(TokenService.validateToken(token)){
-                String userName = TokenService.extractUserName(token);
+            String userName = JwtService.extractUsername(token);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            if(userName != null && JwtService.isValid(token, userDetails)){
                 userFacade.logout(userName);
                 return Response.ok().build();
             }
@@ -67,12 +71,13 @@ public class UserService implements IUserService {
     }
 
     public Response viewShoppingCart(String token){
-        try{
-            if(TokenService.validateToken(token)){
-                String res = userFacade.viewShoppingCart(token);
-                return Response.ok(res).build();
-            }
-            else{
+        //implement using JwtService:
+        try {
+            String userName = JwtService.extractUsername(token);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            if (userName != null && JwtService.isValid(token, userDetails)) {
+                return Response.ok(userFacade.viewShoppingCart(userName)).build();
+            } else {
                 return Response.status(401).build();
             }
         }
@@ -82,12 +87,13 @@ public class UserService implements IUserService {
     }
 
     public Response modifyShoppingCart(String token){
-        try{
-            if(TokenService.validateToken(token)){
+        try {
+            String userName = JwtService.extractUsername(token);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            if (userName != null && JwtService.isValid(token, userDetails)) {
                 userFacade.modifyShoppingCart(token);
                 return Response.ok().build();
-            }
-            else{
+            } else {
                 return Response.status(401).build();
             }
         }
@@ -95,10 +101,13 @@ public class UserService implements IUserService {
             return Response.serverError().build();
         }
     }
+
     public Response checkoutShoppingCart(String token) {
         try{
-            if(TokenService.validateToken(token)){
-                userFacade.checkoutShoppingCart(token);
+            String userName = JwtService.extractUsername(token);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            if(userName != null && JwtService.isValid(token, userDetails)){
+                userFacade.checkoutShoppingCart(userName);
                 return Response.ok().build();
             }
             else{
@@ -110,25 +119,29 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response addItemToBasket(String token,long itemId,long quantity) {
-        try{
-            if(TokenService.validateToken(token)){
-                userFacade.addItemToBasket(token, itemId, quantity);
+    @Override
+    public Response addItemToBasket(String token, long itemId, long quantity) {
+        try {
+            String userName = JwtService.extractUsername(token);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            if (userName != null && JwtService.isValid(token, userDetails)) {
+                userFacade.addItemToBasket(userName, itemId, quantity);
                 return Response.ok().build();
-            }
-            else{
+            } else {
                 return Response.status(401).build();
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return Response.serverError().build();
         }
     }
 
+    @Override
     public Response changeUserPermission(String token, int permission) {
         try{
-            if(TokenService.validateToken(token)){
-                userFacade.changeUserPermission(token, permission);
+            String userName = JwtService.extractUsername(token);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            if(userName != null && JwtService.isValid(token, userDetails)){
+                userFacade.changeUserPermission(userName,permission);
                 return Response.ok().build();
             }
             else{

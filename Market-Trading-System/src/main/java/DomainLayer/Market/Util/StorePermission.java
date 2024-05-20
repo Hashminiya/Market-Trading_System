@@ -1,5 +1,6 @@
 package DomainLayer.Market.Util;
 
+//TODO add to the UML
 public enum StorePermission {
     VIEW_INVENTORY,
     VIEW_STORE_MANAGEMENT_INFO,
