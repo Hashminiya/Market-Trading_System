@@ -14,8 +14,8 @@ public class Store implements DataItem<Long> {
     private Long founderId;
     private String name;
     private String description;
-    private final List<Long> owners;
-    private final List<Long> managers;
+    private final List<String> owners;
+    private final List<String> managers;
     private final InMemoryRepositoryStore products;
     private IRepository<Long , Discount> discounts;
     public Store(Long id, Long founderId, String name, String description, IRepository<Long, Discount> discounts){
@@ -41,16 +41,16 @@ public class Store implements DataItem<Long> {
     public String getName() {
         return name;
     }
-    public List<Long> getOwners(){
+    public List<String> getOwners(){
         return owners;
     }
-    public List<Long> getManagers(){
+    public List<String> getManagers(){
         return managers;
     }
-    public void assignOwner(Long newOwnerId){
+    public void assignOwner(String newOwnerId){
         owners.add(newOwnerId);
     }
-    public void assignManager(Long newManagerId){
+    public void assignManager(String newManagerId){
         managers.add(newManagerId);
     }
 
@@ -61,8 +61,7 @@ public class Store implements DataItem<Long> {
         return products.findAll();
     }
 
-    public void addItem(String name, double price, int quantity, String description, List<String> categories){
-        long itemId = genrateId();
+    public void addItem(Long itemId,String name, double price, int quantity, String description, List<String> categories){
         Item newItem = new Item(itemId, name, description ,new InMemoryRepository<Long,Discount>(), categories);
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
@@ -81,14 +80,14 @@ public class Store implements DataItem<Long> {
         /*A method for adding store discount, can be conditional.*/
         discounts.save(discount);
     }
-    void updateItem(long itemId, String newName, double newPrice, int quantity){
+    public void updateItem(long itemId, String newName, double newPrice, int quantity){
         Item toEdit = products.findById(itemId);
         toEdit.setName(newName);
         toEdit.setPrice(newPrice);
         toEdit.setQuantity(quantity);
         products.update(toEdit);
     }
-    void deleteItem(long itemId){
+    public void deleteItem(long itemId){
         products.delete(itemId);
     }
     public void changeDiscountPolicy(){
@@ -98,8 +97,12 @@ public class Store implements DataItem<Long> {
     public List<Item> search(String keyWord){
         return products.search(null ,keyWord,false);
     }
-    public List<Item> searchWithCategory(String category,String keyWord){
+    public List<Item> searchKeyWordWithCategory(String category,String keyWord){
         return products.search(category ,keyWord,true);
+    }
+    public List<Item> searchByCategory(String category){
+        /* Empty string for fetching all result with the relevant category */
+        return products.search(category,"",true);
     }
     public List<String> getAllCategories(){
         return products.getAllCategoryValues();
@@ -111,5 +114,13 @@ public class Store implements DataItem<Long> {
 
     public void updateAmount(long itemId, int toDecrease){
         products.findById(itemId).decrease(toDecrease);
+    }
+
+    public Item getById(long itemId) {
+        return products.findById(itemId);
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

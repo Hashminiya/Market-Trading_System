@@ -37,9 +37,9 @@ public class StoreBuyerService implements IStoreBuyerService{
     }
 
     @Override
-    public Response searchStoreByCategory(long category) {
+    public Response searchInStoreByCategory(long storeId, String category) {
         try{
-            HashMap<Long, String> result = storeFacade.searchStoreByCategory(category);
+            HashMap<Long, String> result = storeFacade.searchInStoreByCategory(storeId, category);
             if(!result.isEmpty()) {
                 return Response.ok(result).build();
             }
@@ -52,9 +52,9 @@ public class StoreBuyerService implements IStoreBuyerService{
     }
 
     @Override
-    public Response searchItemByCategory(long category) {
+    public Response searchInStoreByKeyWord(long storeId, String keyWord) {
         try{
-            HashMap<Long, String> result = storeFacade.searchItemByCategory(category);
+            HashMap<Long, String> result = storeFacade.searchInStoreByKeyWord(storeId, keyWord);
             if(!result.isEmpty()) {
                 return Response.ok(result).build();
             }
@@ -66,9 +66,9 @@ public class StoreBuyerService implements IStoreBuyerService{
     }
 
     @Override
-    public Response searchStoreByKeyWord(String keyWord) {
+    public Response searchInStoreByKeyWordAndCategory(long storeId, String category, String keyWord) {
         try{
-            HashMap<Long, String> result = storeFacade.searchStoreByKeyWord(keyWord);
+            HashMap<Long, String> result = storeFacade.searchInStoreByKeyWordAndCategory(storeId, category, keyWord);
             if(!result.isEmpty()) {
                 return Response.ok(result).build();
             }
@@ -80,9 +80,9 @@ public class StoreBuyerService implements IStoreBuyerService{
     }
 
     @Override
-    public Response searchItemByKeyWord(String keyWord) {
+    public Response searchGenerallyByCategory(String category) {
         try{
-            HashMap<Long, String> result = storeFacade.searchItemByKeyWord(keyWord);
+            HashMap<Long, String> result = storeFacade.searchGenerallyByCategory(category);
             if(!result.isEmpty()) {
                 return Response.ok(result).build();
             }
@@ -94,9 +94,9 @@ public class StoreBuyerService implements IStoreBuyerService{
     }
 
     @Override
-    public Response searchStoreByName(String name) {
+    public Response searchGenerallyByKeyWord(String keyWord) {
         try{
-            HashMap<Long, String> result = storeFacade.searchStoreByName(name);
+            HashMap<Long, String> result = storeFacade.searchGenerallyByKeyWord(keyWord);
             if(!result.isEmpty()) {
                 return Response.ok(result).build();
             }
@@ -108,9 +108,9 @@ public class StoreBuyerService implements IStoreBuyerService{
     }
 
     @Override
-    public Response searchItemByName(String name) {
+    public Response searchGenerallyByKeyWordAndCategory(String category, String keyWord) {
         try{
-            HashMap<Long, String> result = storeFacade.searchItemByName(name);
+            HashMap<Long, String> result = storeFacade.searchGenerallyByKeyWordAndCategory(category, keyWord);
             if(!result.isEmpty()) {
                 return Response.ok(result).build();
             }

@@ -82,4 +82,8 @@ public class Item implements DataItem<Long> {
         }
         else {this.quantity -= toDecrease;}
     }
+
+    public List<Discount> getDiscounts() {
+        return discounts.findAll();
+    }
 }

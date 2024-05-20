@@ -1,13 +1,14 @@
 package DomainLayer.Market;
 
 import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Util.DataItem;
 
 import java.util.HashMap;
 
-public class ShoppingBasket {
+public class ShoppingBasket implements DataItem<Long> {
 
-    private HashMap<Integer,Integer> items;
-    private int storeId;
+    private HashMap<Integer,Integer> items;     //map<itemId,quantity>
+    private long storeId;
 
     public ShoppingBasket(){
         items = new HashMap<>();
@@ -35,5 +36,15 @@ public class ShoppingBasket {
     @Override
     public String toString() {
         return super.toString(); //TODO: overwrite to return the shopping basket items
+    }
+
+    @Override
+    public Long getId() {
+        return storeId;
+    }
+
+    @Override
+    public String getName() {
+        return "";
     }
 }
