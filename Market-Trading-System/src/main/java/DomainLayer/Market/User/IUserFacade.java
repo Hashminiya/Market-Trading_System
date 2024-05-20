@@ -2,9 +2,9 @@ package DomainLayer.Market.User;
 
 public interface IUserFacade {
     public void createGuestSession();
-    public void terminateGuestSession();
-    public void register(String userName, String password);
-    public boolean login(String userName, String password);
+    public boolean login(String userName, String password) throws Exception;
+    public void terminateGuestSession(String userName);
+    public void register(String userName, String password) throws Exception;
     public void logout(String userName);
     public String viewShoppingCart(String token);
     public void modifyShoppingCart(String token);
