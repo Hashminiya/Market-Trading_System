@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public interface IUserFacade {
-    public void createGuestSession();
+    public String createGuestSession();
     public boolean login(String userName, String password) throws Exception;
     public void terminateGuestSession(String userName);
     public void register(String userName, String password) throws Exception;
@@ -18,7 +18,6 @@ public interface IUserFacade {
     public void assignStoreOwner(String userName, long storeId);
     public void assignStoreManager(String userName, long storeId);
     public List<StorePermission> getUserPermission(String userName);
-    public void CreateGuestSession();
     public void terminateGuest(int guestID);
     public void addItemToBasket(String userName, long itemId, long quantity);
     public void changeUserPermission(String userName, int permission);

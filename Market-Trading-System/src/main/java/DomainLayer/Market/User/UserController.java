@@ -24,12 +24,14 @@ public class UserController implements IUserFacade {
         this.guestId = 0;
     }
 
-    public void createGuestSession(){
+    @Override
+    public String createGuestSession(){
         long id = generateId();
         String userName = "guest" + id;
         Istate guest = new Guest();
         User user = new User(userName, null, 0, guest, true, new ShoppingCart());
         users.save(user);
+        return userName;
     }
 
     @Override
@@ -114,9 +116,6 @@ public class UserController implements IUserFacade {
         return null;
     }
 
-    @Override
-    public void CreateGuestSession() {
-    }
 
     @Override
     public void terminateGuest(int guestID) {

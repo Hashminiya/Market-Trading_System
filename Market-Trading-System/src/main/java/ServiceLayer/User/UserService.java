@@ -14,8 +14,9 @@ public class UserService implements IUserService {
 
     public Response GuestEntry(){
         try{
-            userFacade.CreateGuestSession();
-            return Response.ok().build();
+            String userName =  userFacade.createGuestSession();
+            String token = JwtService.generateToken(userName, "GUEST");
+            return Response.ok(token).build();
         }
         catch (Exception e){
             return Response.serverError().build();
@@ -45,7 +46,7 @@ public class UserService implements IUserService {
     public Response login(String userName, String password){
         try{
             userFacade.login(userName,password);
-            String token = JwtService.generateToken(userName);
+            String token = JwtService.generateToken(userName, "REGISTERED");
             return Response.ok(token).build();
         }
         catch (Exception e){
