@@ -4,30 +4,34 @@ import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Util.StorePermission;
-import static DomainLayer.Market.Util.IdGenerator.generateId;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
 public class UserController implements IUserFacade {
-
     private final IRepository<String, User> users;
     private final HashMap<String, ShoppingCart> carts;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private int guestId ;
+
     public UserController(IRepository<String, User> users) {
         this.users = users;
-        carts = new HashMap<>();
-        passwordEncoder = new BCryptPasswordEncoder();
+        this.carts = new HashMap<>();
+        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.guestId = 0;
     }
 
-    public void createGuestSession(){
-        Long id = generateId();
+    @Override
+    public String createGuestSession(){
+        long id = generateId();
         String userName = "guest" + id;
         Istate guest = new Guest();
-        User user = new User(userName, null,null,guest,false,new ShoppingCart());
+        User user = new User(userName, null, 0, guest, true, new ShoppingCart());
         users.save(user);
+        return userName;
     }
 
     @Override
@@ -63,24 +67,21 @@ public class UserController implements IUserFacade {
         throw new Exception("password is incorrect");
     }
 
-    public void logout(String token) {
-        String userName = token.extractUserName();
+    public void logout(String userName) {
         User user = users.findById(userName);
         user.logout(userName);
     }
 
-    public String viewShoppingCart(String token) {
-        String userName = token.extractUserName();
+    public String viewShoppingCart(String userName) {
         ShoppingCart sc = carts.get(userName);
         return sc.viewShoppingCart();
     }
 
-    public void modifyShoppingCart(String token) {
+    public void modifyShoppingCart(String userName) {
         //TODO implement
     }
 
-    public void checkoutShoppingCart(String token) {
-        String userName = token.extractUserName();
+    public void checkoutShoppingCart(String userName) {
         ShoppingCart shoppingCart = carts.get(userName);
         List<ItemDTO> items = new ArrayList<>();
         List<ShoppingBasket> baskets = shoppingCart.getBaskets();
@@ -116,8 +117,22 @@ public class UserController implements IUserFacade {
     }
 
 
+    @Override
+    public void terminateGuest(int guestID) {
+
+    }
+
+    @Override
+    public void addItemToBasket(String userName, long itemId, long quantity) {
+
+    }
+
+    @Override
+    public void changeUserPermission(String userName, int permission) {
+
+    }
+
     private int generateId() {
-        // Implement ID generation logic
-        return 0;
+        return guestId++;
     }
 }
