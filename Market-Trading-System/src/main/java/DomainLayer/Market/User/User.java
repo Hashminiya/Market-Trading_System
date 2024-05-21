@@ -57,41 +57,58 @@ public class User implements DataItem<String> {
 
     public boolean isLoggedIn() { return loggedIn; }
 
-    public ShoppingCart getShoppingCart() {
-        return shoppingCart;
-    }
+    public ShoppingCart getShoppingCart() { return shoppingCart; }
 
-    public boolean changeState(Istate state){
-
-    }
 
     public boolean login(String userName, String password){
-
+        if(this.userName.equals(userName) && this.password.equals(password)){
+            loggedIn = true;
+            return true;
+        }
+        return false;
     }
 
     public boolean logout(String userName){
-
+        if(this.userName.equals(userName)){
+            loggedIn = false;
+            return true;
+        }
+        return false;
     }
+
+
 
     public boolean addToShoppingCart(int storeNum, int productNum, int quantity){
-
+        if(loggedIn){
+            return shoppingCart.addToShoppingCart(storeNum, productNum, quantity);
+        }
+        return false;
     }
 
-    public boolean deleteFromShoppingCart(int storeNum, int productNum){
-
+    public boolean deleteShoppingBasket(int storeNum, int productNum){
+        if(loggedIn){
+            return shoppingCart.deleteShoppingBasket(storeNum, productNum);
+        }
+        return false;
     }
 
-    public boolean editShoppingCart(int storeNum, int productNum, int newQuantity){
-
+    public boolean modifyShoppingCart(int storeNum, int productNum, int newQuantity){
+        if(loggedIn){
+            return shoppingCart.modifyShoppingCart(storeNum, productNum, newQuantity);
+        }
+        return false;
     }
 
     public boolean checkOutShoppingCart(){
-
+        if(loggedIn){
+            return shoppingCart.checkOutShoppingCart();
+        }
+        return false;
     }
-
 
     public String getPassword() {
         return password;
+    }
 
     @Override
     public String getId() {
