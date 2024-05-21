@@ -1,13 +1,15 @@
 package DomainLayer.Market.Store;
 
 import DAL.ItemDTO;
-import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Market.Util.*;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Market.Store.Item;
 
+
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,14 @@ public class StoreController implements IStoreFacade{
     private IRepository<Long, Store> storesRepo;
     private IPurchaseFacade purchaseFacade;
     private IUserFacade userFacade;
+
+    private String VIEW_INVENTORY = "VIEW_INVENTORY";
+    private String ADD_ITEM = "ADD_ITEM";
+    private String UPDATE_ITEM = "UPDATE_ITEM";
+    private String DELETE_ITEM = "DELETE_ITEM";
+    private String ASSIGN_OWNER = "ASSIGN_OWNER";
+    private String ASSIGN_MANAGER = "ASSIGN_MANAGER";
+
 
     public StoreController(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
         this.storesRepo = storesRepo;
@@ -30,15 +40,16 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts) {
-        //TODO: check the user is registered
+        userFacade.checkPermission(founderId, StorePermission.)
         long storeId = generateStoreId();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
         storesRepo.save(newStore);
     }
 
     @Override
-    public List<String> viewInventoryByStoreOwner(String userId, long storeId) {
-        //TODO: check the user is the store owner- decide if he must be store owner
+    public List<String> viewInventoryByStoreOwner(String userId, long storeId) throws Exception{
+        if(userFacade.checkPermission(userId, VIEW_INVENTORY))
+            throw new CertificateException("User doesn't has permission to view the store inventory");
         Store store = storesRepo.findById(storeId);
         List<Item> inventory = store.viewInventory();
         List<String> itemsInfo = new ArrayList<>();
@@ -50,21 +61,24 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories) {
-        //TODO: check the user is the store owner
+        if(userFacade.checkPermission(userId, ADD_ITEM))
+            throw new CertificateException("User doesn't has permission to add item to the store");
         Store store = storesRepo.findById(storeId);
         store.addItem(itemName, itemPrice, stockAmount, description, categories);
     }
 
     @Override
     public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount) {
-        //TODO: check the user is the store owner/manager with permissions
+        if(userFacade.checkPermission(userId, UPDATE_ITEM))
+            throw new CertificateException("User doesn't has permission to update item in the store");
         Store store = storesRepo.findById(storeId);
         store.updateItem(itemId, newName, newPrice, stockAmount);
     }
 
     @Override
     public void deleteItem(String userId, long storeId, long itemId) {
-        //TODO: check the user is the store owner/manager with permissions
+        if(userFacade.checkPermission(userId, DELETE_ITEM))
+            throw new CertificateException("User doesn't has permission to delete item in the store");
         Store store = storesRepo.findById(storeId);
         store.deleteItem(itemId);
     }
@@ -82,15 +96,17 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void assignStoreOwner(String userId, long storeId, String newOwnerId){
-        //TODO: check the user is the store owner
+        if(userFacade.checkPermission(userId, ASSIGN_OWNER))
+            throw new CertificateException("User doesn't has permission to update item in the store");
         Store store = storesRepo.findById(storeId);
         userFacade.assignStoreOwner(userId, storeId);
         store.assignOwner(newOwnerId);
     }
 
     @Override
-    public void assignStoreManager(String userId, long storeId, String newManagerId){
-        //TODO: check the user is the store owner/manager with permissions
+    public void assignStoreManager(String userId, long storeId, String newManagerId List<String> permissions){
+        if(userFacade.checkPermission(userId, ASSIGN_MANAGER))
+            throw new CertificateException("User doesn't has permission to update item in the store");
         Store store = storesRepo.findById(storeId);
         userFacade.assignStoreManager(userId, storeId);
         store.assignManager(newManagerId);
