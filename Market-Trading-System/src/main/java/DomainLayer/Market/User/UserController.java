@@ -44,7 +44,6 @@ public class UserController implements IUserFacade {
         users.delete(userName);
     }
 
-
     public void register(String userName,String password, int userAge) throws Exception {
         if (users.findById(userName) != null) {
             throw new Exception("username already exists");
@@ -53,7 +52,6 @@ public class UserController implements IUserFacade {
         Istate registered = new Registered();
         User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart());//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
-
     }
 
     public boolean login(String userName, String rawPassword) throws Exception {
@@ -95,29 +93,13 @@ public class UserController implements IUserFacade {
 
     @Override
     public void assignStoreManager(String newOwnerName, long storeId,List<String> storePermissions) {
-        User user = getUser(userName);
-        if (user.checkPermission(storeId, StorePermission.ASSIGN_MANAGER)) {
-            User newManager = getUser(newManagerName);
-            newManager.assignStoreManager(storeId, userPermissions);
-        }
-        else {
-            throw new IllegalArgumentException("user can't assign manager");
-        }
-
+        User newManager = getUser(newOwnerName);
+        newManager.assignStoreManager(storeId, storePermissions);
     }
-
-    @Override
-    public List<String> getStorePermission(String userName, long storeId) {
-        User user = getUser(userName);
-        //get store permissions from user and return them as list of strings
-        return user.getStorePermissions(storeId);
-    }
-
 
     @Override
     public void terminateGuest(int guestID) {
-
-
+        //TODO: implement
     }
 
     @Override

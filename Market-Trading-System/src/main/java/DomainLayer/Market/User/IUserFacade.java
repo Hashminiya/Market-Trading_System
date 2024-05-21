@@ -1,9 +1,6 @@
 package DomainLayer.Market.User;
 
 import DomainLayer.Market.Util.StorePermission;
-import DomainLayer.Market.Util.UserPermission;
-
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 public interface IUserFacade {
@@ -27,6 +24,5 @@ public interface IUserFacade {
     public void addItemToBasket(String userName, long itemId, long quantity);
     public void changeUserPermission(String userName, int permission);
     public boolean isRegistered(String userName);
-
     public boolean isRegister(String founderId);
 }

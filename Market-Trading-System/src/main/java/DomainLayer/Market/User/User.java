@@ -44,8 +44,6 @@ public class User implements DataItem<String> {
         return state;
     }
 
-
-
     public ShoppingCart getShoppingCart() {
         return shoppingCart;
     }
