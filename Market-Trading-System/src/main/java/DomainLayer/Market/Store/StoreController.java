@@ -81,18 +81,18 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void assignStoreOwner(String userId, long storeId, String newOwnerId, List<String> storePermissions){//Noam Gilad - changed the method signature to set new owner and set his permissions
+    public void assignStoreOwner(String userId, long storeId, String newOwnerId){
         //TODO: check the user is the store owner
         Store store = storesRepo.findById(storeId);
-        userFacade.assignStoreOwner(userId, storeId, newOwnerId, storePermissions);
+        userFacade.assignStoreOwner(userId, storeId);
         store.assignOwner(newOwnerId);
     }
 
     @Override
-    public void assignStoreManager(String userId, long storeId, String newManagerId, List<String> storePermissions) {//Noam Gilad - changed the method signature to set new manager and set his permissions
+    public void assignStoreManager(String userId, long storeId, String newManagerId){
         //TODO: check the user is the store owner/manager with permissions
         Store store = storesRepo.findById(storeId);
-        userFacade.assignStoreManager(userId, storeId, newManagerId, storePermissions);
+        userFacade.assignStoreManager(userId, storeId);
         store.assignManager(newManagerId);
     }
 
