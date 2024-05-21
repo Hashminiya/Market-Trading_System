@@ -14,11 +14,12 @@ public interface IUserFacade {
     public String viewShoppingCart(String userName);
     public void modifyShoppingCart(String userName);
     public void checkoutShoppingCart(String userName);
-    public boolean checkPermission(String userName,String permission);
+    public boolean checkPermission(String userName,long storeId, String permission);
     public void assignStoreOwner(String userName, long storeId);
     public void assignStoreManager(String userName, long storeId);
     public List<StorePermission> getUserPermission(String userName);
     public void terminateGuest(int guestID);
     public void addItemToBasket(String userName, long itemId, long quantity);
     public void changeUserPermission(String userName, int permission);
+    public boolean isRegistered(String userName);
 }
