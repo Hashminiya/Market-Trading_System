@@ -36,7 +36,7 @@ public class ShoppingCart {
         sb.addItem(itemId,quantity);
     }
 
-    public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String code){
+    public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String code) throws Exception{
         List<ShoppingBasket> l = getBaskets();
         List<ItemDTO> items = new ArrayList<ItemDTO>();
         for(ShoppingBasket sb : l){

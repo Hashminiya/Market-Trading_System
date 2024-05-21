@@ -14,7 +14,7 @@ public class User implements IUser,DataItem<String> {
     private String password;
     private int userAge;
     private Istate state;
-    private boolean loggedIn;
+    protected boolean loggedIn;
     private ShoppingCart shoppingCart;
     private Map<Long, Set<StoreEnum>> storePermissionsAndRole;
 
@@ -127,7 +127,7 @@ public class User implements IUser,DataItem<String> {
         throw new IllegalArgumentException("user does not have any permissions for this store");
     }
 
-    public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String discountCode) {
+    public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String discountCode) throws Exception{
         verifyIsLoggedIn();
         return shoppingCart.checkoutShoppingCart(storeFacade, discountCode);
     }

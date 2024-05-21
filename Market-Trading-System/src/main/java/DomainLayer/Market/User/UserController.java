@@ -93,7 +93,7 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) {
+    public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception{
         User user = getUser(userName);
         List<ItemDTO> items = user.checkoutShoppingCart(this.storeFacade, discountCode);
         double totalAmount = user.getShoppingCart().getShoppingCartPrice();

@@ -6,6 +6,7 @@ import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.User.SystemManager;
 import DomainLayer.Market.User.User;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
@@ -34,7 +35,8 @@ public class ServiceFactory {
     private static ServiceFactory serviceFactoryInstance;
 
     private ServiceFactory(){
-        initFactory();
+        InMemoryRepository<String, User> user_repo = loadUserRepo();
+        userFacadeInstance = IUserFacade.getInstance(user_repo);
     }
 
     public static synchronized ServiceFactory getServiceFactory(){
@@ -44,7 +46,7 @@ public class ServiceFactory {
         return serviceFactoryInstance;
     }
 
-    public static void initFactory() {
+    public void initFactory() {
         // Init payment and supply services and proxy
         paymentServiceInstance = PaymentServiceImpl.getInstance();
         supplyServiceInstance = SupplyServiceImpl.getInstance();
@@ -53,7 +55,8 @@ public class ServiceFactory {
 
         // Init Facades
         purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryRepository<Long, Purchase>(), paymentServiceProxyInstance,supplyServiceProxyInstance);
-        userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String, User>());
+        InMemoryRepository<String, User> user_repo = loadUserRepo();
+        userFacadeInstance = IUserFacade.getInstance(user_repo);
         storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>());
         userFacadeInstance.setStoreFacade(storeFacadeInstance);
         userFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
@@ -64,6 +67,14 @@ public class ServiceFactory {
         storeManagementServiceInstance = StoreManagementService.getInstance(storeFacadeInstance);
         storeBuyerServiceInstance = StoreBuyerService.getInstance(storeFacadeInstance);
         userServiceInstance = UserService.getInstance(userFacadeInstance);
+    }
+
+    private static InMemoryRepository<String, User> loadUserRepo() {
+        InMemoryRepository<String, User> userRepo = new InMemoryRepository<>();
+        SystemManager systemManager = SystemManager.getInstance();
+        userRepo.save(systemManager);
+
+        return userRepo;
     }
 
     public IStoreFacade getStoreFacade() {

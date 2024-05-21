@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 public class StoreUT {
 
     private final long STORE_ID = 1L;
-    private final long FOUNDER_ID = 1L;
+    private final String FOUNDER_ID = "FOUNDER_NAME";
     private final long ITEM_ID_1 = 1L;
     private final long ITEM_ID_2 = 2L;
     private final String STORE_NAME = "Test Store";
@@ -178,7 +178,7 @@ public class StoreUT {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2"));
 
-        List<Item> result = store.searchWithCategory(category, keyword);
+        List<Item> result = store.searchKeyWordWithCategory(category, keyword);
         assertEquals(1, result.size());
         assertEquals("Test Item", result.get(0).getName());
     }
