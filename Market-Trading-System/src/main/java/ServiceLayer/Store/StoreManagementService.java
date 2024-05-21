@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class StoreManagementService implements IStoreManagementService{
+    private static StoreManagementService instance;
     private final IStoreFacade storeFacade;
     private JwtService jwtService;
     private UserDetailsService userDetailsService;
@@ -19,6 +20,13 @@ public class StoreManagementService implements IStoreManagementService{
         this.storeFacade = storeFacade;
         jwtService = new JwtService();
         userDetailsService = new InMemoryUserDetailsManager();
+    }
+
+    public static synchronized StoreManagementService getInstance(IStoreFacade storeFacade) {
+        if (instance == null) {
+            instance = new StoreManagementService(storeFacade);
+        }
+        return instance;
     }
 
     @Override
