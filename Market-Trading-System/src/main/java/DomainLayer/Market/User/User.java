@@ -143,32 +143,35 @@ public class User implements DataItem<String> {
         return shoppingCart.checkoutShoppingCart(storeFacade, discountCode);
     }
 
-    public void assignStoreOwner(long storeId, List<String> userPermissions) {
-        if(userPermissions.contains(StoreRole.OWNER.name())){
+    public void assignStoreOwner(long storeId) {
+        if(storePermissionsAndRole.containsKey(storeId) && storePermissionsAndRole.get(storeId).contains(StoreRole.OWNER){
             throw new IllegalArgumentException("user is already store owner");
         }
         Set<StoreEnum> permissions = new HashSet<>();
-        for (String permission : userPermissions) {
-            permissions.add(StorePermission.valueOf(permission));
-        }
-        permissions.add(StoreRole.OWNER);
+        permissions.add(StoreRole.OWNER); //Pay attention that if the user is already a manager, he will be both a manager and an owner!
+        permissions.addAll(Arrays.asList(StorePermission.values()));
         storePermissionsAndRole.put(storeId, permissions);
     }
 
     public void assignStoreManager(long storeId, List<String> userPermissions) {
-        if(userPermissions.contains(StoreRole.OWNER.name()) || userPermissions.contains(StoreRole.MANAGER.name())){
-            throw new IllegalArgumentException("user is already store owner or manager");
+        if(storePermissionsAndRole.containsKey(storeId) && storePermissionsAndRole.get(storeId).contains(StoreRole.MANAGER){
+            throw new IllegalArgumentException("user is already store manager");
         }
         Set<StoreEnum> permissions = new HashSet<>();
+        permissions.add(StoreRole.MANAGER);
         for (String permission : userPermissions) {
             permissions.add(StorePermission.valueOf(permission));
         }
-        permissions.add(StoreRole.MANAGER);
         storePermissionsAndRole.put(storeId, permissions);
     }
 
     public void addItemToBasket(long basketId, long itemId, long quantity) {
         verifyIsLoggedIn();
         shoppingCart.addItemToBasket(basketId, itemId, quantity);
+    }
+
+    public boolean isRegistered() {
+        //TODO: implement
+        return false;
     }
 }

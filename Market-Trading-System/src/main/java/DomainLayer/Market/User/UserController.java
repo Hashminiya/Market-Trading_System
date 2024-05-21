@@ -16,7 +16,6 @@ import java.util.List;
 public class UserController implements IUserFacade {
     private final IRepository<String, User> users;
     private final IStoreFacade storeFacade;
-
     private final IPurchaseFacade purchaseFacade;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -35,7 +34,7 @@ public class UserController implements IUserFacade {
         long id = generateId();
         String userName = "guest" + id;
         Istate guest = new Guest();
-        User user = new User(userName, null, 0, guest, true, new ShoppingCart());
+        User user = new User(userName, null, 0, guest, true, new ShoppingCart());//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
         return userName;
     }
@@ -45,10 +44,6 @@ public class UserController implements IUserFacade {
         users.delete(userName);
     }
 
-    @Override
-    public void register(String userName, String password) {
-
-    }
 
     public void register(String userName,String password, int userAge) throws Exception {
         if (users.findById(userName) != null) {
@@ -56,10 +51,9 @@ public class UserController implements IUserFacade {
         }
         String encodedPassword = passwordEncoder.encode(password);
         Istate registered = new Registered();
-        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart());
+        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart());//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
-        //TODO: Shopping cart should get IRepository as parameter.
-        //TODO: delete guest when register.
+
     }
 
     public boolean login(String userName, String rawPassword) throws Exception {
@@ -94,19 +88,13 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public void assignStoreOwner(String userName, long storeId, String newOwnerName, List<String> storePermissions) {
-        User user = getUser(userName);
-        if (user.checkPermission(storeId, StorePermission.ASSIGN_OWNER)) {
-            User newOwner = getUser(newOwnerName);
-            newOwner.assignStoreOwner(storeId, storePermissions);
-        }
-        else {
-            throw new IllegalArgumentException("user can't assign owner");
-        }
+    public void assignStoreOwner(String newOwnerName, long storeId) {
+        User newOwner = getUser(newOwnerName);
+        newOwner.assignStoreOwner(storeId);
     }
 
     @Override
-    public void assignStoreManager(String userName, long storeId, String newManagerName, List<String> userPermissions) {
+    public void assignStoreManager(String newOwnerName, long storeId,List<String> storePermissions) {
         User user = getUser(userName);
         if (user.checkPermission(storeId, StorePermission.ASSIGN_MANAGER)) {
             User newManager = getUser(newManagerName);
@@ -153,5 +141,9 @@ public class UserController implements IUserFacade {
             throw new IllegalArgumentException("user not exists");
         }
         return user;
+    }
+
+    public boolean isRegistered(String userName) {
+        return getUser(userName).isRegistered();
     }
 }
