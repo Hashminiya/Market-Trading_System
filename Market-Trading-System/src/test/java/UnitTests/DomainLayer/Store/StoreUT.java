@@ -178,7 +178,7 @@ public class StoreUT {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2"));
 
-        List<Item> result = store.searchWithCategory(category, keyword);
+        List<Item> result = store.searchKeyWordWithCategory(category, keyword);
         assertEquals(1, result.size());
         assertEquals("Test Item", result.get(0).getName());
     }

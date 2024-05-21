@@ -130,8 +130,13 @@ public class SystemAT {
                 userFacade.addItemToBasket(USER_NAME, BASKET_ID, ITEM_ID, ITEM_QUANTITY);
 
                 // Act
-                userFacade.checkoutShoppingCart(USER_NAME, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
-
+                try {
+                    userFacade.checkoutShoppingCart(USER_NAME, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+                }
+                catch (Exception exp)
+                {
+                    fail();
+                }
                 // Validate that the checkout process was completed successfully
                 List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
                 boolean itemPurchased = purchasedItems.stream()
@@ -145,8 +150,12 @@ public class SystemAT {
                 userFacade.addItemToBasket(USER_NAME, BASKET_ID, ITEM_ID, ITEM_QUANTITY);
 
                 // Act
+                try {
                 userFacade.checkoutShoppingCart(USER_NAME_UNKNOWN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
-
+                }
+                catch (Exception exception){
+                    fail();
+                }
                 // Validate that the checkout process was completed successfully
                 List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
                 boolean itemPurchased = purchasedItems.stream()
@@ -188,7 +197,12 @@ public class SystemAT {
             public void testSuccessfulDelivery() {
                 // Arrange
                 userFacade.addItemToBasket(USER_NAME, BASKET_ID, ITEM_ID, ITEM_QUANTITY);
-                userFacade.checkoutShoppingCart(USER_NAME, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+                try {
+                    userFacade.checkoutShoppingCart(USER_NAME, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+                }
+                catch (Exception exception){
+                    fail();
+                }
                 // TODO : Implement due to supply service..
                 // boolean deliveryConfirmed = supplyService.validateItemSupply(STORE_ID, ITEM_ID, 1);
                 boolean deliveryConfirmed = true;
