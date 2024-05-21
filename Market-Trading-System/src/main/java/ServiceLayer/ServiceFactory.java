@@ -30,36 +30,36 @@ public class ServiceFactory {
     private static PaymentServiceProxy paymentServiceProxyInstance;
     private static SupplyServiceProxy supplyServiceProxyInstance;
 
-    private static ServiceFactory serviceFactoryInstace;
+    // Factory instance
+    private static ServiceFactory serviceFactoryInstance;
 
     private ServiceFactory(){
         initFactory();
     }
 
     public static synchronized ServiceFactory getServiceFactory(){
-        if(serviceFactoryInstace == null) {
-            serviceFactoryInstace = new ServiceFactory();
+        if(serviceFactoryInstance == null) {
+            serviceFactoryInstance = new ServiceFactory();
         }
-        return serviceFactoryInstace;
+        return serviceFactoryInstance;
     }
 
     public static void initFactory() {
-
-        // TODO : Ask about this type of implementation
+        // Init payment and supply services and proxy
         paymentServiceInstance = PaymentServiceImpl.getInstance();
         supplyServiceInstance = SupplyServiceImpl.getInstance();
         paymentServiceProxyInstance = PaymentServiceProxy.getInstance(paymentServiceInstance);
-
         supplyServiceProxyInstance =  SupplyServiceProxy.getInstance(supplyServiceInstance);
-        purchaseFacadeInstance = IPurchaseFacade.getInstance(paymentServiceProxyInstance, paymentServiceInstance, supplyServiceProxyInstance, supplyServiceInstance);
-        //
+        purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryRepository<Long, Purchase>(), paymentServiceProxyInstance,supplyServiceProxyInstance);
 
+        // Init Facades
         userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String, User>());
         storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>());
         userFacadeInstance.setStoreFacade(storeFacadeInstance);
         storeFacadeInstance.setUserFacade(userFacadeInstance);
         storeFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
 
+        // Init Services
         storeManagementServiceInstance = StoreManagementService.getInstance(storeFacadeInstance);
         storeBuyerServiceInstance = StoreBuyerService.getInstance(storeFacadeInstance);
         userServiceInstance = UserService.getInstance(userFacadeInstance);

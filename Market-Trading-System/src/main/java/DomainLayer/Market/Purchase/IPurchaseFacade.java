@@ -11,10 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface IPurchaseFacade {
-    public static IPurchaseFacade getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, PaymentServiceImpl paymentService,
-                                              SupplyServiceProxy supplyServiceProxy, SupplyServiceImpl supplyService)
+    public static IPurchaseFacade getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy)
     {
-        return PurchaseController.getInstance(purchaseRepo, paymentServiceProxy, paymentService, supplyServiceProxy, supplyService);
+        return PurchaseController.getInstance(purchaseRepo, paymentServiceProxy, supplyServiceProxy);
     }
     void checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList,double totalAmount);
     HashMap<Long,List<ItemDTO>> getPurchasesByStore(long storeId);
