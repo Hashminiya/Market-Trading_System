@@ -6,17 +6,14 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
-import DomainLayer.Market.Store.Item;
 
 
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public class StoreController implements IStoreFacade{
-
+    private static StoreController storeControllerInstance;
     private IRepository<Long, Store> storesRepo;
     private IPurchaseFacade purchaseFacade;
     private IUserFacade userFacade;
@@ -34,10 +31,26 @@ public class StoreController implements IStoreFacade{
     private String REMOVE_STORE = "REMOVE_STORE";
 
 
-    public StoreController(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
+    private StoreController(IRepository<Long, Store> storesRepo) {
         this.storesRepo = storesRepo;
-        this.purchaseFacade = purchaseFacade;
-        this.userFacade = userFacade;
+    }
+
+    public static synchronized StoreController getInstance(IRepository<Long, Store> storesRepo) {
+        if (storeControllerInstance == null) {
+            storeControllerInstance = new StoreController(storesRepo);
+            // TODO : We assume that when this function called, next line will be setUserFacade..
+        }
+        return storeControllerInstance;
+    }
+
+    @Override
+    public void setUserFacade(IUserFacade userFacadeInstance) {
+        userFacade = userFacadeInstance;
+    }
+
+    @Override
+    public void setPurchaseFacade(IPurchaseFacade purchaseFacadeInstance) {
+        purchaseFacade = purchaseFacadeInstance;
     }
 
     private synchronized long generateStoreId(){

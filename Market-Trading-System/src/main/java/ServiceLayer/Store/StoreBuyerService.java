@@ -6,12 +6,19 @@ import DomainLayer.Market.Store.IStoreFacade;
 import java.util.HashMap;
 
 public class StoreBuyerService implements IStoreBuyerService{
-
+    private static StoreBuyerService instance;
     private IStoreFacade storeFacade;
     private final String EMPTY_RESULT_ERROR = "Error: 0 results for search";
 
-    public StoreBuyerService(IStoreFacade storeFacade) {
+    private StoreBuyerService(IStoreFacade storeFacade) {
         this.storeFacade = storeFacade;
+    }
+
+    public static synchronized StoreBuyerService getInstance(IStoreFacade storeFacade) {
+        if (instance == null) {
+            instance = new StoreBuyerService(storeFacade);
+        }
+        return instance;
     }
 
     @Override
