@@ -30,8 +30,10 @@ public class SystemManager extends User{
     }
 
     public void InitializeTradingSystem(){
-        // TODO : Check with DB that the system is un-initialized.
-        ServiceFactory.initFactory();
+        if(loggedIn) {
+            ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
+            serviceFactory.initFactory();
+        }
     }
 
     public void AddConnectionWithExternalServices(){

@@ -14,7 +14,7 @@ public class User implements DataItem<String> {
     private String password;
     private int userAge;
     private Istate state;
-    private boolean loggedIn;
+    protected boolean loggedIn;
     private ShoppingCart shoppingCart;
     private Map<Long, Set<StoreEnum>> storePermissionsAndRole;
 
@@ -133,7 +133,7 @@ public class User implements DataItem<String> {
     }
 
     public void assignStoreOwner(long storeId) {
-        if(storePermissionsAndRole.containsKey(storeId) && storePermissionsAndRole.get(storeId).contains(StoreRole.OWNER){
+        if(storePermissionsAndRole.containsKey(storeId) && storePermissionsAndRole.get(storeId).contains(StoreRole.OWNER)){
             throw new IllegalArgumentException("user is already store owner");
         }
         Set<StoreEnum> permissions = new HashSet<>();
@@ -143,7 +143,7 @@ public class User implements DataItem<String> {
     }
 
     public void assignStoreManager(long storeId, List<String> userPermissions) {
-        if(storePermissionsAndRole.containsKey(storeId) && storePermissionsAndRole.get(storeId).contains(StoreRole.MANAGER){
+        if(storePermissionsAndRole.containsKey(storeId) && storePermissionsAndRole.get(storeId).contains(StoreRole.MANAGER)){
             throw new IllegalArgumentException("user is already store manager");
         }
         Set<StoreEnum> permissions = new HashSet<>();

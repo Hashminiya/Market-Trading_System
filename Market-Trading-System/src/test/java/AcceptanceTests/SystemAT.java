@@ -1,7 +1,13 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.User.SystemManager;
+import DomainLayer.Market.User.User;
+import ServiceLayer.ServiceFactory;
+import ServiceLayer.User.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,59 +16,73 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 public class SystemAT {
     // 1.1
     @Nested
     class InitializeTradingSystemTest {
-//
-//        private MockUserService userService;
-//        private TradingSystem tradingSystem;
-//
-//        @Before
-//        public void setUp() {
-//            userService = new MockUserService();
-//            tradingSystem = new TradingSystem(userService);
 
+        private ServiceFactory serviceFactory;
+        private IUserFacade userFacade;
+
+        private final String SYSTEM_MANAGER_NAME = "SystemManager";
+        private final String SYSTEM_MANAGER_PW = "SystemManagerPassword";
+        private final String SYSTEM_MANAGER_WRONG_PW = "SystemManagerWrongPassword";
 
         @Test
         public void testSuccessfulInitialization() {
-//            // Arrange
-//            userService.setUserLoggedIn(true);
-//            userService.setIsUserAdmin(true); // User is system manager
-//
-//            // Act
-//            boolean result = tradingSystem.initialize();
-//
-//            // Assert
-//            assertTrue(result);
-//            assertTrue(tradingSystem.isConnectedToSupplyService());
-//            assertTrue(tradingSystem.isConnectedToPaymentService());
+            // Arrange
+            try {
+                // Init only the user facade
+                serviceFactory = ServiceFactory.getServiceFactory();
+                userFacade = serviceFactory.getUserFacade();
+
+                // Login manager to system
+                userFacade.login(SYSTEM_MANAGER_NAME, SYSTEM_MANAGER_PW);
+                verify(any(User.class), times(1)).login();
+                SystemManager systemManager = SystemManager.getInstance();
+
+                // Act
+                systemManager.InitializeTradingSystem();
+                assertNotEquals(serviceFactory.getUserService(), null);
+            } catch (Exception exp) {
+                fail();
+            }
         }
 
         @Test
-        public void testFailedInitializationNotManager() {
-//            // Arrange
-//            userService.setUserLoggedIn(true);
-//            userService.setIsUserAdmin(false); // User is not system manager
-//
-//            // Act
-//            boolean result = tradingSystem.initialize();
-//
-//            // Assert
-//            assertFalse(result);
-//            assertFalse(tradingSystem.isConnectedToSupplyService());
-//            assertFalse(tradingSystem.isConnectedToPaymentService());
+        public void testFailedLoginInitialization() {
+            try {
+                // Arrange
+                // Init only the user facade
+                serviceFactory = ServiceFactory.getServiceFactory();
+                userFacade = serviceFactory.getUserFacade();
+
+                // Login manager to system
+                userFacade.login(SYSTEM_MANAGER_NAME, SYSTEM_MANAGER_WRONG_PW);
+                verify(any(User.class), times(0)).login();
+                SystemManager systemManager = SystemManager.getInstance();
+
+                // Act
+                systemManager.InitializeTradingSystem();
+                assertNull(serviceFactory.getUserService());
+            } catch (Exception exp) {
+                fail();
+            }
         }
-    }
+
 
 // 1.2 - if needed
 
-    // 1.3
-    @Nested
-    class PaymentTest {
+        // 1.3
+        @Nested
+        class PaymentTest {
 
-        @Test
-        public void testSuccessfulPayment() {
+            @Test
+            public void testSuccessfulPayment() {
 //            // Arrange
 //            MockUserService userService = new MockUserService();
 //            userService.setUserLoggedIn(true);
@@ -77,10 +97,10 @@ public class SystemAT {
 //            assertTrue(result);
 //            assertTrue(paymentService.isPaymentSuccessful());
 //            assertTrue(shoppingCart.isEmpty()); // Shopping cart emptied
-        }
+            }
 
-        @Test
-        public void testFailedPaymentInvalidDetails() {
+            @Test
+            public void testFailedPaymentInvalidDetails() {
 //            // Arrange
 //            MockUserService userService = new MockUserService();
 //            userService.setUserLoggedIn(true);
@@ -95,10 +115,10 @@ public class SystemAT {
 //            assertFalse(result);
 //            assertFalse(paymentService.isPaymentSuccessful());
 //            assertTrue(shoppingCart.isNotEmpty()); // Shopping cart not emptied
-        }
+            }
 
-        @Test
-        public void testPaymentExternalServiceFailure() {
+            @Test
+            public void testPaymentExternalServiceFailure() {
 //            // Arrange
 //            MockUserService userService = new MockUserService();
 //            userService.setUserLoggedIn(true);
@@ -111,18 +131,18 @@ public class SystemAT {
 //
 //            // Assert
 //            assertFalse(result); // May need adjustment based on exception handling
+            }
+
+            // Add similar tests for other scenarios
         }
 
-        // Add similar tests for other scenarios
-    }
+        // 1.4
+        @Nested
+        class DeliveryTest {
 
-    // 1.4
-    @Nested
-    class DeliveryTest {
-
-        @Test
-        public void testSuccessfulDelivery() {
-            // Arrange
+            @Test
+            public void testSuccessfulDelivery() {
+                // Arrange
 //        MockPaymentService paymentService = new MockPaymentService(true); // Successful payment
 //        MockUserService userService = new MockUserService();
 //        userService.setUserLoggedIn(true);
@@ -138,11 +158,11 @@ public class SystemAT {
 //        // Assert
 //        assertTrue(result);
 //        assertTrue(supplyService.isDeliveryConfirmed());
-        }
+            }
 
-        @Test
-        public void testFailedDeliveryInvalidDetails() {
-            // Arrange (Similar to successful delivery, with invalid user details)
+            @Test
+            public void testFailedDeliveryInvalidDetails() {
+                // Arrange (Similar to successful delivery, with invalid user details)
 //        MockPaymentService paymentService = new MockPaymentService(true); // Successful payment
 //        MockUserService userService = new MockUserService();
 //        userService.setUserLoggedIn(true);
@@ -158,10 +178,10 @@ public class SystemAT {
 //        // Assert
 //        assertFalse(result);
 //        assertFalse(supplyService.isDeliveryConfirmed());
-        }
+            }
 
-        @Test
-        public void testDeliveryExternalServiceFailure() {
+            @Test
+            public void testDeliveryExternalServiceFailure() {
 //        // Arrange (Similar to successful delivery, with external service exception)
 //        MockPaymentService paymentService = new MockPaymentService(true); // Successful payment
 //        MockUserService userService = new MockUserService();
@@ -177,18 +197,18 @@ public class SystemAT {
 //
 //        // Assert
 //        assertFalse(result); // May need adjustment based on exception handling
+            }
+
+            // Add similar tests for other scenarios (e.g., payment cancellation on delivery
+
         }
 
-        // Add similar tests for other scenarios (e.g., payment cancellation on delivery
+        // 6.4
+        @Nested
+        class MarketHistoryTest {
 
-    }
-
-    // 6.4
-    @Nested
-    class MarketHistoryTest {
-
-        @Test
-        public void testViewMarketHistorySuccess() {
+            @Test
+            public void testViewMarketHistorySuccess() {
 //        // Arrange
 //        MockUserService userService = new MockUserService();
 //        userService.setUserLoggedIn(true);
@@ -203,10 +223,10 @@ public class SystemAT {
 //        assertTrue(result);
 //        // Assert that pastPurchases is populated (not empty)
 //        assertFalse(pastPurchases.isEmpty());
-        }
+            }
 
-        @Test
-        public void testViewMarketHistoryEmpty() {
+            @Test
+            public void testViewMarketHistoryEmpty() {
 //        // Arrange
 //        MockUserService userService = new MockUserService();
 //        userService.setUserLoggedIn(true);
@@ -221,10 +241,10 @@ public class SystemAT {
 //        assertTrue(result);
 //        // Assert that pastPurchases is empty
 //        assertTrue(pastPurchases.isEmpty());
-        }
+            }
 
-        @Test
-        public void testViewMarketHistoryNotLoggedIn() {
+            @Test
+            public void testViewMarketHistoryNotLoggedIn() {
 //        // Arrange
 //        MockUserService userService = new MockUserService();
 //        userService.setUserLoggedIn(false);
@@ -235,6 +255,7 @@ public class SystemAT {
 //
 //        // Assert
 //        assertFalse(result);
+            }
         }
     }
 }
