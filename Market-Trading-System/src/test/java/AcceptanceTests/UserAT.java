@@ -1,328 +1,238 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.User.User;
+import DomainLayer.Market.User.UserController;
+import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.Purchase.IPurchaseFacade;
+import DomainLayer.Market.Purchase.PurchaseController;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-public class UserAT {
-    // 1.1
-    @Nested
-    class GuestMemberExitTest {
 
-        @Test
-        public void testGuestExits() {
-//        // Arrange
-//        Guest guest = new Guest("guest_id", new ShoppingCart());
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(guest);
-//
-//        // Act
-//        guestSystem.exitSystem(guest.getGuestId());
-//
-//        // Assert
-//        // Verify actions within GuestManagementSystem:
-//        // - Guest identified by guest ID.
-//        // - Guest session marked as closed or removed.
-//        // - Shopping cart might be saved or discarded based on system logic.
-        }
+import javax.ws.rs.core.Response;
 
-        @Test
-        public void testMemberExitExpiredSession() {
-//        // Arrange (Simulate expired member session)
-//        Member member = new Member("member_id", null); // No active session
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(member);
-//
-//        // Act
-//        guestSystem.exitSystem(member.getMemberId());
-//
-//        // Assert
-//        // Verify actions within GuestManagementSystem:
-//        // - Member identified by member ID.
-//        // - Error handling for expired session (no session closure needed).
-        }
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
-        @Test
-        public void testGuestExits2() {
-//        // Arrange
-//        Guest guest = new Guest("guest_id", new ShoppingCart());
-//        MockShoppingCartService shoppingCartService = new MockShoppingCartService(); // Optional mock
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(shoppingCartService);
-//        guestSystem.enterSystem(guest); // Simulate guest entry
-//
-//        // Act
-//        guestSystem.exitSystem(guest.getGuestId());
-//
-//        // Assert
-//        assertFalse(guestSystem.isActiveSession(guest.getGuestId())); // Verify session closed
-//        // Optionally verify shopping cart handling (discarded or saved) with MockShoppingCartService
-        }
+import static org.junit.jupiter.api.Assertions.*;
 
-        @Test
-        public void testMemberExitExpiredSession2() {
-            // Arrange
-//        Member member = new Member("member_id", null); // No active session
-//        GuestManagementSystem guestSystem = new GuestManagementSystem();
-//
-//        // Act
-//        guestSystem.exitSystem(member.getMemberId());
-//
-//        // Assert
-//        // No session closure needed as the session was already expired
-//        // Verify error handling through GuestManagementSystem methods (e.g., handleExpiredSession)
-        }
+public class UserManagementAT {
+
+    private IUserFacade userFacade;
+    private IRepository<String, User> userRepository;
+    private IStoreFacade storeFacade;
+    private IPurchaseFacade purchaseFacade;
+
+    @BeforeEach
+    public void setUp() {
+        userRepository = new InMemoryRepository<>();
+        purchaseFacade = new PurchaseController();
+        storeFacade = new StoreController(new InMemoryRepository<>(), purchaseFacade, new UserController(userRepository, storeFacade, purchaseFacade));
+        userFacade = new UserController(userRepository, storeFacade, purchaseFacade);
     }
 
-    // 1.2
-
-    // 1.3
-    @Nested
-    class RegisterTest {
-
-        @Test
-        public void testSuccessfulRegistration() {
-            // Arrange
-//        MockUserService userService = new MockUserService();
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(userService);
-//        String username = "new_user";
-//        String password = "valid_password";
-//        // Other personal details
-//
-//        // Act
-//        boolean result = guestSystem.register(username, password, personalDetails);
-//
-//        // Assert
-//        assertTrue(result);
-//        assertTrue(userService.isUserRegistered(username)); // Verify user creation
-        }
-
-        @Test
-        public void testDuplicateUsername() {
-//        // Arrange (Simulate existing user)
-//        MockUserService userService = new MockUserService();
-//        userService.addUser("existing_user", "password");
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(userService);
-//        String username = "existing_user";
-//        String password = "valid_password";
-//        // Other personal details
-//
-//        // Act
-//        boolean result = guestSystem.register(username, password, personalDetails);
-//
-//        // Assert
-//        assertFalse(result);
-//        // Verify error message for duplicate username
-        }
+    @Test
+    public void testCreateGuestSession() {
+        String guestName = userFacade.createGuestSession();
+        assertNotNull(guestName);
+        assertTrue(guestName.startsWith("guest"));
+//        assertNotNull(userRepository.findById(guestName));
     }
 
-    // 1.4
-    @Nested
-    class MemberLoginTest {
-
-        @Test
-        public void testSuccessfulLogin() {
-//        // Arrange
-//        MockUserService userService = new MockUserService();
-//        userService.addUser("valid_user", "password");
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(userService);
-//        String username = "valid_user";
-//        String password = "password";
-//
-//        // Act
-//        Member member = guestSystem.login(username, password);
-//
-//        // Assert
-//        // Verify actions within GuestManagementSystem:
-//        // - Username and password sent for validation.
-//        // - User service queried to check credentials.
-//        // - On successful validation:
-//        //   - Member object retrieved or created.
-//        //   - User session marked as logged in.
-//        //   - Member's shopping cart potentially loaded.
-//        //   - Member messages retrieved (if applicable).
-        }
-
-        @Test
-        public void testAlreadyLoggedIn() {
-//        // Arrange (Simulate existing member session)
-//        Member existingMember = new Member("member_id", null);
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(existingMember);
-//        String username = "existing_user";
-//        String password = "password";
-//
-//        // Act
-//        Member member = guestSystem.login(username, password);
-//
-//        // Assert
-//        // Verify actions within GuestManagementSystem:
-//        // - Username and password sent for validation (may be skipped).
-//        // - Existing session check (should identify active session).
-        }
-
-        @Test
-        public void testInvalidLogin() {
-//        // Arrange
-//        MockUserService userService = new MockUserService();
-//        userService.addUser("valid_user", "password");
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(userService);
-//        String username = "invalid_user";
-//        String password = "wrong_password";
-//
-//        // Act
-//        Member member = guestSystem.login(username, password);
-//
-//        // Assert
-//        // Verify actions within GuestManagementSystem:
-//        // - Username and password sent for validation.
-//        // - User service queried to check credentials.
-//        // - On failed validation:
-//        //   - Error handling for invalid credentials.
-        }
+    @Test
+    public void testTerminateGuestSession() {
+        String guestName = userFacade.createGuestSession();
+        userFacade.terminateGuestSession(guestName);
+        assertNull(userRepository.findById(guestName));
     }
 
-    // 2.4
-    @Nested
-    class ViewShoppingCartTest {
-
-        @Test
-        public void testViewNonEmptyCart() {
-//        // Arrange
-//        Guest guest = new Guest("guest_id", new ShoppingCart(List.of(new Item("item1", 1))));
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(guest);
-//
-//        // Act
-//        ShoppingCart cart = guestSystem.viewShoppingCart();
-//
-//        // Assert
-//        assertNotNull(cart);
-//        assertEquals(1, cart.getItems().size()); // Verify items are displayed
-        }
-
-        @Test
-        public void testViewEmptyCart() {
-//        // Arrange
-//        Guest guest = new Guest("guest_id", new ShoppingCart());
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(guest);
-//
-//        // Act
-//        ShoppingCart cart = guestSystem.viewShoppingCart();
-//
-//        // Assert
-//        assertNotNull(cart);
-//        assertTrue(cart.getItems().isEmpty()); // Verify no items displayed
-        }
+    @Test
+    public void testRegister() throws Exception {
+        userFacade.register("newUser", "password123");
+        User user = userRepository.findById("newUser");
+        assertNotNull(user);
+        assertEquals("newUser", user.getUserName());
     }
 
-    // 2.4
-    @Nested
-    class ModifyShoppingCartItemTest {
-
-        @Test
-        public void testDeleteItem() {
-//        // Arrange
-//        Guest guest = new Guest("guest_id", new ShoppingCart(List.of(new Item("item1", 1))));
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(guest);
-//
-//        // Act
-//        guestSystem.modifyItemInCart("item1", ShoppingCartAction.DELETE);
-//
-//        // Assert
-//        ShoppingCart cart = guestSystem.viewShoppingCart();
-//        assertTrue(cart.getItems().isEmpty()); // Verify item removed
-        }
-
-        @Test
-        public void testIncreaseQuantityOutOfStock() {
-//        // Arrange (Mock stock check)
-//        MockInventoryService inventoryService = new MockInventoryService();
-//        inventoryService.setItemStock("item1", 0); // Simulate out-of-stock
-//        Guest guest = new Guest("guest_id", new ShoppingCart(List.of(new Item("item1", 1))));
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(guest, inventoryService);
-//
-//        // Act
-//        guestSystem.modifyItemInCart("item1", ShoppingCartAction.INCREASE_QUANTITY);
-//
-//        // Assert
-//        ShoppingCart cart = guestSystem.viewShoppingCart();
-//        assertEquals(1, cart.getItems().size()); // Verify item quantity unchanged
-//        // Verify error message retrieval through GuestManagementSystem (e.g., getOutOfStockMessage)
-        }
-
-        @Test
-        public void testIncreaseQuantityInStock() {
-//        // Arrange (Mock stock check)
-//        MockInventoryService inventoryService = new MockInventoryService();
-//        inventoryService.setItemStock("item1", 10); // Simulate sufficient stock
-//        Guest guest = new Guest("guest_id", new ShoppingCart(List.of(new Item("item1", 1))));
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(guest, inventoryService);
-//
-//        // Act
-//        guestSystem.modifyItemInCart("item1", ShoppingCartAction.INCREASE_QUANTITY);
-//
-//        // Assert
-//        ShoppingCart cart = guestSystem.viewShoppingCart();
-//        assertEquals(2, cart.getItem("item1").getQuantity()); // Verify quantity increased
-        }
+    @Test
+    public void testLogin() throws Exception {
+        userFacade.register("newUser", "password123");
+        boolean loginResult = userFacade.login("newUser", "password123");
+        assertTrue(loginResult);
     }
 
-    // 2.5
-    @Nested
-    class CheckoutTest {
-
-        @Test
-        public void testSuccessfulCheckout() {
-//        // Arrange (Mock services)
-//        MockInventoryService inventoryService = new MockInventoryService();
-//        inventoryService.setItemStock("item1", 1); // Simulate stock
-//        MockPaymentService paymentService = new MockPaymentService();
-//        paymentService.setPaymentSuccess(true); // Simulate successful payment
-//        MockSupplyService supplyService = new MockSupplyService();
-//        supplyService.setSupplyConfirmation(true); // Simulate supply confirmation
-//        Guest guest = new Guest("guest_id", new ShoppingCart(List.of(new Item("item1", 1))));
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(guest,
-//                inventoryService, paymentService, supplyService);
-//
-//        // Act
-//        boolean checkoutResult = guestSystem.checkout();
-//
-//        // Assert
-//        assertTrue(checkoutResult);
-//        // Verify stock update, payment processing, and supply confirmation calls on mock services
-        }
+    @Test
+    public void testLogout() throws Exception {
+        userFacade.register("newUser", "password123");
+        userFacade.login("newUser", "password123");
+        userFacade.logout("newUser");
+        User user = userRepository.findById("newUser");
+        assertFalse(user.isLoggedIn());
     }
 
-    // 3.1
-    @Nested
-    class MemberLogoutTest {
-
-        @Test
-        public void testMemberLogout() {
-//        // Arrange
-//        Member member = new Member("member_id", new ShoppingCart());
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(member);
-//
-//        // Act
-//        guestSystem.logout();
-//
-//        // Assert
-//        assertFalse(guestSystem.isActiveSession(member.getMemberId())); // Verify session closed
-//        assertTrue(guestSystem.getCurrentUser() instanceof Guest); // Verify guest user after logout
-        }
-
-        @Test
-        public void testGuestLogout() {
-//        // Arrange
-//        Guest guest = new Guest("guest_id", new ShoppingCart());
-//        GuestManagementSystem guestSystem = new GuestManagementSystem(guest);
-//
-//        // Act
-//        guestSystem.logout();
-//
-//        // Assert
-//        assertFalse(guestSystem.isActiveSession(guest.getGuestId())); // Verify session remains closed
-//        // No change in user type as guest was already logged out
-        }
+    @Test
+    public void testViewShoppingCart() throws Exception {
+        userFacade.register("newUser", "password123", 25);
+        userFacade.login("newUser", "password123");
+        String cart = userFacade.viewShoppingCart("newUser");
+        assertNotNull(cart);
     }
+
+    @Test
+    public void testModifyShoppingCart() throws Exception {
+        userFacade.register("newUser", "password123", 25);
+        userFacade.login("newUser", "password123");
+
+        // Add an item to the shopping cart
+        userFacade.addItemToBasket("newUser", 1, 1, 3);
+
+        // Modify the quantity of the item in the shopping cart
+        userFacade.modifyShoppingCart("newUser", 1, 1, 5);
+
+        // Verify that the item quantity has been updated
+        String cart = userFacade.viewShoppingCart("newUser");
+        assertTrue(cart.contains("itemId: 1, quantity: 5"));
+    }
+
+    @Test
+    public void testCheckoutShoppingCart() throws Exception {
+        // Register and login a new user
+        userFacade.register("newUser", "password123", 25);
+        userFacade.login("newUser", "password123");
+
+        // Add an item to the shopping cart
+        userFacade.addItemToBasket("newUser", 1, 1, 5);
+
+        // Proceed to checkout
+        Date expiryDate = new SimpleDateFormat("MM/yyyy").parse("12/2025");
+        userFacade.checkoutShoppingCart("newUser", "1234567812345678", expiryDate, "123", "DISCOUNT10");
+
+        // Verify that the shopping cart is now empty
+        String cart = userFacade.viewShoppingCart("newUser");
+        assertTrue(cart.isEmpty());
+
+        // Verify that the purchase was successful by checking the purchase history or other relevant indicators
+        Response purchaseHistoryResponse = storeFacade.viewPurchasesHistory("newUser");
+        assertEquals(Response.Status.OK.getStatusCode(), purchaseHistoryResponse.getStatus());
+        String purchaseHistory = purchaseHistoryResponse.getEntity().toString();
+        assertTrue(purchaseHistory.contains("itemId: 1")); // Adjust based on actual purchase history content
+    }
+
+
+    @Test
+    public void testCheckPermission() throws Exception {
+        // Register and login a new user
+        userFacade.register("newUser", "password123", 25);
+        userFacade.login("newUser", "password123");
+
+        // Create a new store
+        storeFacade.createStore("newUser", "Store1", "Description1", new InMemoryRepository<Long, Discount>());
+
+        // Initially, the user should not have any permissions for the store
+        boolean permission = userFacade.checkPermission("newUser", 1, "ADD_ITEM");
+        assertFalse(permission);
+
+        // Assign the user as a store manager with specific permissions
+        userFacade.assignStoreManager("newUser", 1, List.of("ADD_ITEM", "REMOVE_ITEM"));
+
+        // Now the user should have the 'ADD_ITEM' permission
+        permission = userFacade.checkPermission("newUser", 1, "ADD_ITEM");
+        assertTrue(permission);
+
+        // The user should also have the 'REMOVE_ITEM' permission
+        permission = userFacade.checkPermission("newUser", 1, "REMOVE_ITEM");
+        assertTrue(permission);
+
+        // The user should not have the 'CHANGE_POLICY' permission
+        permission = userFacade.checkPermission("newUser", 1, "CHANGE_POLICY");
+        assertFalse(permission);
+    }
+    @Test
+    public void testAssignStoreOwner() throws Exception {
+        // Register and login the original store owner
+        userFacade.register("originalOwner", "password123");
+        userFacade.login("originalOwner", "password123");
+
+        // Create a new store by the original owner
+        storeFacade.createStore("originalOwner", "Store1", "Description1", new InMemoryRepository<Long, Discount>());
+
+        // Register and login a new user
+        userFacade.register("newUser", "password456");
+        userFacade.login("newUser", "password456");
+
+        // Assign the new user as a store owner by the original owner
+        userFacade.assignStoreOwner("newUser", "Store1", 1L);
+
+        // Check if the new user has the 'OWNER' permission for the store
+        List<String> permissions = userFacade.getUserPermission("newUser", 1L);
+        assertTrue(permissions.contains("OWNER"));
+    }
+
+    @Test
+    public void testAssignStoreManager() throws Exception {
+        // Register and login the original store owner
+        userFacade.register("originalOwner", "password123", 25);
+        userFacade.login("originalOwner", "password123");
+
+        // Create a new store by the original owner
+        storeFacade.createStore("originalOwner", "Store1", "Description1", new InMemoryRepository<Long, Discount>());
+
+        // Register and login a new user
+        userFacade.register("newUser", "password456");
+        userFacade.login("newUser", "password456");
+
+        // Assign the new user as a store manager by the original owner with specific permissions
+        userFacade.assignStoreManager("newUser", "Store1", 1L, List.of("ADD_ITEM", "REMOVE_ITEM"));
+
+        // Check if the new user has the 'ADD_ITEM' and 'REMOVE_ITEM' permissions for the store
+        List<String> permissions = userFacade.getUserPermission("newUser", 1L);
+        assertTrue(permissions.contains("ADD_ITEM"));
+        assertTrue(permissions.contains("REMOVE_ITEM"));
+    }
+
+
+    @Test
+    public void testTerminateGuest() {
+        String guestName = userFacade.createGuestSession();
+        int guestId = Integer.parseInt(guestName.replace("guest", ""));
+        userFacade.terminateGuest(guestId);
+        assertNull(userRepository.findById(guestName));
+    }
+
+    @Test
+    public void testAddItemToBasket() {
+        userFacade.register("newUser", "password123", 25);
+        userFacade.login("newUser", "password123");
+        userFacade.addItemToBasket("newUser", 1L, 1L, 3);
+        String cart = userFacade.viewShoppingCart("newUser");
+        assertTrue(cart.contains("itemId: 1, quantity: 3"));
+    }
+
+    @Test
+    public void testChangeUserPermission() {
+        userFacade.register("newUser", "password123", 25);
+        userFacade.changeUserPermission("newUser", 2);
+        User user = userRepository.findById("newUser");
+        // Additional assertions to verify permission change
+    }
+
+//    @Test
+//    public void testIsRegister() throws Exception {
+//        // Create a guest session
+//        String guestUserName = userFacade.createGuestSession();
+//        assertFalse(userFacade.isRegister(guestUserName));
+//
+//        // Register a new user
+//        userFacade.register("newUser", "password123");
+//        assertTrue(userFacade.isRegister("newUser"));
+//
+//        // Ensure the guest user is still not registered
+//        assertFalse(userFacade.isRegister(guestUserName));
+//    }
+
 }

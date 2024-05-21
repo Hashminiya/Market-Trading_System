@@ -56,6 +56,7 @@ public class ServiceFactory {
         userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String, User>());
         storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>());
         userFacadeInstance.setStoreFacade(storeFacadeInstance);
+        userFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
         storeFacadeInstance.setUserFacade(userFacadeInstance);
         storeFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
 
