@@ -86,25 +86,19 @@ public class User implements DataItem<String> {
         return true;
     }
 
-    public boolean logout() {
+    public void logout() {
         verifyIsLoggedIn();
         loggedIn = false;
-        return true;
     }
 
-    public boolean addToShoppingCart(int storeNum, int productNum, int quantity) {
+    public void deleteShoppingBasket(long basketId) {
         verifyIsLoggedIn();
-        return shoppingCart.addToShoppingCart(storeNum, productNum, quantity);
+        shoppingCart.deleteShoppingBasket(basketId);
     }
 
-    public boolean deleteShoppingBasket(int storeNum, int productNum) {
+    public void modifyShoppingCart(long basketId, long itemId, int newQuantity) {
         verifyIsLoggedIn();
-        return shoppingCart.deleteShoppingBasket(storeNum, productNum);
-    }
-
-    public boolean modifyShoppingCart(long basketId, long itemId, int newQuantity) {
-        verifyIsLoggedIn();
-        return shoppingCart.modifyShoppingCart(basketId, itemId, newQuantity);
+        shoppingCart.modifyShoppingCart(basketId, itemId, newQuantity);
     }
 
     private void verifyIsLoggedIn() {
@@ -112,9 +106,6 @@ public class User implements DataItem<String> {
             throw new IllegalArgumentException("user not logged in");
         }
     }
-
-
-
 
     public List<String> getStorePermissions(long storeId) {
         List<String> permissions = new ArrayList<>();

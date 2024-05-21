@@ -96,20 +96,20 @@ public class UserController implements IUserFacade {
         User user = getUser(userName);
         List<ItemDTO> items = user.checkoutShoppingCart(this.storeFacade, discountCode);
         double totalAmount = 0;//TODO: call method to calculate total amount
-        purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items, totalAmount);
+        purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items);
         storeFacade.purchaseOccurs();
     }
 
     @Override
-    public void assignStoreOwner(String newOwnerName, long storeId) {
-        User newOwner = getUser(newOwnerName);
-        newOwner.assignStoreOwner(storeId);
+    public void assignStoreOwner(String userName, long storeId) {
+        User user = getUser(userName);
+        user.assignStoreOwner(storeId);
     }
 
     @Override
-    public void assignStoreManager(String newOwnerName, long storeId,List<String> storePermissions) {
-        User newManager = getUser(newOwnerName);
-        newManager.assignStoreManager(storeId, storePermissions);
+    public void assignStoreManager(String userName, long storeId,List<String> storePermissions) {
+        User user = getUser(userName);
+        user.assignStoreManager(storeId, storePermissions);
     }
 
     @Override
@@ -123,16 +123,6 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public void assignStoreOwner(String newOwnerName, long storeId) {
-
-    }
-
-    @Override
-    public void assignStoreManager(String newOwnerName, long storeId, String newManagerName, List<String> storePermissions) {
-
-    }
-
-    @Override
     public List<StorePermission> getUserPermission(String userName) {
         return null;
     }
@@ -142,10 +132,6 @@ public class UserController implements IUserFacade {
         //TODO: implement
     }
 
-    @Override
-    public void addItemToBasket(String userName, long itemId, long quantity) {
-
-    }
 
     @Override
     public void addItemToBasket(String userName,long basketId, long itemId, int quantity) {

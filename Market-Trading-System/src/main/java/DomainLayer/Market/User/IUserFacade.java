@@ -17,12 +17,9 @@ public interface IUserFacade {
     public void assignStoreManager(String userName, long storeId, List<String> storePermissions);
     public List<String> getUserPermission(String userName,long storeId);
     public boolean checkPermission(String userName);
-    public void assignStoreOwner(String newOwnerName, long storeId);
-    public void assignStoreManager(String newOwnerName, long storeId, List<String> storePermissions);
     public List<StorePermission> getUserPermission(String userName);
     public void terminateGuest(int guestID);
-    public void addItemToBasket(String userName, long itemId, long quantity);
+    public void addItemToBasket(String userName,long basketId, long itemId, int quantity);
     public void changeUserPermission(String userName, int permission);
-    public boolean isRegistered(String userName);
     public boolean isRegister(String founderId);
 }
