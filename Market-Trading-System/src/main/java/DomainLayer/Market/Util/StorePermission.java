@@ -12,5 +12,7 @@ public enum StorePermission {
     DELETE_ITEM,
     CHANGE_POLICY,
     CHANGE_DISCOUNT_TYPE,
-    REMOVE_STORE;
+    REMOVE_STORE,
+    MANAGER,
+    OWNER;
 }
