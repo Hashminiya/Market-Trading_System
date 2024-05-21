@@ -12,11 +12,11 @@ import java.util.Map;
 
 public class ShoppingBasket implements DataItem<Long> {
 
-    private long basketId;
-    private Map<Long,Integer> itemsQuantity;     //map<itemId,quantity>
+    private final long basketId;
+    private final Map<Long,Integer> itemsQuantity;     //map<itemId,quantity>
     private Map<Long, Double> itemsPrice;        //map<itemId, price>
     private double basketTotalPrice;
-    private long storeId;
+    private final long storeId;
 
     public ShoppingBasket(Long storeId){
         this.basketId = IdGenerator.generateId();
