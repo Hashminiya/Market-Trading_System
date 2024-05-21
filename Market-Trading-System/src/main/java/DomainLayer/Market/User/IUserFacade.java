@@ -7,7 +7,7 @@ public interface IUserFacade {
     public String createGuestSession();
     public boolean login(String userName, String password) throws Exception;
     public void terminateGuestSession(String userName);
-    public void register(String userName, String password) throws Exception;
+    public void register(String userName, String password, int userAge) throws Exception;
     public void logout(String userName);
     public String viewShoppingCart(String userName);
     public void modifyShoppingCart(String userName);
@@ -17,8 +17,8 @@ public interface IUserFacade {
     public void assignStoreManager(String userName, long storeId, List<String> storePermissions);
     public List<String> getUserPermission(String userName,long storeId);
     public boolean checkPermission(String userName);
-    public void assignStoreOwner(String userName, long storeId, String newOwnerName, List<String> storePermissions);
-    public void assignStoreManager(String userName, long storeId, String newManagerName, List<String> storePermissions);
+    public void assignStoreOwner(String newOwnerName, long storeId);
+    public void assignStoreManager(String newOwnerName, long storeId, List<String> storePermissions);
     public List<StorePermission> getUserPermission(String userName);
     public void terminateGuest(int guestID);
     public void addItemToBasket(String userName, long itemId, long quantity);

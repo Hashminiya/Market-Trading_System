@@ -72,6 +72,21 @@ public class UserController implements IUserFacade {
         return user.getShoppingCart().viewShoppingCart();
     }
 
+    @Override
+    public void modifyShoppingCart(String userName) {
+
+    }
+
+    @Override
+    public void checkoutShoppingCart(String userName) {
+
+    }
+
+    @Override
+    public boolean checkPermission(String userName, long storeId, String permission) {
+        return false;
+    }
+
     public void modifyShoppingCart(String userName, int storeNum, int productNum, int newQuantity) {
         User user = getUser(userName);
         user.modifyShoppingCart(storeNum, productNum, newQuantity);
@@ -98,12 +113,42 @@ public class UserController implements IUserFacade {
     }
 
     @Override
+    public List<String> getUserPermission(String userName, long storeId) {
+        return null;
+    }
+
+    @Override
+    public boolean checkPermission(String userName) {
+        return false;
+    }
+
+    @Override
+    public void assignStoreOwner(String newOwnerName, long storeId) {
+
+    }
+
+    @Override
+    public void assignStoreManager(String newOwnerName, long storeId, String newManagerName, List<String> storePermissions) {
+
+    }
+
+    @Override
+    public List<StorePermission> getUserPermission(String userName) {
+        return null;
+    }
+
+    @Override
     public void terminateGuest(int guestID) {
         //TODO: implement
     }
 
     @Override
-    public void addItemToBasket(String userName,long basketId, long itemId, long quantity) {
+    public void addItemToBasket(String userName, long itemId, long quantity) {
+
+    }
+
+    @Override
+    public void addItemToBasket(String userName,long basketId, long itemId, int quantity) {
         User user = getUser(userName);
         user.addItemToBasket(basketId, itemId, quantity);
     }
@@ -127,5 +172,10 @@ public class UserController implements IUserFacade {
 
     public boolean isRegistered(String userName) {
         return getUser(userName).isRegistered();
+    }
+
+    @Override
+    public boolean isRegister(String founderId) {
+        return false;
     }
 }

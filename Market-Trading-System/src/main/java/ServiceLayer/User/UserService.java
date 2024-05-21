@@ -33,9 +33,9 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response register(String userName, String password){
+    public Response register(String userName, String password, int userAge){
         try{
-            userFacade.register(userName,password);
+            userFacade.register(userName,password,userAge);
             return Response.ok().build();
         }
         catch (Exception e){

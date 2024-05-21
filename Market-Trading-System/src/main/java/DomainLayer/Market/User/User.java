@@ -163,9 +163,9 @@ public class User implements DataItem<String> {
         storePermissionsAndRole.put(storeId, permissions);
     }
 
-    public void addItemToBasket(long basketId, long itemId, long quantity) {
+    public void addItemToBasket(long basketId, long itemId, int quantity) {
         verifyIsLoggedIn();
-        shoppingCart.addItemToBasket(basketId, itemId, quantity);
+        shoppingCart.addItemBasket(basketId, itemId, quantity);
     }
 
     public boolean isRegistered() {
