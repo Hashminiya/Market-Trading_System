@@ -71,7 +71,6 @@ public class Store implements DataItem<Long> {
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
         products.save(newItem);
-
     }
 
     public void addDiscount(List<Long> items, Discount discount){

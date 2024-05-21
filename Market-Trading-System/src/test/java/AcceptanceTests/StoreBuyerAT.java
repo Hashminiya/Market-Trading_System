@@ -1,156 +1,139 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreBuyerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 
 import javax.ws.rs.core.Response;
+
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 public class StoreBuyerAT {
-    final long CATEGORY = 1;
-    final long STORE_ID = 1;
-    final String KEY_WORD = "testKeyword";
-    final String NAME = "testItemName";
 
-    @Mock
-    private IStoreFacade storeFacadeMock;
-
-    @InjectMocks
     private StoreBuyerService storeBuyerService;
-
+    private ServiceFactory serviceFactory;
+    private IStoreFacade storeFacade;
+    long STORE_ID;
+    long ITEM_ID_1;
+    long ITEM_ID_2;
+    long ITEM_ID_3;
+    String STORE_NAME = "storeName";
     @BeforeEach
-    void setUp() {
-        ServiceFactory.initFactory();
-        MockitoAnnotations.openMocks(this);
+    public void setUp() {
+        serviceFactory = ServiceFactory.getServiceFactory();
+        storeFacade = serviceFactory.getStoreFacade();
+        storeBuyerService = StoreBuyerService.getInstance(storeFacade);
+
+        try {
+
+            STORE_ID = storeFacade.createStore("founderId", STORE_NAME, "storeDescription", new InMemoryRepository<Long, Discount>());
+            ITEM_ID_1 = storeFacade.addItemToStore("founderId", STORE_ID, "Laptop", 100,7,"High-end laptop",  List.of("Electronics"));
+            ITEM_ID_2 = storeFacade.addItemToStore("founderId", STORE_ID, "Phone", 150,10,"Smartphone", List.of("Electronics"));
+            ITEM_ID_3 = storeFacade.addItemToStore("founderId", STORE_ID, "Headphones", 50,25,"Noise-cancelling headphones", List.of("Electronics", "Audio"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    // 2.1
     @Test
-    void testGetAllProductsInfoByStore() {
-        HashMap<Long, HashMap<String, String>> expectedResult = new HashMap<>();
-
-        when(storeFacadeMock.getAllProductsInfoByStore(STORE_ID)).thenReturn(expectedResult);
-
-        Response response = storeBuyerService.getAllProductsInfoByStore(STORE_ID);
-
+    public void testGetAllProductsInfoByStore() {
+        Response response = storeBuyerService.getAllProductsInfoByStore(1L);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(expectedResult, response.getEntity());
+
+        Map<Long, String> expectedProducts = new HashMap<>();
+        expectedProducts.put(ITEM_ID_1, "Laptop");
+        expectedProducts.put(ITEM_ID_2, "Phone");
+        expectedProducts.put(ITEM_ID_3, "Headphones");
+
+        assertEquals(expectedProducts, response.getEntity());
     }
 
-    // 2.1
     @Test
-    void testGetAllStoreInfo() {
-        HashMap<Long, HashMap<String, String>> expectedResult = new HashMap<>();
-
-        when(storeFacadeMock.getAllStoreInfo(STORE_ID)).thenReturn(expectedResult);
-
-        Response response = storeBuyerService.getAllStoreInfo(STORE_ID);
-
+    public void testGetAllStoreInfo() {
+        Response response = storeBuyerService.getAllStoreInfo();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(expectedResult, response.getEntity());
+
+        Map<Long, String> expectedStores = new HashMap<>();
+        expectedStores.put(STORE_ID, STORE_NAME);
+
+        assertEquals(expectedStores, response.getEntity());
     }
 
-    // 2.2a + 2.2b
     @Test
-    void testSearchStoreByCategory() {
-        HashMap<Long, String> expectedResult = new HashMap<>();
-
-        when(storeFacadeMock.searchStoreByCategory(CATEGORY)).thenReturn(expectedResult);
-
-        Response response = storeBuyerService.searchStoreByCategory(CATEGORY);
-
-
+    public void testSearchInStoreByCategory() {
+        Response response = storeBuyerService.searchInStoreByCategory(STORE_ID, "Electronics");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(expectedResult, response.getEntity());
+
+        Map<Long, String> expectedProducts = new HashMap<>();
+        expectedProducts.put(ITEM_ID_1, "Laptop");
+        expectedProducts.put(ITEM_ID_2, "Phone");
+        expectedProducts.put(ITEM_ID_3, "Headphones");
+
+        assertEquals(expectedProducts, response.getEntity());
     }
 
-    // 2.2a + 2.2b
     @Test
-    void testSearchItemByCategory() {
-        HashMap<Long, String> expectedResult = new HashMap<>();
-
-        when(storeFacadeMock.searchItemByCategory(CATEGORY)).thenReturn(expectedResult);
-
-        Response response = storeBuyerService.searchItemByCategory(CATEGORY);
-
+    public void testSearchInStoreByKeyWord() {
+        Response response = storeBuyerService.searchInStoreByKeyWord(STORE_ID, "Laptop");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(expectedResult, response.getEntity());
+
+        Map<Long, String> expectedProducts = new HashMap<>();
+        expectedProducts.put(ITEM_ID_1, "Laptop");
+
+        assertEquals(expectedProducts, response.getEntity());
     }
 
-    // 2.2a + 2.2b
     @Test
-    void testSearchStoreByKeyWord() {
-        HashMap<Long, String> expectedResult = new HashMap<>();
-
-        when(storeFacadeMock.searchStoreByKeyWord(KEY_WORD)).thenReturn(expectedResult);
-
-        Response response = storeBuyerService.searchStoreByKeyWord(KEY_WORD);
-
+    public void testSearchInStoreByKeyWordAndCategory() {
+        Response response = storeBuyerService.searchInStoreByKeyWordAndCategory(STORE_ID, "Electronics", "Laptop");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(expectedResult, response.getEntity());
+
+        Map<Long, String> expectedProducts = new HashMap<>();
+        expectedProducts.put(ITEM_ID_1, "Laptop");
+
+        assertEquals(expectedProducts, response.getEntity());
     }
 
-    // 2.2a + 2.2b
     @Test
-    void testSearchItemByKeyWord() {
-        HashMap<Long, String> expectedResult = new HashMap<>();
-
-        when(storeFacadeMock.searchItemByKeyWord(KEY_WORD)).thenReturn(expectedResult);
-
-        Response response = storeBuyerService.searchItemByKeyWord(KEY_WORD);
-
+    public void testSearchGenerallyByCategory() {
+        Response response = storeBuyerService.searchGenerallyByCategory("Electronics");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(expectedResult, response.getEntity());
+
+        Map<Long, String> expectedProducts = new HashMap<>();
+        expectedProducts.put(ITEM_ID_1, "Laptop");
+        expectedProducts.put(ITEM_ID_2, "Phone");
+        expectedProducts.put(ITEM_ID_3, "Headphones");
+
+        assertEquals(expectedProducts, response.getEntity());
     }
 
-    // 2.2a + 2.2b
     @Test
-    void testSearchStoreByName() {
-        HashMap<Long, String> expectedResult = new HashMap<>();
-
-        when(storeFacadeMock.searchStoreByName(NAME)).thenReturn(expectedResult);
-
-        Response response = storeBuyerService.searchStoreByName(NAME);
-
+    public void testSearchGenerallyByKeyWord() {
+        Response response = storeBuyerService.searchGenerallyByKeyWord("Laptop");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(expectedResult, response.getEntity());
+
+        Map<Long, String> expectedProducts = new HashMap<>();
+        expectedProducts.put(ITEM_ID_1, "Laptop");
+
+        assertEquals(expectedProducts, response.getEntity());
     }
 
-    // 2.2a + 2.2b
     @Test
-    void testSearchItemByName() {
-        HashMap<Long, String> expectedResult = new HashMap<>();
-
-        when(storeFacadeMock.searchItemByName(NAME)).thenReturn(expectedResult);
-
-        Response response = storeBuyerService.searchItemByName(NAME);
-
+    public void testSearchGenerallyByKeyWordAndCategory() {
+        Response response = storeBuyerService.searchGenerallyByKeyWordAndCategory("Electronics", "Laptop");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(expectedResult, response.getEntity());
-    }
 
-    // 2.3 - TODO : Implement..
-    @Test
-    void testSavingItemsInShoppingCat()
-    {
+        Map<Long, String> expectedProducts = new HashMap<>();
+        expectedProducts.put(ITEM_ID_1, "Laptop");
 
-    }
-
-    //
-    @Test
-    void testParallelRequests()
-    {
-        // run few threads...
-
+        assertEquals(expectedProducts, response.getEntity());
     }
 }
