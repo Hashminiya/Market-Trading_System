@@ -37,7 +37,6 @@ public class ServiceFactory {
     private ServiceFactory(){
         InMemoryRepository<String, User> user_repo = loadUserRepo();
         userFacadeInstance = IUserFacade.getInstance(user_repo);
-        initFactory();
     }
 
     public static synchronized ServiceFactory getServiceFactory(){

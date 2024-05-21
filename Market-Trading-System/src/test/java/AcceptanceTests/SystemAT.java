@@ -1,11 +1,15 @@
 package AcceptanceTests;
 
+import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
+import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.SystemManager;
 import DomainLayer.Market.User.User;
+import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.User.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +19,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -81,22 +89,70 @@ public class SystemAT {
         @Nested
         class PaymentTest {
 
+            private IUserFacade userFacade;
+            private IStoreFacade storeFacade;
+
+            private String USER_NAME = "UserPayment";
+            private String USER_PW = "UserPW";
+            private String STORE_NAME = "PaymentStore";
+            private final long BASKET_ID = 456L;
+            private final long ITEM_ID = 789L;
+            private final int ITEM_QUANTITY = 2;
+
+            @BeforeEach
+            void setUp()
+            {
+                serviceFactory = ServiceFactory.getServiceFactory();
+                serviceFactory.initFactory();
+                userFacade = serviceFactory.getUserFacade();
+                storeFacade = serviceFactory.getStoreFacade();
+            }
+
             @Test
             public void testSuccessfulPayment() {
-//            // Arrange
-//            MockUserService userService = new MockUserService();
-//            userService.setUserLoggedIn(true);
-//            MockShoppingCart shoppingCart = new MockShoppingCart(true); // Valid shopping cart
-//            MockPaymentService paymentService = new MockPaymentService(true); // Successful payment
-//            TradingSystem tradingSystem = new TradingSystem(userService, paymentService);
-//
-//            // Act
-//            boolean result = tradingSystem.processPayment(shoppingCart);
-//
-//            // Assert
-//            assertTrue(result);
-//            assertTrue(paymentService.isPaymentSuccessful());
-//            assertTrue(shoppingCart.isEmpty()); // Shopping cart emptied
+                // Add item to basket
+                try
+                {
+                    userFacade.register(USER_NAME, USER_PW, 110596);
+                    userFacade.login(USER_NAME, USER_PW);
+                    storeFacade.createStore(USER_NAME, STORE_NAME, "Greate Store!", new InMemoryRepository<Long, Discount>());
+                }
+                catch (Exception exp)
+                {
+                    fail();
+                }
+                userFacade.addItemToBasket(USER_NAME, BASKET_ID, ITEM_ID, ITEM_QUANTITY);
+                verify(any(ShoppingBasket.class), times(1)).addItem(any(),any());
+                // Get items info from store
+                long store_id = getStoreId(STORE_NAME);
+                HashMap<Long, String> itemsInfo = storeFacade.getAllProductsInfoByStore(store_id);
+                assertNotNull(itemsInfo);
+
+                // Checkout shopping cart
+                userFacade.checkoutShoppingCart(USER_NAME);
+                assertEquals(1, items.size(), "Unexpected number of items in the shopping cart");
+
+                // Verify the added item
+                ItemDTO item = items.get(0);
+                assertEquals(ITEM_ID, item.getItemId(), "Incorrect item ID in the shopping cart");
+                assertEquals(ITEM_QUANTITY, item.getQuantity(), "Incorrect quantity in the shopping cart");
+                assertNotNull(item.getName(), "Item name is null");
+                assertNotNull(item.getTotalPrice(), "Total price is null");
+
+            }
+
+            private long getStoreId(String storeName)
+            {
+                // Fetch all store info
+                HashMap<Long, String> allStoreInfo = storeFacade.getAllStoreInfo();
+
+                // Iterate to find the ID of the given store name
+                for (Map.Entry<Long, String> entry : allStoreInfo.entrySet()) {
+                    if (storeName.equals(entry.getValue())) {
+                        return entry.getKey();
+                    }
+                }
+                return 0;
             }
 
             @Test
