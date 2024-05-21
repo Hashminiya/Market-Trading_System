@@ -1,39 +1,39 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.User;
-import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
-import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Store.StoreController;
-import DomainLayer.Market.Purchase.IPurchaseFacade;
-import DomainLayer.Market.Purchase.PurchaseController;
+import ServiceLayer.ServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserManagementAT {
+public class UserAT {
 
     private IUserFacade userFacade;
     private IRepository<String, User> userRepository;
     private IStoreFacade storeFacade;
     private IPurchaseFacade purchaseFacade;
+    private ServiceFactory serviceFactory;
 
     @BeforeEach
     public void setUp() {
+        serviceFactory = ServiceFactory.getServiceFactory();
+        storeFacade = serviceFactory.getStoreFacade();
         userRepository = new InMemoryRepository<>();
-        purchaseFacade = new PurchaseController();
-        storeFacade = new StoreController(new InMemoryRepository<>(), purchaseFacade, new UserController(userRepository, storeFacade, purchaseFacade));
-        userFacade = new UserController(userRepository, storeFacade, purchaseFacade);
+        purchaseFacade = serviceFactory.getPurchaseFacade();
+        userFacade = serviceFactory.getUserFacade();
     }
 
     @Test
@@ -53,7 +53,7 @@ public class UserManagementAT {
 
     @Test
     public void testRegister() throws Exception {
-        userFacade.register("newUser", "password123");
+        userFacade.register("newUser", "password123", 1999);
         User user = userRepository.findById("newUser");
         assertNotNull(user);
         assertEquals("newUser", user.getUserName());
@@ -61,18 +61,18 @@ public class UserManagementAT {
 
     @Test
     public void testLogin() throws Exception {
-        userFacade.register("newUser", "password123");
+        userFacade.register("newUser", "password123", 1999);
         boolean loginResult = userFacade.login("newUser", "password123");
         assertTrue(loginResult);
     }
 
     @Test
     public void testLogout() throws Exception {
-        userFacade.register("newUser", "password123");
+        userFacade.register("newUser", "password123", 1999);
         userFacade.login("newUser", "password123");
         userFacade.logout("newUser");
         User user = userRepository.findById("newUser");
-        assertFalse(user.isLoggedIn());
+        assertFalse(user.isRegister());
     }
 
     @Test
@@ -117,12 +117,10 @@ public class UserManagementAT {
         assertTrue(cart.isEmpty());
 
         // Verify that the purchase was successful by checking the purchase history or other relevant indicators
-        Response purchaseHistoryResponse = storeFacade.viewPurchasesHistory("newUser");
-        assertEquals(Response.Status.OK.getStatusCode(), purchaseHistoryResponse.getStatus());
-        String purchaseHistory = purchaseHistoryResponse.getEntity().toString();
-        assertTrue(purchaseHistory.contains("itemId: 1")); // Adjust based on actual purchase history content
+        HashMap<Long, HashMap<Long, Integer>> purchaseHistory = storeFacade.viewPurchaseHistory("newUser", 1);
+        assertNotNull(purchaseHistory);
+        assertTrue(purchaseHistory.get(1).containsValue("Item:1")); // Adjust based on actual purchase history content
     }
-
 
     @Test
     public void testCheckPermission() throws Exception {
@@ -152,24 +150,25 @@ public class UserManagementAT {
         permission = userFacade.checkPermission("newUser", 1, "CHANGE_POLICY");
         assertFalse(permission);
     }
+
     @Test
     public void testAssignStoreOwner() throws Exception {
         // Register and login the original store owner
-        userFacade.register("originalOwner", "password123");
+        userFacade.register("originalOwner", "password123", 1999);
         userFacade.login("originalOwner", "password123");
 
         // Create a new store by the original owner
         storeFacade.createStore("originalOwner", "Store1", "Description1", new InMemoryRepository<Long, Discount>());
 
         // Register and login a new user
-        userFacade.register("newUser", "password456");
+        userFacade.register("newUser", "password456", 1999);
         userFacade.login("newUser", "password456");
 
         // Assign the new user as a store owner by the original owner
-        userFacade.assignStoreOwner("newUser", "Store1", 1L);
+        userFacade.assignStoreOwner("newUser", 1);
 
         // Check if the new user has the 'OWNER' permission for the store
-        List<String> permissions = userFacade.getUserPermission("newUser", 1L);
+        List<String> permissions = userFacade.getUserPermission("newUser", 1);
         assertTrue(permissions.contains("OWNER"));
     }
 
@@ -183,56 +182,63 @@ public class UserManagementAT {
         storeFacade.createStore("originalOwner", "Store1", "Description1", new InMemoryRepository<Long, Discount>());
 
         // Register and login a new user
-        userFacade.register("newUser", "password456");
+        userFacade.register("newUser", "password456", 1999);
         userFacade.login("newUser", "password456");
 
         // Assign the new user as a store manager by the original owner with specific permissions
-        userFacade.assignStoreManager("newUser", "Store1", 1L, List.of("ADD_ITEM", "REMOVE_ITEM"));
+        userFacade.assignStoreManager("newUser", 1, List.of("ADD_ITEM", "REMOVE_ITEM"));
 
         // Check if the new user has the 'ADD_ITEM' and 'REMOVE_ITEM' permissions for the store
-        List<String> permissions = userFacade.getUserPermission("newUser", 1L);
+        List<String> permissions = userFacade.getUserPermission("newUser", 1);
         assertTrue(permissions.contains("ADD_ITEM"));
         assertTrue(permissions.contains("REMOVE_ITEM"));
     }
 
 
     @Test
-    public void testTerminateGuest() {
+    public void testTerminateGuest() throws Exception {
         String guestName = userFacade.createGuestSession();
         int guestId = Integer.parseInt(guestName.replace("guest", ""));
-        userFacade.terminateGuest(guestId);
+        userFacade.terminateGuestSession("guest");
         assertNull(userRepository.findById(guestName));
     }
 
     @Test
-    public void testAddItemToBasket() {
-        userFacade.register("newUser", "password123", 25);
+    public void testAddItemToBasket() throws Exception {
+        userFacade.register("newUser", "password123", 1999);
         userFacade.login("newUser", "password123");
-        userFacade.addItemToBasket("newUser", 1L, 1L, 3);
+        userFacade.addItemToBasket("newUser", 1, 1, 3);
         String cart = userFacade.viewShoppingCart("newUser");
         assertTrue(cart.contains("itemId: 1, quantity: 3"));
     }
 
     @Test
-    public void testChangeUserPermission() {
+    public void testChangeUserPermission() throws Exception {
+        // Register a new user
         userFacade.register("newUser", "password123", 25);
-        userFacade.changeUserPermission("newUser", 2);
+
+        // Add a permission to the user
+        userFacade.addPermission("newUser", 2, "ASSIGN_MANAGER");
+
+        // Retrieve the user from the repository
         User user = userRepository.findById("newUser");
-        // Additional assertions to verify permission change
+
+        // Verify that the permission has been added to the user
+        assertTrue(user.getStorePermissions(2).contains("ASSIGN_MANAGER"));
     }
 
-//    @Test
-//    public void testIsRegister() throws Exception {
-//        // Create a guest session
-//        String guestUserName = userFacade.createGuestSession();
-//        assertFalse(userFacade.isRegister(guestUserName));
-//
-//        // Register a new user
-//        userFacade.register("newUser", "password123");
-//        assertTrue(userFacade.isRegister("newUser"));
-//
-//        // Ensure the guest user is still not registered
-//        assertFalse(userFacade.isRegister(guestUserName));
-//    }
+    @Test
+    public void testIsRegister() throws Exception {
+        // Create a guest session
+        String guestUserName = userFacade.createGuestSession();
+        assertFalse(userFacade.isRegister(guestUserName));
+
+        // Register a new user
+        userFacade.register("newUser", "password123", 25);
+        assertTrue(userFacade.isRegister("newUser"));
+
+        // Ensure the guest user is still not registered
+        assertFalse(userFacade.isRegister(guestUserName));
+    }
 
 }
