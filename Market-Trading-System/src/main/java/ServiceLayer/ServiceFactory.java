@@ -50,9 +50,9 @@ public class ServiceFactory {
         supplyServiceInstance = SupplyServiceImpl.getInstance();
         paymentServiceProxyInstance = PaymentServiceProxy.getInstance(paymentServiceInstance);
         supplyServiceProxyInstance =  SupplyServiceProxy.getInstance(supplyServiceInstance);
-        purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryRepository<Long, Purchase>(), paymentServiceProxyInstance,supplyServiceProxyInstance);
 
         // Init Facades
+        purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryRepository<Long, Purchase>(), paymentServiceProxyInstance,supplyServiceProxyInstance);
         userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String, User>());
         storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>());
         userFacadeInstance.setStoreFacade(storeFacadeInstance);
