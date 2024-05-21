@@ -151,12 +151,8 @@ public class UserController implements IUserFacade {
         return user;
     }
 
-    public boolean isRegistered(String userName) {
-        return getUser(userName).isRegistered();
-    }
-
     @Override
-    public boolean isRegister(String founderId) {
-        return false;
+    public boolean isRegister(String userName) {
+        return getUser(userName).isRegistered();
     }
 }
