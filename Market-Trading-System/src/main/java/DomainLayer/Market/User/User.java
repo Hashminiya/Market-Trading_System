@@ -33,8 +33,8 @@ public class User implements DataItem<String> {
         this.userAge = userAge;
     }
 
-    public void setUserStates(List<Istate> userStates) {
-        this.userStates = userStates;
+    public void setUserState(Istate state) {
+        this.state = state;
     }
 
     public void setLoggedIn(boolean loggedIn) {
@@ -45,7 +45,6 @@ public class User implements DataItem<String> {
         this.shoppingCart = shoppingCart;
     }
 
-
     public String getUserName() {
         return userName;
     }
@@ -54,13 +53,9 @@ public class User implements DataItem<String> {
         return userAge;
     }
 
-    public List<Istate> getUserStates() {
-        return userStates;
-    }
+    public Istate getUserStates() { return state; }
 
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
+    public boolean isLoggedIn() { return loggedIn; }
 
     public ShoppingCart getShoppingCart() {
         return shoppingCart;
