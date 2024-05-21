@@ -7,7 +7,7 @@ public interface IUserFacade {
     public String createGuestSession();
     public boolean login(String userName, String password) throws Exception;
     public void terminateGuestSession(String userName);
-    public void register(String userName, String password, int userAge) throws Exception;
+    public void register(String userName, String password, int dateOfBirth) throws Exception;
     public void logout(String userName);
     public String viewShoppingCart(String userName);
     public void modifyShoppingCart(String userName);
