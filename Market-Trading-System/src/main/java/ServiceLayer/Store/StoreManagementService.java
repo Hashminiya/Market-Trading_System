@@ -102,6 +102,16 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
+    public Response viewInventory(String userId, Long storeId) {
+        try {
+            return Response.ok().entity(storeFacade.viewInventoryByStoreOwner(userId, storeId)).build();
+        }
+        catch (Exception ex){
+            return Response.status(500).entity(ex.getMessage()).build();
+        }
+    }
+
+    @Override
     public Response viewPurchasesHistory(String userId, Long storeId) {
         try {
             return Response.ok().entity(storeFacade.viewPurchaseHistory(userId, storeId)).build();
@@ -123,9 +133,9 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response assignStoreManager(String userId, long storeId, String newManagerId) {
+    public Response assignStoreManager(String userId, long storeId, String newManagerI, List<String> permissions) {
         try {
-            storeFacade.assignStoreManager(userId, storeId, newManagerId);
+            storeFacade.assignStoreManager(userId, storeId, newManagerI, permissions);
             return Response.ok().build();
         }
         catch (Exception ex){

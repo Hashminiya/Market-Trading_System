@@ -27,6 +27,11 @@ public class StoreController implements IStoreFacade{
     private String DELETE_ITEM = "DELETE_ITEM";
     private String ASSIGN_OWNER = "ASSIGN_OWNER";
     private String ASSIGN_MANAGER = "ASSIGN_MANAGER";
+    private String VIEW_STORE_MANAGEMENT_INFO = "VIEW_STORE_MANAGEMENT_INFO";
+    private String VIEW_PURCHASE_HISTORY = "VIEW_PURCHASE_HISTORY";
+    private String CHANGE_POLICY = "CHANGE_POLICY";
+    private String CHANGE_DISCOUNT_TYPE = "CHANGE_DISCOUNT_TYPE";
+    private String REMOVE_STORE = "REMOVE_STORE";
 
 
     public StoreController(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
@@ -40,18 +45,18 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts) {
-        userFacade.checkPermission(founderId, StorePermission.)
+    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts) throws Exception{
+        if(userFacade.isRegister(founderId))
+            throw new Exception("User isn't registered, so can't create new store");
         long storeId = generateStoreId();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
         storesRepo.save(newStore);
     }
 
     @Override
-    public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId) {
-        //TODO: check the user is the store owner- decide if he must be store owner
-        if(userFacade.checkPermission(userId, VIEW_INVENTORY))
-            throw new CertificateException("User doesn't has permission to view the store inventory");
+    public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId)throws Exception {
+        if(userFacade.checkPermission(userId, storeId, VIEW_INVENTORY))
+            throw new Exception("User doesn't has permission to view the store inventory");
         Store store = storesRepo.findById(storeId);
         List<Item> inventory = store.viewInventory();
         HashMap<Long, Integer> itemsInfo = new HashMap<>();
@@ -62,25 +67,25 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories) {
-        if(userFacade.checkPermission(userId, ADD_ITEM))
-            throw new CertificateException("User doesn't has permission to add item to the store");
+    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories) throws Exception{
+        if(userFacade.checkPermission(userId, storeId, ADD_ITEM))
+            throw new Exception("User doesn't has permission to add item to the store");
         Store store = storesRepo.findById(storeId);
         store.addItem(IdGenerator.generateId(), itemName, itemPrice, stockAmount, description, categories);
     }
 
     @Override
-    public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount) {
-        if(userFacade.checkPermission(userId, UPDATE_ITEM))
-            throw new CertificateException("User doesn't has permission to update item in the store");
+    public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount) throws Exception{
+        if(userFacade.checkPermission(userId, storeId, UPDATE_ITEM))
+            throw new Exception("User doesn't has permission to update item in the store");
         Store store = storesRepo.findById(storeId);
         store.updateItem(itemId, newName, newPrice, stockAmount);
     }
 
     @Override
-    public void deleteItem(String userId, long storeId, long itemId) {
-        if(userFacade.checkPermission(userId, DELETE_ITEM))
-            throw new CertificateException("User doesn't has permission to delete item in the store");
+    public void deleteItem(String userId, long storeId, long itemId) throws Exception{
+        if(userFacade.checkPermission(userId, storeId, DELETE_ITEM))
+            throw new Exception("User doesn't has permission to delete item in the store");
         Store store = storesRepo.findById(storeId);
         store.deleteItem(itemId);
     }
@@ -97,45 +102,56 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void assignStoreOwner(String userId, long storeId, String newOwnerId){
-        if(userFacade.checkPermission(userId, ASSIGN_OWNER))
-            throw new CertificateException("User doesn't has permission to update item in the store");
+    public void assignStoreOwner(String userId, long storeId, String newOwnerId)throws Exception{
+        if(userFacade.checkPermission(userId, storeId, ASSIGN_OWNER))
+            throw new Exception("User doesn't has permission to assign store owner");
         Store store = storesRepo.findById(storeId);
-        userFacade.assignStoreOwner(userId, storeId);
+        userFacade.assignStoreOwner(newOwnerId, storeId);
         store.assignOwner(newOwnerId);
     }
 
     @Override
-    public void assignStoreManager(String userId, long storeId, String newManagerId List<String> permissions){
-        if(userFacade.checkPermission(userId, ASSIGN_MANAGER))
-            throw new CertificateException("User doesn't has permission to update item in the store");
+    public void assignStoreManager(String userId, long storeId, String newManagerId, List<String> permissions)throws Exception{
+        if(userFacade.checkPermission(userId, storeId, ASSIGN_MANAGER))
+            throw new Exception("User doesn't has permission to assign store manager");
         Store store = storesRepo.findById(storeId);
-        userFacade.assignStoreManager(userId, storeId);
+        userFacade.assignStoreManager(newManagerId, storeId, permissions);
         store.assignManager(newManagerId);
     }
 
     @Override
-    public void removeStore(String userId, long storeId) {
-        //TODO: check the user is the founder
+    public void removeStore(String userId, long storeId) throws Exception{
+        if(userFacade.checkPermission(userId, storeId, REMOVE_STORE))
+            throw new Exception("User doesn't has permission to remove store");
         storesRepo.delete(storeId);
     }
 
     @Override
-    public List<String> viewStoreManagementInfo(String userId, long storeId) {
-        //TODO: check the user is the store owner
+    public HashMap<String, List<String>> viewStoreManagementInfo(String userId, long storeId) throws Exception{
+        if(userFacade.checkPermission(userId, storeId, VIEW_STORE_MANAGEMENT_INFO))
+            throw new Exception("User doesn't has permission to view the store management information");
         Store store = storesRepo.findById(storeId);
         List<String> managementIds = store.getManagers();
         managementIds.addAll(store.getOwners());
-        return managementIds;
+        HashMap<String, List<String>> managementInfo = new HashMap<>();
+        for(String id: managementIds){
+            managementInfo.put(id, userFacade.getUserPermission(id, storeId));
+        }
+        return managementInfo;
     }
 
     @Override
-    public HashMap<Long, Integer> viewPurchaseHistory(String userId, long storeId) {
-        //TODO: check the user is the store owner
-        List<ItemDTO> itemDTOs = purchaseFacade.getPurchasesByStore(storeId);
-        HashMap<Long, Integer> result = new HashMap<>();
-        for(ItemDTO item: itemDTOs){
-            result.put(item.getItemId(), item.getQuantity());
+    public HashMap<Long, HashMap<Long, Integer>> viewPurchaseHistory(String userId, long storeId) throws Exception{
+        if(userFacade.checkPermission(userId, storeId, VIEW_PURCHASE_HISTORY))
+            throw new Exception("User doesn't has permission to view the store purchase history");
+        //TODO: alter according to purchase new signature
+        HashMap<Long, List<ItemDTO>> purchases = purchaseFacade.getPurchasesByStore(storeId);
+        HashMap<Long, HashMap<Long, Integer>> result = new HashMap<>();
+        for(Long purchase: purchases.keySet()){
+            result.put(purchase, new HashMap<>());
+            for(ItemDTO itemDTO: purchases.get(purchase)) {
+                result.get(purchase).put(itemDTO.getItemId(), itemDTO.getQuantity());
+            }
         }
         return result;
     }

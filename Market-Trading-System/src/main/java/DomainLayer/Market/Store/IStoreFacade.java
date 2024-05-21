@@ -16,18 +16,18 @@ public interface IStoreFacade {
     public static IStoreFacade create(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
         return new StoreController(storesRepo, purchaseFacade, userFacade);
     }
-    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts);
-    public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId);
-    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories);
-    public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount);
-    public void deleteItem(String userId, long storeId, long itemId);
+    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts)throws Exception;
+    public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId) throws Exception;
+    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories)throws Exception;
+    public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount)throws Exception;
+    public void deleteItem(String userId, long storeId, long itemId)throws Exception;
     public void changeStorePolicy(String userId, long storeId);
     public void changeDiscountType(String userId, long storeId, String newType);
-    public void assignStoreOwner(String userId, long storeId, String newOwnerId);
-    public void assignStoreManager(String userId, long storeId, String newManagerId);
-    public void removeStore(String userId, long storeId);
-    public List<String> viewStoreManagementInfo(String userId, long storeId);
-    public HashMap<Long, Integer> viewPurchaseHistory(String userId, long storeId);
+    public void assignStoreOwner(String userId, long storeId, String newOwnerId)throws Exception;
+    public void assignStoreManager(String userId, long storeId, String newManagerId, List<String> permissions)throws Exception;
+    public void removeStore(String userId, long storeId)throws Exception;
+    public HashMap<String, List<String>> viewStoreManagementInfo(String userId, long storeId)throws Exception;
+    public HashMap<Long, HashMap<Long, Integer>> viewPurchaseHistory(String userId, long storeId)throws Exception;
     public HashMap<Long, String> getAllProductsInfoByStore(long storeId);
     public HashMap<Long, String> getAllStoreInfo();
     public HashMap<Long,String> searchInStoreByCategory(long storeId, String category);

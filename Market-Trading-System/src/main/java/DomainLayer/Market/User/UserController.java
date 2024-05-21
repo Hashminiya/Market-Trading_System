@@ -107,7 +107,7 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public void assignStoreManager(String userName, long storeId) {
+    public void assignStoreManager(String userName, long storeId, List<String> permissions) {
         //TODO implement
     }
 
