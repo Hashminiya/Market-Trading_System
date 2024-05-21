@@ -7,6 +7,7 @@ import DomainLayer.Market.Purchase.Purchase;
 import DomainLayer.Market.Purchase.PurchaseController;
 import DomainLayer.Market.Purchase.SupplyServiceProxy;
 import DomainLayer.Market.Util.IRepository;
+import ServiceLayer.ServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,12 +23,13 @@ public class CheckoutUT {
 
     @BeforeEach
     void setUp(){
-//        ServiceFactory
+
     }
 
     @Test
     void checkout_ValidItems_SuccessfullyCheckedOut() {
         // Mocking dependencies
+        ServiceFactory  serviceFactory= ServiceFactory.getServiceFactory();
         IRepository<Long, Purchase> purchaseRepo = mock(IRepository.class);
         PaymentServiceProxy paymentServiceProxy = mock(PaymentServiceProxy.class);
         SupplyServiceProxy supplyServiceProxy = mock(SupplyServiceProxy.class);
@@ -38,9 +40,8 @@ public class CheckoutUT {
         items.add(new ItemDTO(98142, "Bamba",40,8282,1000));
 
         // Creating instance of PurchaseController
-        PurchaseController purchaseController = new PurchaseController(purchaseRepo, paymentServiceProxy,
-                Mockito.mock(PaymentServiceImpl.class),
-                supplyServiceProxy, Mockito.mock(SupplyServiceImpl.class));
+        PurchaseController purchaseController =  PurchaseController.getInstance(purchaseRepo, paymentServiceProxy,
+                supplyServiceProxy);
 
         // Mocking behavior of paymentServiceProxy
         when(paymentServiceProxy.validateCreditCard(anyString(), any(Date.class), anyString(), anyDouble())).thenReturn(true);
@@ -60,9 +61,8 @@ public class CheckoutUT {
         PaymentServiceProxy paymentServiceProxy = mock(PaymentServiceProxy.class);
         SupplyServiceProxy supplyServiceProxy = mock(SupplyServiceProxy.class);
 
-        PurchaseController purchaseController = new PurchaseController(purchaseRepo, paymentServiceProxy,
-                Mockito.mock(PaymentServiceImpl.class),
-                supplyServiceProxy, Mockito.mock(SupplyServiceImpl.class));
+        PurchaseController purchaseController =  PurchaseController.getInstance(purchaseRepo, paymentServiceProxy,
+                supplyServiceProxy);
 
         List<ItemDTO> items = new ArrayList<>();
 

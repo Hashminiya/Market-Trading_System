@@ -32,9 +32,8 @@ public class PurchaseRepoUT {
         SupplyServiceProxy supplyServiceProxy = mock(SupplyServiceProxy.class);
 
         // Creating instance of PurchaseController
-        PurchaseController purchaseController = new PurchaseController(purchaseRepo, paymentServiceProxy,
-                Mockito.mock(PaymentServiceImpl.class),
-                supplyServiceProxy, Mockito.mock(SupplyServiceImpl.class));
+        PurchaseController purchaseController =  PurchaseController.getInstance(purchaseRepo, paymentServiceProxy,
+                supplyServiceProxy);
 
         // Mocking behavior of purchaseRepo
         List<Purchase> purchaseList = new ArrayList<>();
@@ -57,9 +56,8 @@ public class PurchaseRepoUT {
         SupplyServiceProxy supplyServiceProxy = mock(SupplyServiceProxy.class);
 
         // Creating instance of PurchaseController
-        PurchaseController purchaseController = new PurchaseController(purchaseRepo, paymentServiceProxy,
-                Mockito.mock(PaymentServiceImpl.class),
-                supplyServiceProxy, Mockito.mock(SupplyServiceImpl.class));
+        PurchaseController purchaseController =  PurchaseController.getInstance(purchaseRepo, paymentServiceProxy,
+                supplyServiceProxy);
 
         // Mocking behavior of inventoryReduceItems
         List<ItemDTO> inventoryReduceItems = createItemsList(8282);
