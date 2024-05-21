@@ -57,8 +57,10 @@ public class ShoppingCart {
 
     private ShoppingBasket getShoppingBasket(long basketId){
         ShoppingBasket sb = baskets.findById(basketId);
-        if(sb == null)
-            throw new RuntimeException("no basket exist with this id");
+        if(sb == null) {
+            sb = new ShoppingBasket(basketId);
+            baskets.save(sb);
+        }
         return sb;
     }
 

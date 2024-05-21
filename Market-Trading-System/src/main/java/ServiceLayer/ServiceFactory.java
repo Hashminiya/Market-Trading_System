@@ -16,6 +16,8 @@ import ServiceLayer.User.UserService;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
 
+import javax.imageio.stream.ImageInputStreamImpl;
+
 public class ServiceFactory {
     // Controllers
     private static IStoreFacade storeFacadeInstance;
@@ -35,8 +37,14 @@ public class ServiceFactory {
     private static ServiceFactory serviceFactoryInstance;
 
     private ServiceFactory(){
-        InMemoryRepository<String, User> user_repo = loadUserRepo();
+        InMemoryRepository<String, User> user_repo = new InMemoryRepository<String,User>();
         userFacadeInstance = IUserFacade.getInstance(user_repo);
+        try {
+            loadUserRepo();
+        }
+        catch (Exception exception){
+            // Do nothing for now..
+        }
     }
 
     public static synchronized ServiceFactory getServiceFactory(){
@@ -55,8 +63,6 @@ public class ServiceFactory {
 
         // Init Facades
         purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryRepository<Long, Purchase>(), paymentServiceProxyInstance,supplyServiceProxyInstance);
-        InMemoryRepository<String, User> user_repo = loadUserRepo();
-        userFacadeInstance = IUserFacade.getInstance(user_repo);
         storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>());
         userFacadeInstance.setStoreFacade(storeFacadeInstance);
         userFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
@@ -69,12 +75,9 @@ public class ServiceFactory {
         userServiceInstance = UserService.getInstance(userFacadeInstance);
     }
 
-    private static InMemoryRepository<String, User> loadUserRepo() {
-        InMemoryRepository<String, User> userRepo = new InMemoryRepository<>();
+    private static void loadUserRepo() throws Exception{
         SystemManager systemManager = SystemManager.getInstance();
-        userRepo.save(systemManager);
-
-        return userRepo;
+        userFacadeInstance.register(systemManager.getUserName(), systemManager.getPassword(), systemManager.getUserAge());
     }
 
     public IStoreFacade getStoreFacade() {
