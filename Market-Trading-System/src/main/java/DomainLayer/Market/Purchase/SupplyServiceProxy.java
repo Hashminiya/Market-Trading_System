@@ -14,7 +14,7 @@ public class SupplyServiceProxy implements ISupplyService {
         this.supplyService = supplyService;
     }
 
-    public static SupplyServiceProxy getInstance(SupplyServiceImpl supplyServiceInstance) {
+    public static synchronized SupplyServiceProxy getInstance(SupplyServiceImpl supplyServiceInstance) {
         if(instance == null) {
             instance = new SupplyServiceProxy(supplyServiceInstance);
         }

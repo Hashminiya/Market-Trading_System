@@ -8,7 +8,7 @@ public class SupplyServiceImpl implements ISupplyService {
 
     private SupplyServiceImpl() {}
 
-    public static SupplyServiceImpl getInstance() {
+    public static synchronized SupplyServiceImpl getInstance() {
         if(instance == null) {
             instance = new SupplyServiceImpl();
         }

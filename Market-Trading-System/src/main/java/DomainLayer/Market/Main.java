@@ -12,7 +12,7 @@ public class Main {
 
         // Command-line interface
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Hey Ish Yakar, The system is empty please enter as admin, Welcome to the Market System Manager CLI!");
+        System.out.println("Welcome to the Market System Manager CLI!");
         System.out.println("Do you want to initialize the system? (yes/no)");
         String userInput = scanner.nextLine().trim().toLowerCase();
 

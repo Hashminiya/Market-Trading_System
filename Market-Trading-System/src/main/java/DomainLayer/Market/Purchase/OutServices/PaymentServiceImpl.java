@@ -8,7 +8,9 @@ import java.util.Date;
 public class PaymentServiceImpl implements IPaymentService {
     private static PaymentServiceImpl instance;
 
-    public static PaymentServiceImpl getInstance() {
+    private PaymentServiceImpl(){}
+
+    public static synchronized PaymentServiceImpl getInstance() {
         if(instance == null) {
             instance = new PaymentServiceImpl();
         }

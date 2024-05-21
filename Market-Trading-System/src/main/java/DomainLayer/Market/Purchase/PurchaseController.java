@@ -33,7 +33,7 @@ public class PurchaseController implements IPurchaseFacade {
         inventoryReduceItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
     }
 
-    public static PurchaseController getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+    public static synchronized PurchaseController getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
         if (purchaseControllerInstance == null) {
             purchaseControllerInstance = new PurchaseController(purchaseRepo, paymentServiceProxy, supplyServiceProxy);
         }

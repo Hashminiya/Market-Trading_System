@@ -11,14 +11,14 @@ public class PaymentServiceProxy implements IPaymentService {
     private static PaymentServiceProxy instance;
     private PaymentServiceImpl paymentService;
 
-    public static PaymentServiceProxy getInstance(PaymentServiceImpl paymentService) {
+    public static synchronized PaymentServiceProxy getInstance(PaymentServiceImpl paymentService) {
         if(instance == null) {
             instance = new PaymentServiceProxy(paymentService);
         }
         return instance;
     }
 
-    public PaymentServiceProxy(PaymentServiceImpl paymentService) {
+    private PaymentServiceProxy(PaymentServiceImpl paymentService) {
         this.paymentService = paymentService;
     }
 
