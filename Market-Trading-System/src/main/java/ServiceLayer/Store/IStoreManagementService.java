@@ -1,12 +1,13 @@
 package ServiceLayer.Store;
 
+import DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Util.IRepository;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
 
 public interface IStoreManagementService {
-    public Response createStore(String founderId, String storeName, String storeDescription, IRepository<Long,Discount> repository);
+    public Response createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> repository);
     public Response addItemToStore(String userId, long storeId, String itemName, String description ,double itemPrice, int stockAmount, List<String> categories);
     public Response updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int newAmount);
     public Response deleteItem(String userId, long storeId, long itemId);

@@ -1,5 +1,6 @@
 package ServiceLayer.Store;
 
+import DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IRepository;
 
@@ -13,7 +14,7 @@ public class StoreManagementService implements IStoreManagementService{
     }
 
     @Override
-    public Response createStore(String founderId, String storeName, String storeDescription, IRepository<Long,Discount> repository) {
+    public Response createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> repository) {
         try {
             storeFacade.createStore(founderId,storeName,storeDescription,repository);
             return Response.ok().build();
