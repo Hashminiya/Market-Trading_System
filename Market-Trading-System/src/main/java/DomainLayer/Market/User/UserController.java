@@ -1,39 +1,38 @@
 package DomainLayer.Market.User;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Util.InMemoryRepository;
+import DomainLayer.Market.Util.StorePermission;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Market.ShoppingBasket;
-import DomainLayer.Market.Util.StorePermission;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
-    private static IStoreFacade storeFacade;
     private final IRepository<String, User> users;
-    private final IStoreFacade storeFacade;
-    private final IPurchaseFacade purchaseFacade;
+    private IStoreFacade storeFacade;
+    private IPurchaseFacade purchaseFacade;
     private final BCryptPasswordEncoder passwordEncoder;
     private int guestId ;
 
-    private UserController(IRepository<String, User> users, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade) {
+    private UserController(IRepository<String, User> users) {
 
         this.users = users;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.guestId = 0;
-        this.storeFacade = storeFacade;
-        this.purchaseFacade = purchaseFacade;
     }
 
     @Override
     public void setStoreFacade(IStoreFacade storeFacadeInstance) {
         storeFacade = storeFacadeInstance;
+    }
+
+    public void setPurchaseFacade(IPurchaseFacade purchaseFacade) {
+        this.purchaseFacade = purchaseFacade;
     }
 
     public static synchronized UserController getInstance(IRepository<String, User> users) {
@@ -49,7 +48,7 @@ public class UserController implements IUserFacade {
         long id = generateId();
         String userName = "guest" + id;
         Istate guest = new Guest();
-        User user = new User(userName, null, 0, guest, true, new ShoppingCart());//TODO: Shopping cart should get IRepository as parameter.
+        User user = new User(userName, null, 0, guest, true, new ShoppingCart(new InMemoryRepository<>()));//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
         return userName;
     }
@@ -65,7 +64,7 @@ public class UserController implements IUserFacade {
         }
         String encodedPassword = passwordEncoder.encode(password);
         Istate registered = new Registered();
-        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart());//TODO: Shopping cart should get IRepository as parameter.
+        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart(new InMemoryRepository<>()));//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
     }
 
@@ -88,30 +87,17 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public void modifyShoppingCart(String userName) {
-
-    }
-
-    @Override
-    public void checkoutShoppingCart(String userName) {
-
-    }
-
-    @Override
-    public boolean checkPermission(String userName, long storeId, String permission) {
-        return false;
-    }
-
-    public void modifyShoppingCart(String userName, int storeNum, int productNum, int newQuantity) {
+    public void modifyShoppingCart(String userName, long storeId, long itemId, int newQuantity) {
         User user = getUser(userName);
-        user.modifyShoppingCart(storeNum, productNum, newQuantity);
+        user.modifyShoppingCart(storeId, itemId, newQuantity);
     }
 
+    @Override
     public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) {
         User user = getUser(userName);
         List<ItemDTO> items = user.checkoutShoppingCart(this.storeFacade, discountCode);
-        double totalAmount = 0;//TODO: call method to calculate total amount
-        purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items);
+        double totalAmount = user.getShoppingCart().getShoppingCartPrice();
+        purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items, totalAmount);
         storeFacade.purchaseOccurs();
     }
 
@@ -128,30 +114,33 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public List<String> getUserPermission(String userName, long storeId) {
-        return null;
-    }
-
-    @Override
-    public boolean checkPermission(String userName) {
-        return false;
-    }
-
-    @Override
-    public void terminateGuest(int guestID) {
-        //TODO: implement
-    }
-
-
-    @Override
     public void addItemToBasket(String userName,long basketId, long itemId, int quantity) {
         User user = getUser(userName);
         user.addItemToBasket(basketId, itemId, quantity);
     }
 
     @Override
-    public void changeUserPermission(String userName, int permission) {
+    public void addPermission(String userName, long storeId, String permission) {
+        User user = getUser(userName);
+        user.addPermission(storeId, StorePermission.valueOf(permission));
+    }
 
+    @Override
+    public void removePermission(String userName, long storeId, String permission) {
+        User user = getUser(userName);
+        user.removePermission(storeId, StorePermission.valueOf(permission));
+    }
+
+    @Override
+    public boolean checkPermission(String userName, long storeId, String permission) {
+        User user = getUser(userName);
+        return user.checkPermission(storeId, StorePermission.valueOf(permission));
+    }
+
+    @Override
+    public List<String> getUserPermission(String userName, long storeId) {
+        User user = getUser(userName);
+        return user.getStorePermissions(storeId);
     }
 
     private int generateId() {
@@ -168,6 +157,6 @@ public class UserController implements IUserFacade {
 
     @Override
     public boolean isRegister(String userName) {
-        return getUser(userName).isRegistered();
+        return getUser(userName).isRegister();
     }
 }
