@@ -123,11 +123,6 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public List<StorePermission> getUserPermission(String userName) {
-        return null;
-    }
-
-    @Override
     public void terminateGuest(int guestID) {
         //TODO: implement
     }
