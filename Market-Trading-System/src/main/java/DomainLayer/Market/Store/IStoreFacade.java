@@ -17,9 +17,9 @@ public interface IStoreFacade {
     }
     public void setUserFacade(IUserFacade userFacade);
     public void setPurchaseFacade(IPurchaseFacade purchaseFacadeInstance);
-    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts)throws Exception;
+    public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts)throws Exception;
     public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId) throws Exception;
-    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories)throws Exception;
+    public long addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories)throws Exception;
     public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount)throws Exception;
     public void deleteItem(String userId, long storeId, long itemId)throws Exception;
     public void changeStorePolicy(String userId, long storeId);
