@@ -142,8 +142,7 @@ public class UserControllerUT {
     void testCheckPermissionWithStoreId() {
         String userName = USERNAME_TEST;
         Long storeId = 1L;
-        String permission = "ASSIGN_OWNER";
-        boolean hasPermission = userController.checkPermission(userName, storeId, permission);
+        boolean hasPermission = userController.checkPermission(userName, storeId);
         assertFalse(hasPermission);
     }
 

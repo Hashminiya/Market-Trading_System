@@ -31,7 +31,7 @@ public class ShoppingCart {
         sb.updateItemQuantity(itemId,quantity);
     }
 
-    public void addItemBasket(long basketId, long itemId, int quantity){//Noam Gilad: Maybe change 'addItemBasket' to 'addItemToBasket'?
+    public void addItemBasket(long basketId, long itemId, int quantity){
         ShoppingBasket sb = getShoppingBasket(basketId);
         sb.addItem(itemId,quantity);
     }
