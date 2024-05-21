@@ -41,7 +41,6 @@ public class PurchaseController implements IPurchaseFacade {
 
         inventoryReduceItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
 
-
     }
 
     @Override
