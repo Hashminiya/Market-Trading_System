@@ -17,44 +17,39 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class PurchaseController implements IPurchaseFacade {
+    private static PurchaseController purchaseControllerInstance;
+    private final BlockingQueue<ItemDTO> inventoryReduceItems; // queue to remove products from inventory
+    private final IRepository<Long,Purchase> purchaseRepo;
 
-    private BlockingQueue<ItemDTO> inventoryReduceItems; // queue to remove products from inventory
-
-    private IRepository<Long,Purchase> purchaseRepo;
-
-    private PaymentServiceProxy paymentServiceProxy;
-    private SupplyServiceProxy supplyServiceProxy;
-
-    private PaymentServiceImpl paymentServiceImpl;
-    private SupplyServiceImpl supplyServiceImpl;
+    private final PaymentServiceProxy paymentServiceProxy;
+    private final SupplyServiceProxy supplyServiceProxy;
 
 
-    public PurchaseController(IRepository<Long,Purchase> purchaseRepo,PaymentServiceProxy paymentServiceProxy,PaymentServiceImpl paymentServiceImpl,
-                              SupplyServiceProxy supplyServiceProxy,SupplyServiceImpl supplyServiceImpl) {
-
-        this.purchaseRepo=purchaseRepo;
-
-        this.paymentServiceProxy=paymentServiceProxy;
-        this.paymentServiceImpl=paymentServiceImpl;
-        this.supplyServiceProxy=supplyServiceProxy;
-        this.supplyServiceImpl=supplyServiceImpl;
+    private PurchaseController(IRepository<Long,Purchase> purchaseRepo,PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+        this.purchaseRepo = purchaseRepo;
+        this.paymentServiceProxy = paymentServiceProxy;
+        this.supplyServiceProxy = supplyServiceProxy;
 
         inventoryReduceItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
+    }
 
+    public static synchronized PurchaseController getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+        if (purchaseControllerInstance == null) {
+            purchaseControllerInstance = new PurchaseController(purchaseRepo, paymentServiceProxy, supplyServiceProxy);
+        }
+        return purchaseControllerInstance;
     }
 
     @Override
     public void checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList,double totalAmount) {
-        if(purchaseItemsList.size()==0)
+        if(purchaseItemsList.isEmpty())
             throw new RuntimeException("No items for checkout");
 
         Long purchaseId = IdGenerator.generateId();
         Purchase purchase = new Purchase(userID,totalAmount,purchaseId,purchaseItemsList,paymentServiceProxy, supplyServiceProxy);
         purchase.checkout(creditCard, expiryDate, cvv);
         purchaseRepo.save(purchase);
-        for (ItemDTO item: purchaseItemsList){
-            inventoryReduceItems.add(item);
-        }
+        inventoryReduceItems.addAll(purchaseItemsList);
     }
 
     @Override
@@ -63,7 +58,7 @@ public class PurchaseController implements IPurchaseFacade {
         List<Purchase> purchaseList = purchaseRepo.findAll();
         for (Purchase purchase:purchaseList){
            List<ItemDTO> itemsList = purchase.getItemByStore(storeId);
-           if(itemsList.size()>0) {
+           if(!itemsList.isEmpty()) {
                toRet.put(purchase.getId(), itemsList);
            }
         }
@@ -73,9 +68,9 @@ public class PurchaseController implements IPurchaseFacade {
     @Override
     public synchronized List<ItemDTO> getPurchasedItems() {
         List<ItemDTO> purchasedItems = new ArrayList<>();
-        if (inventoryReduceItems.size() == 0)
+        if (inventoryReduceItems.isEmpty())
             throw new RuntimeException("There are no purchased items waiting to reduce from inventory");
-        while (inventoryReduceItems.size() > 0)
+        while (!inventoryReduceItems.isEmpty())
             purchasedItems.add(inventoryReduceItems.remove());
         return purchasedItems;
     }
