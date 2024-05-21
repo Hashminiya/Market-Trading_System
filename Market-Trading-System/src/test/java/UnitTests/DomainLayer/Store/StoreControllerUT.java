@@ -54,7 +54,7 @@ public class StoreControllerUT {
 
     @Test
     void testCreateStore() throws Exception {
-        when(userFacadeMock.isRegistered(FOUNDER_ID)).thenReturn(true);
+        when(userFacadeMock.isRegister(FOUNDER_ID)).thenReturn(true);
 
         storeFacade.createStore(FOUNDER_ID, "storeName", "storeDescription", discountRepoMock);
 
