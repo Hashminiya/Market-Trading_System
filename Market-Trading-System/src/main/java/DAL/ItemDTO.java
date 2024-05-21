@@ -1,16 +1,15 @@
 package DAL;
 
+import DomainLayer.Market.Util.DataItem;
+
 import java.util.Date;
 
-public class ItemDTO {
+public class ItemDTO implements DataItem <Long>{
     private long storeId;
     private double totalPrice;
     private int quantity;
     private String itemName;
     private long itemId;
-    private Date purchaseDate;
-
-    public Date getPurchaseDate() {return purchaseDate;}
 
     public long getStoreId() {
         return storeId;
@@ -24,11 +23,17 @@ public class ItemDTO {
         return quantity;
     }
 
-    public String getItemName() {
-        return itemName;
-    }
-
     public long getItemId() {
         return itemId;
+    }
+
+    @Override
+    public Long getId() {
+        return itemId;
+    }
+
+    @Override
+    public String getName() {
+        return itemName;
     }
 }
