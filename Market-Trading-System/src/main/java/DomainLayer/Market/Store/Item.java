@@ -3,6 +3,8 @@ package DomainLayer.Market.Store;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
 
+import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Item implements DataItem<Long> {
@@ -40,12 +42,14 @@ public class Item implements DataItem<Long> {
         return description;
     }
 
-    public double getCurrentPrice(){
-        double price = this.price;
+    public double getCurrentPrice(String code) throws Exception {
+        double currentPrice = this.price;
         for (Discount discount :discounts.findAll()){
-            ///TODO decide if discount nee to be activated and calculate new price accordingly
+            if(discount.isValid(null)){
+                currentPrice = discount.calculatePrice(currentPrice, code);
+            }
         }
-        return price;
+        return currentPrice;
     }
 
     public int getQuantity() {

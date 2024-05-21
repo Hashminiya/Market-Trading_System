@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response;
 
 public interface IStoreBuyerService {
     public Response getAllProductsInfoByStore(long storeId);
-    public Response getAllStoreInfo(long storeId);
+    public Response getAllStoreInfo();
     public Response searchInStoreByCategory(long storeId, String category);
     public Response searchInStoreByKeyWord(long storeId, String keyWord);
     public Response searchInStoreByKeyWordAndCategory(long storeId, String category, String keyWord);

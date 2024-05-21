@@ -45,6 +45,10 @@ public class UserController implements IUserFacade {
         users.delete(userName);
     }
 
+    @Override
+    public void register(String userName, String password) {
+
+    }
 
     public void register(String userName,String password, int userAge) throws Exception {
         if (users.findById(userName) != null) {

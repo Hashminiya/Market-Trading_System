@@ -1,24 +1,28 @@
 package DomainLayer.Market.Store;
 
 
+import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Store implements DataItem<Long> {
     private final Long id;
-    private Long founderId;
+    private String founderId;
     private String name;
     private String description;
     private final List<String> owners;
     private final List<String> managers;
     private final InMemoryRepositoryStore products;
     private IRepository<Long , Discount> discounts;
-    public Store(Long id, Long founderId, String name, String description, IRepository<Long, Discount> discounts){
+
+    public Store(Long id, String founderId, String name, String description, IRepository<Long, Discount> discounts){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
@@ -61,7 +65,7 @@ public class Store implements DataItem<Long> {
         return products.findAll();
     }
 
-    public void addItem(Long itemId,String name, double price, int quantity, String description, List<String> categories){
+    public void addItem(Long itemId, String name, double price, int quantity, String description, List<String> categories){
         Item newItem = new Item(itemId, name, description ,new InMemoryRepository<Long,Discount>(), categories);
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
@@ -122,5 +126,22 @@ public class Store implements DataItem<Long> {
 
     public String getDescription() {
         return description;
+    }
+
+    public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception{
+        HashMap<Long,Integer> items = basket.getItems();
+        HashMap<Long, Double> itemsPrice = new HashMap<>();
+        double price = 0;
+        for(Map.Entry<Long, Integer> entry: items.entrySet()){
+            Item item = products.findById(entry.getKey());
+            itemsPrice.put(item.getId(), item.getCurrentPrice(code));
+            price += item.getCurrentPrice(code) * entry.getValue();
+        }
+        basket.setItemsPrice(itemsPrice);
+        for(Discount discount: discounts.findAll()){
+            if(discount.isValid(new ArrayList<>(basket.getItems().keySet())))
+                price = discount.calculatePrice(price, code);
+        }
+        basket.setPrice(price);
     }
 }
