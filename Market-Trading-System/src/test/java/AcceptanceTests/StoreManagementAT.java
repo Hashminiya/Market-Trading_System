@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
+import java.security.Provider;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +28,7 @@ public class StoreManagementAT {
 
     @BeforeEach
     public void setUp() {
+
         discountRepository = new InMemoryRepository<Long, Discount>();
         storeFacade = new StoreController(new InMemoryRepository<>(), new PurchaseController(), new UserController(new InMemoryRepository<>()));
         storeManagementService = new StoreManagementService(storeFacade);

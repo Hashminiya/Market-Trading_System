@@ -2,6 +2,7 @@ package ServiceLayer.Store;
 
 import javax.ws.rs.core.Response;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Util.JwtService;
 
 import java.util.HashMap;
 

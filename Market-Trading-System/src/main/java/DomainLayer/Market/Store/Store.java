@@ -33,27 +33,28 @@ public class Store implements DataItem<Long> {
         managers = new ArrayList<>();
     }
 
-    private long genrateId() {
-        return IdGenerator.generateId();
-    }
-
     @Override
     public Long getId() {
         return id;
     }
+
     @Override
     public String getName() {
         return name;
     }
+
     public List<String> getOwners(){
         return owners;
     }
+
     public List<String> getManagers(){
         return managers;
     }
+
     public void assignOwner(String newOwnerId){
         owners.add(newOwnerId);
     }
+
     public void assignManager(String newManagerId){
         managers.add(newManagerId);
     }
@@ -129,7 +130,7 @@ public class Store implements DataItem<Long> {
     }
 
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception{
-        HashMap<Long,Integer> items = basket.getItems();
+        Map<Long,Integer> items = basket.getItems();
         HashMap<Long, Double> itemsPrice = new HashMap<>();
         double price = 0;
         for(Map.Entry<Long, Integer> entry: items.entrySet()){
@@ -142,6 +143,6 @@ public class Store implements DataItem<Long> {
             if(discount.isValid(new ArrayList<>(basket.getItems().keySet())))
                 price = discount.calculatePrice(price, code);
         }
-        basket.setPrice(price);
+        basket.setBasketTotalPrice(price);
     }
 }
