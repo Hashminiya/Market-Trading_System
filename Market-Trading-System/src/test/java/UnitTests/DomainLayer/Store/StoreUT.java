@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 public class StoreUT {
 
     private final long STORE_ID = 1L;
-    private final long FOUNDER_ID = 1L;
+    private final String FOUNDER_ID = "FOUNDER_NAME";
     private final long ITEM_ID_1 = 1L;
     private final long ITEM_ID_2 = 2L;
     private final String STORE_NAME = "Test Store";
