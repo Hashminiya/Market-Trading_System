@@ -1,39 +1,72 @@
 package DomainLayer.Market.User;
 
+import DAL.ItemDTO;
+import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingCart {
-    private IRepository<Long,ShoppingBasket> baskets;
+    private final IRepository<Long,ShoppingBasket> baskets;
 
-    public ShoppingCart(){
-        baskets = new InMemoryRepository<ShoppingBasket>();
+    public ShoppingCart(IRepository<Long,ShoppingBasket> baskets){
+        this.baskets = baskets;
     }
 
     public String viewShoppingCart(){
-        String res = "";
+        StringBuilder res = new StringBuilder();
         List<ShoppingBasket> l = baskets.findAll();
         for(ShoppingBasket s : l){
-            res += s.toString();
-            //TODO: overwrite the toString method in shoppingBasket class
+            res.append(s.toString());
         }
-        return res;
+        return res.toString();
     }
 
-    public void modifyShoppingCart(Item i, long basketId){
-        ShoppingBasket sb = baskets.findById(basketId);
-        sb.modifyItem(i);
-        //TODO: replace the item? or maybe better to create few function for the different modification options?
+    public void modifyShoppingCart(long basketId, long itemId, int quantity){
+        ShoppingBasket sb = getShoppingBasket(basketId);
+        sb.updateItemQuantity(itemId,quantity);
     }
 
-    public void checkoutShoppingCart(){
-        //TODO: what data the purchase need to perform the checkout?
+    public void addItemBasket(long basketId, long itemId, int quantity){
+        ShoppingBasket sb = getShoppingBasket(basketId);
+        sb.addItem(itemId,quantity);
+    }
 
+    public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String code){
+        List<ShoppingBasket> l = getBaskets();
+        List<ItemDTO> items = new ArrayList<ItemDTO>();
+        for(ShoppingBasket sb : l){
+            storeFacade.calculateBasketPrice(sb,code);
+            List<ItemDTO> basketItems = sb.checkoutShoppingBasket(storeFacade);
+            items.addAll(basketItems);
+        }
+        return items;
     }
 
     public List<ShoppingBasket> getBaskets() {
+        return baskets.findAll();
+    }
+
+    public void deleteShoppingBasket(long id){
+        baskets.delete(id);
+    }
+
+    private ShoppingBasket getShoppingBasket(long basketId){
+        ShoppingBasket sb = baskets.findById(basketId);
+        if(sb == null)
+            throw new RuntimeException("no basket exist with this id");
+        return sb;
+    }
+
+    public double getShoppingCartPrice(){
+        double totalPrice = 0;
+        for(ShoppingBasket sb: getBaskets()){
+            totalPrice += sb.getBasketTotalPrice();
+        }
+        return totalPrice;
     }
 }
