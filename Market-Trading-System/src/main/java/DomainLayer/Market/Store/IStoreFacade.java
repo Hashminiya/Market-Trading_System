@@ -11,10 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface IStoreFacade {
-
-    public static IStoreFacade create(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
-        return new StoreController(storesRepo, purchaseFacade, userFacade);
+    public static IStoreFacade getInstance(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade)
+    {
+        return StoreController.getInstance(storesRepo, purchaseFacade, userFacade);
     }
+
     public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Item.Discount> discounts);
     public List<String> viewInventoryByStoreOwner(String userId, long storeId);
     public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories);    public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount);

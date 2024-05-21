@@ -9,21 +9,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class UserController implements IUserFacade{
+public class UserController implements IUserFacade{
     private static UserController userControllerInstance;
     private final IRepository<String,User> users;
     private final HashMap<String,ShoppingCart> carts;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserController(IRepository<String, User> users) {
+    private UserController(IRepository<String, User> users) {
         this.users = users;
         carts = new HashMap<>();
         passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public static synchronized UserController getInstance() {
+    public static UserController getInstance(IRepository<String, User> users) {
         if (userControllerInstance == null) {
-            userControllerInstance = new UserController();
+            userControllerInstance = new UserController(users);
         }
         return userControllerInstance;
     }

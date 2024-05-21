@@ -16,37 +16,33 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class PurchaseController implements IPurchaseFacade {
+    private static PurchaseController purchaseControllerInstance;
     private HashMap<Long, List<ItemDTO>> storeIDtoItems;
     private HashMap<String, List<ItemDTO>> userIDtoItems;
     private BlockingQueue<ItemDTO> purchasedItems;
 
-
-    private PaymentServiceProxy paymentServiceProxy;
-    private SupplyServiceProxy supplyServiceProxy;
-
-    private PaymentServiceImpl paymentServiceImpl;
-    private SupplyServiceImpl supplyServiceImpl;
+    private PaymentServiceProxy paymentServiceProxyInstance;
+    private SupplyServiceProxy supplyServiceProxyInstance;
 
     private boolean isPaymentServiceConnected;
     private boolean isSupplyServiceConnected;
 
-    public PurchaseController() {
+    private PurchaseController(PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
         isPaymentServiceConnected = false;
         isSupplyServiceConnected = false;
 
         storeIDtoItems = new HashMap<>();
         userIDtoItems = new HashMap<>();
         purchasedItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
-        initServices();
+        paymentServiceProxyInstance = paymentServiceProxy;
+        supplyServiceProxyInstance = supplyServiceProxy;
     }
 
-    @Override
-    public void initServices() {
-        paymentServiceImpl = new PaymentServiceImpl();
-        supplyServiceImpl = new SupplyServiceImpl();
-
-        paymentServiceProxy = new PaymentServiceProxy(paymentServiceImpl);
-        supplyServiceProxy = new SupplyServiceProxy(supplyServiceImpl);
+    public static PurchaseController getInstance(PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+        if (purchaseControllerInstance == null) {
+            purchaseControllerInstance = new PurchaseController(paymentServiceProxy, supplyServiceProxy);
+        }
+        return purchaseControllerInstance;
     }
 
     @Override
@@ -58,7 +54,7 @@ public class PurchaseController implements IPurchaseFacade {
     public boolean checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList) {
         if(purchaseItemsList.size()==0)
             throw new RuntimeException("No items for checkout");
-        Purchase purchase = new Purchase(paymentServiceProxy, supplyServiceProxy);
+        Purchase purchase = new Purchase(paymentServiceProxyInstance, paymentServiceProxyInstance);
         boolean success = purchase.checkout(purchaseItemsList, creditCard, expiryDate, cvv);
         if (!success)
             throw new RuntimeException("Checkout Failed");

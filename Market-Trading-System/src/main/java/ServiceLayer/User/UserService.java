@@ -5,10 +5,18 @@ import DomainLayer.Market.User.IUserFacade;
 import javax.ws.rs.core.Response;
 
 public class UserService implements IUserService {
-    IUserFacade userFacade;
+    private static UserService instance;
+    private IUserFacade userFacade;
 
-    public UserService(IUserFacade userFacade) {
+    private UserService(IUserFacade userFacade) {
         this.userFacade = userFacade;
+    }
+
+    public static UserService getInstance(IUserFacade userFacade) {
+        if (instance == null) {
+            instance = new UserService(userFacade);
+        }
+        return instance;
     }
 
     public Response GuestEntry(){

@@ -12,29 +12,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class StoreController implements IStoreFacade{
-
+public class StoreController implements IStoreFacade{
     private static StoreController storeControllerInstance;
-
-    private StoreController() {
-        // private constructor to prevent instantiation
-    }
-
-    public static synchronized StoreController getInstance() {
-        if (storeControllerInstance == null) {
-            storeControllerInstance = new StoreController();
-        }
-        return storeControllerInstance;
-    }
-
     private IRepository<Long, Store> storesRepo;
     private IPurchaseFacade purchaseFacade;
     private IUserFacade userFacade;
 
-    public StoreController(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
+    private StoreController(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
         this.storesRepo = storesRepo;
         this.purchaseFacade = purchaseFacade;
         this.userFacade = userFacade;
+    }
+
+    public static StoreController getInstance(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade) {
+        if (storeControllerInstance == null) {
+            storeControllerInstance = new StoreController(storesRepo, purchaseFacade, userFacade);
+        }
+        return storeControllerInstance;
     }
 
     private synchronized long generateStoreId(){

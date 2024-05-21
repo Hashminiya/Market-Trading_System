@@ -8,11 +8,6 @@ public class ItemDTO {
     private int quantity;
     private String itemName;
     private long itemId;
-    private long itemId;
-    private Date purchaseDate;
-
-    public long getStoreId() {
-    public Date getPurchaseDate() {return purchaseDate;}
 
     public long getStoreId() {
         return storeId;
