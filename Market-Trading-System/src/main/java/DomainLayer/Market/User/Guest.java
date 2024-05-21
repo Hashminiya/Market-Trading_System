@@ -23,4 +23,9 @@ public class Guest implements Istate{
     public List<StorePermission> getPermission() {
         return List.of();
     }
+
+    @Override
+    public boolean isRegistered() {
+        return false;
+    }
 }

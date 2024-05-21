@@ -1,16 +1,18 @@
 package ServiceLayer.User;
 
 import javax.ws.rs.core.Response;
+import java.util.Date;
 
 public interface IUserService{
     public Response GuestEntry();
-    public Response GuestExit(int GuestID);
+    public Response GuestExit(String token);
     public Response register(String userName, String password, int userAge);
     public Response login(String userName, String password);
     public Response logout(String userName);
     public Response viewShoppingCart(String token);
-    public Response modifyShoppingCart(String token);
-    public Response checkoutShoppingCart(String token);
+    public Response modifyShoppingCart(String token, long basketId, long itemId, int newQuantity);
+    public Response checkoutShoppingCart(String token, String creditCard, Date expiryDate , String cvv, String discountCode);
     public Response addItemToBasket(String token, long basketId, long itemId, int quantity);
-    public Response changeUserPermission(String token, int permission);
+    public Response addPermission(String token, long storeId, String permission);
+    public Response removePermission(String token, long storeId, String permission);
 }
