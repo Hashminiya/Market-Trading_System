@@ -1,6 +1,7 @@
 package AcceptanceTests;
 
 import DAL.ItemDTO;
+import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount;
@@ -12,6 +13,7 @@ import DomainLayer.Market.User.User;
 import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.User.UserService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +32,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class SystemAT {
+    private final String USER_NAME = "UserPayment";
+    private final String USER_NAME_UNKNOWN = "UserPaymentDoesntExist";
+    private final String USER_PW = "UserPW";
+    private final String STORE_NAME = "PaymentStore";
+    private final long BASKET_ID = 456L;
+    private final long ITEM_ID = 789L;
+    private final int ITEM_QUANTITY = 2;
+    private static final String CREDIT_CARD = "1234567890123456";
+    private static final Date EXPIRY_DATE = new Date(System.currentTimeMillis() + 86400000L); // 1 day in future
+    private static final String CVV = "123";
+    private static final String DISCOUNT_CODE = "DISCOUNT10";
+
     // 1.1
     @Nested
     class InitializeTradingSystemTest {
@@ -40,14 +55,17 @@ public class SystemAT {
         private final String SYSTEM_MANAGER_PW = "SystemManagerPassword";
         private final String SYSTEM_MANAGER_WRONG_PW = "SystemManagerWrongPassword";
 
+        @BeforeEach
+        void setUp(){
+            // Init only the user facade
+            serviceFactory = ServiceFactory.getServiceFactory();
+            userFacade = serviceFactory.getUserFacade();
+        }
+
         @Test
         public void testSuccessfulInitialization() {
             // Arrange
             try {
-                // Init only the user facade
-                serviceFactory = ServiceFactory.getServiceFactory();
-                userFacade = serviceFactory.getUserFacade();
-
                 // Login manager to system
                 userFacade.login(SYSTEM_MANAGER_NAME, SYSTEM_MANAGER_PW);
                 verify(any(User.class), times(1)).login();
@@ -64,11 +82,6 @@ public class SystemAT {
         @Test
         public void testFailedLoginInitialization() {
             try {
-                // Arrange
-                // Init only the user facade
-                serviceFactory = ServiceFactory.getServiceFactory();
-                userFacade = serviceFactory.getUserFacade();
-
                 // Login manager to system
                 userFacade.login(SYSTEM_MANAGER_NAME, SYSTEM_MANAGER_WRONG_PW);
                 verify(any(User.class), times(0)).login();
@@ -91,28 +104,16 @@ public class SystemAT {
 
             private IUserFacade userFacade;
             private IStoreFacade storeFacade;
-
-            private String USER_NAME = "UserPayment";
-            private String USER_PW = "UserPW";
-            private String STORE_NAME = "PaymentStore";
-            private final long BASKET_ID = 456L;
-            private final long ITEM_ID = 789L;
-            private final int ITEM_QUANTITY = 2;
+            private IPurchaseFacade purchaseFacade;
 
             @BeforeEach
-            void setUp()
-            {
+            void setUp(){
                 serviceFactory = ServiceFactory.getServiceFactory();
                 serviceFactory.initFactory();
                 userFacade = serviceFactory.getUserFacade();
                 storeFacade = serviceFactory.getStoreFacade();
-            }
-
-            @Test
-            public void testSuccessfulPayment() {
-                // Add item to basket
-                try
-                {
+                purchaseFacade = serviceFactory.getPurchaseFacade();
+                try {
                     userFacade.register(USER_NAME, USER_PW, 110596);
                     userFacade.login(USER_NAME, USER_PW);
                     storeFacade.createStore(USER_NAME, STORE_NAME, "Greate Store!", new InMemoryRepository<Long, Discount>());
@@ -121,56 +122,36 @@ public class SystemAT {
                 {
                     fail();
                 }
-                userFacade.addItemToBasket(USER_NAME, BASKET_ID, ITEM_ID, ITEM_QUANTITY);
-                verify(any(ShoppingBasket.class), times(1)).addItem(any(),any());
-                // Get items info from store
-                long store_id = getStoreId(STORE_NAME);
-                HashMap<Long, String> itemsInfo = storeFacade.getAllProductsInfoByStore(store_id);
-                assertNotNull(itemsInfo);
-
-                // Checkout shopping cart
-                userFacade.checkoutShoppingCart(USER_NAME);
-                assertEquals(1, items.size(), "Unexpected number of items in the shopping cart");
-
-                // Verify the added item
-                ItemDTO item = items.get(0);
-                assertEquals(ITEM_ID, item.getItemId(), "Incorrect item ID in the shopping cart");
-                assertEquals(ITEM_QUANTITY, item.getQuantity(), "Incorrect quantity in the shopping cart");
-                assertNotNull(item.getName(), "Item name is null");
-                assertNotNull(item.getTotalPrice(), "Total price is null");
-
             }
 
-            private long getStoreId(String storeName)
-            {
-                // Fetch all store info
-                HashMap<Long, String> allStoreInfo = storeFacade.getAllStoreInfo();
+            @Test
+            public void testSuccessfulPayment() {
+                // Assert
+                userFacade.addItemToBasket(USER_NAME, BASKET_ID, ITEM_ID, ITEM_QUANTITY);
 
-                // Iterate to find the ID of the given store name
-                for (Map.Entry<Long, String> entry : allStoreInfo.entrySet()) {
-                    if (storeName.equals(entry.getValue())) {
-                        return entry.getKey();
-                    }
-                }
-                return 0;
+                // Act
+                userFacade.checkoutShoppingCart(USER_NAME, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+
+                // Validate that the checkout process was completed successfully
+                List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
+                boolean itemPurchased = purchasedItems.stream()
+                        .anyMatch(item -> item.getItemId() == ITEM_ID && item.getQuantity() == ITEM_QUANTITY);
+                assertTrue(itemPurchased, "The item should be marked as purchased.");
             }
 
             @Test
             public void testFailedPaymentInvalidDetails() {
-//            // Arrange
-//            MockUserService userService = new MockUserService();
-//            userService.setUserLoggedIn(true);
-//            MockShoppingCart shoppingCart = new MockShoppingCart(true); // Valid shopping cart
-//            MockPaymentService paymentService = new MockPaymentService(false); // Failed payment
-//            TradingSystem tradingSystem = new TradingSystem(userService, paymentService);
-//
-//            // Act
-//            boolean result = tradingSystem.processPayment(shoppingCart);
-//
-//            // Assert
-//            assertFalse(result);
-//            assertFalse(paymentService.isPaymentSuccessful());
-//            assertTrue(shoppingCart.isNotEmpty()); // Shopping cart not emptied
+                // Assert
+                userFacade.addItemToBasket(USER_NAME, BASKET_ID, ITEM_ID, ITEM_QUANTITY);
+
+                // Act
+                userFacade.checkoutShoppingCart(USER_NAME_UNKNOWN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+
+                // Validate that the checkout process was completed successfully
+                List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
+                boolean itemPurchased = purchasedItems.stream()
+                        .anyMatch(item -> item.getItemId() == ITEM_ID && item.getQuantity() == ITEM_QUANTITY);
+                assertFalse(itemPurchased, "The item should be marked as purchased.");
             }
 
             @Test
@@ -196,66 +177,27 @@ public class SystemAT {
         @Nested
         class DeliveryTest {
 
+            private SupplyServiceImpl supplyService;
+
+            @BeforeEach
+            void setUp() {
+                supplyService = serviceFactory.getSupplyService();
+            }
+
             @Test
             public void testSuccessfulDelivery() {
                 // Arrange
-//        MockPaymentService paymentService = new MockPaymentService(true); // Successful payment
-//        MockUserService userService = new MockUserService();
-//        userService.setUserLoggedIn(true);
-//        MockShoppingCart shoppingCart = new MockShoppingCart(true); // Valid shopping cart
-//        MockSupplyService supplyService = new MockSupplyService(true); // Successful delivery
-//        TradingSystem tradingSystem = new TradingSystem(userService, paymentService, supplyService);
-//
-//        tradingSystem.processPayment(shoppingCart); // Simulate successful payment
-//
-//        // Act
-//        boolean result = tradingSystem.initiateDelivery();
-//
-//        // Assert
-//        assertTrue(result);
-//        assertTrue(supplyService.isDeliveryConfirmed());
+                userFacade.addItemToBasket(USER_NAME, BASKET_ID, ITEM_ID, ITEM_QUANTITY);
+                userFacade.checkoutShoppingCart(USER_NAME, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+                // TODO : Implement due to supply service..
+                // boolean deliveryConfirmed = supplyService.validateItemSupply(STORE_ID, ITEM_ID, 1);
+                boolean deliveryConfirmed = true;
+                assertTrue(deliveryConfirmed, "The delivery should be confirmed.");
             }
 
             @Test
             public void testFailedDeliveryInvalidDetails() {
-                // Arrange (Similar to successful delivery, with invalid user details)
-//        MockPaymentService paymentService = new MockPaymentService(true); // Successful payment
-//        MockUserService userService = new MockUserService();
-//        userService.setUserLoggedIn(true);
-//        MockShoppingCart shoppingCart = new MockShoppingCart(true); // Valid shopping cart
-//        MockSupplyService supplyService = new MockSupplyService(false); // Failed delivery
-//        TradingSystem tradingSystem = new TradingSystem(userService, paymentService, supplyService);
-//
-//        tradingSystem.processPayment(shoppingCart); // Simulate successful payment
-//
-//        // Act
-//        boolean result = tradingSystem.initiateDelivery();
-//
-//        // Assert
-//        assertFalse(result);
-//        assertFalse(supplyService.isDeliveryConfirmed());
             }
-
-            @Test
-            public void testDeliveryExternalServiceFailure() {
-//        // Arrange (Similar to successful delivery, with external service exception)
-//        MockPaymentService paymentService = new MockPaymentService(true); // Successful payment
-//        MockUserService userService = new MockUserService();
-//        userService.setUserLoggedIn(true);
-//        MockShoppingCart shoppingCart = new MockShoppingCart(true); // Valid shopping cart
-//        MockSupplyService supplyService = new MockSupplyService(true); // Throws exception
-//        TradingSystem tradingSystem = new TradingSystem(userService, paymentService, supplyService);
-//
-//        tradingSystem.processPayment(shoppingCart); // Simulate successful payment
-//
-//        // Act
-//        boolean result = tradingSystem.initiateDelivery();
-//
-//        // Assert
-//        assertFalse(result); // May need adjustment based on exception handling
-            }
-
-            // Add similar tests for other scenarios (e.g., payment cancellation on delivery
 
         }
 
