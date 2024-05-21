@@ -17,7 +17,7 @@ public class StoreBuyerService implements IStoreBuyerService{
     @Override
     public Response getAllProductsInfoByStore(long storeId) {
         try{
-            HashMap<Long, HashMap<String, String>> result = storeFacade.getAllProductsInfoByStore(storeId);
+            HashMap<Long, String> result = storeFacade.getAllProductsInfoByStore(storeId);
             return Response.ok(result).build();
         }
         catch(Exception ex){
@@ -26,9 +26,9 @@ public class StoreBuyerService implements IStoreBuyerService{
     }
 
     @Override
-    public Response getAllStoreInfo(long storeId) {
+    public Response getAllStoreInfo() {
         try{
-            HashMap<Long, HashMap<String, String>> result = storeFacade.getAllStoreInfo(storeId);
+            HashMap<Long, String> result = storeFacade.getAllStoreInfo();
             return Response.ok(result).build();
         }
         catch(Exception ex){

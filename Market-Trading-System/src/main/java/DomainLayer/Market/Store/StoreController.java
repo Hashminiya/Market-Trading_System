@@ -11,6 +11,7 @@ import DomainLayer.Market.Store.Item;
 
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,14 +48,15 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public List<String> viewInventoryByStoreOwner(String userId, long storeId) throws Exception{
+    public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId) {
+        //TODO: check the user is the store owner- decide if he must be store owner
         if(userFacade.checkPermission(userId, VIEW_INVENTORY))
             throw new CertificateException("User doesn't has permission to view the store inventory");
         Store store = storesRepo.findById(storeId);
         List<Item> inventory = store.viewInventory();
-        List<String> itemsInfo = new ArrayList<>();
-        for( Item item: inventory){
-            itemsInfo.add(item.getName());
+        HashMap<Long, Integer> itemsInfo = new HashMap<>();
+        for(Item item: inventory){
+            itemsInfo.put(item.getId(), item.getQuantity());
         }
         return itemsInfo;
     }
@@ -64,7 +66,7 @@ public class StoreController implements IStoreFacade{
         if(userFacade.checkPermission(userId, ADD_ITEM))
             throw new CertificateException("User doesn't has permission to add item to the store");
         Store store = storesRepo.findById(storeId);
-        store.addItem(itemName, itemPrice, stockAmount, description, categories);
+        store.addItem(IdGenerator.generateId(), itemName, itemPrice, stockAmount, description, categories);
     }
 
     @Override
@@ -128,21 +130,34 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void viewPurchaseHistory(String userId, long storeId) {
+    public HashMap<Long, Integer> viewPurchaseHistory(String userId, long storeId) {
         //TODO: check the user is the store owner
-        purchaseFacade.getPurchaseByStore(storeId);
+        List<ItemDTO> itemDTOs = purchaseFacade.getPurchasesByStore(storeId);
+        HashMap<Long, Integer> result = new HashMap<>();
+        for(ItemDTO item: itemDTOs){
+            result.put(item.getItemId(), item.getQuantity());
+        }
+        return result;
     }
 
     @Override
-    public HashMap<Long, HashMap<String, String>> getAllProductsInfoByStore(long storeId) {
-
-        return null;
+    public HashMap<Long, String> getAllProductsInfoByStore(long storeId) {
+        Store store = storesRepo.findById(storeId);
+        List<Item> items = store.viewInventory();
+        HashMap<Long, String> result = new HashMap<>();
+        for(Item item: items){
+            result.put(item.getId(), item.getName());
+        }
+        return result;
     }
 
     @Override
-    public HashMap<Long, HashMap<String, String>> getAllStoreInfo(long storeId) {
-
-        return null;
+    public HashMap<Long, String> getAllStoreInfo() {
+        HashMap<Long, String> result = new HashMap<>();
+        for(Store store: storesRepo.findAll()){
+            result.put(store.getId(), store.getName());
+        }
+        return result;
     }
 
     @Override
@@ -234,5 +249,29 @@ public class StoreController implements IStoreFacade{
             Store store = storesRepo.findById(itemDto.getStoreId());
             store.updateAmount(itemDto.getItemId(), itemDto.getQuantity());
         }
+    }
+
+    @Override
+    public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception {
+        Store store = storesRepo.findById(basket.getId());
+        store.calculateBasketPrice(basket, code);
+    }
+
+    @Override
+    public void addHiddenDiscount(double percent, Date expirationDate, List<Long> items, long storeId, String code, boolean isStoreDiscount) {
+        Store store = storesRepo.findById(storeId);
+        if(isStoreDiscount)
+            store.addDiscount(new HiddenDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, code));
+        else
+            store.addDiscount(items, new HiddenDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, code));
+    }
+
+    @Override
+    public void addRegularDiscount(double percent, Date expirationDate, List<Long> items, long storeId, List<Long> conditionItems, boolean isStoreDiscount) {
+        Store store = storesRepo.findById(storeId);
+        if(isStoreDiscount)
+            store.addDiscount(new RegularDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, conditionItems));
+        else
+            store.addDiscount(items, new RegularDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, conditionItems));
     }
 }
