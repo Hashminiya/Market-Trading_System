@@ -3,14 +3,19 @@ package DAL;
 import java.util.Date;
 
 public class ItemDTO {
-    private long storeId;
-    private double totalPrice;
-    private int quantity;
-    private String itemName;
-    private long itemId;
-    private Date purchaseDate;
+    private final long storeId;
+    private final double totalPrice;
+    private final int quantity;
+    private final String itemName;
+    private final long itemId;
 
-    public Date getPurchaseDate() {return purchaseDate;}
+    public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice){
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.quantity = quantity;
+        this.storeId = storeId;
+        this.totalPrice = totalPrice;
+    }
 
     public long getStoreId() {
         return storeId;
