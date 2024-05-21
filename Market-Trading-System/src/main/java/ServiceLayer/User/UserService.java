@@ -11,6 +11,19 @@ public class UserService implements IUserService {
     IUserFacade userFacade;
     private JwtService JwtService;
     private UserDetailsService userDetailsService;
+    private static UserService instance;
+    private IUserFacade userFacade;
+
+    private UserService(IUserFacade userFacade) {
+        this.userFacade = userFacade;
+    }
+
+    public static synchronized UserService getInstance(IUserFacade userFacade) {
+        if (instance == null) {
+            instance = new UserService(userFacade);
+        }
+        return instance;
+    }
 
     public Response GuestEntry(){
         try{

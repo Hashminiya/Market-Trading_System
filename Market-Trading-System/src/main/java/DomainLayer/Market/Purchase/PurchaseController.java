@@ -5,102 +5,75 @@ import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
 import DomainLayer.Market.Purchase.Abstractions.ISupplyService;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
+import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.Store;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class PurchaseController implements IPurchaseFacade {
-    private HashMap<Long, List<ItemDTO>> storeIDtoItems;
-    private HashMap<String, List<ItemDTO>> userIDtoItems;
-    private BlockingQueue<ItemDTO> purchasedItems;
+    private static PurchaseController purchaseControllerInstance;
+    private final BlockingQueue<ItemDTO> inventoryReduceItems; // queue to remove products from inventory
+    private final IRepository<Long,Purchase> purchaseRepo;
+
+    private final PaymentServiceProxy paymentServiceProxy;
+    private final SupplyServiceProxy supplyServiceProxy;
 
 
-    private PaymentServiceProxy paymentServiceProxy;
-    private SupplyServiceProxy supplyServiceProxy;
+    private PurchaseController(IRepository<Long,Purchase> purchaseRepo,PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+        this.purchaseRepo = purchaseRepo;
+        this.paymentServiceProxy = paymentServiceProxy;
+        this.supplyServiceProxy = supplyServiceProxy;
 
-    private PaymentServiceImpl paymentServiceImpl;
-    private SupplyServiceImpl supplyServiceImpl;
-
-    private boolean isPaymentServiceConnected;
-    private boolean isSupplyServiceConnected;
-
-    public PurchaseController() {
-        isPaymentServiceConnected = false;
-        isSupplyServiceConnected = false;
-
-        storeIDtoItems = new HashMap<>();
-        userIDtoItems = new HashMap<>();
-        purchasedItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
-        initServices();
+        inventoryReduceItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
     }
 
-    @Override
-    public void initServices() {
-        paymentServiceImpl = new PaymentServiceImpl();
-        supplyServiceImpl = new SupplyServiceImpl();
-
-        paymentServiceProxy = new PaymentServiceProxy(paymentServiceImpl);
-        supplyServiceProxy = new SupplyServiceProxy(supplyServiceImpl);
-    }
-
-    @Override
-    public boolean isValidServices() {
-        return isPaymentServiceConnected & isSupplyServiceConnected;
-    }
-
-    @Override
-    public boolean checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList) {
-        if(purchaseItemsList.size()==0)
-            throw new RuntimeException("No items for checkout");
-        Purchase purchase = new Purchase(paymentServiceProxy, supplyServiceProxy);
-        boolean success = purchase.checkout(purchaseItemsList, creditCard, expiryDate, cvv);
-        if (!success)
-            throw new RuntimeException("Checkout Failed");
-        for (ItemDTO item : purchaseItemsList) { // save all the purchased items
-            if (!userIDtoItems.containsKey(userID))
-                userIDtoItems.put(userID, new ArrayList<>());
-            userIDtoItems.get(userID).add(item);//save item by userID
-
-            if (!storeIDtoItems.containsKey(item.getStoreId()))
-                storeIDtoItems.put(item.getStoreId(), new ArrayList<>());
-            storeIDtoItems.get(item.getStoreId()).add(item);//save item by storeID
-            purchasedItems.add(item);
+    public static synchronized PurchaseController getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+        if (purchaseControllerInstance == null) {
+            purchaseControllerInstance = new PurchaseController(purchaseRepo, paymentServiceProxy, supplyServiceProxy);
         }
-        return true;
+        return purchaseControllerInstance;
     }
 
     @Override
-    public List<ItemDTO> getPurchasesByStore(long storeId) {
-        if (!storeIDtoItems.containsKey(storeId))
-            throw new RuntimeException(String.format("In store: %d no product has been bought", storeId));
-        return storeIDtoItems.get(storeId);
+    public void checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList,double totalAmount) {
+        if(purchaseItemsList.isEmpty())
+            throw new RuntimeException("No items for checkout");
+
+        Long purchaseId = IdGenerator.generateId();
+        Purchase purchase = new Purchase(userID,totalAmount,purchaseId,purchaseItemsList,paymentServiceProxy, supplyServiceProxy);
+        purchase.checkout(creditCard, expiryDate, cvv);
+        purchaseRepo.save(purchase);
+        inventoryReduceItems.addAll(purchaseItemsList);
     }
 
     @Override
-    public List<ItemDTO> getPurchasesByUser(String userId) {
-        if (!userIDtoItems.containsKey(userId))
-            throw new RuntimeException(String.format("user: %s did not buy anything", userId));
-        return userIDtoItems.get(userId);
+    public HashMap<Long,List<ItemDTO>> getPurchasesByStore(long storeId) {
+        HashMap<Long,List<ItemDTO>> toRet = new HashMap<>();
+        List<Purchase> purchaseList = purchaseRepo.findAll();
+        for (Purchase purchase:purchaseList){
+           List<ItemDTO> itemsList = purchase.getItemByStore(storeId);
+           if(!itemsList.isEmpty()) {
+               toRet.put(purchase.getId(), itemsList);
+           }
+        }
+        return toRet;
     }
 
     @Override
     public synchronized List<ItemDTO> getPurchasedItems() {
         List<ItemDTO> purchasedItems = new ArrayList<>();
-        if (this.purchasedItems.size() == 0)
+        if (inventoryReduceItems.isEmpty())
             throw new RuntimeException("There are no purchased items waiting to reduce from inventory");
-        while (this.purchasedItems.size() > 0)
-            purchasedItems.add(this.purchasedItems.remove());
+        while (!inventoryReduceItems.isEmpty())
+            purchasedItems.add(inventoryReduceItems.remove());
         return purchasedItems;
     }
 }
-
-
 
 

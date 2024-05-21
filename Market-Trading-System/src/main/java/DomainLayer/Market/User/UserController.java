@@ -14,19 +14,34 @@ import java.util.List;
 
 
 public class UserController implements IUserFacade {
+    private static UserController userControllerInstance;
+    private static IStoreFacade storeFacade;
     private final IRepository<String, User> users;
     private final IStoreFacade storeFacade;
     private final IPurchaseFacade purchaseFacade;
     private final BCryptPasswordEncoder passwordEncoder;
-
     private int guestId ;
 
-    public UserController(IRepository<String, User> users, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade) {
+    private UserController(IRepository<String, User> users, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade) {
+
         this.users = users;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.guestId = 0;
         this.storeFacade = storeFacade;
         this.purchaseFacade = purchaseFacade;
+    }
+
+    @Override
+    public void setStoreFacade(IStoreFacade storeFacadeInstance) {
+        storeFacade = storeFacadeInstance;
+    }
+
+    public static synchronized UserController getInstance(IRepository<String, User> users) {
+        if (userControllerInstance == null) {
+            userControllerInstance = new UserController(users);
+            // TODO : We assume that when this function called, next line will be setStoreFacade..
+        }
+        return userControllerInstance;
     }
 
     @Override

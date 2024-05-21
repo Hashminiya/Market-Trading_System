@@ -3,7 +3,18 @@ package DomainLayer.Market.User;
 import DomainLayer.Market.Util.StorePermission;
 import java.util.List;
 
+import DomainLayer.Market.Purchase.IPurchaseFacade;
+import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Store;
+import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.Util.IRepository;
+
 public interface IUserFacade {
+    public static IUserFacade getInstance(IRepository<String, User> users)
+    {
+        return UserController.getInstance(users);
+    }
+    public void setStoreFacade(IStoreFacade storeFacade);
     public String createGuestSession();
     public boolean login(String userName, String password) throws Exception;
     public void terminateGuestSession(String userName);
