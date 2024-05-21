@@ -1,7 +1,7 @@
 package DomainLayer.Market.Util;
 
 //TODO add to the UML
-public enum StorePermission {
+public enum StorePermission implements StoreEnum {
     VIEW_INVENTORY,
     VIEW_STORE_MANAGEMENT_INFO,
     VIEW_PURCHASE_HISTORY,
@@ -12,7 +12,5 @@ public enum StorePermission {
     DELETE_ITEM,
     CHANGE_POLICY,
     CHANGE_DISCOUNT_TYPE,
-    REMOVE_STORE,
-    MANAGER,
-    OWNER;
+    REMOVE_STORE;
 }
