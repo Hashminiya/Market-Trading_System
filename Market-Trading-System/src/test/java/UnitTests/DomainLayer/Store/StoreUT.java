@@ -175,7 +175,7 @@ public class StoreUT {
     void testSearchWithCategory() {
         String category = "Category1";
         String keyword = "Test";
-        store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
+        store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of(category));
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2"));
 
         List<Item> result = store.searchKeyWordWithCategory(category, keyword);
@@ -189,8 +189,8 @@ public class StoreUT {
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2", "Category3"));
 
         List<String> categories = store.getAllCategories();
-        assertTrue(categories.contains("Category1"));
-        assertTrue(categories.contains("Category2"));
-        assertTrue(categories.contains("Category3"));
+        assertTrue(categories.contains("category1"));
+        assertTrue(categories.contains("category2"));
+        assertTrue(categories.contains("category3"));
     }
 }
