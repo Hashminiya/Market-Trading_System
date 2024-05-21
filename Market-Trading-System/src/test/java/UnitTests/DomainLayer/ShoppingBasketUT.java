@@ -1,4 +1,4 @@
-package DomainLayer.Market;
+package UnitTests.DomainLayer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import DomainLayer.Market.ShoppingBasket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -100,7 +101,7 @@ public class ShoppingBasketUT {
         ItemDTO item = checkoutItems.get(0);
         assertEquals(ITEM_ID, item.getItemId());
         assertEquals(quantity, item.getQuantity());
-        assertEquals(price*quantity, item.getTotalPrice());
+        assertEquals(price * quantity, item.getTotalPrice());
         assertEquals(itemName, item.getName());
     }
 
@@ -120,6 +121,7 @@ public class ShoppingBasketUT {
         assertEquals(expectedTotalPrice, basket.getBasketTotalPrice());
     }
 
+
     @Test
     public void testToString() {
         int quantity = 2;
@@ -133,7 +135,30 @@ public class ShoppingBasketUT {
         HashMap<Long, Double> itemPrices = new HashMap<>();
         itemPrices.put(ITEM_ID, price);
         basket.setItemsPrice(itemPrices);
+        basket.setBasketTotalPrice(quantity * price);
 
-        when(storeFacade.getAllProductsInfoByStore(1L)).thenReturn(productInfo);
+        when(storeFacade.getAllProductsInfoByStore(STORE_ID)).thenReturn(productInfo);
+
+        String basketString = basket.toString();
+        assertTrue(basketString.contains("Shopping Basket ID: " + basket.getId()));
+        assertTrue(basketString.contains("Store ID: " + STORE_ID));
+        assertTrue(basketString.contains("Item ID"));
+        assertTrue(basketString.contains("Quantity"));
+        assertTrue(basketString.contains("Price"));
+        assertTrue(basketString.contains("Total"));
+        assertTrue(basketString.contains(String.valueOf(ITEM_ID)));
+        assertTrue(basketString.contains(String.valueOf(quantity)));
+        assertTrue(basketString.contains(String.valueOf(price)));
+        assertTrue(basketString.contains(String.valueOf(quantity * price)));
+        assertTrue(basketString.contains("Total Basket Price: " + String.format("%.2f", quantity * price)));
+    }
+
+    @Test
+    public void testEmptyBasketToString() {
+        String basketString = basket.toString();
+        assertTrue(basketString.contains("Shopping Basket ID: " + basket.getId()));
+        assertTrue(basketString.contains("Store ID: " + STORE_ID));
+        assertTrue(basketString.contains("Items:\n"));
+        assertTrue(basketString.contains("Total Basket Price: 0.00"));
     }
 }
