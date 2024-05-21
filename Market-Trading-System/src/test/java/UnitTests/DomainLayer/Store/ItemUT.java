@@ -1,7 +1,9 @@
 package UnitTests.DomainLayer.Store;
 
 import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.Store.HiddenDiscount;
 import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.RegularDiscount;
 import DomainLayer.Market.Util.InMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,8 @@ public class ItemUT {
     private final String ITEM_DESCRIPTION = "Test Description";
     private final double ITEM_PRICE = 10.99;
     private final int ITEM_QUANTITY = 100;
+    private final double DISCOUNT = 0.8;
+    private final String CODE = "code";
     private final List<String> ITEM_CATEGORIES = List.of("Category1", "Category2");
 
     @Mock
@@ -126,16 +130,36 @@ public class ItemUT {
     @Test
     void testGetCurrentPriceWithoutDiscount() {
         when(discountsMock.findAll()).thenReturn(List.of());
-        assertEquals(ITEM_PRICE, item.getCurrentPrice());
+        try {
+            assertEquals(ITEM_PRICE, item.getCurrentPrice(""));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void testGetCurrentPriceWithDiscount() {
-        Discount discount = mock(Discount.class);
-        when(discount.apply(anyDouble())).thenAnswer(invocation -> (double) invocation.getArgument(0) * 0.9); // 10% discount
-        when(discountsMock.findAll()).thenReturn(List.of(discount));
+    void testGetCurrentPriceWithRegularDiscount() {
+        Discount discount = mock(RegularDiscount.class);
+        try {
+            when(discount.calculatePrice(anyDouble(),anyString())).thenReturn(DISCOUNT*ITEM_PRICE);
+            item.setDiscount(discount);
+            double expectedPrice = DISCOUNT*ITEM_PRICE;
+            assertEquals(expectedPrice, item.getCurrentPrice(CODE));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        double expectedPrice = ITEM_PRICE * 0.9;
-        assertEquals(expectedPrice, item.getCurrentPrice());
+    @Test
+    void testGetCurrentPriceWithHiddenDiscount() {
+        Discount discount = mock(HiddenDiscount.class);
+        try {
+            when(discount.calculatePrice(anyDouble(),anyString())).thenReturn(DISCOUNT*ITEM_PRICE);
+            item.setDiscount(discount);
+            double expectedPrice = DISCOUNT*ITEM_PRICE;
+            assertEquals(expectedPrice, item.getCurrentPrice(CODE));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

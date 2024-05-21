@@ -58,12 +58,13 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts) throws Exception{
+    public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts) throws Exception{
         if(userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
         long storeId = generateStoreId();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
         storesRepo.save(newStore);
+        return storeId;//for test purposes
     }
 
     @Override
@@ -80,11 +81,13 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories) throws Exception{
+    public long addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories) throws Exception{
         if(userFacade.checkPermission(userId, storeId, ADD_ITEM))
             throw new Exception("User doesn't has permission to add item to the store");
         Store store = storesRepo.findById(storeId);
-        store.addItem(IdGenerator.generateId(), itemName, itemPrice, stockAmount, description, categories);
+        Long id = IdGenerator.generateId();
+        store.addItem(id, itemName, itemPrice, stockAmount, description, categories);
+        return id; //for test purposes
     }
 
     @Override

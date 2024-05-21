@@ -7,11 +7,15 @@ import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Store.Discount;
+import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
+import java.security.Provider;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,12 +28,13 @@ public class StoreManagementAT {
     private IStoreFacade storeFacade;
     private StoreManagementService storeManagementService;
     private IRepository<Long, Discount> discountRepository;
-
+    private ServiceFactory serviceFactory;
     @BeforeEach
     public void setUp() {
+        serviceFactory = ServiceFactory.getServiceFactory();
+        storeFacade = serviceFactory.getStoreFacade();
         discountRepository = new InMemoryRepository<Long, Discount>();
-        storeFacade = new StoreController(new InMemoryRepository<>(), new PurchaseController(), new UserController(new InMemoryRepository<>()));
-        storeManagementService = new StoreManagementService(storeFacade);
+        storeManagementService = serviceFactory.getStoreManagementService();
     }
 
     @Test
@@ -107,7 +112,7 @@ public class StoreManagementAT {
     @Test
     public void testAssignStoreManager() {
         storeManagementService.createStore(FOUNDER_ID, SOTRE_NAME, STORE_DESCRIPTION, discountRepository);
-        Response response = storeManagementService.assignStoreManager("userId", 1L, "newManagerId");
+        Response response = storeManagementService.assignStoreManager("userId", 1L, "newManagerId", Arrays.stream(new String[]{"VIEW_STORE_MANAGEMENT_INFO", "VIEW_PURCHASE_HISTORY", "VIEW_INVENTORY"}).toList());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 }

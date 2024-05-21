@@ -4,18 +4,21 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import javax.ws.rs.core.Response;
 import java.util.Date;
 
 public class UserService implements IUserService {
     private IUserFacade userFacade;
-    private JwtService JwtService;
+    private JwtService jwtService;
     private UserDetailsService userDetailsService;
     private static UserService instance;
 
     private UserService(IUserFacade userFacade) {
+        this.userDetailsService = new InMemoryUserDetailsManager();
         this.userFacade = userFacade;
+        this.jwtService = new JwtService();
     }
 
     public static synchronized UserService getInstance(IUserFacade userFacade) {
@@ -28,7 +31,7 @@ public class UserService implements IUserService {
     public Response GuestEntry(){
         try{
             String userName =  userFacade.createGuestSession();
-            String token = JwtService.generateToken(userName, "GUEST");
+            String token = jwtService.generateToken(userName, "GUEST");
             return Response.ok(token).build();
         }
         catch (Exception e){
@@ -38,9 +41,9 @@ public class UserService implements IUserService {
 
     public Response GuestExit(String token){
         try{
-            String userName = JwtService.extractUsername(token);
+            String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if(userName != null && JwtService.isValid(token, userDetails)) {
+            if(userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.terminateGuestSession(userName);
                 return Response.ok().build();
             }
@@ -66,7 +69,7 @@ public class UserService implements IUserService {
     public Response login(String userName, String password){
         try{
             userFacade.login(userName,password);
-            String token = JwtService.generateToken(userName, "REGISTERED");
+            String token = jwtService.generateToken(userName, "REGISTERED");
             return Response.ok(token).build();
         }
         catch (Exception e){
@@ -76,9 +79,9 @@ public class UserService implements IUserService {
 
     public Response logout(String token){
         try{
-            String userName = JwtService.extractUsername(token);
+            String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if(userName != null && JwtService.isValid(token, userDetails)){
+            if(userName != null && jwtService.isValid(token, userDetails)){
                 userFacade.logout(userName);
                 return Response.ok().build();
             }
@@ -92,11 +95,11 @@ public class UserService implements IUserService {
     }
 
     public Response viewShoppingCart(String token){
-        //implement using JwtService:
+        //implement using jwtService:
         try {
-            String userName = JwtService.extractUsername(token);
+            String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if (userName != null && JwtService.isValid(token, userDetails)) {
+            if (userName != null && jwtService.isValid(token, userDetails)) {
                 return Response.ok(userFacade.viewShoppingCart(userName)).build();
             } else {
                 return Response.status(401).build();
@@ -110,9 +113,9 @@ public class UserService implements IUserService {
     @Override
     public Response modifyShoppingCart(String token, long basketId, long itemId, int newQuantity){
         try {
-            String userName = JwtService.extractUsername(token);
+            String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if (userName != null && JwtService.isValid(token, userDetails)) {
+            if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.modifyShoppingCart(userName, basketId,itemId,newQuantity);
                 return Response.ok().build();
             } else {
@@ -127,9 +130,9 @@ public class UserService implements IUserService {
     @Override
     public Response checkoutShoppingCart(String token, String creditCard, Date expiryDate , String cvv, String discountCode) {
         try{
-            String userName = JwtService.extractUsername(token);
+            String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if(userName != null && JwtService.isValid(token, userDetails)){
+            if(userName != null && jwtService.isValid(token, userDetails)){
                 userFacade.checkoutShoppingCart(userName, creditCard, expiryDate, cvv, discountCode);
                 return Response.ok().build();
             }
@@ -145,9 +148,9 @@ public class UserService implements IUserService {
     @Override
     public Response addItemToBasket(String token,long basketId, long itemId, int quantity) {
         try {
-            String userName = JwtService.extractUsername(token);
+            String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if (userName != null && JwtService.isValid(token, userDetails)) {
+            if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.addItemToBasket(userName,basketId, itemId, quantity);
                 return Response.ok().build();
             } else {
@@ -161,9 +164,9 @@ public class UserService implements IUserService {
     @Override
     public Response addPermission(String token, long storeId, String permission) {
         try{
-            String userName = JwtService.extractUsername(token);
+            String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if(userName != null && JwtService.isValid(token, userDetails)){
+            if(userName != null && jwtService.isValid(token, userDetails)){
                 userFacade.addPermission(userName, storeId, permission);
                 return Response.ok().build();
             }
@@ -179,9 +182,9 @@ public class UserService implements IUserService {
     @Override
     public Response removePermission(String token, long storeId ,String permission) {
         try{
-            String userName = JwtService.extractUsername(token);
+            String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if(userName != null && JwtService.isValid(token, userDetails)){
+            if(userName != null && jwtService.isValid(token, userDetails)){
                 userFacade.removePermission(userName, storeId,permission);
                 return Response.ok().build();
             }
