@@ -14,7 +14,7 @@ public interface IUserFacade {
     public String viewShoppingCart(String userName);
     public void modifyShoppingCart(String userName);
     public void checkoutShoppingCart(String userName);
-    public boolean checkPermission(String userName);
+    public boolean checkPermission(String userName,String permission);
     public void assignStoreOwner(String userName, long storeId);
     public void assignStoreManager(String userName, long storeId);
     public List<StorePermission> getUserPermission(String userName);
