@@ -8,9 +8,18 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class StoreManagementService implements IStoreManagementService{
+    private static StoreManagementService instance;
     private final IStoreFacade storeFacade;
-    public StoreManagementService(IStoreFacade storeFacade){
+
+    private StoreManagementService(IStoreFacade storeFacade){
         this.storeFacade = storeFacade;
+    }
+
+    public static synchronized StoreManagementService getInstance(IStoreFacade storeFacade) {
+        if (instance == null) {
+            instance = new StoreManagementService(storeFacade);
+        }
+        return instance;
     }
 
     @Override

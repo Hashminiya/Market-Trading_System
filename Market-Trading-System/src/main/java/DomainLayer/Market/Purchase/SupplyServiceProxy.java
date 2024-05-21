@@ -7,10 +7,18 @@ import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import java.util.List;
 
 public class SupplyServiceProxy implements ISupplyService {
+    private static SupplyServiceProxy instance;
     private SupplyServiceImpl supplyService;
 
-    public SupplyServiceProxy(SupplyServiceImpl supplyService) {
+    private SupplyServiceProxy(SupplyServiceImpl supplyService) {
         this.supplyService = supplyService;
+    }
+
+    public static synchronized SupplyServiceProxy getInstance(SupplyServiceImpl supplyServiceInstance) {
+        if(instance == null) {
+            instance = new SupplyServiceProxy(supplyServiceInstance);
+        }
+        return instance;
     }
 
     @Override
