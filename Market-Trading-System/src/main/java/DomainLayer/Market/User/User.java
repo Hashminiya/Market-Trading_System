@@ -9,7 +9,7 @@ import DomainLayer.Market.Util.StoreRole;
 
 import java.util.*;
 
-public class User implements DataItem<String> {
+public class User implements IUser,DataItem<String> {
     private String userName;
     private String password;
     private int userAge;
@@ -159,8 +159,15 @@ public class User implements DataItem<String> {
         shoppingCart.addItemBasket(basketId, itemId, quantity);
     }
 
-    public boolean isRegistered() {
-        //TODO: implement
-        return false;
+    public boolean isRegister() {
+        return state.isRegistered();
+    }
+
+    public void removePermission(long storeId, StorePermission storePermission) {
+        storePermissionsAndRole.get(storeId).remove(storePermission);
+    }
+
+    public void addPermission(long storeId, StorePermission storePermission) {
+        storePermissionsAndRole.get(storeId).add(storePermission);
     }
 }
