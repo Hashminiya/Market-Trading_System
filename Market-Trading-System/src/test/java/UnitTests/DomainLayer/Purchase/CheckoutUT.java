@@ -21,11 +21,6 @@ import static org.mockito.Mockito.*;
 
 public class CheckoutUT {
 
-    @BeforeEach
-    void setUp(){
-
-    }
-
     @Test
     void checkout_ValidItems_SuccessfullyCheckedOut() {
         // Mocking dependencies
