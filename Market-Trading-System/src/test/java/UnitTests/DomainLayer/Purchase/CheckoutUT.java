@@ -24,7 +24,6 @@ public class CheckoutUT {
     @Test
     void checkout_ValidItems_SuccessfullyCheckedOut() {
         // Mocking dependencies
-        ServiceFactory  serviceFactory= ServiceFactory.getServiceFactory();
         IRepository<Long, Purchase> purchaseRepo = mock(IRepository.class);
         PaymentServiceProxy paymentServiceProxy = mock(PaymentServiceProxy.class);
         SupplyServiceProxy supplyServiceProxy = mock(SupplyServiceProxy.class);
