@@ -1,4 +1,5 @@
 package DomainLayer.Market.User;
+import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
@@ -7,6 +8,7 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Util.StorePermission;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,15 +17,18 @@ public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
     private static IStoreFacade storeFacade;
     private final IRepository<String, User> users;
-    private final HashMap<String, ShoppingCart> carts;
+    private final IStoreFacade storeFacade;
+    private final IPurchaseFacade purchaseFacade;
     private final BCryptPasswordEncoder passwordEncoder;
     private int guestId ;
 
-    private UserController(IRepository<String, User> users) {
+    private UserController(IRepository<String, User> users, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade) {
+
         this.users = users;
-        this.carts = new HashMap<>();
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.guestId = 0;
+        this.storeFacade = storeFacade;
+        this.purchaseFacade = purchaseFacade;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class UserController implements IUserFacade {
         long id = generateId();
         String userName = "guest" + id;
         Istate guest = new Guest();
-        User user = new User(userName, null, 0, guest, true, new ShoppingCart());
+        User user = new User(userName, null, 0, guest, true, new ShoppingCart());//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
         return userName;
     }
@@ -54,57 +59,77 @@ public class UserController implements IUserFacade {
         users.delete(userName);
     }
 
-    @Override
-    public void register(String userName, String password) {
-
-    }
-
     public void register(String userName,String password, int userAge) throws Exception {
         if (users.findById(userName) != null) {
             throw new Exception("username already exists");
         }
         String encodedPassword = passwordEncoder.encode(password);
         Istate registered = new Registered();
-        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart());
+        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart());//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
-        //TODO: delete guest when register
     }
 
     public boolean login(String userName, String rawPassword) throws Exception {
-        User user = users.findById(userName);
-        if (user == null) {
-            throw new Exception("user not exists");
-        }
+        User user = getUser(userName);
         if (passwordEncoder.matches(rawPassword, user.getPassword())) {
-            user.login(userName, rawPassword);
-            return true;
+            return user.login();
         }
-        throw new Exception("password is incorrect");
+        throw new IllegalArgumentException("wrong password");
     }
 
     public void logout(String userName) {
-        User user = users.findById(userName);
-        user.logout(userName);
+        User user = getUser(userName);
+        user.logout();
     }
 
     public String viewShoppingCart(String userName) {
-        ShoppingCart sc = carts.get(userName);
-        return sc.viewShoppingCart();
+        User user = getUser(userName);
+        return user.getShoppingCart().viewShoppingCart();
     }
 
+    @Override
     public void modifyShoppingCart(String userName) {
-        //TODO implement
+
     }
 
+    @Override
     public void checkoutShoppingCart(String userName) {
-        ShoppingCart shoppingCart = carts.get(userName);
-        List<ItemDTO> items = new ArrayList<>();
-        List<ShoppingBasket> baskets = shoppingCart.getBaskets();
-        for (ShoppingBasket shoppingBasket : baskets) {
-            //TODO: call to IStoreFacade to receive the price for basket and add itemDTOs
-        }
-        //TODO: call checkout function in purchase
-        //TODO delegate to ShoppingCart?
+
+    }
+
+    @Override
+    public boolean checkPermission(String userName, long storeId, String permission) {
+        return false;
+    }
+
+    public void modifyShoppingCart(String userName, int storeNum, int productNum, int newQuantity) {
+        User user = getUser(userName);
+        user.modifyShoppingCart(storeNum, productNum, newQuantity);
+    }
+
+    public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) {
+        User user = getUser(userName);
+        List<ItemDTO> items = user.checkoutShoppingCart(this.storeFacade, discountCode);
+        double totalAmount = 0;//TODO: call method to calculate total amount
+        purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items);
+        storeFacade.purchaseOccurs();
+    }
+
+    @Override
+    public void assignStoreOwner(String userName, long storeId) {
+        User user = getUser(userName);
+        user.assignStoreOwner(storeId);
+    }
+
+    @Override
+    public void assignStoreManager(String userName, long storeId,List<String> storePermissions) {
+        User user = getUser(userName);
+        user.assignStoreManager(storeId, storePermissions);
+    }
+
+    @Override
+    public List<String> getUserPermission(String userName, long storeId) {
+        return null;
     }
 
     @Override
@@ -112,34 +137,16 @@ public class UserController implements IUserFacade {
         return false;
     }
 
-    public boolean checkPermission(String userName, Long storeId) {
-        return false;
-    }
-
-    @Override
-    public void assignStoreOwner(String userName, long storeId) {
-        //TODO implement
-    }
-
-    @Override
-    public void assignStoreManager(String userName, long storeId, List<String> permissions) {
-        //TODO implement
-    }
-
-    @Override
-    public List<StorePermission> getUserPermission(String userName) {
-        return null;
-    }
-
-
     @Override
     public void terminateGuest(int guestID) {
-
+        //TODO: implement
     }
 
-    @Override
-    public void addItemToBasket(String userName, long itemId, long quantity) {
 
+    @Override
+    public void addItemToBasket(String userName,long basketId, long itemId, int quantity) {
+        User user = getUser(userName);
+        user.addItemToBasket(basketId, itemId, quantity);
     }
 
     @Override
@@ -149,5 +156,18 @@ public class UserController implements IUserFacade {
 
     private int generateId() {
         return guestId++;
+    }
+
+    private User getUser(String userName) {
+        User user = users.findById(userName);
+        if (user == null) {
+            throw new IllegalArgumentException("user not exists");
+        }
+        return user;
+    }
+
+    @Override
+    public boolean isRegister(String userName) {
+        return getUser(userName).isRegistered();
     }
 }

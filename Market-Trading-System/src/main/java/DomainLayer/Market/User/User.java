@@ -1,11 +1,13 @@
 package DomainLayer.Market.User;
 
+import DAL.ItemDTO;
+import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.DataItem;
+import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import DomainLayer.Market.Util.StoreRole;
 
+import java.util.*;
 
 public class User implements DataItem<String> {
     private String userName;
@@ -14,15 +16,46 @@ public class User implements DataItem<String> {
     private Istate state;
     private boolean loggedIn;
     private ShoppingCart shoppingCart;
-    private Map<Long, Set<StorePermission>> storePermissions;
+    private Map<Long, Set<StoreEnum>> storePermissionsAndRole;
 
-    public User(String userName,String password, int userAge, Istate state, boolean loggedIn, ShoppingCart shoppingCart) {
+    public User(String userName, String password, int userAge, Istate state, boolean loggedIn, ShoppingCart shoppingCart) {
         this.userName = userName;
         this.password = password;
         this.userAge = userAge;
         this.state = state;
         this.loggedIn = loggedIn;
         this.shoppingCart = shoppingCart;
+        this.storePermissionsAndRole = new HashMap<>();
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public int getUserAge() {
+        return userAge;
+    }
+
+    public Istate getUserState() {
+        return state;
+    }
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+
+    @Override
+    public String getId() {
+        return userName;
+    }
+
+    @Override
+    public String getName() {
+        return userName;
     }
 
     public void setUserName(String userName) {
@@ -33,8 +66,8 @@ public class User implements DataItem<String> {
         this.userAge = userAge;
     }
 
-    public void setUserStates(List<Istate> userStates) {
-        this.userStates = userStates;
+    public void setUserState(Istate state) {
+        this.state = state;
     }
 
     public void setLoggedIn(boolean loggedIn) {
@@ -45,66 +78,89 @@ public class User implements DataItem<String> {
         this.shoppingCart = shoppingCart;
     }
 
-
-    public String getUserName() {
-        return userName;
+    public boolean login() {
+        if (loggedIn) {
+            throw new IllegalArgumentException("user already logged in");
+        }
+        loggedIn = true;
+        return true;
     }
 
-    public int getUserAge() {
-        return userAge;
+    public void logout() {
+        verifyIsLoggedIn();
+        loggedIn = false;
     }
 
-    public List<Istate> getUserStates() {
-        return userStates;
+    public void deleteShoppingBasket(long basketId) {
+        verifyIsLoggedIn();
+        shoppingCart.deleteShoppingBasket(basketId);
     }
 
-    public boolean isLoggedIn() {
-        return loggedIn;
+    public void modifyShoppingCart(long basketId, long itemId, int newQuantity) {
+        verifyIsLoggedIn();
+        shoppingCart.modifyShoppingCart(basketId, itemId, newQuantity);
     }
 
-    public ShoppingCart getShoppingCart() {
-        return shoppingCart;
+    private void verifyIsLoggedIn() {
+        if (!loggedIn) {
+            throw new IllegalArgumentException("user not logged in");
+        }
     }
 
-    public boolean changeState(Istate state){
-
+    public List<String> getStorePermissions(long storeId) {
+        List<String> permissions = new ArrayList<>();
+        if (storePermissionsAndRole.containsKey(storeId)) {
+            for (StoreEnum permission : storePermissionsAndRole.get(storeId)) {
+                permissions.add(permission.name());
+            }
+        }
+        return permissions;
     }
 
-    public boolean login(String userName, String password){
-
+    public boolean checkPermission(long storeId, StorePermission storePermission) {
+        if (storePermissionsAndRole.containsKey(storeId)) {
+            if (storePermissionsAndRole.get(storeId).contains(storePermission)) {
+                return true;
+            }
+            throw new IllegalArgumentException("user does not have" + storePermission.name() + "permission for this store");
+        }
+        throw new IllegalArgumentException("user does not have any permissions for this store");
     }
 
-    public boolean logout(String userName){
-
+    public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String discountCode) {
+        verifyIsLoggedIn();
+        return shoppingCart.checkoutShoppingCart(storeFacade, discountCode);
     }
 
-    public boolean addToShoppingCart(int storeNum, int productNum, int quantity){
-
+    public void assignStoreOwner(long storeId) {
+        if(storePermissionsAndRole.containsKey(storeId) && storePermissionsAndRole.get(storeId).contains(StoreRole.OWNER){
+            throw new IllegalArgumentException("user is already store owner");
+        }
+        Set<StoreEnum> permissions = new HashSet<>();
+        permissions.add(StoreRole.OWNER); //Pay attention that if the user is already a manager, he will be both a manager and an owner!
+        permissions.addAll(Arrays.asList(StorePermission.values()));
+        storePermissionsAndRole.put(storeId, permissions);
     }
 
-    public boolean deleteFromShoppingCart(int storeNum, int productNum){
-
+    public void assignStoreManager(long storeId, List<String> userPermissions) {
+        if(storePermissionsAndRole.containsKey(storeId) && storePermissionsAndRole.get(storeId).contains(StoreRole.MANAGER){
+            throw new IllegalArgumentException("user is already store manager");
+        }
+        Set<StoreEnum> permissions = new HashSet<>();
+        permissions.add(StoreRole.MANAGER);
+        for (String permission : userPermissions) {
+            permissions.add(StorePermission.valueOf(permission));
+        }
+        storePermissionsAndRole.put(storeId, permissions);
     }
 
-    public boolean editShoppingCart(int storeNum, int productNum, int newQuantity){
-
+    public void addItemToBasket(long basketId, long itemId, int quantity) {
+        verifyIsLoggedIn();
+        shoppingCart.addItemBasket(basketId, itemId, quantity);
     }
 
-    public boolean checkOutShoppingCart(){
-
-    }
-
-
-    public String getPassword() {
-        return password;
-
-    @Override
-    public String getId() {
-        return userName;
-    }
-
-    @Override
-    public String getName() {
-        return userName;
+    public boolean isRegistered() {
+        //TODO: implement
+        return false;
     }
 }

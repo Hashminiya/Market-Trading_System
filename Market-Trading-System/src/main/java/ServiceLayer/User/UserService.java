@@ -46,9 +46,9 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response register(String userName, String password){
+    public Response register(String userName, String password, int userAge){
         try{
-            userFacade.register(userName,password);
+            userFacade.register(userName,password,userAge);
             return Response.ok().build();
         }
         catch (Exception e){
@@ -134,12 +134,12 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Response addItemToBasket(String token, long itemId, long quantity) {
+    public Response addItemToBasket(String token,long basketId, long itemId, int quantity) {
         try {
             String userName = JwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
             if (userName != null && JwtService.isValid(token, userDetails)) {
-                userFacade.addItemToBasket(userName, itemId, quantity);
+                userFacade.addItemToBasket(userName,basketId, itemId, quantity);
                 return Response.ok().build();
             } else {
                 return Response.status(401).build();
