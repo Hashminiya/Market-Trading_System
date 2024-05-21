@@ -15,8 +15,7 @@ public class StoreManagementService implements IStoreManagementService{
         this.storeFacade = storeFacade;
     }
 
-    // Public method to provide access to the instance
-    public static StoreManagementService getInstance(IStoreFacade storeFacade) {
+    public static synchronized StoreManagementService getInstance(IStoreFacade storeFacade) {
         if (instance == null) {
             instance = new StoreManagementService(storeFacade);
         }

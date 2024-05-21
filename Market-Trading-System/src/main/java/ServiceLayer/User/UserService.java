@@ -18,7 +18,7 @@ public class UserService implements IUserService {
         this.userFacade = userFacade;
     }
 
-    public static UserService getInstance(IUserFacade userFacade) {
+    public static synchronized UserService getInstance(IUserFacade userFacade) {
         if (instance == null) {
             instance = new UserService(userFacade);
         }

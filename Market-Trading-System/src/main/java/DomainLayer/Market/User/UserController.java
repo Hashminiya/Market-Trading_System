@@ -1,4 +1,5 @@
 package DomainLayer.Market.User;
+import DomainLayer.Market.Store.IStoreFacade;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
+    private static IStoreFacade storeFacade;
     private final IRepository<String, User> users;
     private final HashMap<String, ShoppingCart> carts;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -24,9 +26,15 @@ public class UserController implements IUserFacade {
         this.guestId = 0;
     }
 
-    public static UserController getInstance(IRepository<String, User> users) {
+    @Override
+    public void setStoreFacade(IStoreFacade storeFacadeInstance) {
+        storeFacade = storeFacadeInstance;
+    }
+
+    public static synchronized UserController getInstance(IRepository<String, User> users) {
         if (userControllerInstance == null) {
             userControllerInstance = new UserController(users);
+            // TODO : We assume that when this function called, next line will be setStoreFacade..
         }
         return userControllerInstance;
     }

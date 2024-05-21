@@ -1,10 +1,9 @@
 package DomainLayer.Market.Store;
 
 
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
-import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.User.IUserFacade;
 
 import java.util.Date;
@@ -12,10 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface IStoreFacade {
-    public static IStoreFacade getInstance(IRepository<Long, Store> storesRepo, IPurchaseFacade purchaseFacade, IUserFacade userFacade)
+    public static IStoreFacade getInstance(IRepository<Long, Store> storesRepo)
     {
-        return StoreController.getInstance(storesRepo, purchaseFacade, userFacade);
+        return StoreController.getInstance(storesRepo);
     }
+    public void setUserFacade(IUserFacade userFacade);
+    public void setPurchaseFacade(IPurchaseFacade purchaseFacadeInstance);
     public void createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts)throws Exception;
     public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId) throws Exception;
     public void addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories)throws Exception;

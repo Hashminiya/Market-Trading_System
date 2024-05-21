@@ -14,7 +14,7 @@ public class StoreBuyerService implements IStoreBuyerService{
         this.storeFacade = storeFacade;
     }
 
-    public static StoreBuyerService getInstance(IStoreFacade storeFacade) {
+    public static synchronized StoreBuyerService getInstance(IStoreFacade storeFacade) {
         if (instance == null) {
             instance = new StoreBuyerService(storeFacade);
         }

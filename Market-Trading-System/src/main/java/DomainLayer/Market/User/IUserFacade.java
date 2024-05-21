@@ -16,6 +16,7 @@ public interface IUserFacade {
     {
         return UserController.getInstance(users);
     }
+    public void setStoreFacade(IStoreFacade storeFacade);
     public void createGuestSession();
     public boolean login(String userName, String password) throws Exception;
     public void terminateGuestSession(String userName);

@@ -5,6 +5,7 @@ import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
 import DomainLayer.Market.Purchase.Abstractions.ISupplyService;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
 
 import java.util.ArrayList;
@@ -23,12 +24,14 @@ public class PurchaseController implements IPurchaseFacade {
     private BlockingQueue<ItemDTO> purchasedItems;
 
     private PaymentServiceProxy paymentServiceProxyInstance;
+    private PaymentServiceImpl paymentServiceInstance;
     private SupplyServiceProxy supplyServiceProxyInstance;
-
+    private SupplyServiceImpl supplyServiceInstance;
     private boolean isPaymentServiceConnected;
     private boolean isSupplyServiceConnected;
 
-    private PurchaseController(PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+
+    private PurchaseController(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, PaymentServiceImpl paymentService, SupplyServiceProxy supplyServiceProxy, SupplyServiceImpl supplyService) {
         isPaymentServiceConnected = false;
         isSupplyServiceConnected = false;
 
@@ -37,11 +40,17 @@ public class PurchaseController implements IPurchaseFacade {
         purchasedItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
         paymentServiceProxyInstance = paymentServiceProxy;
         supplyServiceProxyInstance = supplyServiceProxy;
+        paymentServiceInstance = paymentService;
+        supplyServiceInstance = supplyService;
+        // TODO : Yagil
+        // --- = purchaseRepo;
+
     }
 
-    public static PurchaseController getInstance(PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+    public static PurchaseController getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, PaymentServiceImpl paymentService,
+                                                 SupplyServiceProxy supplyServiceProxy, SupplyServiceImpl supplyService) {
         if (purchaseControllerInstance == null) {
-            purchaseControllerInstance = new PurchaseController(paymentServiceProxy, supplyServiceProxy);
+            purchaseControllerInstance = new PurchaseController(purchaseRepo, paymentServiceProxy, paymentService, supplyServiceProxy, supplyService);
         }
         return purchaseControllerInstance;
     }

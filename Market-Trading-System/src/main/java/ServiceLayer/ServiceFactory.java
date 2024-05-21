@@ -36,7 +36,7 @@ public class ServiceFactory {
         initFactory();
     }
 
-    public static ServiceFactory getServiceFactory(){
+    public static synchronized ServiceFactory getServiceFactory(){
         if(serviceFactoryInstace == null) {
             serviceFactoryInstace = new ServiceFactory();
         }
@@ -44,48 +44,66 @@ public class ServiceFactory {
     }
 
     public static void initFactory() {
-        // Create singleton instances of controllers
-        userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String, User>());
-        storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>(), purchaseFacadeInstance, userFacadeInstance);
 
-        // Create services
+        // TODO : Ask about this type of implementation
+        paymentServiceInstance = PaymentServiceImpl.getInstance();
+        supplyServiceInstance = SupplyServiceImpl.getInstance();
+        paymentServiceProxyInstance = PaymentServiceProxy.getInstance(paymentServiceInstance);
+
+        supplyServiceProxyInstance =  SupplyServiceProxy.getInstance(supplyServiceInstance);
+        purchaseFacadeInstance = IPurchaseFacade.getInstance(paymentServiceProxyInstance, paymentServiceInstance, supplyServiceProxyInstance, supplyServiceInstance);
+        //
+
+        userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String, User>());
+        storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>());
+        userFacadeInstance.setStoreFacade(storeFacadeInstance);
+        storeFacadeInstance.setUserFacade(userFacadeInstance);
+        storeFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
+
         storeManagementServiceInstance = StoreManagementService.getInstance(storeFacadeInstance);
         storeBuyerServiceInstance = StoreBuyerService.getInstance(storeFacadeInstance);
         userServiceInstance = UserService.getInstance(userFacadeInstance);
-
-        // TODO : Ask Yagil about this type of implementation
-        paymentServiceInstance = PaymentServiceImpl.getInstance();
-        supplyServiceInstance = SupplyServiceImpl.getInstance();
-
-        paymentServiceProxyInstance = PaymentServiceProxy.getInstance(paymentServiceInstance);
-        supplyServiceProxyInstance =  SupplyServiceProxy.getInstance(supplyServiceInstance);
-        purchaseFacadeInstance = IPurchaseFacade.getInstance(paymentServiceProxyInstance, supplyServiceProxyInstance);
     }
 
-    // Factory methods for singleton instances of controllers
-    public static IStoreFacade getStoreFacade() {
+    public IStoreFacade getStoreFacade() {
         return storeFacadeInstance;
     }
 
-    public static IUserFacade getUserFacade() {
+    public IUserFacade getUserFacade() {
         return userFacadeInstance;
     }
 
+    public IPurchaseFacade getPurchaseFacade(){
+        return purchaseFacadeInstance;
+    }
+
     // Factory methods for services
-    public static StoreManagementService getStoreManagementService() {
+    public StoreManagementService getStoreManagementService() {
         return storeManagementServiceInstance;
     }
 
-    public static StoreBuyerService getStoreBuyerService() {
+    public StoreBuyerService getStoreBuyerService() {
         return storeBuyerServiceInstance;
     }
 
-    public static UserService getUserService() {
+    public UserService getUserService() {
         return userServiceInstance;
     }
 
-    public static PaymentServiceImpl paymentService(){
+    public PaymentServiceImpl paymentService(){
         return paymentServiceInstance;
+    }
+
+    public SupplyServiceImpl getSupplyService(){
+        return supplyServiceInstance;
+    }
+
+    public PaymentServiceProxy getPaymentServiceProxy(){
+        return paymentServiceProxyInstance;
+    }
+
+    public SupplyServiceProxy getSupplyServiceProxy(){
+        return supplyServiceProxyInstance;
     }
 
 }
