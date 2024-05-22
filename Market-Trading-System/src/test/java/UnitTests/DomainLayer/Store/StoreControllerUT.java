@@ -6,6 +6,7 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,17 +40,21 @@ public class StoreControllerUT {
     private IPurchaseFacade purchaseFacadeMock;
 
     @Mock
-    private IRepository<Long, Store> storesRepoMock;
+    private InMemoryRepository<Long, Store> storesRepoMock;
 
     @Mock
     private IRepository<Long, Discount> discountRepoMock;
 
-    @InjectMocks
-    private IStoreFacade storeFacade = StoreController.getInstance(storesRepoMock);
+
+    private IStoreFacade storeFacade;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        storesRepoMock = mock(InMemoryRepository.class);
+        userFacadeMock = mock(UserController.class);
+        storeFacade = StoreController.getInstance(storesRepoMock);
+        storeFacade.setUserFacade(userFacadeMock);
     }
 
     @Test

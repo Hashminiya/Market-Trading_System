@@ -69,7 +69,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId)throws Exception {
-        if(userFacade.checkPermission(userId, storeId, VIEW_INVENTORY))
+        if(!userFacade.checkPermission(userId, storeId, VIEW_INVENTORY))
             throw new Exception("User doesn't has permission to view the store inventory");
         Store store = storesRepo.findById(storeId);
         List<Item> inventory = store.viewInventory();
@@ -119,7 +119,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void assignStoreOwner(String userId, long storeId, String newOwnerId)throws Exception{
-        if(userFacade.checkPermission(userId, storeId, ASSIGN_OWNER))
+        if(!userFacade.checkPermission(userId, storeId, ASSIGN_OWNER))
             throw new Exception("User doesn't has permission to assign store owner");
         Store store = storesRepo.findById(storeId);
         userFacade.assignStoreOwner(newOwnerId, storeId);
@@ -128,7 +128,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void assignStoreManager(String userId, long storeId, String newManagerId, List<String> permissions)throws Exception{
-        if(userFacade.checkPermission(userId, storeId, ASSIGN_MANAGER))
+        if(!userFacade.checkPermission(userId, storeId, ASSIGN_MANAGER))
             throw new Exception("User doesn't has permission to assign store manager");
         Store store = storesRepo.findById(storeId);
         userFacade.assignStoreManager(newManagerId, storeId, permissions);
@@ -137,14 +137,14 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void removeStore(String userId, long storeId) throws Exception{
-        if(userFacade.checkPermission(userId, storeId, REMOVE_STORE))
+        if(!userFacade.checkPermission(userId, storeId, REMOVE_STORE))
             throw new Exception("User doesn't has permission to remove store");
         storesRepo.delete(storeId);
     }
 
     @Override
     public HashMap<String, List<String>> viewStoreManagementInfo(String userId, long storeId) throws Exception{
-        if(userFacade.checkPermission(userId, storeId, VIEW_STORE_MANAGEMENT_INFO))
+        if(!userFacade.checkPermission(userId, storeId, VIEW_STORE_MANAGEMENT_INFO))
             throw new Exception("User doesn't has permission to view the store management information");
         Store store = storesRepo.findById(storeId);
         List<String> managementIds = store.getManagers();
@@ -158,7 +158,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public HashMap<Long, HashMap<Long, Integer>> viewPurchaseHistory(String userId, long storeId) throws Exception{
-        if(userFacade.checkPermission(userId, storeId, VIEW_PURCHASE_HISTORY))
+        if(!userFacade.checkPermission(userId, storeId, VIEW_PURCHASE_HISTORY))
             throw new Exception("User doesn't has permission to view the store purchase history");
         //TODO: alter according to purchase new signature
         HashMap<Long, List<ItemDTO>> purchases = purchaseFacade.getPurchasesByStore(storeId);
