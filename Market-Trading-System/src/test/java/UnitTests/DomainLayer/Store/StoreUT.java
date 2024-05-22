@@ -173,7 +173,7 @@ public class StoreUT {
 
     @Test
     void testSearchWithCategory() {
-        String category = "Category1";
+        String category = "testcategory";
         String keyword = "Test";
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of(category));
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2"));

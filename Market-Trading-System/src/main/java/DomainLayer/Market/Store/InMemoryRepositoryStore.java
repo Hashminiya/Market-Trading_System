@@ -42,36 +42,17 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
     }
 
     public List<Item> search(String category, String queryString, boolean withCategory) {
-        List<Item> items = new ArrayList<>();
         try {
             IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(index));
-
-            // Create a multi-field query parser to search both name and description
-            QueryParser multiFieldParser = new MultiFieldQueryParser(new String[]{"name", "description"}, this.analyzer);
+            QueryParser multiFieldParser = new MultiFieldQueryParser(new String[]{"name", "description"}, analyzer);
             Query query = multiFieldParser.parse(queryString);
-
-            // Build the final query
-            BooleanQuery.Builder builder = new BooleanQuery.Builder();
-            builder.add(query, BooleanClause.Occur.MUST);
-            if (withCategory) {
-                builder.add(new TermQuery(new Term("category", category)), BooleanClause.Occur.MUST);
-            }
-            Query finalQuery = builder.build();
-
-            // Execute the search
+            Query finalQuery = buildQuery(query,withCategory,category);
             TopDocs results = searcher.search(finalQuery, SEARCH_LIMIT);
-            for (ScoreDoc scoreDoc : results.scoreDocs) {
-                Document doc = searcher.doc(scoreDoc.doc);
-                Long itemId = Long.parseLong(doc.get("id"));
-                Item item = this.data.get(itemId);
-                if (item != null) {
-                    items.add(item);
-                }
-            }
+            return asItemsList(results, searcher);
         } catch (Exception e) {
             e.printStackTrace();
+            return new ArrayList<>();
         }
-        return items;
     }
 
     private List<Item> asItemsList(TopDocs results, IndexSearcher searcher) throws IOException {
@@ -134,7 +115,7 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
             doc.add(new TextField("description", item.getDescription(), Field.Store.YES));
             doc.add(new DoublePoint("price", item.getPrice()));
             writer.addDocument(doc);
-            writer.commit();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
