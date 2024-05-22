@@ -1,6 +1,7 @@
 package UnitTests.DomainLayer.Store;
 
 import DomainLayer.Market.Purchase.IPurchaseFacade;
+import DomainLayer.Market.Purchase.PurchaseController;
 import DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
@@ -46,15 +47,21 @@ public class StoreControllerUT {
     private IRepository<Long, Discount> discountRepoMock;
 
 
-    private IStoreFacade storeFacade;
+    @Mock
+    private Store storeMock;
+    @InjectMocks
+    private StoreController storeFacade;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         storesRepoMock = mock(InMemoryRepository.class);
         userFacadeMock = mock(UserController.class);
+        purchaseFacadeMock = mock((PurchaseController.class));
         storeFacade = StoreController.getInstance(storesRepoMock);
         storeFacade.setUserFacade(userFacadeMock);
+        storeFacade.setPurchaseFacade(purchaseFacadeMock);
+        storeMock = mock(Store.class);
     }
 
     @Test
@@ -115,13 +122,13 @@ public class StoreControllerUT {
 
     @Test
     void testAssignStoreOwner() throws Exception {
-        Store store = mock(Store.class);
-        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+        when(storesRepoMock.findById(eq(STORE_ID))).thenReturn(storeMock);
+//        doNothing().when(storeMock).assignOwner("newOwnerId");
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ASSIGN_OWNER")).thenReturn(true);
 
         storeFacade.assignStoreOwner(USER_ID, STORE_ID, "newOwnerId");
 
-        verify(store).assignOwner("newOwnerId");
+        verify(storeMock).assignOwner("newOwnerId");
     }
 
     @Test

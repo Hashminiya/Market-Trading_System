@@ -59,7 +59,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts) throws Exception{
-        if(userFacade.isRegister(founderId))
+        if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
         long storeId = generateStoreId();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
@@ -82,7 +82,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public long addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories) throws Exception{
-        if(userFacade.checkPermission(userId, storeId, ADD_ITEM))
+        if(!userFacade.checkPermission(userId, storeId, ADD_ITEM))
             throw new Exception("User doesn't has permission to add item to the store");
         Store store = storesRepo.findById(storeId);
         Long id = IdGenerator.generateId();
@@ -92,7 +92,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount) throws Exception{
-        if(userFacade.checkPermission(userId, storeId, UPDATE_ITEM))
+        if(!userFacade.checkPermission(userId, storeId, UPDATE_ITEM))
             throw new Exception("User doesn't has permission to update item in the store");
         Store store = storesRepo.findById(storeId);
         store.updateItem(itemId, newName, newPrice, stockAmount);
@@ -100,7 +100,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void deleteItem(String userId, long storeId, long itemId) throws Exception{
-        if(userFacade.checkPermission(userId, storeId, DELETE_ITEM))
+        if(!userFacade.checkPermission(userId, storeId, DELETE_ITEM))
             throw new Exception("User doesn't has permission to delete item in the store");
         Store store = storesRepo.findById(storeId);
         store.deleteItem(itemId);
