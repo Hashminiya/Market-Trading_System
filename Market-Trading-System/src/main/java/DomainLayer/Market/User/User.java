@@ -122,7 +122,7 @@ public class User implements IUser,DataItem<String> {
             if (storePermissionsAndRole.get(storeId).contains(storePermission)) {
                 return true;
             }
-            throw new IllegalArgumentException("user does not have" + storePermission.name() + "permission for this store");
+            throw new IllegalArgumentException("user does not have " + storePermission.name() + " permission for this store");
         }
         throw new IllegalArgumentException("user does not have any permissions for this store");
     }
