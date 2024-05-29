@@ -3,6 +3,7 @@ package AcceptanceTests;
 import DomainLayer.Market.Purchase.PurchaseController;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class StoreManagementAT {
 
@@ -32,9 +34,18 @@ public class StoreManagementAT {
     @BeforeEach
     public void setUp() {
         serviceFactory = ServiceFactory.getServiceFactory();
+        serviceFactory.initFactory();
         storeFacade = serviceFactory.getStoreFacade();
         discountRepository = new InMemoryRepository<Long, Discount>();
         storeManagementService = serviceFactory.getStoreManagementService();
+        IUserFacade userFacade = serviceFactory.getUserFacade();
+        try {
+            userFacade.register(FOUNDER_ID, "PASS", 13);
+            userFacade.login(FOUNDER_ID, "PASS");
+        }
+        catch (Exception exp){
+            fail();
+        }
     }
 
     @Test

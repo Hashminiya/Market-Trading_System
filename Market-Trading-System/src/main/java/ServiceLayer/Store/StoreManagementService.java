@@ -20,7 +20,7 @@ public class StoreManagementService implements IStoreManagementService {
     private JwtService jwtService;
     private UserDetailsService userDetailsService;
 
-    public StoreManagementService(IStoreFacade storeFacade) {
+    private StoreManagementService(IStoreFacade storeFacade) {
         this.storeFacade = storeFacade;
         jwtService = new JwtService();
         userDetailsService = new InMemoryUserDetailsManager();

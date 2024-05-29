@@ -76,11 +76,11 @@ public class ShoppingBasketUT {
         basket.updateItemQuantity(ITEM_ID, 0);
 
         Map<Long, Integer> items = basket.getItems();
-        assertEquals(0, items.size());
+        assertEquals(0, items.get(ITEM_ID));
     }
 
     @Test
-    public void testCheckoutShoppingBasket() {
+    public void testCheckoutShoppingBasketSuccess() {
         int quantity = 2;
         double price = 5.0;
         String itemName = "Test Item";

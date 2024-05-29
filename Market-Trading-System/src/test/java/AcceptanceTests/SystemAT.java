@@ -3,13 +3,10 @@ package AcceptanceTests;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
-import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.SystemManager;
-import DomainLayer.Market.User.User;
 import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
 
@@ -20,24 +17,22 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class SystemAT {
-    private final String USER_NAME = "UserPayment";
-    private final String USER_NAME_UNKNOWN = "UserPaymentDoesntExist";
-    private final String USER_PW = "UserPW";
-    private final String STORE_NAME = "PaymentStore";
-    private final long BASKET_ID = 456L;
-    private final long ITEM_ID = 789L;
-    private final int ITEM_QUANTITY = 2;
+    private static final String USER_NAME = "UserPayment";
+    private static final String USER_NAME_UNKNOWN = "UserPaymentDoesntExist";
+    private static final String USER_PW = "UserPW";
+    private static final String STORE_NAME = "PaymentStore";
+    private static final long BASKET_ID = 456L;
+    private static final long ITEM_ID = 789L;
+    private static final int ITEM_QUANTITY = 2;
     private static final String CREDIT_CARD = "1234567890123456";
     private static final Date EXPIRY_DATE = new Date(System.currentTimeMillis() + 86400000L); // 1 day in future
     private static final String CVV = "123";
     private static final String DISCOUNT_CODE = "DISCOUNT10";
-    private final String SYSTEM_MANAGER_NAME = "SystemManager";
-    private final String SYSTEM_MANAGER_PW = "SystemManagerPassword";
-    private final String SYSTEM_MANAGER_WRONG_PW = "SystemManagerWrongPassword";
+    private static final String SYSTEM_MANAGER_NAME = "SystemManager";
+    private static final String SYSTEM_MANAGER_PW = "SystemManagerPassword";
+    private static final String SYSTEM_MANAGER_WRONG_PW = "SystemManagerWrongPassword";
 
     private ServiceFactory serviceFactory;
     private IUserFacade userFacade;

@@ -37,7 +37,8 @@ public class ShoppingBasket implements DataItem<Long> {
         List<ItemDTO> items = new ArrayList<>();
         Map<Long,String> itemsNames = storeFacade.getAllProductsInfoByStore(storeId);
         for(Map.Entry<Long,Integer> entry: itemsQuantity.entrySet()){
-            ItemDTO item = new ItemDTO(entry.getKey(),itemsNames.get(entry.getKey()), entry.getValue(), storeId,itemsPrice.get(entry.getKey()));
+            int itemQuantity = entry.getValue();
+            ItemDTO item = new ItemDTO(entry.getKey(),itemsNames.get(entry.getKey()), itemQuantity, storeId,itemsPrice.get(entry.getKey())*itemQuantity);
             items.add(item);
         }
         return items;
