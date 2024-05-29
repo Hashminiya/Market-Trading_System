@@ -34,7 +34,8 @@ public class ItemUT {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, discountsMock, ITEM_CATEGORIES);
+        discountsMock = new InMemoryRepository<Long,Discount>();
+        item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, new InMemoryRepository<Long,Discount>(), ITEM_CATEGORIES);
         item.setPrice(ITEM_PRICE);
         item.setQuantity(ITEM_QUANTITY);
     }
@@ -98,16 +99,9 @@ public class ItemUT {
     }
 
     @Test
-    void testSetDiscount() {
-        Discount discount = mock(Discount.class);
-        item.setDiscount(discount);
-        verify(discountsMock).save(discount);
-    }
-
-    @Test
     void testGetDiscounts() {
         Discount discount = mock(Discount.class);
-        when(discountsMock.findAll()).thenReturn(List.of(discount));
+        item.setDiscount(discount);
         List<Discount> discounts = item.getDiscounts();
         assertEquals(1, discounts.size());
         assertEquals(discount, discounts.get(0));
@@ -129,7 +123,6 @@ public class ItemUT {
 
     @Test
     void testGetCurrentPriceWithoutDiscount() {
-        when(discountsMock.findAll()).thenReturn(List.of());
         try {
             assertEquals(ITEM_PRICE, item.getCurrentPrice(""));
         } catch (Exception e) {
@@ -142,6 +135,7 @@ public class ItemUT {
         Discount discount = mock(RegularDiscount.class);
         try {
             when(discount.calculatePrice(anyDouble(),anyString())).thenReturn(DISCOUNT*ITEM_PRICE);
+            when(discount.isValid(any())).thenReturn(true);
             item.setDiscount(discount);
             double expectedPrice = DISCOUNT*ITEM_PRICE;
             assertEquals(expectedPrice, item.getCurrentPrice(CODE));
@@ -155,6 +149,7 @@ public class ItemUT {
         Discount discount = mock(HiddenDiscount.class);
         try {
             when(discount.calculatePrice(anyDouble(),anyString())).thenReturn(DISCOUNT*ITEM_PRICE);
+            when(discount.isValid(any())).thenReturn(true);
             item.setDiscount(discount);
             double expectedPrice = DISCOUNT*ITEM_PRICE;
             assertEquals(expectedPrice, item.getCurrentPrice(CODE));

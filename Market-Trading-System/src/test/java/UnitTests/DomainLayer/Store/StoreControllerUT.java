@@ -1,13 +1,16 @@
 package UnitTests.DomainLayer.Store;
 
 import DomainLayer.Market.Purchase.IPurchaseFacade;
+import DomainLayer.Market.Purchase.PurchaseController;
 import DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -39,19 +42,37 @@ public class StoreControllerUT {
     private IPurchaseFacade purchaseFacadeMock;
 
     @Mock
-    private IRepository<Long, Store> storesRepoMock;
+    private InMemoryRepository<Long, Store> storesRepoMock;
 
     @Mock
     private IRepository<Long, Discount> discountRepoMock;
 
+
+    @Mock
+    private Store storeMock;
     @InjectMocks
-    private IStoreFacade storeFacade = StoreController.getInstance(storesRepoMock);
+    private StoreController storeFacade;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        storesRepoMock = mock(InMemoryRepository.class);
+        userFacadeMock = mock(UserController.class);
+        purchaseFacadeMock = mock(PurchaseController.class);
+        storeMock = mock(Store.class);
+
+        storeFacade = StoreController.getInstance(storesRepoMock);
+        storeFacade.setStoersRepo(storesRepoMock);
+        storeFacade.setUserFacade(userFacadeMock);
+        storeFacade.setPurchaseFacade(purchaseFacadeMock);
     }
 
+    @AfterEach
+    void tearDown() {
+        // Reset the singleton instance or any shared state here
+        storeFacade.clear();  // Ensure resetInstance() method is available in StoreController
+    }
     @Test
     void testCreateStore() throws Exception {
         when(userFacadeMock.isRegister(FOUNDER_ID)).thenReturn(true);
@@ -106,17 +127,18 @@ public class StoreControllerUT {
         HashMap<Long, Integer> result = storeFacade.viewInventoryByStoreOwner(USER_ID, STORE_ID);
 
         assertEquals(inventory, result);
+
     }
 
     @Test
     void testAssignStoreOwner() throws Exception {
-        Store store = mock(Store.class);
-        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+        when(storesRepoMock.findById(anyLong())).thenReturn(storeMock);
+        doNothing().when(storeMock).assignOwner("newOwnerId");
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ASSIGN_OWNER")).thenReturn(true);
 
         storeFacade.assignStoreOwner(USER_ID, STORE_ID, "newOwnerId");
 
-        verify(store).assignOwner("newOwnerId");
+        verify(storeMock).assignOwner("newOwnerId");
     }
 
     @Test

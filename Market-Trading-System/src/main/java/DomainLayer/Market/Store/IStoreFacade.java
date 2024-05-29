@@ -5,6 +5,7 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -42,4 +43,8 @@ public interface IStoreFacade {
     public void calculateBasketPrice(ShoppingBasket basket, String code)throws Exception;
     public void addHiddenDiscount(double percent, Date expirationDate, List<Long> items, long storeId, String code, boolean isStoreDiscount);
     public void addRegularDiscount(double percent, Date expirationDate, List<Long> items, long storeId, List<Long> conditionItems, boolean isStoreDiscount);
+
+    void clear();
+
+    void setStoersRepo(IRepository<Long,Store> storesRepo);
 }
