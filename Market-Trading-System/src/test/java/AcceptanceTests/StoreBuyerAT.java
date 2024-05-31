@@ -5,6 +5,9 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreBuyerService;
+import ServiceLayer.User.IUserService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,22 +21,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StoreBuyerAT {
 
-    private StoreBuyerService storeBuyerService;
-    private ServiceFactory serviceFactory;
-    private IStoreFacade storeFacade;
-    long STORE_ID;
-    long ITEM_ID_1;
-    long ITEM_ID_2;
-    long ITEM_ID_3;
-    String STORE_NAME = "storeName";
-    @BeforeEach
-    public void setUp() {
-        serviceFactory = ServiceFactory.getServiceFactory();
-        storeFacade = serviceFactory.getStoreFacade();
+    private static StoreBuyerService storeBuyerService;
+    private static IUserService userService;
+    static long STORE_ID;
+    static long ITEM_ID_1;
+    static long ITEM_ID_2;
+    static long ITEM_ID_3;
+    static String STORE_NAME = "storeName";
+    @BeforeAll
+    public static void setUp() {
+        ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
+        serviceFactory.initFactory();
+        IStoreFacade storeFacade = serviceFactory.getStoreFacade();
         storeBuyerService = StoreBuyerService.getInstance(storeFacade);
-
+        userService = serviceFactory.getUserService();
         try {
-
+            userService.register("founderId","12345678",30);
             STORE_ID = storeFacade.createStore("founderId", STORE_NAME, "storeDescription", new InMemoryRepository<Long, Discount>());
             ITEM_ID_1 = storeFacade.addItemToStore("founderId", STORE_ID, "Laptop", 100,7,"High-end laptop",  List.of("Electronics"));
             ITEM_ID_2 = storeFacade.addItemToStore("founderId", STORE_ID, "Phone", 150,10,"Smartphone", List.of("Electronics"));
@@ -42,10 +45,14 @@ public class StoreBuyerAT {
             throw new RuntimeException(e);
         }
     }
+    @AfterEach
+    public void tearDown(){
+
+    }
 
     @Test
     public void testGetAllProductsInfoByStore() {
-        Response response = storeBuyerService.getAllProductsInfoByStore(1L);
+        Response response = storeBuyerService.getAllProductsInfoByStore(STORE_ID);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         Map<Long, String> expectedProducts = new HashMap<>();

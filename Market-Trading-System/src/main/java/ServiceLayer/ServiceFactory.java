@@ -10,11 +10,13 @@ import DomainLayer.Market.User.SystemManager;
 import DomainLayer.Market.User.User;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
+import DomainLayer.Market.Util.JwtService;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.User.UserService;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 public class ServiceFactory {
     // Controllers
@@ -65,8 +67,12 @@ public class ServiceFactory {
 
         // Init Services
         storeManagementServiceInstance = StoreManagementService.getInstance(storeFacadeInstance);
+        storeManagementServiceInstance.setJwtService(new JwtService());
+        storeManagementServiceInstance.setUserFacade(userFacadeInstance);
         storeBuyerServiceInstance = StoreBuyerService.getInstance(storeFacadeInstance);
         userServiceInstance = UserService.getInstance(userFacadeInstance);
+        userServiceInstance.setJwtService(new JwtService());
+        userServiceInstance.setUserDetailsService(new InMemoryUserDetailsManager());
     }
 
     private static InMemoryRepository<String, User> loadUserRepo() {
