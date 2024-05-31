@@ -1,27 +1,20 @@
 package DomainLayer.Market.Store;
 
 import DomainLayer.Market.Util.InMemoryRepository;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.RAMDirectory;
-
+import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.document.DoublePoint;
-import org.apache.lucene.util.BytesRef;
-
 
 public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
     private final int SEARCH_LIMIT = 30;
@@ -29,7 +22,7 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
     private final IndexWriter writer;
     private final StandardAnalyzer analyzer;
 
-    public InMemoryRepositoryStore(){
+    public InMemoryRepositoryStore() {
         super();
         index = new RAMDirectory();
         this.analyzer = new StandardAnalyzer();
@@ -44,9 +37,21 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
     public List<Item> search(String category, String queryString, boolean withCategory) {
         try {
             IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(index));
-            QueryParser multiFieldParser = new MultiFieldQueryParser(new String[]{"name", "description"}, analyzer);
-            Query query = multiFieldParser.parse(queryString);
-            Query finalQuery = buildQuery(query,withCategory,category);
+            Query finalQuery;
+
+            if (queryString == null || queryString.trim().isEmpty()) {
+                if (withCategory && category != null && !category.isEmpty()) {
+                    finalQuery = new TermQuery(new Term("category", category.toLowerCase()));
+                } else {
+                    // If no query string and no category, return empty results
+                    return new ArrayList<>();
+                }
+            } else {
+                QueryParser multiFieldParser = new MultiFieldQueryParser(new String[]{"name", "description"}, analyzer);
+                Query query = multiFieldParser.parse(queryString);
+                finalQuery = buildQuery(query, withCategory, category);
+            }
+
             TopDocs results = searcher.search(finalQuery, SEARCH_LIMIT);
             return asItemsList(results, searcher);
         } catch (Exception e) {
@@ -102,24 +107,24 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+
     private void indexItem(Item item) {
         try {
             Document doc = new Document();
             doc.add(new StringField("id", String.valueOf(item.getId()), Field.Store.YES));
             doc.add(new TextField("name", item.getName(), Field.Store.YES));
             for (String category : item.getCategories()) {
-                doc.add(new TextField("category", category, Field.Store.YES));
+                doc.add(new StringField("category", category.toLowerCase(), Field.Store.YES));
             }
             doc.add(new TextField("description", item.getDescription(), Field.Store.YES));
             doc.add(new DoublePoint("price", item.getPrice()));
             writer.addDocument(doc);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     public List<String> getAllCategoryValues() {
         List<String> categoryValues = new ArrayList<>();
         try {
@@ -138,11 +143,11 @@ public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
         return categoryValues;
     }
 
-    private Query buildQuery(Query query, boolean withCategory, String category){
+    private Query buildQuery(Query query, boolean withCategory, String category) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
         builder.add(query, BooleanClause.Occur.MUST);
-        if (withCategory) {
-            builder.add(new TermQuery(new Term("category", category)), BooleanClause.Occur.MUST);
+        if (withCategory && category != null && !category.isEmpty()) {
+            builder.add(new TermQuery(new Term("category", category.toLowerCase())), BooleanClause.Occur.MUST);
         }
         return builder.build();
     }
