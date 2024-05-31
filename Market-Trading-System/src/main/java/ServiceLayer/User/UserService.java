@@ -19,9 +19,7 @@ public class UserService implements IUserService {
     private static UserService instance;
 
     private UserService(IUserFacade userFacade) {
-        this.userDetailsService = new InMemoryUserDetailsManager();
         this.userFacade = userFacade;
-        this.jwtService = new JwtService();
     }
 
     public static synchronized UserService getInstance(IUserFacade userFacade) {
@@ -29,6 +27,13 @@ public class UserService implements IUserService {
             instance = new UserService(userFacade);
         }
         return instance;
+    }
+    public void setJwtService(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    public void setUserDetailsService(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     public Response GuestEntry() {
