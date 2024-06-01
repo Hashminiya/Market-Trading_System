@@ -5,6 +5,7 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.ArrayList;
@@ -27,13 +28,17 @@ public class ShoppingCart {
     }
 
     public void modifyShoppingCart(long basketId, long itemId, int quantity){
+        if (baskets.findById(basketId) == null){
+            throw new IllegalArgumentException("no such basket");
+        }
         ShoppingBasket sb = getShoppingBasket(basketId);
         sb.updateItemQuantity(itemId,quantity);
     }
 
-    public void addItemBasket(long basketId, long itemId, int quantity){
+    public Long addItemBasket(long basketId, long itemId, int quantity){
         ShoppingBasket sb = getShoppingBasket(basketId);
         sb.addItem(itemId,quantity);
+        return sb.getId();
     }
 
     public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String code) throws Exception{
@@ -58,7 +63,8 @@ public class ShoppingCart {
     private ShoppingBasket getShoppingBasket(long basketId){
         ShoppingBasket sb = baskets.findById(basketId);
         if(sb == null)
-            throw new RuntimeException("no basket exist with this id");
+            sb = new ShoppingBasket(IdGenerator.generateId());
+        baskets.save(sb);
         return sb;
     }
 

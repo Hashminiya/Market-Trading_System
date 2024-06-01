@@ -47,8 +47,11 @@ public class StoreManagementAT {
         userService.register(MANAGER_ID,PASSWORD,AGE);
         Response response1 = userService.login(FOUNDER_ID, PASSWORD);
         TOKEN = (String) response1.getEntity();
-        Response response = storeManagementService.createStore(TOKEN, STORE_NAME, STORE_DESCRIPTION, discountRepository);
-        STORE_ID = (long) response.getEntity();
+
+    }
+    @AfterAll
+    public static void tearDown(){
+        storeManagementService.removeStore(TOKEN, STORE_ID);
     }
 
     @Test
@@ -56,6 +59,7 @@ public class StoreManagementAT {
     public void testCreateStore() {
         // Store creation is handled in setUp, no need to create it here again
         Response response = storeManagementService.createStore(TOKEN, "newStoreName", "newStoreDescription", discountRepository);
+        STORE_ID = (long) response.getEntity();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 

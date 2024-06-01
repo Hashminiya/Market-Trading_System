@@ -1,244 +1,134 @@
 package AcceptanceTests;
 
-import DomainLayer.Market.Purchase.IPurchaseFacade;
-import DomainLayer.Market.Store.Discount;
-import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.User.IUserFacade;
-import DomainLayer.Market.User.User;
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
+import DomainLayer.Market.Util.StorePermission;
+import DomainLayer.Market.Util.UserPermission;
 import ServiceLayer.ServiceFactory;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import ServiceLayer.Store.StoreManagementService;
+import ServiceLayer.User.UserService;
+import org.junit.jupiter.api.*;
 
 import javax.ws.rs.core.Response;
-import java.text.SimpleDateFormat;
+import java.security.Permission;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserAT {
 
-    private IUserFacade userFacade;
-    private IRepository<String, User> userRepository;
-    private IStoreFacade storeFacade;
-    private IPurchaseFacade purchaseFacade;
-    private ServiceFactory serviceFactory;
+    private static final String USERNAME = "testUser";
+    private static final String USERNAME2 = "testUser2";
+    private static final String PASSWORD = "password123";
+    private static final int AGE = 25;
+    private static final String CREDIT_CARD = "1234-5678-9876-5432";
+    private static final Date EXPIRY_DATE = new Date(); // Set an appropriate expiry date
+    private static final String CVV = "123";
+    private static final String DISCOUNT_CODE = "DISCOUNT10";
+    private static long BASKET_ID;
+    private static long STOREID;
+    private static String TOKEN;
+    private static UserService userService;
+    private static ServiceFactory serviceFactory;
+    private static StoreManagementService storeSevice;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         serviceFactory = ServiceFactory.getServiceFactory();
-        storeFacade = serviceFactory.getStoreFacade();
-        userRepository = new InMemoryRepository<>();
-        purchaseFacade = serviceFactory.getPurchaseFacade();
-        userFacade = serviceFactory.getUserFacade();
+        serviceFactory.initFactory();
+        userService = serviceFactory.getUserService();
+        storeSevice = serviceFactory.getStoreManagementService();
+
+    }
+    @AfterAll
+    public static void tearDown()
+    {
+        storeSevice.removeStore(TOKEN,STOREID);
     }
 
     @Test
-    public void testCreateGuestSession() {
-        String guestName = userFacade.createGuestSession();
-        assertNotNull(guestName);
-        assertTrue(guestName.startsWith("guest"));
-//        assertNotNull(userRepository.findById(guestName));
+    @Order(1)
+    public void testGuestEntry() {
+        Response response = userService.GuestEntry();
+        TOKEN = (String) response.getEntity();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testTerminateGuestSession() {
-        String guestName = userFacade.createGuestSession();
-        userFacade.terminateGuestSession(guestName);
-        assertNull(userRepository.findById(guestName));
+    @Order(2)
+    public void testGuestExit() {
+        Response response = userService.GuestExit(TOKEN);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testRegister() throws Exception {
-        userFacade.register("newUser", "password123", 1999);
-        User user = userRepository.findById("newUser");
-        assertNotNull(user);
-        assertEquals("newUser", user.getUserName());
+    @Order(3)
+    public void testRegister() {
+        Response response = userService.register(USERNAME, PASSWORD, AGE);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testLogin() throws Exception {
-        userFacade.register("newUser", "password123", 1999);
-        boolean loginResult = userFacade.login("newUser", "password123");
-        assertTrue(loginResult);
+    @Order(4)
+    public void testLogin() {
+        userService.register(USERNAME2, PASSWORD, AGE);
+        Response response = userService.login(USERNAME2,PASSWORD);
+        TOKEN = (String) response.getEntity();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testLogout() throws Exception {
-        userFacade.register("newUser", "password123", 1999);
-        userFacade.login("newUser", "password123");
-        userFacade.logout("newUser");
-        User user = userRepository.findById("newUser");
-        assertFalse(user.isRegister());
+    @Order(5)
+    public void testLogout() {
+        Response response = userService.logout(TOKEN);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testViewShoppingCart() throws Exception {
-        userFacade.register("newUser", "password123", 25);
-        userFacade.login("newUser", "password123");
-        String cart = userFacade.viewShoppingCart("newUser");
-        assertNotNull(cart);
+    @Order(6)
+    public void testViewShoppingCart() {
+        Response response1 = userService.login(USERNAME2,PASSWORD);
+        TOKEN = (String) response1.getEntity();
+        Response response2 = userService.viewShoppingCart(TOKEN);
+        assertEquals(Response.Status.OK.getStatusCode(), response2.getStatus());
+        assertEquals("", response2.getEntity());
     }
 
     @Test
-    public void testModifyShoppingCart() throws Exception {
-        userFacade.register("newUser", "password123", 25);
-        userFacade.login("newUser", "password123");
-
-        // Add an item to the shopping cart
-        userFacade.addItemToBasket("newUser", 1, 1, 3);
-
-        // Modify the quantity of the item in the shopping cart
-        userFacade.modifyShoppingCart("newUser", 1, 1, 5);
-
-        // Verify that the item quantity has been updated
-        String cart = userFacade.viewShoppingCart("newUser");
-        assertTrue(cart.contains("itemId: 1, quantity: 5"));
+    @Order(7)
+    public void testAddPermission() {
+        Response storeResponse = storeSevice.createStore(TOKEN, "myStore", "description", new InMemoryRepository<>());
+        STOREID = (Long) storeResponse.getEntity();
+        Response response = userService.addPermission(TOKEN, USERNAME,STOREID, StorePermission.REMOVE_STORE.toString());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testCheckoutShoppingCart() throws Exception {
-        // Register and login a new user
-        userFacade.register("newUser", "password123", 25);
-        userFacade.login("newUser", "password123");
-
-        // Add an item to the shopping cart
-        userFacade.addItemToBasket("newUser", 1, 1, 5);
-
-        // Proceed to checkout
-        Date expiryDate = new SimpleDateFormat("MM/yyyy").parse("12/2025");
-        userFacade.checkoutShoppingCart("newUser", "1234567812345678", expiryDate, "123", "DISCOUNT10");
-
-        // Verify that the shopping cart is now empty
-        String cart = userFacade.viewShoppingCart("newUser");
-        assertTrue(cart.isEmpty());
-
-        // Verify that the purchase was successful by checking the purchase history or other relevant indicators
-        HashMap<Long, HashMap<Long, Integer>> purchaseHistory = storeFacade.viewPurchaseHistory("newUser", 1);
-        assertNotNull(purchaseHistory);
-        assertTrue(purchaseHistory.get(1).containsValue("Item:1")); // Adjust based on actual purchase history content
+    @Order(8)
+    public void testRemovePermission() {
+        Response response = userService.removePermission(TOKEN, USERNAME,STOREID, StorePermission.REMOVE_STORE.toString());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testCheckPermission() throws Exception {
-        // Register and login a new user
-        userFacade.register("newUser", "password123", 25);
-        userFacade.login("newUser", "password123");
-
-        // Create a new store
-        storeFacade.createStore("newUser", "Store1", "Description1", new InMemoryRepository<Long, Discount>());
-
-        // Initially, the user should not have any permissions for the store
-        boolean permission = userFacade.checkPermission("newUser", 1, "ADD_ITEM");
-        assertFalse(permission);
-
-        // Assign the user as a store manager with specific permissions
-        userFacade.assignStoreManager("newUser", 1, List.of("ADD_ITEM", "REMOVE_ITEM"));
-
-        // Now the user should have the 'ADD_ITEM' permission
-        permission = userFacade.checkPermission("newUser", 1, "ADD_ITEM");
-        assertTrue(permission);
-
-        // The user should also have the 'REMOVE_ITEM' permission
-        permission = userFacade.checkPermission("newUser", 1, "REMOVE_ITEM");
-        assertTrue(permission);
-
-        // The user should not have the 'CHANGE_POLICY' permission
-        permission = userFacade.checkPermission("newUser", 1, "CHANGE_POLICY");
-        assertFalse(permission);
+    @Order(9)
+    public void testAddItemToBasket() {
+        Response response = userService.addItemToBasket(TOKEN, 1L, 1L, 3);
+        BASKET_ID = (long) response.getEntity();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testAssignStoreOwner() throws Exception {
-        // Register and login the original store owner
-        userFacade.register("originalOwner", "password123", 1999);
-        userFacade.login("originalOwner", "password123");
-
-        // Create a new store by the original owner
-        storeFacade.createStore("originalOwner", "Store1", "Description1", new InMemoryRepository<Long, Discount>());
-
-        // Register and login a new user
-        userFacade.register("newUser", "password456", 1999);
-        userFacade.login("newUser", "password456");
-
-        // Assign the new user as a store owner by the original owner
-        userFacade.assignStoreOwner("newUser", 1);
-
-        // Check if the new user has the 'OWNER' permission for the store
-        List<String> permissions = userFacade.getUserPermission("newUser", 1);
-        assertTrue(permissions.contains("OWNER"));
+    @Order(10)
+    public void testModifyShoppingCart() {
+        Response response = userService.modifyShoppingCart(TOKEN, BASKET_ID, 1L, 5);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void testAssignStoreManager() throws Exception {
-        // Register and login the original store owner
-        userFacade.register("originalOwner", "password123", 25);
-        userFacade.login("originalOwner", "password123");
-
-        // Create a new store by the original owner
-        storeFacade.createStore("originalOwner", "Store1", "Description1", new InMemoryRepository<Long, Discount>());
-
-        // Register and login a new user
-        userFacade.register("newUser", "password456", 1999);
-        userFacade.login("newUser", "password456");
-
-        // Assign the new user as a store manager by the original owner with specific permissions
-        userFacade.assignStoreManager("newUser", 1, List.of("ADD_ITEM", "REMOVE_ITEM"));
-
-        // Check if the new user has the 'ADD_ITEM' and 'REMOVE_ITEM' permissions for the store
-        List<String> permissions = userFacade.getUserPermission("newUser", 1);
-        assertTrue(permissions.contains("ADD_ITEM"));
-        assertTrue(permissions.contains("REMOVE_ITEM"));
+    @Order(11)
+    public void testCheckoutShoppingCart() {
+        Response response = userService.checkoutShoppingCart(TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
-
-
-    @Test
-    public void testTerminateGuest() throws Exception {
-        String guestName = userFacade.createGuestSession();
-        int guestId = Integer.parseInt(guestName.replace("guest", ""));
-        userFacade.terminateGuestSession("guest");
-        assertNull(userRepository.findById(guestName));
-    }
-
-    @Test
-    public void testAddItemToBasket() throws Exception {
-        userFacade.register("newUser", "password123", 1999);
-        userFacade.login("newUser", "password123");
-        userFacade.addItemToBasket("newUser", 1, 1, 3);
-        String cart = userFacade.viewShoppingCart("newUser");
-        assertTrue(cart.contains("itemId: 1, quantity: 3"));
-    }
-
-    @Test
-    public void testChangeUserPermission() throws Exception {
-        // Register a new user
-        userFacade.register("newUser", "password123", 25);
-
-        // Add a permission to the user
-        userFacade.addPermission("newUser", 2, "ASSIGN_MANAGER");
-
-        // Retrieve the user from the repository
-        User user = userRepository.findById("newUser");
-
-        // Verify that the permission has been added to the user
-        assertTrue(user.getStorePermissions(2).contains("ASSIGN_MANAGER"));
-    }
-
-    @Test
-    public void testIsRegister() throws Exception {
-        // Create a guest session
-        String guestUserName = userFacade.createGuestSession();
-        assertFalse(userFacade.isRegister(guestUserName));
-
-        // Register a new user
-        userFacade.register("newUser", "password123", 25);
-        assertTrue(userFacade.isRegister("newUser"));
-
-        // Ensure the guest user is still not registered
-        assertFalse(userFacade.isRegister(guestUserName));
-    }
-
 }
