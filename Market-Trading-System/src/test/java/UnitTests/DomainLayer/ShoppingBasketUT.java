@@ -22,9 +22,7 @@ public class ShoppingBasketUT {
 
     @Mock
     private IStoreFacade storeFacade;
-
     private ShoppingBasket basket;
-
     private final long ITEM_ID = 10L;
     private final long STORE_ID = 1L;
 
@@ -35,7 +33,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testAddItem() {
+    public void testAddItemShouldAddItemForGivenQuantity() {
         int quantity = 2;
 
         basket.addItem(ITEM_ID, quantity);
@@ -46,7 +44,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testRemoveItem() {
+    public void testRemoveItemShouldRemoveItemForGivenItemID() {
         int quantity = 2;
 
         basket.addItem(ITEM_ID, quantity);
@@ -57,7 +55,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testUpdateItemQuantity() {
+    public void testUpdateItemQuantityShouldUpdateQuantityForGivenNewQuantity() {
         int quantity1 = 2;
         int quantity2 = 1;
 
@@ -69,7 +67,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testUpdateItemQuantityToZero() {
+    public void testUpdateItemQuantityToZeroShouldSetQuantityToZeroForGivenItemID() {
         int quantity = 2;
 
         basket.addItem(ITEM_ID, quantity);
@@ -80,7 +78,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testCheckoutShoppingBasketSuccess() {
+    public void testCheckoutShoppingBasketShouldReturnCheckoutItemsForGivenStoreFacade() {
         int quantity = 2;
         double price = 5.0;
         String itemName = "Test Item";
@@ -106,7 +104,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testBasketTotalPrice() {
+    public void testBasketTotalPriceShouldCalculateTotalPriceForGivenItems() {
         int quantity = 2;
         double price = 5.0;
 
@@ -123,7 +121,7 @@ public class ShoppingBasketUT {
 
 
     @Test
-    public void testToString() {
+    public void testToStringShouldReturnFormattedStringForGivenBasketContents() {
         int quantity = 2;
         double price = 5.0;
         String itemName = "Test Item";
@@ -154,7 +152,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testEmptyBasketToString() {
+    public void testToStringShouldReturnFormattedStringForEmptyBasket() {
         String basketString = basket.toString();
         assertTrue(basketString.contains("Shopping Basket ID: " + basket.getId()));
         assertTrue(basketString.contains("Store ID: " + STORE_ID));
