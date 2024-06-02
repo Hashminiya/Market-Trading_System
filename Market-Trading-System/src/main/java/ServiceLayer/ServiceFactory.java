@@ -11,6 +11,8 @@ import DomainLayer.Market.User.User;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.JwtService;
+import ServiceLayer.Market.ISystemManagerService;
+import ServiceLayer.Market.SystemManagerService;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.User.UserService;
@@ -18,13 +20,17 @@ import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import javax.ws.rs.core.Response;
+
 public class ServiceFactory {
+    private boolean systemAvailable;
     // Controllers
     private static IStoreFacade storeFacadeInstance;
     private static IUserFacade userFacadeInstance;
     private static IPurchaseFacade purchaseFacadeInstance;
 
     // Services
+    private static SystemManagerService systemManagerService;
     private static StoreManagementService storeManagementServiceInstance;
     private static StoreBuyerService storeBuyerServiceInstance;
     private static UserService userServiceInstance;
@@ -35,10 +41,27 @@ public class ServiceFactory {
 
     // Factory instance
     private static ServiceFactory serviceFactoryInstance;
+    private JwtService jwtService;
 
     private ServiceFactory(){
-        InMemoryRepository<String, User> user_repo = loadUserRepo();
-        userFacadeInstance = IUserFacade.getInstance(user_repo);
+        systemAvailable = false;
+        userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String,User>(), SystemManager.getInstance());
+        userServiceInstance = UserService.getInstance(userFacadeInstance);
+        jwtService = new JwtService();
+        userServiceInstance.setJwtService(jwtService);
+        loadUserRepo();
+
+    }
+
+    private Response loadUserRepo() {
+        try {
+            SystemManager systemManager = SystemManager.getInstance();
+            userServiceInstance.register(systemManager.getUserName(),systemManager.getPassword(),systemManager.getUserAge());
+            return Response.ok().build();
+        }
+        catch (Exception e){
+            return Response.status(500).entity(e.getMessage()).build();
+        }
     }
 
     public static synchronized ServiceFactory getServiceFactory(){
@@ -48,38 +71,63 @@ public class ServiceFactory {
         return serviceFactoryInstance;
     }
 
-    public void initFactory() {
-        // Init payment and supply services and proxy
+    public Response initFactory(String token) {
+        if(validAdmin(token)) {
+            initExternalServices();
+            initFacades();
+            initServices();
+            systemAvailable = true;
+            return Response.ok().build();
+        }
+        else{
+            return Response.status(500).entity("User os not authorized to init the system. Make sure your loged in with admin user").build();
+        }
+
+    }
+
+    private boolean validAdmin(String token) {
+        String userName = jwtService.extractUsername(token);
+        if(jwtService.isValid(token, userFacadeInstance.loadUserByUsername(userName))) {
+            return userFacadeInstance.isAdmin(userName);
+        }
+        return false;
+    }
+
+    private void initExternalServices(){
         paymentServiceInstance = PaymentServiceImpl.getInstance();
         supplyServiceInstance = SupplyServiceImpl.getInstance();
         paymentServiceProxyInstance = PaymentServiceProxy.getInstance(paymentServiceInstance);
         supplyServiceProxyInstance =  SupplyServiceProxy.getInstance(supplyServiceInstance);
-
-        // Init Facades
+    }
+    private void initFacades() {
         purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryRepository<Long, Purchase>(), paymentServiceProxyInstance,supplyServiceProxyInstance);
-        InMemoryRepository<String, User> user_repo = loadUserRepo();
-        userFacadeInstance = IUserFacade.getInstance(user_repo);
+        purchaseFacadeInstance.setUserFacade(userFacadeInstance);
         storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>());
         userFacadeInstance.setStoreFacade(storeFacadeInstance);
         userFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
         storeFacadeInstance.setUserFacade(userFacadeInstance);
         storeFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
+    }
 
-        // Init Services
+    private void initServices(){
+        systemManagerService = SystemManagerService.getInstance();
+        systemManagerService.setPurchaseFacade(purchaseFacadeInstance);
+        systemManagerService.setStoreFacade(storeFacadeInstance);
+        systemManagerService.setUserFacade(userFacadeInstance);
+        systemManagerService.setJwtService(new JwtService());
+
         storeManagementServiceInstance = StoreManagementService.getInstance(storeFacadeInstance);
         storeManagementServiceInstance.setJwtService(new JwtService());
         storeManagementServiceInstance.setUserFacade(userFacadeInstance);
+
         storeBuyerServiceInstance = StoreBuyerService.getInstance(storeFacadeInstance);
+
         userServiceInstance = UserService.getInstance(userFacadeInstance);
         userServiceInstance.setJwtService(new JwtService());
     }
 
-    private static InMemoryRepository<String, User> loadUserRepo() {
-        InMemoryRepository<String, User> userRepo = new InMemoryRepository<>();
-        SystemManager systemManager = SystemManager.getInstance();
-        userRepo.save(systemManager);
-
-        return userRepo;
+    public ISystemManagerService getSystemManagerService() {
+        return systemManagerService;
     }
 
     public IStoreFacade getStoreFacade() {
@@ -121,6 +169,10 @@ public class ServiceFactory {
 
     public SupplyServiceProxy getSupplyServiceProxy(){
         return supplyServiceProxyInstance;
+    }
+
+    public boolean systemAvailable(){
+        return systemAvailable;
     }
 
 }

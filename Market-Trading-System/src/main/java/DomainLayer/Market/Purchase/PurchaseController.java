@@ -7,6 +7,7 @@ import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.Store;
+import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
 
@@ -23,6 +24,7 @@ public class PurchaseController implements IPurchaseFacade {
 
     private final PaymentServiceProxy paymentServiceProxy;
     private final SupplyServiceProxy supplyServiceProxy;
+    private IUserFacade userFacade;
 
 
     private PurchaseController(IRepository<Long,Purchase> purchaseRepo,PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
@@ -73,6 +75,20 @@ public class PurchaseController implements IPurchaseFacade {
         while (!inventoryReduceItems.isEmpty())
             purchasedItems.add(inventoryReduceItems.remove());
         return purchasedItems;
+    }
+
+    @Override
+    public List<Purchase> getPurchaseHistory(String userName) {
+        if(userFacade.isAdmin(userName)) {
+            return purchaseRepo.findAll();
+        }
+        else{
+            throw new RuntimeException(String.format("%s unauthorized to preform this action",userName));
+        }
+    }
+
+    public void setUserFacade(IUserFacade userFacade) {
+        this.userFacade = userFacade;
     }
 }
 

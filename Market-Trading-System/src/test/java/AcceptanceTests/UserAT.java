@@ -17,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserAT {
-
+    private static final String ADMIN_USER_NAME ="SystemManager" ;
+    private static final String ADMIN_PASSWORD = "SystemManagerPassword";
     private static final String USERNAME1 = "testUser";
     private static final String USERNAME2 = "testUser2";
     private static final String PASSWORD = "password123";
@@ -38,8 +39,8 @@ public class UserAT {
 
     @BeforeAll
     public static void setUp() {
-        serviceFactory = ServiceFactory.getServiceFactory();
-        serviceFactory.initFactory();
+        SetUp.setUp();
+        ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
         userService = serviceFactory.getUserService();
         storeSevice = serviceFactory.getStoreManagementService();
         userService.register(USERNAME1, PASSWORD, AGE);

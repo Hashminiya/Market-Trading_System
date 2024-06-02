@@ -17,16 +17,25 @@ import java.util.List;
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
     private final IRepository<String, User> users;
+    private final SystemManager admin;
     private IStoreFacade storeFacade;
     private IPurchaseFacade purchaseFacade;
     private final BCryptPasswordEncoder passwordEncoder;
     private int guestId ;
 
-    private UserController(IRepository<String, User> users) {
-
+    private UserController(IRepository<String, User> users, SystemManager admin) {
         this.users = users;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.guestId = 0;
+        this.admin = admin;
+    }
+
+    public static synchronized UserController getInstance(IRepository<String, User> users, SystemManager admin) {
+        if (userControllerInstance == null) {
+            userControllerInstance = new UserController(users, admin);
+            // TODO : We assume that when this function called, next line will be setStoreFacade..
+        }
+        return userControllerInstance;
     }
 
     @Override
@@ -36,14 +45,6 @@ public class UserController implements IUserFacade {
 
     public void setPurchaseFacade(IPurchaseFacade purchaseFacade) {
         this.purchaseFacade = purchaseFacade;
-    }
-
-    public static synchronized UserController getInstance(IRepository<String, User> users) {
-        if (userControllerInstance == null) {
-            userControllerInstance = new UserController(users);
-            // TODO : We assume that when this function called, next line will be setStoreFacade..
-        }
-        return userControllerInstance;
     }
 
     @Override
@@ -202,5 +203,10 @@ public class UserController implements IUserFacade {
                 return false;
             }
         };
+    }
+
+    @Override
+    public boolean isAdmin(String userName) {
+        return admin.getUserName().equals(userName);
     }
 }

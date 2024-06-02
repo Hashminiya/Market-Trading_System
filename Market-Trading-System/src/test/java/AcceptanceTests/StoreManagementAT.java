@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StoreManagementAT {
 
+    private static final String ADMIN_USER_NAME ="SystemManager" ;
+    private static final String ADMIN_PASSWORD = "SystemManagerPassword";
     private static final String FOUNDER_ID = "founderId";
     private static final String PASSWORD = "12345678";
     private static final int AGE = 30;
@@ -28,17 +30,15 @@ public class StoreManagementAT {
     private static final String MANAGER_ID = "ManagerId";
     private static String TOKEN;
     private static long STORE_ID;
-    private static IStoreFacade storeFacade;
     private static StoreManagementService storeManagementService;
     private static IRepository<Long, Discount> discountRepository;
-    private static ServiceFactory serviceFactory;
     private static UserService userService;
 
     @BeforeAll
     public static void setUp() {
-        serviceFactory = ServiceFactory.getServiceFactory();
-        serviceFactory.initFactory();
-        storeFacade = serviceFactory.getStoreFacade();
+        SetUp.setUp();
+        ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
+
         discountRepository = new InMemoryRepository<>();
         storeManagementService = serviceFactory.getStoreManagementService();
         storeManagementService.setUserFacade(serviceFactory.getUserFacade());
@@ -52,6 +52,7 @@ public class StoreManagementAT {
     @AfterAll
     public static void tearDown(){
         storeManagementService.removeStore(TOKEN, STORE_ID);
+
     }
 
     @Test
