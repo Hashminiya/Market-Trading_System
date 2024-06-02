@@ -219,9 +219,9 @@ public class UserService implements IUserService {
         }
     }
 
-    public Optional<UserModel> getUser(int id){
-        Optional<UserModel> optional = Optional.empty();
-        optional = Optional.of(new UserModel("noam", "12345", 1));
-        return optional;
+    public UserModel getUser(String userName){
+        if(userName.equals("noam"))
+            return new UserModel("noam", "12345", 1);
+        else return null;
     }
 }
