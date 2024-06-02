@@ -8,12 +8,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-
+@Component
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
     private final IRepository<String, User> users;

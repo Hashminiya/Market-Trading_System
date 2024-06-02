@@ -2,13 +2,18 @@ package ServiceLayer.User;
 
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.JwtService;
+import API.model.UserModel;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
 import java.util.Date;
+import java.util.Optional;
 
+
+@Service
 public class UserService implements IUserService {
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private IUserFacade userFacade;
@@ -210,5 +215,11 @@ public class UserService implements IUserService {
             logger.error("Error removing permission", e);
             return Response.serverError().build();
         }
+    }
+
+    public Optional<UserModel> getUser(int id){
+        Optional<UserModel> optional = Optional.empty();
+        optional = Optional.of(new UserModel("noam", "12345", 1));
+        return optional;
     }
 }
