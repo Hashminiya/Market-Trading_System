@@ -2,22 +2,23 @@ package AcceptanceTests;
 
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
-import DomainLayer.Market.Util.UserPermission;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
 import org.junit.jupiter.api.*;
 
 import javax.ws.rs.core.Response;
-import java.security.Permission;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserAT {
 
-    private static final String USERNAME = "testUser";
+    private static final String USERNAME1 = "testUser";
     private static final String USERNAME2 = "testUser2";
     private static final String PASSWORD = "password123";
     private static final int AGE = 25;
@@ -25,9 +26,12 @@ public class UserAT {
     private static final Date EXPIRY_DATE = new Date(); // Set an appropriate expiry date
     private static final String CVV = "123";
     private static final String DISCOUNT_CODE = "DISCOUNT10";
+    private static long ITEMID;
     private static long BASKET_ID;
     private static long STOREID;
-    private static String TOKEN;
+    private static String USERNAME1_TOKEN;
+    private static String USERNAME2_TOKEN;
+    private static String GUEST_TOKEN;
     private static UserService userService;
     private static ServiceFactory serviceFactory;
     private static StoreManagementService storeSevice;
@@ -38,58 +42,59 @@ public class UserAT {
         serviceFactory.initFactory();
         userService = serviceFactory.getUserService();
         storeSevice = serviceFactory.getStoreManagementService();
-
+        userService.register(USERNAME1, PASSWORD, AGE);
+        USERNAME1_TOKEN = (String) userService.login(USERNAME1, PASSWORD).getEntity();
+        STOREID = (long) storeSevice.createStore(USERNAME1_TOKEN, "new test store- userAT", "description",new InMemoryRepository<>()).getEntity();
+        ITEMID = (long) storeSevice.addItemToStore(USERNAME1_TOKEN, STOREID,"new item", "desctiprion",50,100, List.of("electronics")).getEntity();
     }
     @AfterAll
     public static void tearDown()
     {
-        storeSevice.removeStore(TOKEN,STOREID);
+        userService.login(USERNAME1,PASSWORD);
+        storeSevice.removeStore(USERNAME1_TOKEN,STOREID);
     }
 
     @Test
     @Order(1)
     public void testGuestEntry() {
         Response response = userService.GuestEntry();
-        TOKEN = (String) response.getEntity();
+        GUEST_TOKEN = (String) response.getEntity();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     @Order(2)
     public void testGuestExit() {
-        Response response = userService.GuestExit(TOKEN);
+        Response response = userService.GuestExit(GUEST_TOKEN);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     @Order(3)
     public void testRegister() {
-        Response response = userService.register(USERNAME, PASSWORD, AGE);
+        Response response = userService.register(USERNAME2, PASSWORD, AGE);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     @Order(4)
     public void testLogin() {
-        userService.register(USERNAME2, PASSWORD, AGE);
         Response response = userService.login(USERNAME2,PASSWORD);
-        TOKEN = (String) response.getEntity();
+        USERNAME2_TOKEN = (String) response.getEntity();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     @Order(5)
     public void testLogout() {
-        Response response = userService.logout(TOKEN);
+        Response response = userService.logout(USERNAME2_TOKEN);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     @Order(6)
     public void testViewShoppingCart() {
-        Response response1 = userService.login(USERNAME2,PASSWORD);
-        TOKEN = (String) response1.getEntity();
-        Response response2 = userService.viewShoppingCart(TOKEN);
+        Response response2 = userService.viewShoppingCart(USERNAME1_TOKEN);
         assertEquals(Response.Status.OK.getStatusCode(), response2.getStatus());
         assertEquals("", response2.getEntity());
     }
@@ -97,23 +102,21 @@ public class UserAT {
     @Test
     @Order(7)
     public void testAddPermission() {
-        Response storeResponse = storeSevice.createStore(TOKEN, "myStore", "description", new InMemoryRepository<>());
-        STOREID = (Long) storeResponse.getEntity();
-        Response response = userService.addPermission(TOKEN, USERNAME,STOREID, StorePermission.REMOVE_STORE.toString());
+        Response response = userService.addPermission(USERNAME1_TOKEN, USERNAME2,STOREID, StorePermission.REMOVE_STORE.toString());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     @Order(8)
     public void testRemovePermission() {
-        Response response = userService.removePermission(TOKEN, USERNAME,STOREID, StorePermission.REMOVE_STORE.toString());
+        Response response = userService.removePermission(USERNAME1_TOKEN, USERNAME2,STOREID, StorePermission.REMOVE_STORE.toString());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     @Order(9)
     public void testAddItemToBasket() {
-        Response response = userService.addItemToBasket(TOKEN, 1L, 1L, 3);
+        Response response = userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID, 3);
         BASKET_ID = (long) response.getEntity();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
@@ -121,14 +124,14 @@ public class UserAT {
     @Test
     @Order(10)
     public void testModifyShoppingCart() {
-        Response response = userService.modifyShoppingCart(TOKEN, BASKET_ID, 1L, 5);
+        Response response = userService.modifyShoppingCart(USERNAME1_TOKEN, BASKET_ID, ITEMID, 5);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     @Order(11)
     public void testCheckoutShoppingCart() {
-        Response response = userService.checkoutShoppingCart(TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+        Response response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 }

@@ -10,6 +10,7 @@ import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ShoppingCart {
     private final IRepository<Long,ShoppingBasket> baskets;
@@ -28,15 +29,15 @@ public class ShoppingCart {
     }
 
     public void modifyShoppingCart(long basketId, long itemId, int quantity){
-        if (baskets.findById(basketId) == null){
+        ShoppingBasket sb = baskets.findById(basketId);
+        if (sb == null){
             throw new IllegalArgumentException("no such basket");
         }
-        ShoppingBasket sb = getShoppingBasket(basketId);
         sb.updateItemQuantity(itemId,quantity);
     }
 
-    public Long addItemBasket(long basketId, long itemId, int quantity){
-        ShoppingBasket sb = getShoppingBasket(basketId);
+    public Long addItemBasket(long storeId, long itemId, int quantity){
+        ShoppingBasket sb = getShoppingBasket(storeId);
         sb.addItem(itemId,quantity);
         return sb.getId();
     }
@@ -60,11 +61,15 @@ public class ShoppingCart {
         baskets.delete(id);
     }
 
-    private ShoppingBasket getShoppingBasket(long basketId){
-        ShoppingBasket sb = baskets.findById(basketId);
-        if(sb == null)
-            sb = new ShoppingBasket(IdGenerator.generateId());
-        baskets.save(sb);
+    private ShoppingBasket getShoppingBasket(long storeId){
+        ShoppingBasket sb;
+        List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
+        if(currentBasket.size() == 0) {
+            sb = new ShoppingBasket(storeId);
+            baskets.save(sb);
+        }
+        else
+            sb = currentBasket.get(0);
         return sb;
     }
 

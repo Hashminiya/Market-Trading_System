@@ -117,9 +117,9 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public long addItemToBasket(String userName,long basketId, long itemId, int quantity) {
+    public long addItemToBasket(String userName,long storeId, long itemId, int quantity) {
         User user = getUser(userName);
-        return user.addItemToBasket(basketId, itemId, quantity);
+        return user.addItemToBasket(storeId, itemId, quantity);
     }
 
     @Override

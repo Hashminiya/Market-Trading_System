@@ -96,4 +96,9 @@ public class ShoppingBasket implements DataItem<Long> {
     public double getBasketTotalPrice() {
         return basketTotalPrice;
     }
+
+    public long getStoreId() {
+        return storeId;
+    }
+
 }
