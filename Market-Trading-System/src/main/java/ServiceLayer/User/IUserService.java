@@ -13,6 +13,6 @@ public interface IUserService{
     public Response modifyShoppingCart(String token, long basketId, long itemId, int newQuantity);
     public Response checkoutShoppingCart(String token, String creditCard, Date expiryDate , String cvv, String discountCode);
     public Response addItemToBasket(String token, long basketId, long itemId, int quantity);
-    public Response addPermission(String token, long storeId, String permission);
-    public Response removePermission(String token, long storeId, String permission);
+    public Response addPermission(String token, String userToPermit,long storeId, String permission);
+    public Response removePermission(String token, String userToUnPermit,long storeId, String permission);
 }

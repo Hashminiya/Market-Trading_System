@@ -117,20 +117,20 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public void addItemToBasket(String userName,long basketId, long itemId, int quantity) {
+    public long addItemToBasket(String userName,long storeId, long itemId, int quantity) {
         User user = getUser(userName);
-        user.addItemToBasket(basketId, itemId, quantity);
+        return user.addItemToBasket(storeId, itemId, quantity);
     }
 
     @Override
-    public void addPermission(String userName, long storeId, String permission) {
-        User user = getUser(userName);
+    public void addPermission(String userName, String userToPermit,long storeId, String permission) {
+        User user = getUser(userToPermit);
         user.addPermission(storeId, StorePermission.valueOf(permission));
     }
 
     @Override
-    public void removePermission(String userName, long storeId, String permission) {
-        User user = getUser(userName);
+    public void removePermission(String userName, String userToUnPermit,long storeId, String permission) {
+        User user = getUser(userToUnPermit);
         user.removePermission(storeId, StorePermission.valueOf(permission));
     }
 

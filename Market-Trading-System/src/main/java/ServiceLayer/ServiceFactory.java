@@ -72,7 +72,6 @@ public class ServiceFactory {
         storeBuyerServiceInstance = StoreBuyerService.getInstance(storeFacadeInstance);
         userServiceInstance = UserService.getInstance(userFacadeInstance);
         userServiceInstance.setJwtService(new JwtService());
-        userServiceInstance.setUserDetailsService(new InMemoryUserDetailsManager());
     }
 
     private static InMemoryRepository<String, User> loadUserRepo() {

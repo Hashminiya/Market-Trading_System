@@ -291,7 +291,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception {
-        Store store = storesRepo.findById(basket.getId());
+        Store store = storesRepo.findById(basket.getStoreId());
         store.calculateBasketPrice(basket, code);
     }
 

@@ -154,9 +154,9 @@ public class User implements IUser,DataItem<String> {
         storePermissionsAndRole.put(storeId, permissions);
     }
 
-    public void addItemToBasket(long basketId, long itemId, int quantity) {
+    public Long addItemToBasket(long storeId, long itemId, int quantity) {
         verifyIsLoggedIn();
-        shoppingCart.addItemBasket(basketId, itemId, quantity);
+        return shoppingCart.addItemBasket(storeId, itemId, quantity);
     }
 
     public boolean isRegister() {
@@ -168,6 +168,8 @@ public class User implements IUser,DataItem<String> {
     }
 
     public void addPermission(long storeId, StorePermission storePermission) {
+        if (!storePermissionsAndRole.containsKey(storeId))
+            storePermissionsAndRole.put(storeId, new HashSet<>());
         storePermissionsAndRole.get(storeId).add(storePermission);
     }
 }

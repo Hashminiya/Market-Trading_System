@@ -4,7 +4,7 @@ import DomainLayer.Market.Util.DataItem;
 
 import java.util.Date;
 
-public class ItemDTO implements DataItem <Long> {
+public class ItemDTO implements DataItem <Long>, Comparable {
     private final long storeId;
     private final double totalPrice;
     private final int quantity;
@@ -43,5 +43,10 @@ public class ItemDTO implements DataItem <Long> {
     @Override
     public String getName() {
         return itemName;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return 0;
     }
 }

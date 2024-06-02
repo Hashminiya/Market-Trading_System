@@ -5,10 +5,12 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ShoppingCart {
     private final IRepository<Long,ShoppingBasket> baskets;
@@ -27,13 +29,17 @@ public class ShoppingCart {
     }
 
     public void modifyShoppingCart(long basketId, long itemId, int quantity){
-        ShoppingBasket sb = getShoppingBasket(basketId);
+        ShoppingBasket sb = baskets.findById(basketId);
+        if (sb == null){
+            throw new IllegalArgumentException("no such basket");
+        }
         sb.updateItemQuantity(itemId,quantity);
     }
 
-    public void addItemBasket(long basketId, long itemId, int quantity){
-        ShoppingBasket sb = getShoppingBasket(basketId);
+    public Long addItemBasket(long storeId, long itemId, int quantity){
+        ShoppingBasket sb = getShoppingBasket(storeId);
         sb.addItem(itemId,quantity);
+        return sb.getId();
     }
 
     public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String code) throws Exception{
@@ -55,10 +61,15 @@ public class ShoppingCart {
         baskets.delete(id);
     }
 
-    private ShoppingBasket getShoppingBasket(long basketId){
-        ShoppingBasket sb = baskets.findById(basketId);
-        if(sb == null)
-            throw new RuntimeException("no basket exist with this id");
+    private ShoppingBasket getShoppingBasket(long storeId){
+        ShoppingBasket sb;
+        List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
+        if(currentBasket.size() == 0) {
+            sb = new ShoppingBasket(storeId);
+            baskets.save(sb);
+        }
+        else
+            sb = currentBasket.get(0);
         return sb;
     }
 
