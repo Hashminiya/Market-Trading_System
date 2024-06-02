@@ -65,6 +65,7 @@ public class StoreController implements IStoreFacade{
         long storeId = generateStoreId();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
         storesRepo.save(newStore);
+        userFacade.assignStoreOwner(founderId,storeId);
         return storeId;//for test purposes
     }
 
@@ -290,7 +291,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception {
-        Store store = storesRepo.findById(basket.getId());
+        Store store = storesRepo.findById(basket.getStoreId());
         store.calculateBasketPrice(basket, code);
     }
 

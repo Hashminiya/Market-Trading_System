@@ -3,8 +3,6 @@ package ServiceLayer.User;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,13 +13,10 @@ public class UserService implements IUserService {
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private IUserFacade userFacade;
     private JwtService jwtService;
-    private UserDetailsService userDetailsService;
     private static UserService instance;
 
     private UserService(IUserFacade userFacade) {
-        this.userDetailsService = new InMemoryUserDetailsManager();
         this.userFacade = userFacade;
-        this.jwtService = new JwtService();
     }
 
     public static synchronized UserService getInstance(IUserFacade userFacade) {
@@ -30,7 +25,10 @@ public class UserService implements IUserService {
         }
         return instance;
     }
-
+    public void setJwtService(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+    
     public Response GuestEntry() {
         try {
             String userName = userFacade.createGuestSession();
@@ -46,7 +44,7 @@ public class UserService implements IUserService {
     public Response GuestExit(String token) {
         try {
             String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.terminateGuestSession(userName);
                 logger.info("Guest session terminated for user: {}", userName);
@@ -87,7 +85,7 @@ public class UserService implements IUserService {
     public Response logout(String token) {
         try {
             String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.logout(userName);
                 logger.info("User logged out: {}", userName);
@@ -105,7 +103,7 @@ public class UserService implements IUserService {
     public Response viewShoppingCart(String token) {
         try {
             String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 logger.info("Viewing shopping cart for user: {}", userName);
                 return Response.ok(userFacade.viewShoppingCart(userName)).build();
@@ -123,7 +121,7 @@ public class UserService implements IUserService {
     public Response modifyShoppingCart(String token, long basketId, long itemId, int newQuantity) {
         try {
             String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.modifyShoppingCart(userName, basketId, itemId, newQuantity);
                 logger.info("Modified shopping cart for user: {}", userName);
@@ -142,7 +140,7 @@ public class UserService implements IUserService {
     public Response checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
         try {
             String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.checkoutShoppingCart(userName, creditCard, expiryDate, cvv, discountCode);
                 logger.info("Checkout shopping cart for user: {}", userName);
@@ -161,11 +159,11 @@ public class UserService implements IUserService {
     public Response addItemToBasket(String token, long basketId, long itemId, int quantity) {
         try {
             String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                userFacade.addItemToBasket(userName, basketId, itemId, quantity);
+                Response response = Response.ok( userFacade.addItemToBasket(userName, basketId, itemId, quantity)).build();
                 logger.info("Added item to basket for user: {}", userName);
-                return Response.ok().build();
+                return response;
             } else {
                 logger.warn("Invalid token for adding item to basket: {}", token);
                 return Response.status(401).build();
@@ -177,12 +175,12 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Response addPermission(String token, long storeId, String permission) {
+    public Response addPermission(String token, String userToPermit,long storeId, String permission) {
         try {
             String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                userFacade.addPermission(userName, storeId, permission);
+                userFacade.addPermission(userName, userToPermit,storeId, permission);
                 logger.info("Added permission for user: {}", userName);
                 return Response.ok().build();
             } else {
@@ -196,12 +194,12 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Response removePermission(String token, long storeId, String permission) {
+    public Response removePermission(String token, String userToUnPermit,long storeId, String permission) {
         try {
             String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                userFacade.removePermission(userName, storeId, permission);
+                userFacade.removePermission(userName, userToUnPermit,storeId, permission);
                 logger.info("Removed permission for user: {}", userName);
                 return Response.ok().build();
             } else {

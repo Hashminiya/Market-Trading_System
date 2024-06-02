@@ -3,10 +3,13 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -114,20 +117,20 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public void addItemToBasket(String userName,long basketId, long itemId, int quantity) {
+    public long addItemToBasket(String userName,long storeId, long itemId, int quantity) {
         User user = getUser(userName);
-        user.addItemToBasket(basketId, itemId, quantity);
+        return user.addItemToBasket(storeId, itemId, quantity);
     }
 
     @Override
-    public void addPermission(String userName, long storeId, String permission) {
-        User user = getUser(userName);
+    public void addPermission(String userName, String userToPermit,long storeId, String permission) {
+        User user = getUser(userToPermit);
         user.addPermission(storeId, StorePermission.valueOf(permission));
     }
 
     @Override
-    public void removePermission(String userName, long storeId, String permission) {
-        User user = getUser(userName);
+    public void removePermission(String userName, String userToUnPermit,long storeId, String permission) {
+        User user = getUser(userToUnPermit);
         user.removePermission(storeId, StorePermission.valueOf(permission));
     }
 
@@ -158,5 +161,46 @@ public class UserController implements IUserFacade {
     @Override
     public boolean isRegister(String userName) {
         return getUser(userName).isRegister();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String userName) {
+        User user = users.findById(userName);
+        return new UserDetails() {
+            @Override
+            public Collection<? extends GrantedAuthority> getAuthorities() {
+                return null;
+            }
+
+            @Override
+            public String getPassword() {
+                return user.getPassword();
+            }
+
+            @Override
+            public String getUsername() {
+                return user.getUserName();
+            }
+
+            @Override
+            public boolean isAccountNonExpired() {
+                return false;
+            }
+
+            @Override
+            public boolean isAccountNonLocked() {
+                return false;
+            }
+
+            @Override
+            public boolean isCredentialsNonExpired() {
+                return false;
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return false;
+            }
+        };
     }
 }
