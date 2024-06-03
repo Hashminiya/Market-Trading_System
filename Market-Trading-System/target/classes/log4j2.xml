@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <!-- File Appender -->
+        <File name="File" fileName="logs/app.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+        </File>
+        <!-- Optional: Console Appender with a high threshold to effectively disable it -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="OFF" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="File" />
+            <!-- Comment out or remove the Console appender reference to disable console logging -->
+            <!-- <AppenderRef ref="Console" /> -->
+        </Root>
+        <Logger name="ServiceLayer" level="info" additivity="false">
+            <AppenderRef ref="File" />
+            <!-- Comment out or remove the Console appender reference to disable console logging -->
+            <!-- <AppenderRef ref="Console" /> -->
+        </Logger>
+    </Loggers>
+</Configuration>

@@ -9,6 +9,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;
 import java.util.Date;
@@ -66,14 +67,14 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response register(String userName, String password, int userAge) {
+    public ResponseEntity<String> register(String userName, String password, int userAge) {
         try {
             userFacade.register(userName, password, userAge);
             logger.info("User registered: {}", userName);
-            return Response.ok().build();
+            return ResponseEntity.ok("User registered successfully");
         } catch (Exception e) {
             logger.error("Error registering user: {}", userName, e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error registering user");
         }
     }
 
