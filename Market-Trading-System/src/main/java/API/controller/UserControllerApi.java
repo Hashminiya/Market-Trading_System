@@ -1,10 +1,13 @@
 package API.controller;
 import ServiceLayer.User.UserService;
+import ServiceLayer.Store.StoreBuyerService;
 import API.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+
 
 import javax.ws.rs.core.Response;
 import java.util.Date;
@@ -37,7 +40,7 @@ public class UserControllerApi {
     }
 
     @GetMapping("/user/register")
-    public Response register(@RequestParam String userName,@RequestParam String password,@RequestParam int userAge) throws Exception{
+    public ResponseEntity<String> register(@RequestParam String userName, @RequestParam String password, @RequestParam int userAge) throws Exception{
         return userService.register(userName,password,userAge);
     }
 

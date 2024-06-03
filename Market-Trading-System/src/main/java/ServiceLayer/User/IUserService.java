@@ -2,11 +2,13 @@ package ServiceLayer.User;
 
 import javax.ws.rs.core.Response;
 import java.util.Date;
+import org.springframework.http.ResponseEntity;
+
 
 public interface IUserService{
     public Response GuestEntry();
     public Response GuestExit(String token);
-    public Response register(String userName, String password, int userAge);
+    public ResponseEntity<String> register(String userName, String password, int userAge);
     public Response login(String userName, String password);
     public Response logout(String userName);
     public Response viewShoppingCart(String token);
