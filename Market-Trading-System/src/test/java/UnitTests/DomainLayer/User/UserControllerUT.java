@@ -40,7 +40,7 @@ public class UserControllerUT {
         MockitoAnnotations.openMocks(this);
         passwordEncoder = new BCryptPasswordEncoder();
         resetUserControllerInstance();
-        userController = UserController.getInstance(users);
+        userController = UserController.getInstance(users, SystemManager.getInstance());
         userController.setStoreFacade(storeFacade);
         userController.setPurchaseFacade(purchaseFacade);
     }

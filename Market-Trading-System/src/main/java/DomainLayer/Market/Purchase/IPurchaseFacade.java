@@ -4,6 +4,7 @@ import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 
 import java.util.Date;
@@ -19,5 +20,7 @@ public interface IPurchaseFacade {
     HashMap<Long,List<ItemDTO>> getPurchasesByStore(long storeId);
     //HashMap<Long,List<ItemDTO>> getPurchasesByUser(String UserId); Not For this version
     List<ItemDTO> getPurchasedItems();
+    List<Purchase> getPurchaseHistory(String userName);
+    public void setUserFacade(IUserFacade userFacade);
 
 }

@@ -139,7 +139,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void removeStore(String userId, long storeId) throws Exception{
-        if(!userFacade.checkPermission(userId, storeId, REMOVE_STORE))
+        if(!userFacade.checkPermission(userId, storeId, REMOVE_STORE) && !userFacade.isAdmin(userId))
             throw new Exception("User doesn't has permission to remove store");
         storesRepo.delete(storeId);
     }

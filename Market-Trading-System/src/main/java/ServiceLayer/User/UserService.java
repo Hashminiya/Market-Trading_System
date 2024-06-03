@@ -156,12 +156,12 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Response addItemToBasket(String token, long basketId, long itemId, int quantity) {
+    public Response addItemToBasket(String token, long storeId, long itemId, int quantity) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                Response response = Response.ok( userFacade.addItemToBasket(userName, basketId, itemId, quantity)).build();
+                Response response = Response.ok( userFacade.addItemToBasket(userName, storeId, itemId, quantity)).build();
                 logger.info("Added item to basket for user: {}", userName);
                 return response;
             } else {

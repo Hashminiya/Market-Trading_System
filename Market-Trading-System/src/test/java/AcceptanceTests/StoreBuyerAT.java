@@ -30,8 +30,8 @@ public class StoreBuyerAT {
     static String STORE_NAME = "storeName";
     @BeforeAll
     public static void setUp() {
+        SetUp.setUp();
         ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
-        serviceFactory.initFactory();
         IStoreFacade storeFacade = serviceFactory.getStoreFacade();
         storeBuyerService = StoreBuyerService.getInstance(storeFacade);
         userService = serviceFactory.getUserService();

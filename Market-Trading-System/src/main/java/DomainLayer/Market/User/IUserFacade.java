@@ -9,9 +9,9 @@ import DomainLayer.Market.Util.IRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface IUserFacade {
-    public static IUserFacade getInstance(IRepository<String, User> users)
+    public static IUserFacade getInstance(IRepository<String, User> users, SystemManager systemManager)
     {
-        return UserController.getInstance(users);
+        return UserController.getInstance(users, systemManager);
     }
     public void setStoreFacade(IStoreFacade storeFacade);
     public void setPurchaseFacade(IPurchaseFacade purchaseFacade);
@@ -31,6 +31,6 @@ public interface IUserFacade {
     public void addPermission(String userName, String userToPermit ,long storeId, String permission);
     public void removePermission(String userName, String userToUnPermit,long storeId, String permission);
     public boolean isRegister(String founderId);
-
     UserDetails loadUserByUsername(String userName);
+    public boolean isAdmin(String userName);
 }
