@@ -5,10 +5,12 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.JwtService;
+import org.springframework.http.ResponseEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
 
 public class StoreManagementService implements IStoreManagementService {
@@ -38,215 +40,215 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public Response createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, Discount> repository) {
+    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, Discount> repository) {
         try {
             String userName = jwtService.extractUsername(founderToken);
             if (jwtService.isValid(founderToken, userFacade.loadUserByUsername(userName))) {
                 Response response = Response.ok().entity(storeFacade.createStore(userName, storeName, storeDescription, repository)).build();
                 logger.info("Store created by user: {}", userName);
-                return response;
+                return ResponseEntity.ok().body(String.format("Store created by user %s", userName));
             } else {
                 logger.warn("Invalid token for creating store: {}", founderToken);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error creating store", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public Response addItemToStore(String token, long storeId, String itemName, String description, double itemPrice, int stockAmount, List<String> categories) {
+    public ResponseEntity<String> addItemToStore(String token, long storeId, String itemName, String description, double itemPrice, int stockAmount, List<String> categories) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 Response response = Response.ok().entity(storeFacade.addItemToStore(userName, storeId, itemName, itemPrice, stockAmount, description, categories)).build();
                 logger.info("Item added to store by user: {}", userName);
-                return response;
+                return ResponseEntity.ok().body(String.format("Item added to store by user %s", userName));
             } else {
                 logger.warn("Invalid token for adding item to store: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error adding item to store", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public Response updateItem(String token, long storeId, long itemId, String newName, double newPrice, int newAmount) {
+    public ResponseEntity<String> updateItem(String token, long storeId, long itemId, String newName, double newPrice, int newAmount) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.updateItem(userName, storeId, itemId, newName, newPrice, newAmount);
                 logger.info("Item updated in store by user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok().body(String.format("Item updated in store by user %s", userName));
             } else {
                 logger.warn("Invalid token for updating item: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error updating item", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public Response deleteItem(String token, long storeId, long itemId) {
+    public ResponseEntity<String> deleteItem(String token, long storeId, long itemId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.deleteItem(userName, storeId, itemId);
                 logger.info("Item deleted from store by user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok().body(String.format("Item deleted from store by user %s", userName));
             } else {
                 logger.warn("Invalid token for deleting item: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error deleting item", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public Response changeStorePolicy(String token, long storeId) {
+    public ResponseEntity<String> changeStorePolicy(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.changeStorePolicy(userName, storeId);
                 logger.info("Store policy changed by user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok().body(String.format("Store policy changed by user %s", userName));
             } else {
                 logger.warn("Invalid token for changing store policy: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error changing store policy", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public Response changeDiscountType(String token, long storeId, String newType) {
+    public ResponseEntity<String> changeDiscountType(String token, long storeId, String newType) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.changeDiscountType(userName, storeId, newType);
                 logger.info("Discount type changed by user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok().body(String.format("Discount type changed by user %s", userName));
             } else {
                 logger.warn("Invalid token for changing discount type: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error changing discount type", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public Response removeStore(String token, long storeId) {
+    public ResponseEntity<String> removeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.removeStore(userName, storeId);
                 logger.info("Store removed by user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok().body(String.format("Store removed by user %s", userName));
             } else {
                 logger.warn("Invalid token for removing store: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error removing store", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public Response viewManagementInfo(String token, long storeId) {
+    public ResponseEntity<HashMap<String, List<String>>> viewManagementInfo(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 logger.info("Viewing management info for store by user: {}", userName);
-                return Response.ok().entity(storeFacade.viewStoreManagementInfo(userName, storeId)).build();
+                return ResponseEntity.status(200).body(storeFacade.viewStoreManagementInfo(userName, storeId));
             } else {
                 logger.warn("Invalid token for viewing management info: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).build();
             }
         } catch (Exception ex) {
             logger.error("Error viewing management info", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).build();
         }
     }
 
     @Override
-    public Response viewInventory(String token, long storeId) {
+    public ResponseEntity<HashMap<Long, Integer>> viewInventory(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 logger.info("Viewing inventory for store by user: {}", userName);
-                return Response.ok().entity(storeFacade.viewInventoryByStoreOwner(userName, storeId)).build();
+                return ResponseEntity.ok().body(storeFacade.viewInventoryByStoreOwner(userName, storeId));
             } else {
                 logger.warn("Invalid token for viewing inventory: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).build();
             }
         } catch (Exception ex) {
             logger.error("Error viewing inventory", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).build();
         }
     }
 
     @Override
-    public Response viewPurchasesHistory(String token, long storeId) {
+    public ResponseEntity<HashMap<Long, HashMap<Long, Integer>>> viewPurchasesHistory(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 logger.info("Viewing purchase history for store by user: {}", userName);
-                return Response.ok().entity(storeFacade.viewPurchaseHistory(userName, storeId)).build();
+                return ResponseEntity.ok().body(storeFacade.viewPurchaseHistory(userName, storeId));
             } else {
                 logger.warn("Invalid token for viewing purchase history: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).build();
             }
         } catch (Exception ex) {
             logger.error("Error viewing purchase history", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).build();
         }
     }
 
     @Override
-    public Response assignStoreOwner(String token, long storeId, String newOwnerId) {
+    public ResponseEntity<String> assignStoreOwner(String token, long storeId, String newOwnerId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.assignStoreOwner(userName, storeId, newOwnerId);
                 logger.info("Store owner assigned by user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok().body(String.format("Store owner assigned by user %s", userName));
             } else {
                 logger.warn("Invalid token for assigning store owner: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error assigning store owner", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public Response assignStoreManager(String token, long storeId, String newManagerI, List<String> permissions) {
+    public ResponseEntity<String> assignStoreManager(String token, long storeId, String newManagerI, List<String> permissions) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.assignStoreManager(userName, storeId, newManagerI, permissions);
                 logger.info("Store manager assigned by user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok().body(String.format("Store manager assigned by user %s", userName));
             } else {
                 logger.warn("Invalid token for assigning store manager: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
             logger.error("Error assigning store manager", ex);
-            return Response.status(500).entity(ex.getMessage()).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 }

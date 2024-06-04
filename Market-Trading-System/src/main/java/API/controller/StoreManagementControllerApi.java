@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -59,17 +60,17 @@ public class StoreManagementControllerApi {
     }
 
     @GetMapping("storeManagement/viewManagementInfo")
-    public ResponseEntity<String> viewManagementInfo(@RequestParam String token,@RequestParam long storeId) {
+    public ResponseEntity<HashMap<String, List<String>>> viewManagementInfo(@RequestParam String token,@RequestParam long storeId) {
         return storeManagementService.viewManagementInfo(token, storeId);
     }
 
     @GetMapping("storeManagement/viewInventory")
-    public ResponseEntity<String> viewInventory(@RequestParam String token,@RequestParam long storeId) {
+    public ResponseEntity<HashMap<Long, Integer>> viewInventory(@RequestParam String token, @RequestParam long storeId) {
         return storeManagementService.viewInventory(token, storeId);
     }
 
     @GetMapping("storeManagement/viewPurchasesHistory")
-    public ResponseEntity<String> viewPurchasesHistory(@RequestParam String token,@RequestParam long storeId) {
+    public ResponseEntity<HashMap<Long, HashMap<Long, Integer>>> viewPurchasesHistory(@RequestParam String token,@RequestParam long storeId) {
         return storeManagementService.viewPurchasesHistory(token, storeId);
     }
 
