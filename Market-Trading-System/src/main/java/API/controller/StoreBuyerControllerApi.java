@@ -28,32 +28,32 @@ public class StoreBuyerControllerApi {
     }
 
     @GetMapping("storeBuyer/searchInStoreByCategory")
-    public ResponseEntity<String> searchInStoreByCategory(long storeId, String category) {
+    public ResponseEntity<String> searchInStoreByCategory(@RequestParam long storeId, @RequestParam String category) {
         return storeBuyerService.searchInStoreByCategory(storeId, category);
     }
 
     @GetMapping("storeBuyer/searchInStoreByKeyWord")
-    public ResponseEntity<String> searchInStoreByKeyWord(long storeId, String keyWord) {
+    public ResponseEntity<String> searchInStoreByKeyWord(@RequestParam long storeId, @RequestParam String keyWord) {
         return storeBuyerService.searchInStoreByKeyWord(storeId, keyWord);
     }
 
     @GetMapping("storeBuyer/searchInStoreByKeyWordAndCategory")
-    public ResponseEntity<String> searchInStoreByKeyWordAndCategory(long storeId, String category, String keyWord) {
+    public ResponseEntity<String> searchInStoreByKeyWordAndCategory(@RequestParam long storeId,@RequestParam String category,@RequestParam String keyWord) {
         return storeBuyerService.searchInStoreByKeyWordAndCategory(storeId, category, keyWord);
     }
 
     @GetMapping("storeBuyer/searchGenerallyByCategory")
-    public ResponseEntity<String> searchGenerallyByCategory(String category) {
+    public ResponseEntity<String> searchGenerallyByCategory(@RequestParam String category) {
         return storeBuyerService.searchGenerallyByCategory(category);
     }
 
     @GetMapping("storeBuyer/searchGenerallyByKeyWord")
-    public ResponseEntity<String> searchGenerallyByKeyWord(String keyWord) {
+    public ResponseEntity<String> searchGenerallyByKeyWord(@RequestParam String keyWord) {
         return storeBuyerService.searchGenerallyByKeyWord(keyWord);
     }
 
     @GetMapping("storeBuyer/searchGenerallyByKeyWordAndCategory")
-    public ResponseEntity<String> searchGenerallyByKeyWordAndCategory(String category, String keyWord) {
+    public ResponseEntity<String> searchGenerallyByKeyWordAndCategory(@RequestParam String category,@RequestParam String keyWord) {
         return storeBuyerService.searchGenerallyByKeyWordAndCategory(category, keyWord);
     }
 
