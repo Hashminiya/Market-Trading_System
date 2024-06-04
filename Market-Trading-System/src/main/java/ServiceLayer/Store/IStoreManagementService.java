@@ -14,9 +14,9 @@ public interface IStoreManagementService {
     public Response changeStorePolicy(String token, long storeId);
     public Response changeDiscountType(String token, long storeId, String newType);
     public Response removeStore(String token, long storeId);
-    public Response viewManagmentInfo(String token, Long storeId);
-    public Response viewInventory(String token, Long storeId);
-    public Response viewPurchasesHistory(String token, Long storeId);
+    public Response viewManagementInfo(String token, long storeId);
+    public Response viewInventory(String token, long storeId);
+    public Response viewPurchasesHistory(String token, long storeId);
     public Response assignStoreOwner(String token, long storeId, String newOwnerId);
     public Response assignStoreManager(String token, long storeId ,String newManagerId, List<String> permissions);
 }

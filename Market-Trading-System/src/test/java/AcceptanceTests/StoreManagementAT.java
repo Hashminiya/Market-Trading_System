@@ -90,7 +90,7 @@ public class StoreManagementAT {
     @Test
     public void testViewManagementInfo() {
         storeManagementService.createStore(FOUNDER_ID, SOTRE_NAME, STORE_DESCRIPTION, discountRepository);
-        Response response = storeManagementService.viewManagmentInfo("userId", 1L);
+        Response response = storeManagementService.viewManagementInfo("userId", 1L);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         // Add more assertions to verify the content of the response
     }
