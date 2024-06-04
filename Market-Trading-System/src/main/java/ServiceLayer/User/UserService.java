@@ -34,34 +34,36 @@ public class UserService implements IUserService {
     public void setJwtService(JwtService jwtService) {
         this.jwtService = jwtService;
     }
-    
+
     public Response GuestEntry() {
+
+    public ResponseEntity<String> GuestEntry() {
         try {
             String userName = userFacade.createGuestSession();
             String token = jwtService.generateToken(userName, "GUEST");
             logger.info("Guest session created for user: {}", userName);
-            return Response.ok(token).build();
+            return ResponseEntity.ok(token);
         } catch (Exception e) {
             logger.error("Error creating guest session", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error creating guest session");
         }
     }
 
-    public Response GuestExit(String token) {
+    public ResponseEntity<String> GuestExit(String token) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.terminateGuestSession(userName);
                 logger.info("Guest session terminated for user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok("Guest session terminated successfully");
             } else {
                 logger.warn("Invalid token for guest exit: {}", token);
-                return Response.status(401).build();
+                return ResponseEntity.status(401).body("Invalid token for guest exit");
             }
         } catch (Exception e) {
             logger.error("Error terminating guest session", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error terminating guest session");
         }
     }
 
@@ -76,151 +78,151 @@ public class UserService implements IUserService {
         }
     }
 
-    public Response login(String userName, String password) {
+    public ResponseEntity<String> login(String userName, String password) {
         try {
             userFacade.login(userName, password);
             String token = jwtService.generateToken(userName, "REGISTERED");
             logger.info("User logged in: {}", userName);
-            return Response.ok(token).build();
+            return ResponseEntity.ok(token);
         } catch (Exception e) {
             logger.error("Error logging in user: {}", userName, e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body(String.format("Error logging in user %s", userName));
         }
     }
 
-    public Response logout(String token) {
+    public ResponseEntity<String> logout(String token) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.logout(userName);
                 logger.info("User logged out: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok(String.format("User %s logged out", userName));
             } else {
                 logger.warn("Invalid token for logout: {}", token);
-                return Response.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
             logger.error("Error logging out user", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error logging out user");
         }
     }
 
-    public Response viewShoppingCart(String token) {
+    public ResponseEntity<String> viewShoppingCart(String token) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 logger.info("Viewing shopping cart for user: {}", userName);
-                return Response.ok(userFacade.viewShoppingCart(userName)).build();
+                return ResponseEntity.ok(userFacade.viewShoppingCart(userName));
             } else {
                 logger.warn("Invalid token for viewing shopping cart: {}", token);
-                return Response.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
             logger.error("Error viewing shopping cart", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error viewing shopping cart");
         }
     }
 
     @Override
-    public Response modifyShoppingCart(String token, long basketId, long itemId, int newQuantity) {
+    public ResponseEntity<String> modifyShoppingCart(String token, long basketId, long itemId, int newQuantity) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.modifyShoppingCart(userName, basketId, itemId, newQuantity);
                 logger.info("Modified shopping cart for user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok(String.format("Modified shopping cart for user %s", userName));
             } else {
                 logger.warn("Invalid token for modifying shopping cart: {}", token);
-                return Response.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
             logger.error("Error modifying shopping cart", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error modifying shopping cart");
         }
     }
 
     @Override
-    public Response checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
+    public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.checkoutShoppingCart(userName, creditCard, expiryDate, cvv, discountCode);
                 logger.info("Checkout shopping cart for user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok(String.format("Checkout shopping cart for user %s", userName));
             } else {
                 logger.warn("Invalid token for checkout: {}", token);
-                return Response.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
             logger.error("Error during checkout", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error during checkout");
         }
     }
 
     @Override
-    public Response addItemToBasket(String token, long storeId, long itemId, int quantity) {
+    public ResponseEntity<String> addItemToBasket(String token, long storeId, long itemId, int quantity) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 Response response = Response.ok( userFacade.addItemToBasket(userName, storeId, itemId, quantity)).build();
                 logger.info("Added item to basket for user: {}", userName);
-                return response;
+                return ResponseEntity.ok(String.format("Added item to basket for user %s", userName));
             } else {
                 logger.warn("Invalid token for adding item to basket: {}", token);
-                return Response.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
             logger.error("Error adding item to basket", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error adding item to basket");
         }
     }
 
     @Override
-    public Response addPermission(String token, String userToPermit,long storeId, String permission) {
+    public ResponseEntity<String> addPermission(String token, String userToPermit, long storeId, String permission) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.addPermission(userName, userToPermit,storeId, permission);
                 logger.info("Added permission for user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok(String.format("Added permission for user %s",userName));
             } else {
                 logger.warn("Invalid token for adding permission: {}", token);
-                return Response.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
             logger.error("Error adding permission", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error adding permission");
         }
     }
 
     @Override
-    public Response removePermission(String token, String userToUnPermit,long storeId, String permission) {
+    public ResponseEntity<String> removePermission(String token, String userToUnPermit, long storeId, String permission) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.removePermission(userName, userToUnPermit,storeId, permission);
                 logger.info("Removed permission for user: {}", userName);
-                return Response.ok().build();
+                return ResponseEntity.ok(String.format("Removed permission for user %s", userName));
             } else {
                 logger.warn("Invalid token for removing permission: {}", token);
-                return Response.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
             logger.error("Error removing permission", e);
-            return Response.serverError().build();
+            return ResponseEntity.status(500).body("Error removing permission");
         }
     }
 
-    public UserModel getUser(String userName){
+    public ResponseEntity<UserModel> getUser(String userName){
         if(userName.equals("noam"))
-            return new UserModel("noam", "12345", 1);
-        else return null;
+            return ResponseEntity.ok(new UserModel("noam", "12345", 1));
+        else return ResponseEntity.status(500).build();
     }
 }
