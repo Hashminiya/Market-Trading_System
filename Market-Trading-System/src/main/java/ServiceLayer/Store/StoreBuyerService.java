@@ -5,10 +5,12 @@ import DomainLayer.Market.Store.IStoreFacade;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Optional;
 
+@Service
 public class StoreBuyerService implements IStoreBuyerService {
     private static final Logger logger = LogManager.getLogger(StoreBuyerService.class);
     private static StoreBuyerService instance;
@@ -136,7 +138,7 @@ public class StoreBuyerService implements IStoreBuyerService {
             HashMap<Long, String> result = storeFacade.searchGenerallyByKeyWordAndCategory(category, keyWord);
             if (!result.isEmpty()) {
                 logger.info("General search by keyword: {} and category: {}", keyWord, category);
-                return ResponseEntity.status(200).body(result);;
+                return ResponseEntity.status(200).body(result);
             }
         } catch (Exception ex) {
             logger.error("Error in general search by keyword: {} and category: {}", keyWord, category, ex);
