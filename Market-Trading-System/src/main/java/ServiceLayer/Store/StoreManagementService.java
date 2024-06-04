@@ -9,11 +9,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.List;
 
+@Service
 public class StoreManagementService implements IStoreManagementService {
     private static final Logger logger = LogManager.getLogger(StoreManagementService.class);
     String USER_NOT_VALID = "Authentication failed";
