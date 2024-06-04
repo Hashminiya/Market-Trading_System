@@ -164,7 +164,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public Response viewManagmentInfo(String token, Long storeId) {
+    public Response viewManagementInfo(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
@@ -181,7 +181,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public Response viewInventory(String token, Long storeId) {
+    public Response viewInventory(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
@@ -198,7 +198,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public Response viewPurchasesHistory(String token, Long storeId) {
+    public Response viewPurchasesHistory(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
