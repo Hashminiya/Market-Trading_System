@@ -24,18 +24,18 @@ public class UserControllerApi {
         this.userService = userService;
     }
 
-    @GetMapping("/user")
-    public UserModel getUser(@RequestParam String userName){
+    @GetMapping("/user/getUser")
+    public ResponseEntity<UserModel> getUser(@RequestParam String userName){
         return userService.getUser(userName);
     }
 
-    @GetMapping("user/GuestEntry")
-    public Response GuestEntry() {
+    @GetMapping("/user/GuestEntry")
+    public ResponseEntity<String> GuestEntry() {
         return userService.GuestEntry();
     }
 
-    @GetMapping("user/GuestExit")
-    public Response GuestExit(@RequestParam String token) {
+    @GetMapping("/user/GuestExit")
+    public ResponseEntity<String> GuestExit(@RequestParam String token) {
         return userService.GuestExit(token);
     }
 
@@ -44,43 +44,43 @@ public class UserControllerApi {
         return userService.register(userName,password,userAge);
     }
 
-    @GetMapping("user/login")
-    public Response login(@RequestParam String userName,@RequestParam String password) {
+    @GetMapping("/user/login")
+    public ResponseEntity<String> login(@RequestParam String userName,@RequestParam String password) {
         return userService.login(userName, password);
     }
 
-    @GetMapping("user/logout")
-    public Response logout(@RequestParam String token) {
+    @GetMapping("/user/logout")
+    public ResponseEntity<String> logout(@RequestParam String token) {
         return userService.logout(token);
     }
 
-    @GetMapping("user/viewShoppingCart")
-    public Response viewShoppingCart(@RequestParam String token) {
+    @GetMapping("/user/viewShoppingCart")
+    public ResponseEntity<String> viewShoppingCart(@RequestParam String token) {
         return userService.viewShoppingCart(token);
     }
 
-    @GetMapping("user/modifyShoppingCart")
-    public Response modifyShoppingCart(@RequestParam String token,@RequestParam long basketId,@RequestParam long itemId,@RequestParam int newQuantity) {
+    @GetMapping("/user/modifyShoppingCart")
+    public ResponseEntity<String> modifyShoppingCart(@RequestParam String token,@RequestParam long basketId,@RequestParam long itemId,@RequestParam int newQuantity) {
         return userService.modifyShoppingCart(token, basketId, itemId, newQuantity);
     }
 
-    @GetMapping("user/checkoutShoppingCart")
-    public Response checkoutShoppingCart(@RequestParam String token,@RequestParam String creditCard,@RequestParam Date expiryDate,@RequestParam String cvv,@RequestParam String discountCode) {
+    @GetMapping("/user/checkoutShoppingCart")
+    public ResponseEntity<String> checkoutShoppingCart(@RequestParam String token,@RequestParam String creditCard,@RequestParam Date expiryDate,@RequestParam String cvv,@RequestParam String discountCode) {
         return userService.checkoutShoppingCart(token, creditCard, expiryDate, cvv, discountCode);
     }
 
-    @GetMapping("user/addItemToBasket")
-    public Response addItemToBasket(@RequestParam String token,@RequestParam long basketId,@RequestParam long itemId,@RequestParam int quantity) {
+    @GetMapping("/user/addItemToBasket")
+    public ResponseEntity<String> addItemToBasket(@RequestParam String token,@RequestParam long basketId,@RequestParam long itemId,@RequestParam int quantity) {
         return userService.addItemToBasket(token, basketId, itemId, quantity);
     }
 
-    @GetMapping("user/addPermission")
-    public Response addPermission(@RequestParam String token,@RequestParam long storeId,@RequestParam String permission) {
+    @GetMapping("/user/addPermission")
+    public ResponseEntity<String> addPermission(@RequestParam String token,@RequestParam long storeId,@RequestParam String permission) {
         return userService.addPermission(token, storeId, permission);
     }
 
-    @GetMapping("user/removePermission")
-    public Response removePermission(@RequestParam String token,@RequestParam long storeId,@RequestParam String permission) {
+    @GetMapping("/user/removePermission")
+    public ResponseEntity<String> removePermission(@RequestParam String token,@RequestParam long storeId,@RequestParam String permission) {
         return userService.removePermission(token, storeId, permission);
     }
 
