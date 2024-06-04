@@ -1,21 +1,22 @@
 package DomainLayer.Market.Store;
 
-import DomainLayer.Market.Util.DataItem;
 import java.util.Date;
 import java.util.List;
 
-public abstract class Discount implements IDiscount {
+public abstract class DiscountComposite implements IDiscount{
 
     protected Long id;
     protected double percent;
     protected Date expirationDate;
     protected Long storeId;
+    protected List<IDiscount> discounts;
 
-    public Discount(Long id, double percent, Date expirationDate, long storeId){
+    public DiscountComposite(Long id, double percent, Date expirationDate, long storeId, List<IDiscount> discounts){
         this.id = id;
         this.percent = percent;
         this.expirationDate = expirationDate;
         this.storeId = storeId;
+        this.discounts = discounts;
     }
 
     @Override
@@ -29,13 +30,15 @@ public abstract class Discount implements IDiscount {
     }
 
 
+    @Override
     public Date getExpirationDate(){
         return expirationDate;
     }
 
-    public boolean isValid(List<Long> items){
-        Date now = new Date();
-        return getExpirationDate().after(now);
+    @Override
+    public boolean isValid(List<Long> items) {
+        //TODO
+        return false;
     }
 
     public abstract double calculatePrice(double originalPrice, String code) throws Exception;
