@@ -7,12 +7,12 @@ import java.util.HashMap;
 
 
 public interface IStoreBuyerService {
-    public ResponseEntity<String> getAllProductsInfoByStore(long storeId);
-    public ResponseEntity<HashMap<Long, String>> getAllStoreInfo();
-    public ResponseEntity<HashMap<Long, String>> searchInStoreByCategory(long storeId, String category);
-    public ResponseEntity<HashMap<Long, String>> searchInStoreByKeyWord(long storeId, String keyWord);
-    public ResponseEntity<HashMap<Long, String>> searchInStoreByKeyWordAndCategory(long storeId, String category, String keyWord);
-    public ResponseEntity<HashMap<Long, String>> searchGenerallyByCategory(String category);
-    public ResponseEntity<HashMap<Long, String>> searchGenerallyByKeyWord(String keyWord);
-    public ResponseEntity<HashMap<Long, String>> searchGenerallyByKeyWordAndCategory(String category, String keyWord);
+    public ResponseEntity<?> getAllProductsInfoByStore(long storeId);
+    public ResponseEntity<?> getAllStoreInfo();
+    public ResponseEntity<?> searchInStoreByCategory(long storeId, String category);
+    public ResponseEntity<?> searchInStoreByKeyWord(long storeId, String keyWord);
+    public ResponseEntity<?> searchInStoreByKeyWordAndCategory(long storeId, String category, String keyWord);
+    public ResponseEntity<?> searchGenerallyByCategory(String category);
+    public ResponseEntity<?> searchGenerallyByKeyWord(String keyWord);
+    public ResponseEntity<?> searchGenerallyByKeyWordAndCategory(String category, String keyWord);
 }
