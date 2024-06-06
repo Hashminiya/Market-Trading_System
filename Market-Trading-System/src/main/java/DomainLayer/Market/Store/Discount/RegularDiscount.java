@@ -9,8 +9,8 @@ public class RegularDiscount extends Discount {
 
     private ICondition conditions;
 
-    public RegularDiscount(Long id, double percent, Date expirationDate, long storeId, ICondition conditionItems){
-        super(id, percent, expirationDate, storeId);
+    public RegularDiscount(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories, ICondition conditionItems){
+        super(id, percent, expirationDate, storeId, items, categories);
         this.conditions = conditionItems;
     }
 
