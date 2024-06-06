@@ -20,42 +20,42 @@ public class StoreBuyerControllerApi {
     }
 
     @GetMapping("storeBuyer/getAllProductsInfoByStore")
-    public ResponseEntity<String> getAllProductsInfoByStore(@RequestParam long storeId) {
+    public ResponseEntity<?> getAllProductsInfoByStore(@RequestParam long storeId) {
         return storeBuyerService.getAllProductsInfoByStore(storeId);
     }
 
     @GetMapping("storeBuyer/getAllStoreInfo")
-    public ResponseEntity<HashMap<Long, String>> getAllStoreInfo() {
+    public ResponseEntity<?> getAllStoreInfo() {
         return storeBuyerService.getAllStoreInfo();
     }
 
     @GetMapping("storeBuyer/searchInStoreByCategory")
-    public ResponseEntity<HashMap<Long, String>> searchInStoreByCategory(@RequestParam long storeId, @RequestParam String category) {
+    public ResponseEntity<?> searchInStoreByCategory(@RequestParam long storeId, @RequestParam String category) {
         return storeBuyerService.searchInStoreByCategory(storeId, category);
     }
 
     @GetMapping("storeBuyer/searchInStoreByKeyWord")
-    public ResponseEntity<HashMap<Long, String>> searchInStoreByKeyWord(@RequestParam long storeId, @RequestParam String keyWord) {
+    public ResponseEntity<?> searchInStoreByKeyWord(@RequestParam long storeId, @RequestParam String keyWord) {
         return storeBuyerService.searchInStoreByKeyWord(storeId, keyWord);
     }
 
     @GetMapping("storeBuyer/searchInStoreByKeyWordAndCategory")
-    public ResponseEntity<HashMap<Long, String>> searchInStoreByKeyWordAndCategory(@RequestParam long storeId,@RequestParam String category,@RequestParam String keyWord) {
+    public ResponseEntity<?> searchInStoreByKeyWordAndCategory(@RequestParam long storeId,@RequestParam String category,@RequestParam String keyWord) {
         return storeBuyerService.searchInStoreByKeyWordAndCategory(storeId, category, keyWord);
     }
 
     @GetMapping("storeBuyer/searchGenerallyByCategory")
-    public ResponseEntity<HashMap<Long, String>> searchGenerallyByCategory(@RequestParam String category) {
+    public ResponseEntity<?> searchGenerallyByCategory(@RequestParam String category) {
         return storeBuyerService.searchGenerallyByCategory(category);
     }
 
     @GetMapping("storeBuyer/searchGenerallyByKeyWord")
-    public ResponseEntity<HashMap<Long, String>> searchGenerallyByKeyWord(@RequestParam String keyWord) {
+    public ResponseEntity<?> searchGenerallyByKeyWord(@RequestParam String keyWord) {
         return storeBuyerService.searchGenerallyByKeyWord(keyWord);
     }
 
     @GetMapping("storeBuyer/searchGenerallyByKeyWordAndCategory")
-    public ResponseEntity<HashMap<Long, String>> searchGenerallyByKeyWordAndCategory(@RequestParam String category,@RequestParam String keyWord) {
+    public ResponseEntity<?> searchGenerallyByKeyWordAndCategory(@RequestParam String category,@RequestParam String keyWord) {
         return storeBuyerService.searchGenerallyByKeyWordAndCategory(category, keyWord);
     }
 
