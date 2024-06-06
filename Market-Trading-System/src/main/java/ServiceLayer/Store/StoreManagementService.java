@@ -168,7 +168,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public ResponseEntity<HashMap<String, List<String>>> viewManagementInfo(String token, long storeId) {
+    public ResponseEntity<?> viewManagementInfo(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
@@ -176,16 +176,16 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(200).body(storeFacade.viewStoreManagementInfo(userName, storeId));
             } else {
                 logger.warn("Invalid token for viewing management info: {}", token);
-                return ResponseEntity.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception ex) {
             logger.error("Error viewing management info", ex);
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public ResponseEntity<HashMap<Long, Integer>> viewInventory(String token, long storeId) {
+    public ResponseEntity<?> viewInventory(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
@@ -193,16 +193,16 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.ok().body(storeFacade.viewInventoryByStoreOwner(userName, storeId));
             } else {
                 logger.warn("Invalid token for viewing inventory: {}", token);
-                return ResponseEntity.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception ex) {
             logger.error("Error viewing inventory", ex);
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
     @Override
-    public ResponseEntity<HashMap<Long, HashMap<Long, Integer>>> viewPurchasesHistory(String token, long storeId) {
+    public ResponseEntity<?> viewPurchasesHistory(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
@@ -210,11 +210,11 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.ok().body(storeFacade.viewPurchaseHistory(userName, storeId));
             } else {
                 logger.warn("Invalid token for viewing purchase history: {}", token);
-                return ResponseEntity.status(401).build();
+                return ResponseEntity.status(401).body(token);
             }
         } catch (Exception ex) {
             logger.error("Error viewing purchase history", ex);
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 

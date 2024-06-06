@@ -60,17 +60,17 @@ public class StoreManagementControllerApi {
     }
 
     @GetMapping("storeManagement/viewManagementInfo")
-    public ResponseEntity<HashMap<String, List<String>>> viewManagementInfo(@RequestParam String token,@RequestParam long storeId) {
+    public ResponseEntity<?> viewManagementInfo(@RequestParam String token,@RequestParam long storeId) {
         return storeManagementService.viewManagementInfo(token, storeId);
     }
 
     @GetMapping("storeManagement/viewInventory")
-    public ResponseEntity<HashMap<Long, Integer>> viewInventory(@RequestParam String token, @RequestParam long storeId) {
+    public ResponseEntity<?> viewInventory(@RequestParam String token, @RequestParam long storeId) {
         return storeManagementService.viewInventory(token, storeId);
     }
 
     @GetMapping("storeManagement/viewPurchasesHistory")
-    public ResponseEntity<HashMap<Long, HashMap<Long, Integer>>> viewPurchasesHistory(@RequestParam String token,@RequestParam long storeId) {
+    public ResponseEntity<?> viewPurchasesHistory(@RequestParam String token,@RequestParam long storeId) {
         return storeManagementService.viewPurchasesHistory(token, storeId);
     }
 

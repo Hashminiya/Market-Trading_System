@@ -16,9 +16,9 @@ public interface IStoreManagementService {
     public ResponseEntity<String> changeStorePolicy(String token, long storeId);
     public ResponseEntity<String> changeDiscountType(String token, long storeId, String newType);
     public ResponseEntity<String> removeStore(String token, long storeId);
-    public ResponseEntity<HashMap<String, List<String>>> viewManagementInfo(String token, long storeId);
-    public ResponseEntity<HashMap<Long, Integer>> viewInventory(String token, long storeId);
-    public ResponseEntity<HashMap<Long, HashMap<Long, Integer>>> viewPurchasesHistory(String token, long storeId);
+    public ResponseEntity<?> viewManagementInfo(String token, long storeId);
+    public ResponseEntity<?> viewInventory(String token, long storeId);
+    public ResponseEntity<?> viewPurchasesHistory(String token, long storeId);
     public ResponseEntity<String> assignStoreOwner(String token, long storeId, String newOwnerId);
     public ResponseEntity<String> assignStoreManager(String token, long storeId ,String newManagerId, List<String> permissions);
 }
