@@ -1,6 +1,6 @@
 package UnitTests.DomainLayer.Store;
 
-import DomainLayer.Market.Store.HiddenDiscount;
+import DomainLayer.Market.Store.Discount.HiddenDiscount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,9 @@
 package DomainLayer.Market.Store;
 
 import DAL.ItemDTO;
+import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.HiddenDiscount;
+import DomainLayer.Market.Store.Discount.RegularDiscount;
 import DomainLayer.Market.Util.*;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
@@ -307,7 +310,7 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void addRegularDiscount(double percent, Date expirationDate, List<Long> items, long storeId, List<Long> conditionItems, boolean isStoreDiscount) {
+    public void addRegularDiscount(double percent, Date expirationDate, List<Long> items, long storeId, HashMap<Long, Integer> conditionItems, boolean isStoreDiscount) {
         Store store = storesRepo.findById(storeId);
         if(isStoreDiscount)
             store.addDiscount(new RegularDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, conditionItems));

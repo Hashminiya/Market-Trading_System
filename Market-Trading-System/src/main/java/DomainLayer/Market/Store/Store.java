@@ -2,9 +2,10 @@ package DomainLayer.Market.Store;
 
 
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Market.Util.InMemoryRepository;
 
 import java.util.ArrayList;
@@ -20,9 +21,9 @@ public class Store implements DataItem<Long> {
     private final List<String> owners;
     private final List<String> managers;
     private final InMemoryRepositoryStore products;
-    private IRepository<Long , Discount> discounts;
+    private IRepository<Long , IDiscount> discounts;
 
-    public Store(Long id, String founderId, String name, String description, IRepository<Long, Discount> discounts){
+    public Store(Long id, String founderId, String name, String description, IRepository<Long, IDiscount> discounts){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
@@ -130,18 +131,37 @@ public class Store implements DataItem<Long> {
 
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception{
         Map<Long,Integer> items = basket.getItems();
-        HashMap<Long, Double> itemsPrice = new HashMap<>();
+        Map<Long, Double> itemsPrice = new HashMap<>();
         double price = 0;
-        for(Map.Entry<Long, Integer> entry: items.entrySet()){
-            Item item = products.findById(entry.getKey());
-            itemsPrice.put(item.getId(), item.getCurrentPrice(code));
-            price += item.getCurrentPrice(code) * entry.getValue();
+        for(IDiscount discount: discounts.findAll()){
+            if(discount.isValid(items, code)) {
+                if (discount.isByCategory()) {
+                    List<Long> updatedItems = new ArrayList<>();
+                    for (String category : discount.getCategories()) {
+                        List<Item> discountItems = searchByCategory(category);
+                        for (Item currItem : discountItems) {
+                            if (!updatedItems.contains(currItem.getId()))
+                                updatedItems.add(currItem.getId());
+                        }
+                    }
+                    discount.setItems(updatedItems);
+                }
+                itemsPrice = getItemsPrices(items.keySet().stream().toList());
+                itemsPrice = discount.calculatePrice(itemsPrice);
+            }
         }
         basket.setItemsPrice(itemsPrice);
-        for(Discount discount: discounts.findAll()){
-            if(discount.isValid(new ArrayList<>(basket.getItems().keySet())))
-                price = discount.calculatePrice(price, code);
+        for(Long itemId: itemsPrice.keySet()){
+            price += (items.get(itemId) * itemsPrice.get(itemId));
         }
         basket.setBasketTotalPrice(price);
+    }
+
+    private Map<Long, Double> getItemsPrices(List<Long> items){
+        Map<Long, Double> itemPrice = new HashMap<>();
+        for(Long itemId: items){
+            itemPrice.put(itemId, products.findById(itemId).getPrice());
+        }
+        return itemPrice;
     }
 }
