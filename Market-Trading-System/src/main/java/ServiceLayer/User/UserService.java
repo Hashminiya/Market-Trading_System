@@ -83,7 +83,7 @@ public class UserService implements IUserService {
             userFacade.login(userName, password);
             String token = jwtService.generateToken(userName, "REGISTERED");
             logger.info("User logged in: {}", userName);
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(String.format("User %s logged in",userName));
         } catch (Exception e) {
             logger.error("Error logging in user: {}", userName, e);
             return ResponseEntity.status(500).body(String.format("Error logging in user %s", userName));
