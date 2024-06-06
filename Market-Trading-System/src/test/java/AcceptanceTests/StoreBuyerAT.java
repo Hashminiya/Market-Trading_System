@@ -1,6 +1,6 @@
 package AcceptanceTests;
 
-import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
@@ -8,7 +8,6 @@ import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.User.IUserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;

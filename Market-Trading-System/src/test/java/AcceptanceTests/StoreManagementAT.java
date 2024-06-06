@@ -1,12 +1,8 @@
 package AcceptanceTests;
 
-import DomainLayer.Market.Purchase.PurchaseController;
-import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Store.StoreController;
-import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
-import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.Store.Discount.Discount;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;

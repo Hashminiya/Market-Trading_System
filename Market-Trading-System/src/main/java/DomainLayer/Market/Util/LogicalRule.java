@@ -4,5 +4,4 @@ public enum LogicalRule {
     OR,
     AND,
     XOR,
-    CONDITION
 }

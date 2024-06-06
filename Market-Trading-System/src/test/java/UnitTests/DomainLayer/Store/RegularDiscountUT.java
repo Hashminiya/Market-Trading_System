@@ -1,10 +1,9 @@
 package UnitTests.DomainLayer.Store;
 
-import DomainLayer.Market.Store.RegularDiscount;
+import DomainLayer.Market.Store.Discount.RegularDiscount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;

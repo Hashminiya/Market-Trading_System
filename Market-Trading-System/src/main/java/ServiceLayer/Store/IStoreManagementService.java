@@ -1,6 +1,6 @@
 package ServiceLayer.Store;
 
-import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.IRepository;
 
 import javax.ws.rs.core.Response;
