@@ -10,6 +10,8 @@ import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -17,6 +19,7 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+@Component("purchaseController")
 public class PurchaseController implements IPurchaseFacade {
     private static PurchaseController purchaseControllerInstance;
     private final BlockingQueue<ItemDTO> inventoryReduceItems; // queue to remove products from inventory
@@ -26,7 +29,7 @@ public class PurchaseController implements IPurchaseFacade {
     private final SupplyServiceProxy supplyServiceProxy;
     private IUserFacade userFacade;
 
-
+    @Autowired
     private PurchaseController(IRepository<Long,Purchase> purchaseRepo,PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
         this.purchaseRepo = purchaseRepo;
         this.paymentServiceProxy = paymentServiceProxy;

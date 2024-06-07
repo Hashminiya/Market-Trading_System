@@ -3,6 +3,7 @@ package ServiceLayer.User;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.JwtService;
 import API.model.UserModel;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,14 +15,14 @@ import java.util.Date;
 import java.util.Optional;
 
 
-@Service
+@Service("userService")
 public class UserService implements IUserService {
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private IUserFacade userFacade;
     private JwtService jwtService;
     private static UserService instance;
 
-    private UserService(IUserFacade userFacade) {
+    private UserService(@Qualifier("userController") IUserFacade userFacade) {
         this.userFacade = userFacade;
     }
 
@@ -34,8 +35,6 @@ public class UserService implements IUserService {
     public void setJwtService(JwtService jwtService) {
         this.jwtService = jwtService;
     }
-
-    public Response GuestEntry() {
 
     public ResponseEntity<String> GuestEntry() {
         try {
@@ -83,9 +82,9 @@ public class UserService implements IUserService {
             userFacade.login(userName, password);
             String token = jwtService.generateToken(userName, "REGISTERED");
             logger.info("User logged in: {}", userName);
-            return ResponseEntity.ok(String.format("User %s logged in",userName));
+            return ResponseEntity.ok(token);
         } catch (Exception e) {
-            logger.error("Error logging in user: {}", userName, e);
+            //logger.error("Error logging in user: {}", userName, e);
             return ResponseEntity.status(500).body(String.format("Error logging in user %s", userName));
         }
     }

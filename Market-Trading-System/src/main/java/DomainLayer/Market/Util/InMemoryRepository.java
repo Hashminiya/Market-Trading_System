@@ -1,11 +1,11 @@
 package DomainLayer.Market.Util;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
 
-@Component
+@Repository("InMemoryRepository")
 public class InMemoryRepository<K,T extends DataItem<K>> implements IRepository<K,T> {
 
     protected HashMap<K,T> data = new HashMap<K,T>();

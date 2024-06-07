@@ -1,9 +1,11 @@
 package DomainLayer.Market.User;
 
 import DomainLayer.Market.Util.StorePermission;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component("registered")
 public class Registered implements Istate{
 
     public Registered() {

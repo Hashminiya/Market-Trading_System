@@ -3,6 +3,7 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,7 +15,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-@Component
+@Component("userController")
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
     private final IRepository<String, User> users;
@@ -24,6 +25,7 @@ public class UserController implements IUserFacade {
     private final BCryptPasswordEncoder passwordEncoder;
     private int guestId ;
 
+    @Autowired
     private UserController(IRepository<String, User> users, SystemManager admin) {
         this.users = users;
         this.passwordEncoder = new BCryptPasswordEncoder();

@@ -11,11 +11,15 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.BytesRef;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
+@Repository("InMemoryRepositoryStore")
 public class InMemoryRepositoryStore extends InMemoryRepository<Long, Item> {
     private final int SEARCH_LIMIT = 30;
     private final Directory index;

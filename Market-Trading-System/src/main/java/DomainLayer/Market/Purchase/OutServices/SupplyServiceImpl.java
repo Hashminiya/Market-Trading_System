@@ -2,7 +2,9 @@ package DomainLayer.Market.Purchase.OutServices;
 
 import DomainLayer.Market.Purchase.Abstractions.ISupplyService;
 import DomainLayer.Market.Purchase.SupplyServiceProxy;
+import org.springframework.stereotype.Component;
 
+@Component("SupplyServiceImpl")
 public class SupplyServiceImpl implements ISupplyService {
     private static SupplyServiceImpl instance;
 

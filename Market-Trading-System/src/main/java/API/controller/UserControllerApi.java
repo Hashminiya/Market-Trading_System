@@ -1,8 +1,8 @@
 package API.controller;
-import ServiceLayer.User.UserService;
-import ServiceLayer.Store.StoreBuyerService;
+import ServiceLayer.User.IUserService;
 import API.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -15,17 +15,17 @@ import java.util.Date;
 public class UserControllerApi {
 
 
-    private final UserService userService;
+    private final IUserService userService;
 
     @Autowired
-    public UserControllerApi(UserService userService){
+    public UserControllerApi(@Qualifier("userService") IUserService userService){
         this.userService = userService;
     }
 
-    @GetMapping("/user/getUser")
-    public ResponseEntity<UserModel> getUser(@RequestParam String userName){
-        return userService.getUser(userName);
-    }
+//    @GetMapping("/user/getUser")
+//    public ResponseEntity<UserModel> getUser(@RequestParam String userName){
+//        return userService.getUser(userName);
+//    }
 
     @PostMapping("/user/GuestEntry")
     public ResponseEntity<String> GuestEntry() {
@@ -73,13 +73,13 @@ public class UserControllerApi {
     }
 
     @PutMapping("/user/addPermission")
-    public ResponseEntity<String> addPermission(@RequestParam String token,@RequestParam long storeId,@RequestParam String permission) {
-        return userService.addPermission(token, storeId, permission);
+    public ResponseEntity<String> addPermission(@RequestParam String token, @RequestParam String userToPermit,@RequestParam long storeId,@RequestParam String permission) {
+        return userService.addPermission(token, userToPermit, storeId, permission);
     }
 
     @DeleteMapping("/user/removePermission")
-    public ResponseEntity<String> removePermission(@RequestParam String token,@RequestParam long storeId,@RequestParam String permission) {
-        return userService.removePermission(token, storeId, permission);
+    public ResponseEntity<String> removePermission(@RequestParam String token, @RequestParam String userToUnPermit, @RequestParam long storeId,@RequestParam String permission) {
+        return userService.removePermission(token, userToUnPermit, storeId, permission);
     }
 
 }

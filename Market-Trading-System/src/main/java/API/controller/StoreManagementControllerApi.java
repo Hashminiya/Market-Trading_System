@@ -3,7 +3,7 @@ package API.controller;
 import DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Util.IRepository;
 import ServiceLayer.Store.StoreBuyerService;
-import ServiceLayer.Store.StoreManagementService;
+import ServiceLayer.Store.IStoreManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +15,10 @@ import java.util.List;
 @RestController
 public class StoreManagementControllerApi {
 
-    private final StoreManagementService storeManagementService;
+    private final IStoreManagementService storeManagementService;
 
     @Autowired
-    public StoreManagementControllerApi(StoreManagementService storeManagementService){
+    public StoreManagementControllerApi(IStoreManagementService storeManagementService){
         this.storeManagementService = storeManagementService;
     }
 

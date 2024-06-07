@@ -1,4 +1,6 @@
 package ServiceLayer;
+import org.springframework.http.ResponseEntity;
+
 import javax.ws.rs.core.Response;
 import java.util.Scanner;
 
@@ -11,7 +13,7 @@ public class Main {
         String password = scanner.nextLine();
 
         ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
-        Response loginResponse = serviceFactory.getUserService().login(userName, password);
-        serviceFactory.initFactory((String) loginResponse.getEntity());
+        ResponseEntity<String> loginResponse = serviceFactory.getUserService().login(userName, password);
+        serviceFactory.initFactory(loginResponse.getBody());
     }
 }
