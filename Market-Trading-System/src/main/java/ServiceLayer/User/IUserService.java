@@ -1,6 +1,4 @@
 package ServiceLayer.User;
-
-import javax.ws.rs.core.Response;
 import java.util.Date;
 import org.springframework.http.ResponseEntity;
 

@@ -4,8 +4,6 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
@@ -48,6 +46,14 @@ public class UserController implements IUserFacade {
 
     public void setPurchaseFacade(IPurchaseFacade purchaseFacade) {
         this.purchaseFacade = purchaseFacade;
+    }
+
+    public static synchronized UserController getInstance(IRepository<String, User> users) {
+        if (userControllerInstance == null) {
+            userControllerInstance = new UserController(users);
+            // TODO : We assume that when this function called, next line will be setStoreFacade..
+        }
+        return userControllerInstance;
     }
 
     @Override
@@ -165,47 +171,6 @@ public class UserController implements IUserFacade {
     @Override
     public boolean isRegister(String userName) {
         return getUser(userName).isRegister();
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String userName) {
-        User user = users.findById(userName);
-        return new UserDetails() {
-            @Override
-            public Collection<? extends GrantedAuthority> getAuthorities() {
-                return null;
-            }
-
-            @Override
-            public String getPassword() {
-                return user.getPassword();
-            }
-
-            @Override
-            public String getUsername() {
-                return user.getUserName();
-            }
-
-            @Override
-            public boolean isAccountNonExpired() {
-                return false;
-            }
-
-            @Override
-            public boolean isAccountNonLocked() {
-                return false;
-            }
-
-            @Override
-            public boolean isCredentialsNonExpired() {
-                return false;
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return false;
-            }
-        };
     }
 
     @Override
