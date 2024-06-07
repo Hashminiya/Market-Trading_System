@@ -7,11 +7,13 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Market.Util.InMemoryRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Component
 public class ShoppingCart {
     private final IRepository<Long,ShoppingBasket> baskets;
 

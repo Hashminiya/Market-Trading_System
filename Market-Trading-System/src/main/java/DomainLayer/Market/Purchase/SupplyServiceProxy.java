@@ -3,9 +3,11 @@ package DomainLayer.Market.Purchase;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.Abstractions.ISupplyService;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component("SupplyServiceProxy")
 public class SupplyServiceProxy implements ISupplyService {
     private static SupplyServiceProxy instance;
     private SupplyServiceImpl supplyService;

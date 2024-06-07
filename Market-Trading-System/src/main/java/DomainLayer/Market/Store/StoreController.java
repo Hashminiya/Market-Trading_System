@@ -6,6 +6,7 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
+import org.springframework.stereotype.Component;
 
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+@Component
 public class StoreController implements IStoreFacade{
     private static StoreController storeControllerInstance;
     private IRepository<Long, Store> storesRepo;

@@ -2,9 +2,11 @@ package DomainLayer.Market.Purchase.OutServices;
 
 import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
 import ServiceLayer.ServiceFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Component("PaymentServiceImpl")
 public class PaymentServiceImpl implements IPaymentService {
     private static PaymentServiceImpl instance;
 

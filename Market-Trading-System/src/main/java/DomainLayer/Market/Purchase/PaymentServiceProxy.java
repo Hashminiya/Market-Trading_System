@@ -3,10 +3,13 @@ package DomainLayer.Market.Purchase;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
 
+@Component("PaymentServiceProxy")
 public class PaymentServiceProxy implements IPaymentService {
     private static PaymentServiceProxy instance;
     private PaymentServiceImpl paymentService;
@@ -18,6 +21,7 @@ public class PaymentServiceProxy implements IPaymentService {
         return instance;
     }
 
+    @Autowired
     private PaymentServiceProxy(PaymentServiceImpl paymentService) {
         this.paymentService = paymentService;
     }
