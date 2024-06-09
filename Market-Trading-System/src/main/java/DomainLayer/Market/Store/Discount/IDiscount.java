@@ -23,6 +23,6 @@ public interface IDiscount extends DataItem<Long> {
 
     public boolean isValid(Map<Long, Integer> items, String code);
 
-    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices);
+    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code);
 
 }

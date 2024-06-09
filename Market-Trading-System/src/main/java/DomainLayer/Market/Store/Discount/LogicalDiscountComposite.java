@@ -16,27 +16,44 @@ public class LogicalDiscountComposite extends DiscountComposite{
         this.logicalRule = LogicalRule.valueOf(rule);
     }
 
+
     @Override
-    public boolean isValid(Map<Long, Integer> items, String code) {
-        Date now = new Date();
-        if(!getExpirationDate().after(now))
-            return false;
-        for(IDiscount discount: discounts){
-            if(!discount.isValid(items, code))
-                return false;
+    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) throws Exception{
+        switch (logicalRule){
+            case OR:
+                return orCalculatePrice(itemsPrices, itemsCount, code);
+            case AND:
+                return andCalculatePrice(itemsPrices, itemsCount, code);
+            case XOR:
+                return xorCalculatePrice(itemsPrices, itemsCount, code);
+            default:
+                throw new Exception("Logical discount missing logical rule");
         }
-        return true;
-    }
-
-    @Override
-    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices) {
-        return Map.of();
     }
 
 
-    private Map<Long, Integer> orCalculatePrice(Map<Long, Double> basketItems, String code){
-        Map<Long, Integer> newPrices = new HashMap<>();
+    private Map<Long, Double> orCalculatePrice(Map<Long, Double> basketItems, Map<Long, Integer> itemsCount, String code){
+        Map<Long, Double> newPrices = new HashMap<>();
+        for(IDiscount discount: discounts){
+            if(discount.isValid(itemsCount, code))
+                newPrices = discount.calculatePrice(basketItems, itemsCount, code);
+        }
+        return newPrices;
+    }
 
+    private Map<Long, Double> andCalculatePrice(Map<Long, Double> basketItems, Map<Long, Integer> itemsCount, String code){
+        Map<Long, Double> newPrices = new HashMap<>();
+        if(isValid(itemsCount, code)){
+            for(IDiscount discount: discounts){
+                newPrices = discount.calculatePrice(basketItems, itemsCount, code);
+            }
+        }
+        return newPrices;
+    }
+
+    private Map<Long, Double> xorCalculatePrice(Map<Long, Double> basketItems, Map<Long, Integer> itemsCount, String code){
+        Map<Long, Double> newPrices = new HashMap<>();
+        //TODO
         return newPrices;
     }
 }
