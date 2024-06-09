@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RegularDiscountUT {
     private final long DISCOUNT_ID1 = 1L;
-    private final double DISCOUNT_PERCENT = 0.2;  // 20% discount
+    private final double DISCOUNT_PERCENT = 20;  // 20% discount
     private final long STORE_ID = 1L;
     private final List<Long> CONDITION_ITEMS = Arrays.asList(1L, 2L, 3L);
 

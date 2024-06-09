@@ -48,8 +48,18 @@ public abstract class DiscountComposite implements IDiscount {
     @Override
     public boolean isByCategory(){ return !(this.categories == null || this.categories.isEmpty()); }
 
-    public abstract boolean isValid(Map<Long, Integer> items, String code);
+    @Override
+    public boolean isValid(Map<Long, Integer> items, String code) {
+        Date now = new Date();
+        if(!getExpirationDate().after(now))
+            return false;
+        for(IDiscount discount: discounts){
+            if(!discount.isValid(items, code))
+                return false;
+        }
+        return true;
+    }
 
-    public abstract Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices);
+    public abstract Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code);
 
 }

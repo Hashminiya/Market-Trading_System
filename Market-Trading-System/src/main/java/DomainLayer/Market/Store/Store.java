@@ -68,7 +68,7 @@ public class Store implements DataItem<Long> {
     }
 
     public void addItem(Long itemId, String name, double price, int quantity, String description, List<String> categories){
-        Item newItem = new Item(itemId, name, description ,new InMemoryRepository<Long,Discount>(), categories);
+        Item newItem = new Item(itemId, name, description, categories);
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
         products.save(newItem);
@@ -85,6 +85,7 @@ public class Store implements DataItem<Long> {
         /*A method for adding store discount, can be conditional.*/
         discounts.save(discount);
     }
+
     public void updateItem(long itemId, String newName, double newPrice, int quantity){
         Item toEdit = products.findById(itemId);
         toEdit.setName(newName);
@@ -95,6 +96,7 @@ public class Store implements DataItem<Long> {
     public void deleteItem(long itemId){
         products.delete(itemId);
     }
+
     public void changeDiscountPolicy(){
         ///TODO
         throw new UnsupportedOperationException("changeDiscountPolicy method is not implemented yet");
@@ -102,6 +104,7 @@ public class Store implements DataItem<Long> {
     public List<Item> search(String keyWord){
         return products.search(null ,keyWord,false);
     }
+
     public List<Item> searchKeyWordWithCategory(String category,String keyWord){
         return products.search(category ,keyWord,true);
     }
@@ -147,7 +150,7 @@ public class Store implements DataItem<Long> {
                     discount.setItems(updatedItems);
                 }
                 itemsPrice = getItemsPrices(items.keySet().stream().toList());
-                itemsPrice = discount.calculatePrice(itemsPrice);
+                itemsPrice = discount.calculatePrice(itemsPrice, items, code);
             }
         }
         basket.setItemsPrice(itemsPrice);

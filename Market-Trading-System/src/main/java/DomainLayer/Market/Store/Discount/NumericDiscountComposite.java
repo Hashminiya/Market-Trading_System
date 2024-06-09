@@ -3,6 +3,7 @@ package DomainLayer.Market.Store.Discount;
 import DomainLayer.Market.Util.NumericRule;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +18,20 @@ public class NumericDiscountComposite extends DiscountComposite{
 
 
     @Override
-    public boolean isValid(Map<Long, Integer> items, String code) {
-        return false;
+    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) {
+        switch (numericRule){
+            case MAX:
+
+        }
     }
 
-    @Override
-    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices) {
-        return Map.of();
+    private Map<Long, Double> maxCalculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) {
+        Map<Long, Double>  newPrices = new HashMap<>();
+        double
+    }
+
+    private Map<Long, Double> addCalculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) {
+        Map<Long, Double>  newPrices = new HashMap<>();
+        double
     }
 }

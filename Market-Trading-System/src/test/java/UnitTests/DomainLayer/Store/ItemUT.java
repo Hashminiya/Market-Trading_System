@@ -35,7 +35,7 @@ public class ItemUT {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         discountsMock = new InMemoryRepository<Long,Discount>();
-        item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, new InMemoryRepository<Long,Discount>(), ITEM_CATEGORIES);
+        item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, ITEM_CATEGORIES);
         item.setPrice(ITEM_PRICE);
         item.setQuantity(ITEM_QUANTITY);
     }

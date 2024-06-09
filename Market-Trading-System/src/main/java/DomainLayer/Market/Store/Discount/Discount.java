@@ -44,7 +44,7 @@ public abstract class Discount implements IDiscount {
 
     public List<String> getCategories(){ return categories;}
 
-    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices) {
+    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) {
         if(itemsPrices == null)
             throw new NullPointerException("Null items prices List");
         for(Long itemId: itemsPrices.keySet().stream().toList()){
