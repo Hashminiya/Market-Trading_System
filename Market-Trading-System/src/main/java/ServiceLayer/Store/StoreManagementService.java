@@ -5,6 +5,8 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,8 +25,12 @@ public class StoreManagementService implements IStoreManagementService {
     private JwtService jwtService;
     private IUserFacade userFacade;
 
-    public StoreManagementService(IStoreFacade storeFacade) {
+    @Autowired
+    public StoreManagementService(@Qualifier("StoreController") IStoreFacade storeFacade,@Qualifier("userController") IUserFacade userFacade) {
         this.storeFacade = storeFacade;
+        this.jwtService = new JwtService();
+        this.userFacade = userFacade;
+        StoreManagementService.instance = this;
     }
 
     public void setJwtService(JwtService jwtService) {
@@ -34,9 +40,9 @@ public class StoreManagementService implements IStoreManagementService {
         this.userFacade = userFacade;
     }
 
-    public static synchronized StoreManagementService getInstance(IStoreFacade storeFacade) {
+    public static synchronized StoreManagementService getInstance(IStoreFacade storeFacade, IUserFacade userFacade) {
         if (instance == null) {
-            instance = new StoreManagementService(storeFacade);
+            instance = new StoreManagementService(storeFacade,userFacade);
         }
         return instance;
     }

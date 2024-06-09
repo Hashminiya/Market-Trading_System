@@ -6,6 +6,8 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 
@@ -14,7 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-@Component
+@Component("StoreController")
 public class StoreController implements IStoreFacade{
     private static StoreController storeControllerInstance;
     private IRepository<Long, Store> storesRepo;
@@ -33,14 +35,16 @@ public class StoreController implements IStoreFacade{
     private String CHANGE_DISCOUNT_TYPE = "CHANGE_DISCOUNT_TYPE";
     private String REMOVE_STORE = "REMOVE_STORE";
 
-
-    private StoreController(IRepository<Long, Store> storesRepo) {
+    @Autowired
+    private StoreController(@Qualifier("InMemoryRepository") IRepository<Long, Store> storesRepo,
+                            @Qualifier("purchaseController") IPurchaseFacade purchaseFacadeInstance) {
         this.storesRepo = storesRepo;
+        this.purchaseFacade = purchaseFacadeInstance;
     }
 
-    public static synchronized StoreController getInstance(IRepository<Long, Store> storesRepo) {
+    public static synchronized StoreController getInstance(IRepository<Long, Store> storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance) {
         if (storeControllerInstance == null) {
-            storeControllerInstance = new StoreController(storesRepo);
+            storeControllerInstance = new StoreController(storesRepo, purchaseFacadeInstance);
             // TODO : We assume that when this function called, next line will be setUserFacade..
         }
         return storeControllerInstance;

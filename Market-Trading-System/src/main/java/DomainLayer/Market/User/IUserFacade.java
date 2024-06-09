@@ -9,9 +9,9 @@ import DomainLayer.Market.Util.IRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface IUserFacade {
-    public static IUserFacade getInstance(IRepository<String, User> users, SystemManager systemManager)
+    public static IUserFacade getInstance(IRepository<String, User> users, SystemManager systemManager, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade)
     {
-        return UserController.getInstance(users, systemManager);
+        return UserController.getInstance(users, systemManager, storeFacade, purchaseFacade);
     }
     public void setStoreFacade(IStoreFacade storeFacade);
     public void setPurchaseFacade(IPurchaseFacade purchaseFacade);

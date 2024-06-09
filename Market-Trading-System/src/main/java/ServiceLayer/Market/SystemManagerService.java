@@ -9,9 +9,13 @@ import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
 
+@Service
 public class SystemManagerService implements ISystemManagerService {
     private static final Logger logger = LogManager.getLogger(StoreManagementService.class);
     String USER_NOT_VALID = "Authentication failed";
@@ -20,13 +24,20 @@ public class SystemManagerService implements ISystemManagerService {
     private IUserFacade userFacade;
     private IPurchaseFacade purchaseFacade;
     private JwtService jwtService;
-    private SystemManagerService() {
-        SystemManager systemManager = SystemManager.getInstance();
+
+    @Autowired
+    private SystemManagerService(@Qualifier("purchaseController") IPurchaseFacade purchaseFacade,
+                                 @Qualifier("StoreController") IStoreFacade storeFacade,
+                                 @Qualifier("userController") IUserFacade userFacade) {
+        //SystemManager systemManager = SystemManager.getInstance();
+        this.purchaseFacade = purchaseFacade;
+        this.storeFacade = storeFacade;
+        this.userFacade = userFacade;
     }
 
-    public static synchronized SystemManagerService getInstance() {
+    public static synchronized SystemManagerService getInstance(IPurchaseFacade purchaseFacade, IStoreFacade storeFacade, IUserFacade userFacade) {
         if (instance == null) {
-            instance = new SystemManagerService();
+            instance = new SystemManagerService(purchaseFacade, storeFacade, userFacade);
         }
         return instance;
     }

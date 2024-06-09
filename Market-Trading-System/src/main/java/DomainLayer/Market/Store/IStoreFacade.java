@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface IStoreFacade {
-    public static IStoreFacade getInstance(IRepository<Long, Store> storesRepo)
+    public static IStoreFacade getInstance(IRepository<Long, Store> storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance)
     {
-        return StoreController.getInstance(storesRepo);
+        return StoreController.getInstance(storesRepo, userFacadeInstance, purchaseFacadeInstance);
     }
     public void setUserFacade(IUserFacade userFacade);
     public void setPurchaseFacade(IPurchaseFacade purchaseFacadeInstance);

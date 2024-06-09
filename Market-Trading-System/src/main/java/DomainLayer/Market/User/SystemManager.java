@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Component("SystemManager")
 public class SystemManager extends User{
     private static final String USER_NAME = "SystemManager";
     private static final String PASSWORD = "SystemManagerPassword";

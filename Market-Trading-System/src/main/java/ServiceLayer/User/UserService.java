@@ -9,10 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
-
-import javax.ws.rs.core.Response;
 import java.util.Date;
-import java.util.Optional;
 
 
 @Service("userService")
@@ -24,6 +21,7 @@ public class UserService implements IUserService {
 
     private UserService(@Qualifier("userController") IUserFacade userFacade) {
         this.userFacade = userFacade;
+        this.jwtService = new JwtService();
     }
 
     public static synchronized UserService getInstance(IUserFacade userFacade) {
@@ -168,7 +166,7 @@ public class UserService implements IUserService {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                Response response = Response.ok( userFacade.addItemToBasket(userName, storeId, itemId, quantity)).build();
+                ResponseEntity<Long> response = ResponseEntity.ok(userFacade.addItemToBasket(userName, storeId, itemId, quantity));
                 logger.info("Added item to basket for user: {}", userName);
                 return ResponseEntity.ok(String.format("Added item to basket for user %s", userName));
             } else {

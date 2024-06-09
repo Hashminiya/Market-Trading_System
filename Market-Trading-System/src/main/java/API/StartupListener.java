@@ -1,5 +1,7 @@
 package API;
 
+import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.User.UserController;
 import ServiceLayer.User.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +28,9 @@ public class StartupListener implements ApplicationListener<ContextRefreshedEven
         System.out.println("---------------------------------------");
         System.out.println("event received");
         System.out.println("---------------------------------------");
+
+        SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
+
 
         userService.register("admin", "admin",25);
 

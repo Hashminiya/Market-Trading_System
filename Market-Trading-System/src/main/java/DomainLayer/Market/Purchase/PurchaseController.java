@@ -11,6 +11,7 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -30,7 +31,7 @@ public class PurchaseController implements IPurchaseFacade {
     private IUserFacade userFacade;
 
     @Autowired
-    private PurchaseController(IRepository<Long,Purchase> purchaseRepo,PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+    private PurchaseController(@Qualifier("InMemoryRepository") IRepository<Long,Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
         this.purchaseRepo = purchaseRepo;
         this.paymentServiceProxy = paymentServiceProxy;
         this.supplyServiceProxy = supplyServiceProxy;
