@@ -10,7 +10,10 @@ import org.springframework.context.annotation.DependsOn;
 @DependsOn("startupListener")
 public class DemoApplication {
 
+    public static boolean systemInitialize;
+
     public static void main(String[] args) {
+
         SpringApplication.run(DemoApplication.class, args);
     }
 
