@@ -18,7 +18,7 @@ public class LogicalDiscountComposite extends DiscountComposite{
 
 
     @Override
-    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) throws Exception{
+    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code){
         switch (logicalRule){
             case OR:
                 return orCalculatePrice(itemsPrices, itemsCount, code);
@@ -27,7 +27,7 @@ public class LogicalDiscountComposite extends DiscountComposite{
             case XOR:
                 return xorCalculatePrice(itemsPrices, itemsCount, code);
             default:
-                throw new Exception("Logical discount missing logical rule");
+                return null;
         }
     }
 

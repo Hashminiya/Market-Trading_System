@@ -21,17 +21,22 @@ public class NumericDiscountComposite extends DiscountComposite{
     public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) {
         switch (numericRule){
             case MAX:
-
+            //TODO
         }
+        return null;
     }
 
     private Map<Long, Double> maxCalculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) {
         Map<Long, Double>  newPrices = new HashMap<>();
-        double
+        //TODO
+        return null;
+
     }
 
     private Map<Long, Double> addCalculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) {
         Map<Long, Double>  newPrices = new HashMap<>();
-        double
+        //TODO
+        return null;
+
     }
 }
