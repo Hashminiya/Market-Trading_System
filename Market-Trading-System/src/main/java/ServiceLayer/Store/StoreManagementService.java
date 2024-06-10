@@ -1,6 +1,7 @@
 package ServiceLayer.Store;
 
 import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
@@ -42,7 +43,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, Discount> repository) {
+    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, IDiscount> repository) {
         try {
             String userName = jwtService.extractUsername(founderToken);
             if (jwtService.isValid(founderToken, userFacade.loadUserByUsername(userName))) {

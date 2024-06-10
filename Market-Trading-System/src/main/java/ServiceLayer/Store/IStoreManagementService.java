@@ -1,6 +1,7 @@
 package ServiceLayer.Store;
 
 import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Util.IRepository;
 import org.springframework.http.ResponseEntity;
 
@@ -9,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface IStoreManagementService {
-    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, Discount> repository);
+    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, IDiscount> repository);
     public ResponseEntity<String> addItemToStore(String token, long storeId, String itemName, String description ,double itemPrice, int stockAmount, List<String> categories);
     public ResponseEntity<String> updateItem(String token, long storeId, long itemId, String newName, double newPrice, int newAmount);
     public ResponseEntity<String> deleteItem(String token, long storeId, long itemId);
