@@ -21,4 +21,5 @@ public interface IStoreManagementService {
     public ResponseEntity<?> viewPurchasesHistory(String token, long storeId);
     public ResponseEntity<String> assignStoreOwner(String token, long storeId, String newOwnerId);
     public ResponseEntity<String> assignStoreManager(String token, long storeId ,String newManagerId, List<String> permissions);
+    public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails);
 }

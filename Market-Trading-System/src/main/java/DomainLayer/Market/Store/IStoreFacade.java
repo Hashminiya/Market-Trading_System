@@ -3,6 +3,7 @@ package DomainLayer.Market.Store;
 
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.User.IUserFacade;
@@ -18,7 +19,7 @@ public interface IStoreFacade {
     }
     public void setUserFacade(IUserFacade userFacade);
     public void setPurchaseFacade(IPurchaseFacade purchaseFacadeInstance);
-    public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts)throws Exception;
+    public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, IDiscount> discounts)throws Exception;
     public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId) throws Exception;
     public long addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories)throws Exception;
     public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount)throws Exception;
@@ -41,10 +42,10 @@ public interface IStoreFacade {
     public boolean addItemToShoppingBasket(ShoppingBasket basket, long storeId, long itemId, int quantity);
     public void purchaseOccurs();
     public void calculateBasketPrice(ShoppingBasket basket, String code)throws Exception;
-    public void addHiddenDiscount(double percent, Date expirationDate, List<Long> items, long storeId, String code, boolean isStoreDiscount);
-    public void addRegularDiscount(double percent, Date expirationDate, List<Long> items, long storeId, HashMap<Long, Integer> conditionItems, boolean isStoreDiscount);
 
     void clear();
 
     void setStoersRepo(IRepository<Long,Store> storesRepo);
+
+    public void addDiscount(String userName, long storeId, String discountDetails) throws Exception;
 }

@@ -253,4 +253,22 @@ public class StoreManagementService implements IStoreManagementService {
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                storeFacade.addDiscount(userName, storeId, discountDetails);
+                logger.info("Discount added by user: {}", userName);
+                return ResponseEntity.ok().body(String.format("Discount added by user %s", userName));
+            } else {
+                logger.warn("Invalid token for adding discount to store: {}", token);
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
+            }
+        } catch (Exception ex) {
+            logger.error("Error adding discount", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
 }

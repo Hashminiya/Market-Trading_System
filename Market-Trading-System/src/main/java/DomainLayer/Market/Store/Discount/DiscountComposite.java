@@ -1,5 +1,7 @@
 package DomainLayer.Market.Store.Discount;
 
+import DomainLayer.Market.Util.IRepository;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +14,11 @@ public abstract class DiscountComposite implements IDiscount {
     protected Long storeId;
     protected List<Long> items;
     protected List<String> categories;
+    protected boolean isStore;
     protected List<IDiscount> discounts;
 
-    public DiscountComposite(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories, List<IDiscount> discounts){
+
+    public DiscountComposite(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories, boolean isStore, List<IDiscount> discounts){
         this.id = id;
         this.percent = percent;
         this.expirationDate = expirationDate;
@@ -22,6 +26,7 @@ public abstract class DiscountComposite implements IDiscount {
         this.discounts = discounts;
         this.items = items;
         this.categories = categories;
+        this.isStore = isStore;
     }
 
     @Override

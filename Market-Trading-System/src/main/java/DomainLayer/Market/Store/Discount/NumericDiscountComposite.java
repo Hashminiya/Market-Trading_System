@@ -1,18 +1,33 @@
 package DomainLayer.Market.Store.Discount;
 
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.NumericRule;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class NumericDiscountComposite extends DiscountComposite{
 
     private NumericRule numericRule;
 
-    public NumericDiscountComposite(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories, List<IDiscount> discounts, String rule) {
-        super(id, percent, expirationDate, storeId, items, categories, discounts);
+
+    @JsonCreator
+    public NumericDiscountComposite(@JsonProperty("id") Long id,
+                                    @JsonProperty("percent") double percent,
+                                    @JsonProperty("expirationDate") Date expirationDate,
+                                    @JsonProperty("storeId") long storeId,
+                                    @JsonProperty("items") List<Long> items,
+                                    @JsonProperty("categories") List<String> categories,
+                                    @JsonProperty("isStore") boolean isStore,
+                                    @JsonProperty("discounts") List<IDiscount> discounts,
+                                    @JsonProperty("numericRule") String rule) {
+        super(id, percent, expirationDate, storeId, items, categories, isStore, discounts);
         this.numericRule = NumericRule.valueOf(rule);
     }
 

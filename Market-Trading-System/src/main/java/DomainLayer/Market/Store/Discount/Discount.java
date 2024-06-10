@@ -12,14 +12,16 @@ public abstract class Discount implements IDiscount {
     protected Long storeId;
     protected List<Long> items;
     protected List<String> categories;
+    protected boolean isStore;
 
-    public Discount(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories){
+    public Discount(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories, boolean isStore){
         this.id = id;
         this.percent = percent;
         this.expirationDate = expirationDate;
         this.storeId = storeId;
         this.items = items;
         this.categories = categories;
+        this.isStore = isStore;
     }
 
     @Override

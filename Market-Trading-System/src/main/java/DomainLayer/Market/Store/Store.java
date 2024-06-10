@@ -2,11 +2,12 @@ package DomainLayer.Market.Store;
 
 
 import DomainLayer.Market.ShoppingBasket;
-import DomainLayer.Market.Store.Discount.Discount;
-import DomainLayer.Market.Store.Discount.IDiscount;
+import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,5 +167,24 @@ public class Store implements DataItem<Long> {
             itemPrice.put(itemId, products.findById(itemId).getPrice());
         }
         return itemPrice;
+    }
+
+    public void addDiscount(String discountDetails) throws Exception{
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerSubtypes(new NamedType(RegularDiscount.class, "RegularDiscount"));
+        objectMapper.registerSubtypes(new NamedType(HiddenDiscount.class, "HiddenDiscount"));
+        objectMapper.registerSubtypes(new NamedType(LogicalDiscountComposite.class, "LogicalDiscountComposite"));
+        objectMapper.registerSubtypes(new NamedType(NumericDiscountComposite.class, "NumericDiscountComposite"));
+        objectMapper.registerSubtypes(new NamedType(Condition.class, "Condition"));
+        objectMapper.registerSubtypes(new NamedType(ConditionComposite.class, "ConditionComposite"));
+
+        try {
+            IDiscount discount = objectMapper.readValue(discountDetails, IDiscount.class);
+            discounts.save(discount);
+        }
+        catch (Exception e){
+            throw new Exception("Error while creating discount\n" + e.getMessage());
+        }
+
     }
 }

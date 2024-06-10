@@ -1,7 +1,12 @@
 package DomainLayer.Market.Store.Discount;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.util.Map;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class Condition implements ICondition{
 
     //private Map<Long, Integer> conditionItem;
@@ -9,7 +14,9 @@ public class Condition implements ICondition{
     private Long itemId;
     private int count;
 
-    public Condition(Long itemId, int count){
+    @JsonCreator
+    public Condition(@JsonProperty("itemId") Long itemId,
+                     @JsonProperty("count") int count){
         this.itemId = itemId;
         this.count = count;
     }
