@@ -75,17 +75,6 @@ public class Store implements DataItem<Long> {
         products.save(newItem);
     }
 
-    public void addDiscount(List<Long> items, Discount discount){
-        /*A method for adding regular discount, un conditional, assign to an item or a category.*/
-        for(Long item : items){
-            products.findById(item).setDiscount(discount);
-        }
-    }
-
-    public void addDiscount(Discount discount){
-        /*A method for adding store discount, can be conditional.*/
-        discounts.save(discount);
-    }
 
     public void updateItem(long itemId, String newName, double newPrice, int quantity){
         Item toEdit = products.findById(itemId);
