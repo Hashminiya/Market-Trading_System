@@ -3,10 +3,7 @@ package DomainLayer.Market.Store;
 
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
-import DomainLayer.Market.Store.StorePurchasePolicy.AgeRestrictedPurchasePolicy;
-import DomainLayer.Market.Store.StorePurchasePolicy.MaximumQuantityPurchasePolicy;
-import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicyComposite;
-import DomainLayer.Market.Store.StorePurchasePolicy.PurchsePoilcy;
+import DomainLayer.Market.Store.StorePurchasePolicy.*;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
@@ -29,6 +26,7 @@ public class Store implements DataItem<Long> {
     private final InMemoryRepositoryStore products;
     private IRepository<Long , IDiscount> discounts;
     private IRepository<Long, PurchsePoilcy> purchasePolicies;
+    private PurchasePolicyFactory policyFactory;
 
     public Store(Long id, String founderId, String name, String description,
                  IRepository<Long, IDiscount> discounts,
@@ -167,6 +165,13 @@ public class Store implements DataItem<Long> {
         return itemPrice;
     }
 
+    public void setPolicyFactory(PurchasePolicyFactory policyFactory) {
+        this.policyFactory = policyFactory;
+    }
+
+    public IRepository<Long, Item> getProductRepo() {
+        return products;
+    }
     public void addDiscount(String discountDetails) throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerSubtypes(new NamedType(RegularDiscount.class, "RegularDiscount"));
@@ -196,6 +201,7 @@ public class Store implements DataItem<Long> {
         }
         return true;
     }
+
     public void addPolicy(String policyDetails) throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerSubtypes(new NamedType(AgeRestrictedPurchasePolicy.class, "ageRestrictedPolicy"));
@@ -204,6 +210,7 @@ public class Store implements DataItem<Long> {
 
         try {
             PurchsePoilcy purchsePoilcy = objectMapper.readValue(policyDetails, PurchsePoilcy.class);
+            policyFactory.createPolicy(purchsePoilcy);
             purchasePolicies.save(purchsePoilcy);
         }
         catch (Exception e){
