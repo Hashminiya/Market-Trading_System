@@ -23,4 +23,5 @@ public interface IStoreManagementService {
     public ResponseEntity<String> assignStoreOwner(String token, long storeId, String newOwnerId);
     public ResponseEntity<String> assignStoreManager(String token, long storeId ,String newManagerId, List<String> permissions);
     public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails);
+    public ResponseEntity<?> addPolicy(String token, long storeId, String policyDetails);
 }
