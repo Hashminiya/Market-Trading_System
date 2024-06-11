@@ -5,21 +5,22 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class MaximumQuantityPurchasePolicy extends PurchsePoilcy{
     private final int maxAmount;
     @JsonCreator
     public MaximumQuantityPurchasePolicy(@JsonProperty("name") String name,
                                          @JsonProperty("id") Long id,
                                          @JsonProperty("minAge") int maxAmount,
-                                         @JsonProperty("items") IRepository<Long, Item> items,
+                                         @JsonProperty("items") List<Long> items,
                                          @JsonProperty("categories") List<String> categories,
                                          @JsonProperty("isStore") boolean isStore){
-        super(id, name, items, categories, isStore);
+        super(id, name, items,categories, isStore);
         this.maxAmount = maxAmount;
     }
 

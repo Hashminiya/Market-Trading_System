@@ -5,6 +5,7 @@ import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.HiddenDiscount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Discount.RegularDiscount;
+import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicyFactory;
 import DomainLayer.Market.Util.*;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
@@ -37,6 +38,7 @@ public class StoreController implements IStoreFacade{
     private String CHANGE_DISCOUNT_TYPE = "CHANGE_DISCOUNT_TYPE";
     private String REMOVE_STORE = "REMOVE_STORE";
     private String ADD_DISCOUNT = "ADD_DISCOUNT";
+    private String ADD_POLICY = "ADD_POLICY";
 
 
     private StoreController(IRepository<Long, Store> storesRepo) {
@@ -71,8 +73,10 @@ public class StoreController implements IStoreFacade{
             throw new Exception("User isn't registered, so can't create new store");
         long storeId = generateStoreId();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts, new InMemoryRepository<>()); //TODO get policy inventory from above or something
+        newStore.setPolicyFactory(new PurchasePolicyFactory(userFacade, newStore.getProductRepo()));
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);
+
         return storeId;//for test purposes
     }
 
@@ -332,5 +336,13 @@ public class StoreController implements IStoreFacade{
         else{
             return s1.checkValidBasket(basket,userDetails);
         }
+    }
+
+    @Override
+    public void addPolicy(String userName, long storeId, String discountDetails) throws Exception{
+        if(userFacade.checkPermission(userName, storeId, ADD_POLICY))
+            throw new Exception("User doesn't has permission to view the store purchase history");
+        Store store = storesRepo.findById(storeId);
+        store.addPolicy(discountDetails);
     }
 }

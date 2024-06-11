@@ -12,14 +12,14 @@ public abstract class PurchsePoilcy implements DataItem<Long> {
     ///TODO decide how to get relevant user data
     private final Long id;
     private final String name;
-    private final IRepository<Long, Item> items;
+    private IRepository<Long, Item> items;
+    private List<Long> itemsList;
     private final List<String> categories;
     private final boolean isStore;
-    public PurchsePoilcy(Long id, String name, IRepository<Long, Item> items,
-                         List<String> categories,boolean isStore){
+    public PurchsePoilcy(Long id, String name, List<Long> itemsList,List<String> categories,boolean isStore){
         this.id = id;
         this.name = name;
-        this.items = items;
+        this.itemsList = itemsList;
         this.categories = categories;
         this.isStore = isStore;
     }
@@ -32,6 +32,11 @@ public abstract class PurchsePoilcy implements DataItem<Long> {
     public String getName() {
         return name;
     }
+
+    public List<Long> getItemsList() {
+        return itemsList;
+    }
+
     public boolean isIncluded(Item item){
         if (isStore) return true;
         if(categories != null) {
@@ -46,4 +51,7 @@ public abstract class PurchsePoilcy implements DataItem<Long> {
 
     public abstract boolean isValid(HashMap<Item,Integer> itemsInBasket, String userDetails);
 
+    public List<PurchsePoilcy> getPolicies() {
+        return null;
+    }
 }
