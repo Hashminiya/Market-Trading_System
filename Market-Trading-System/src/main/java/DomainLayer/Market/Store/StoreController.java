@@ -70,7 +70,7 @@ public class StoreController implements IStoreFacade{
         if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
         long storeId = generateStoreId();
-        Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
+        Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts, new InMemoryRepository<>()); //TODO get policy inventory from above or something
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);
         return storeId;//for test purposes
@@ -321,5 +321,16 @@ public class StoreController implements IStoreFacade{
             throw new Exception("User doesn't has permission to view the store purchase history");
         Store store = storesRepo.findById(storeId);
         store.addDiscount(discountDetails);
+    }
+
+    @Override
+    public boolean checkValidBasket(ShoppingBasket basket, String userDetails) {
+        Store s1 = storesRepo.findById(basket.getStoreId());
+        if(s1 == null){
+            throw new RuntimeException("failed while checking validity of basket- store not found");
+        }
+        else{
+            return s1.checkValidBasket(basket,userDetails);
+        }
     }
 }
