@@ -44,10 +44,13 @@ public class ShoppingCart {
         return sb.getId();
     }
 
-    public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String code) throws Exception{
+    public List<ItemDTO> checkoutShoppingCart(String userName,IStoreFacade storeFacade, String code) throws Exception{
         List<ShoppingBasket> l = getBaskets();
         List<ItemDTO> items = new ArrayList<ItemDTO>();
         for(ShoppingBasket sb : l){
+            if(!storeFacade.checkValidBasket(sb, userName)){
+                throw new RuntimeException("couldn't complete checkout- invalid basket");
+            }
             storeFacade.calculateBasketPrice(sb,code);
             List<ItemDTO> basketItems = sb.checkoutShoppingBasket(storeFacade);
             items.addAll(basketItems);

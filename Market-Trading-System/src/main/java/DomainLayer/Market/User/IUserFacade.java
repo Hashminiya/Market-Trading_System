@@ -33,4 +33,5 @@ public interface IUserFacade {
     public boolean isRegister(String founderId);
     UserDetails loadUserByUsername(String userName);
     public boolean isAdmin(String userName);
+    public int getUserAge(String userName);
 }

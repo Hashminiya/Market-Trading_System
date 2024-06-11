@@ -212,4 +212,10 @@ public class UserController implements IUserFacade {
     public boolean isAdmin(String userName) {
         return admin.getUserName().equals(userName);
     }
+
+    @Override
+    public int getUserAge(String userName) {
+        return users.findById(userName).getUserAge();
+    }
+
 }
