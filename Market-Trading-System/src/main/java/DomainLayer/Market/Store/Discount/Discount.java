@@ -1,6 +1,9 @@
 package DomainLayer.Market.Store.Discount;
 
+import DomainLayer.Market.Store.Item;
+
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,28 +37,60 @@ public abstract class Discount implements IDiscount {
         return "";
     }
 
-    public Date getExpirationDate(){
-        return expirationDate;
-    }
+    public abstract boolean isValid(Map<Item, Integer> items, String code);
 
-    public abstract boolean isValid(Map<Long, Integer> items, String code);
-
-    public void setItems(List<Long> items){ this.items = items; }
-
-    public boolean isByCategory(){ return !(this.categories == null || this.categories.isEmpty()); }
-
-    public List<String> getCategories(){ return categories;}
-
-    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code) {
-        if(itemsPrices == null)
-            throw new NullPointerException("Null items prices List");
-        for(Long itemId: itemsPrices.keySet().stream().toList()){
-            if(items.contains(itemId)){
-                double originalPrice = itemsPrices.get(itemId);
-                itemsPrices.replace(itemId, originalPrice, (1-percent/100) * originalPrice);
+    public Map<Item, Double> calculatePrice(Map<Item, Double> itemsPrices, Map<Item, Integer> itemsCount, String code) {
+        Map<Item, Double> newItemsPrices = new HashMap<>(itemsPrices);
+        for(Item item: itemsCount.keySet().stream().toList()){
+            if(!categories.isEmpty()){
+                boolean found = false;
+                for(String category: categories){
+                    if(item.getCategories().contains(category)){
+                        found = true;
+                        break;
+                    }
+                }
+                if(found){
+                    newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent/100) * item.getPrice());
+                }
             }
+            else if(isStore)
+                newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent/100) * newItemsPrices.get(item));
+            else
+                if(items.contains(item.getId()))
+                    newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent/100) * newItemsPrices.get(item));
+
         }
-        return itemsPrices;
+        return newItemsPrices;
     }
 
+    @Override
+    public Map<Item, Double> getPercent(Map<Item, Double> itemsPrices, Map<Item, Integer> itemsCount, String code) throws Exception{
+        Map<Item, Double> itemsPercent = new HashMap<>();
+        for(Item item: itemsCount.keySet().stream().toList()){
+            if(!categories.isEmpty()){
+                boolean found = false;
+                for(String category: categories){
+                    if(item.getCategories().contains(category)){
+                        found = true;
+                        break;
+                    }
+                }
+                if(found){
+                    itemsPercent.put(item, percent);
+                }
+                else{
+                    itemsPercent.put(item, 0.0);
+                }
+            }
+            else if(isStore)
+                itemsPercent.put(item, percent);
+            else
+            if(items.contains(item.getId()))
+                itemsPercent.put(item, percent);
+            else
+                itemsPercent.put(item, 0.0);
+        }
+        return itemsPercent;
+    }
 }

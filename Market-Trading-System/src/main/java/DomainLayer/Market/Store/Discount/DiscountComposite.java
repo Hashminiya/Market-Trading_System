@@ -1,5 +1,6 @@
 package DomainLayer.Market.Store.Discount;
 
+import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.IRepository;
 
 import java.util.Date;
@@ -9,24 +10,18 @@ import java.util.Map;
 public abstract class DiscountComposite implements IDiscount {
 
     protected Long id;
-    protected double percent;
+    /*protected double percent;
     protected Date expirationDate;
-    protected Long storeId;
-    protected List<Long> items;
+    protected Long storeId;*/
+    /*protected List<Long> items;
     protected List<String> categories;
-    protected boolean isStore;
+    protected boolean isStore;*/
     protected List<IDiscount> discounts;
 
 
-    public DiscountComposite(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories, boolean isStore, List<IDiscount> discounts){
+    public DiscountComposite(Long id, List<IDiscount> discounts){
         this.id = id;
-        this.percent = percent;
-        this.expirationDate = expirationDate;
-        this.storeId = storeId;
         this.discounts = discounts;
-        this.items = items;
-        this.categories = categories;
-        this.isStore = isStore;
     }
 
     @Override
@@ -39,25 +34,9 @@ public abstract class DiscountComposite implements IDiscount {
         return "";
     }
 
-    @Override
-    public Date getExpirationDate(){
-        return expirationDate;
-    }
 
     @Override
-    public List<String> getCategories(){ return categories;}
-
-    @Override
-    public void setItems(List<Long> items) {this.items = items; }
-
-    @Override
-    public boolean isByCategory(){ return !(this.categories == null || this.categories.isEmpty()); }
-
-    @Override
-    public boolean isValid(Map<Long, Integer> items, String code) {
-        Date now = new Date();
-        if(!getExpirationDate().after(now))
-            return false;
+    public boolean isValid(Map<Item, Integer> items, String code) {
         for(IDiscount discount: discounts){
             if(!discount.isValid(items, code))
                 return false;
@@ -65,6 +44,8 @@ public abstract class DiscountComposite implements IDiscount {
         return true;
     }
 
-    public abstract Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code);
+    public abstract Map<Item, Double> getPercent(Map<Item, Double> itemsPrices, Map<Item, Integer> itemCount, String code) throws Exception;
+
+    public abstract Map<Item, Double> calculatePrice(Map<Item, Double> itemsPrices, Map<Item, Integer> itemsCount, String code) throws Exception;
 
 }

@@ -1,5 +1,6 @@
 package DomainLayer.Market.Store.Discount;
 
+import DomainLayer.Market.Store.Item;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -28,9 +29,9 @@ public class HiddenDiscount extends Discount {
     }
 
     @Override
-    public boolean isValid(Map<Long, Integer> items, String code){
+    public boolean isValid(Map<Item, Integer> items, String code){
         Date now = new Date();
-        return (getExpirationDate().after(now) && this.code.equals(code));
+        return (expirationDate.after(now) && this.code.equals(code));
     }
 
 }

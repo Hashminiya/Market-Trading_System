@@ -1,5 +1,6 @@
 package DomainLayer.Market.Store.Discount;
 
+import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
 
 import java.util.Date;
@@ -13,16 +14,10 @@ public interface IDiscount extends DataItem<Long> {
 
     public String getName();
 
-    public Date getExpirationDate();
+    public Map<Item, Double> getPercent(Map<Item, Double> itemsPrices, Map<Item, Integer> itemCount, String code)throws Exception;
 
-    public List<String> getCategories();
+    public boolean isValid(Map<Item, Integer> items, String code);
 
-    public void setItems(List<Long> items);
-
-    public boolean isByCategory();
-
-    public boolean isValid(Map<Long, Integer> items, String code);
-
-    public Map<Long, Double> calculatePrice(Map<Long, Double> itemsPrices, Map<Long, Integer> itemsCount, String code);
+    public Map<Item, Double> calculatePrice(Map<Item, Double> itemsPrices, Map<Item, Integer> itemsCount, String code) throws Exception;
 
 }

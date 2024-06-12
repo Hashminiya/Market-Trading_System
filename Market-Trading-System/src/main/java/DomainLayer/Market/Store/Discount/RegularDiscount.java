@@ -1,5 +1,6 @@
 package DomainLayer.Market.Store.Discount;
 
+import DomainLayer.Market.Store.Item;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -29,11 +30,17 @@ public class RegularDiscount extends Discount {
     }
 
     @Override
-    public boolean isValid(Map<Long, Integer> items, String code){
+    public boolean isValid(Map<Item, Integer> items, String code){
         Date now = new Date();
-        if(!getExpirationDate().after(now))
+        if(!expirationDate.after(now))
             return false;
-        return conditions.isValid(items);
+        Map<Long, Integer> itemsIds = new HashMap<>();
+        for(Item item: items.keySet()) {
+            itemsIds.put(item.getId(), items.get(item));
+        }
+        return conditions.isValid(itemsIds);
     }
+
+
 
 }

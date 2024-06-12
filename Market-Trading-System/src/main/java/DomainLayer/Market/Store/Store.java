@@ -123,37 +123,29 @@ public class Store implements DataItem<Long> {
     }
 
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception{
-        Map<Long,Integer> items = basket.getItems();
-        Map<Long, Double> itemsPrice = new HashMap<>();
+        Map<Item,Integer> itemsCount = new HashMap<>();
+        for(Long itemId: basket.getItems().keySet())
+            itemsCount.put(products.findById(itemId), basket.getItems().get(itemId));
+        Map<Item, Double> itemsPrice = getItemsPrices(itemsCount.keySet().stream().toList());
         double price = 0;
         for(IDiscount discount: discounts.findAll()){
-            if(discount.isValid(items, code)) {
-                if (discount.isByCategory()) {
-                    List<Long> updatedItems = new ArrayList<>();
-                    for (String category : discount.getCategories()) {
-                        List<Item> discountItems = searchByCategory(category);
-                        for (Item currItem : discountItems) {
-                            if (!updatedItems.contains(currItem.getId()))
-                                updatedItems.add(currItem.getId());
-                        }
-                    }
-                    discount.setItems(updatedItems);
-                }
-                itemsPrice = getItemsPrices(items.keySet().stream().toList());
-                itemsPrice = discount.calculatePrice(itemsPrice, items, code);
+            if(discount.isValid(itemsCount, code)) {
+                itemsPrice = discount.calculatePrice(itemsPrice, itemsCount, code);
             }
         }
-        basket.setItemsPrice(itemsPrice);
-        for(Long itemId: itemsPrice.keySet()){
-            price += (items.get(itemId) * itemsPrice.get(itemId));
+        Map<Long, Double> itemsIdPrice = new HashMap<>();
+        for(Item item: itemsPrice.keySet()) {
+            price += (itemsCount.get(item) * itemsPrice.get(item));
+            itemsIdPrice.put(item.getId(), itemsPrice.get(item));
         }
+        basket.setItemsPrice(itemsIdPrice);
         basket.setBasketTotalPrice(price);
     }
 
-    private Map<Long, Double> getItemsPrices(List<Long> items){
-        Map<Long, Double> itemPrice = new HashMap<>();
-        for(Long itemId: items){
-            itemPrice.put(itemId, products.findById(itemId).getPrice());
+    private Map<Item, Double> getItemsPrices(List<Item> items){
+        Map<Item, Double> itemPrice = new HashMap<>();
+        for(Item item: items){
+            itemPrice.put(item, item.getPrice());
         }
         return itemPrice;
     }
