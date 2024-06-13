@@ -1,6 +1,10 @@
 package DomainLayer.Market.Store;
 
 import DAL.ItemDTO;
+import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.HiddenDiscount;
+import DomainLayer.Market.Store.Discount.IDiscount;
+import DomainLayer.Market.Store.Discount.RegularDiscount;
 import DomainLayer.Market.Util.*;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
@@ -32,6 +36,7 @@ public class StoreController implements IStoreFacade{
     private String CHANGE_POLICY = "CHANGE_POLICY";
     private String CHANGE_DISCOUNT_TYPE = "CHANGE_DISCOUNT_TYPE";
     private String REMOVE_STORE = "REMOVE_STORE";
+    private String ADD_DISCOUNT = "ADD_DISCOUNT";
 
 
     private StoreController(IRepository<Long, Store> storesRepo) {
@@ -61,7 +66,7 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, Discount> discounts) throws Exception{
+    public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, IDiscount> discounts) throws Exception{
         if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
         long storeId = generateStoreId();
@@ -297,23 +302,6 @@ public class StoreController implements IStoreFacade{
         store.calculateBasketPrice(basket, code);
     }
 
-    @Override
-    public void addHiddenDiscount(double percent, Date expirationDate, List<Long> items, long storeId, String code, boolean isStoreDiscount) {
-        Store store = storesRepo.findById(storeId);
-        if(isStoreDiscount)
-            store.addDiscount(new HiddenDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, code));
-        else
-            store.addDiscount(items, new HiddenDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, code));
-    }
-
-    @Override
-    public void addRegularDiscount(double percent, Date expirationDate, List<Long> items, long storeId, List<Long> conditionItems, boolean isStoreDiscount) {
-        Store store = storesRepo.findById(storeId);
-        if(isStoreDiscount)
-            store.addDiscount(new RegularDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, conditionItems));
-        else
-            store.addDiscount(items, new RegularDiscount(IdGenerator.generateId(), percent, expirationDate, storeId, conditionItems));
-    }
 
     @Override
     public void clear() {
@@ -325,5 +313,13 @@ public class StoreController implements IStoreFacade{
     @Override
     public void setStoersRepo(IRepository<Long,Store> storesRepo) {
         this.storesRepo = storesRepo;
+    }
+
+    @Override
+    public void addDiscount(String userName, long storeId, String discountDetails) throws Exception{
+        if(userFacade.checkPermission(userName, storeId, ADD_DISCOUNT))
+            throw new Exception("User doesn't has permission to view the store purchase history");
+        Store store = storesRepo.findById(storeId);
+        store.addDiscount(discountDetails);
     }
 }

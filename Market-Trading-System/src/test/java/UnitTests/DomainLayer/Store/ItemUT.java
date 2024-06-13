@@ -1,9 +1,9 @@
 package UnitTests.DomainLayer.Store;
 
-import DomainLayer.Market.Store.Discount;
-import DomainLayer.Market.Store.HiddenDiscount;
+import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.HiddenDiscount;
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.RegularDiscount;
+import DomainLayer.Market.Store.Discount.RegularDiscount;
 import DomainLayer.Market.Util.InMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ public class ItemUT {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         discountsMock = new InMemoryRepository<Long,Discount>();
-        item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, new InMemoryRepository<Long,Discount>(), ITEM_CATEGORIES);
+        item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, ITEM_CATEGORIES);
         item.setPrice(ITEM_PRICE);
         item.setQuantity(ITEM_QUANTITY);
     }

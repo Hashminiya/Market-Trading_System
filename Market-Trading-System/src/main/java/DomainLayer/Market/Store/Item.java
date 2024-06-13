@@ -1,10 +1,9 @@
 package DomainLayer.Market.Store;
 
+import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
 
-import java.util.Date;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class Item implements DataItem<Long> {
@@ -13,14 +12,12 @@ public class Item implements DataItem<Long> {
     private String description;
     private int quantity;
     private double price;
-    private final IRepository<Long,Discount> discounts;
     private List<String> categories;
 
-    public Item(Long id, String name,String description ,IRepository<Long, Discount> discounts, List<String> categories){
+    public Item(Long id, String name,String description, List<String> categories){
         this.id = id;
         this.name = name;
         this.description = description;
-        this.discounts = discounts;
         this.categories = categories;
     }
 
@@ -43,21 +40,11 @@ public class Item implements DataItem<Long> {
     }
 
     public double getCurrentPrice(String code) throws Exception {
-        double currentPrice = this.price;
-        for (Discount discount :discounts.findAll()){
-            if(discount.isValid(null)){
-                currentPrice = discount.calculatePrice(currentPrice, code);
-            }
-        }
-        return currentPrice;
+        return this.price;
     }
 
     public int getQuantity() {
         return quantity;
-    }
-
-    public void setDiscount(Discount discount){
-        this.discounts.save(discount);
     }
 
     public void setQuantity(int quantity){
@@ -87,7 +74,4 @@ public class Item implements DataItem<Long> {
         else {this.quantity -= toDecrease;}
     }
 
-    public List<Discount> getDiscounts() {
-        return discounts.findAll();
-    }
 }

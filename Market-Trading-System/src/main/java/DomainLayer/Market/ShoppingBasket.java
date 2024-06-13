@@ -54,7 +54,7 @@ public class ShoppingBasket implements DataItem<Long> {
         itemsQuantity.put(itemId,quantity);
     }
 
-    public void setItemsPrice(HashMap<Long, Double> itemsPrice){
+    public void setItemsPrice(Map<Long, Double> itemsPrice){
         this.itemsPrice = itemsPrice;
     }
 

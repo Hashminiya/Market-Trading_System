@@ -1,6 +1,6 @@
 package API.controller;
 
-import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.IRepository;
 import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.Store.IStoreManagementService;

@@ -2,10 +2,12 @@ package DomainLayer.Market.Store;
 
 
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Market.Util.InMemoryRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,9 +22,9 @@ public class Store implements DataItem<Long> {
     private final List<String> owners;
     private final List<String> managers;
     private final InMemoryRepositoryStore products;
-    private IRepository<Long , Discount> discounts;
+    private IRepository<Long , IDiscount> discounts;
 
-    public Store(Long id, String founderId, String name, String description, IRepository<Long, Discount> discounts){
+    public Store(Long id, String founderId, String name, String description, IRepository<Long, IDiscount> discounts){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
@@ -67,23 +69,13 @@ public class Store implements DataItem<Long> {
     }
 
     public void addItem(Long itemId, String name, double price, int quantity, String description, List<String> categories){
-        Item newItem = new Item(itemId, name, description ,new InMemoryRepository<Long,Discount>(), categories);
+        Item newItem = new Item(itemId, name, description, categories);
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
         products.save(newItem);
     }
 
-    public void addDiscount(List<Long> items, Discount discount){
-        /*A method for adding regular discount, un conditional, assign to an item or a category.*/
-        for(Long item : items){
-            products.findById(item).setDiscount(discount);
-        }
-    }
 
-    public void addDiscount(Discount discount){
-        /*A method for adding store discount, can be conditional.*/
-        discounts.save(discount);
-    }
     public void updateItem(long itemId, String newName, double newPrice, int quantity){
         Item toEdit = products.findById(itemId);
         toEdit.setName(newName);
@@ -94,6 +86,7 @@ public class Store implements DataItem<Long> {
     public void deleteItem(long itemId){
         products.delete(itemId);
     }
+
     public void changeDiscountPolicy(){
         ///TODO
         throw new UnsupportedOperationException("changeDiscountPolicy method is not implemented yet");
@@ -101,6 +94,7 @@ public class Store implements DataItem<Long> {
     public List<Item> search(String keyWord){
         return products.search(null ,keyWord,false);
     }
+
     public List<Item> searchKeyWordWithCategory(String category,String keyWord){
         return products.search(category ,keyWord,true);
     }
@@ -129,19 +123,49 @@ public class Store implements DataItem<Long> {
     }
 
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception{
-        Map<Long,Integer> items = basket.getItems();
-        HashMap<Long, Double> itemsPrice = new HashMap<>();
+        Map<Item,Integer> itemsCount = new HashMap<>();
+        for(Long itemId: basket.getItems().keySet())
+            itemsCount.put(products.findById(itemId), basket.getItems().get(itemId));
+        Map<Item, Double> itemsPrice = getItemsPrices(itemsCount.keySet().stream().toList());
         double price = 0;
-        for(Map.Entry<Long, Integer> entry: items.entrySet()){
-            Item item = products.findById(entry.getKey());
-            itemsPrice.put(item.getId(), item.getCurrentPrice(code));
-            price += item.getCurrentPrice(code) * entry.getValue();
+        for(IDiscount discount: discounts.findAll()){
+            if(discount.isValid(itemsCount, code)) {
+                itemsPrice = discount.calculatePrice(itemsPrice, itemsCount, code);
+            }
         }
-        basket.setItemsPrice(itemsPrice);
-        for(Discount discount: discounts.findAll()){
-            if(discount.isValid(new ArrayList<>(basket.getItems().keySet())))
-                price = discount.calculatePrice(price, code);
+        Map<Long, Double> itemsIdPrice = new HashMap<>();
+        for(Item item: itemsPrice.keySet()) {
+            price += (itemsCount.get(item) * itemsPrice.get(item));
+            itemsIdPrice.put(item.getId(), itemsPrice.get(item));
         }
+        basket.setItemsPrice(itemsIdPrice);
         basket.setBasketTotalPrice(price);
+    }
+
+    private Map<Item, Double> getItemsPrices(List<Item> items){
+        Map<Item, Double> itemPrice = new HashMap<>();
+        for(Item item: items){
+            itemPrice.put(item, item.getPrice());
+        }
+        return itemPrice;
+    }
+
+    public void addDiscount(String discountDetails) throws Exception{
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerSubtypes(new NamedType(RegularDiscount.class, "RegularDiscount"));
+        objectMapper.registerSubtypes(new NamedType(HiddenDiscount.class, "HiddenDiscount"));
+        objectMapper.registerSubtypes(new NamedType(LogicalDiscountComposite.class, "LogicalDiscountComposite"));
+        objectMapper.registerSubtypes(new NamedType(NumericDiscountComposite.class, "NumericDiscountComposite"));
+        objectMapper.registerSubtypes(new NamedType(Condition.class, "Condition"));
+        objectMapper.registerSubtypes(new NamedType(ConditionComposite.class, "ConditionComposite"));
+
+        try {
+            IDiscount discount = objectMapper.readValue(discountDetails, IDiscount.class);
+            discounts.save(discount);
+        }
+        catch (Exception e){
+            throw new Exception("Error while creating discount\n" + e.getMessage());
+        }
+
     }
 }

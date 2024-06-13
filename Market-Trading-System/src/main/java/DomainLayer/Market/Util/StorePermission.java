@@ -12,5 +12,6 @@ public enum StorePermission implements StoreEnum {
     DELETE_ITEM,
     CHANGE_POLICY,
     CHANGE_DISCOUNT_TYPE,
-    REMOVE_STORE;
+    REMOVE_STORE,
+    ADD_DISCOUNT;
 }

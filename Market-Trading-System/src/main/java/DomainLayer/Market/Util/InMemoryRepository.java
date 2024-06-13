@@ -1,9 +1,11 @@
 package DomainLayer.Market.Util;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
+
 
 @Repository("InMemoryRepository")
 public class InMemoryRepository<K,T extends DataItem<K>> implements IRepository<K,T> {

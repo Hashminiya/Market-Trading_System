@@ -1,6 +1,7 @@
 package ServiceLayer.Store;
 
-import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
@@ -42,7 +43,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, Discount> repository) {
+    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, IDiscount> repository) {
         try {
             String userName = jwtService.extractUsername(founderToken);
             if (jwtService.isValid(founderToken, userFacade.loadUserByUsername(userName))) {
@@ -250,6 +251,24 @@ public class StoreManagementService implements IStoreManagementService {
             }
         } catch (Exception ex) {
             logger.error("Error assigning store manager", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                storeFacade.addDiscount(userName, storeId, discountDetails);
+                logger.info("Discount added by user: {}", userName);
+                return ResponseEntity.ok().body(String.format("Discount added by user %s", userName));
+            } else {
+                logger.warn("Invalid token for adding discount to store: {}", token);
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
+            }
+        } catch (Exception ex) {
+            logger.error("Error adding discount", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }

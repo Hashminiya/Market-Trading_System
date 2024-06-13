@@ -2,7 +2,7 @@ package UnitTests.DomainLayer.Store;
 
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.Discount;
+import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.InMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
