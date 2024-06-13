@@ -31,12 +31,11 @@ public class StartupRunner implements CommandLineRunner {
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
         }
-        // Continue with the rest of your application logic here
         runSystem();
     }
 
     private void runSystem() {
-        // Your system's main logic goes here
+        System.out.println("Payment and Supply external services connected successfully");
         System.out.println("The server is running...");
     }
 }
