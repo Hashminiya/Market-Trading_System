@@ -206,7 +206,7 @@ public class Store implements DataItem<Long> {
             purchasePolicies.save(purchsePoilcy);
         }
         catch (Exception e){
-            throw new Exception("Error while creating discount\n" + e.getMessage());
+            throw new Exception("Error while creating policy\n" + e.getMessage());
         }
 
     }
