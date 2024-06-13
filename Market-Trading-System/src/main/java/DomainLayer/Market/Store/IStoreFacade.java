@@ -46,6 +46,8 @@ public interface IStoreFacade {
     void clear();
 
     void setStoersRepo(IRepository<Long,Store> storesRepo);
+    public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName);
 
     public void addDiscount(String userName, long storeId, String discountDetails) throws Exception;
+    public void addPolicy(String userName, long storeId, String policyDetails) throws Exception;
 }

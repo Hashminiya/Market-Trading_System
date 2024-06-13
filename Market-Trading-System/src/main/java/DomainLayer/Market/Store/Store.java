@@ -3,6 +3,8 @@ package DomainLayer.Market.Store;
 
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
+import DomainLayer.Market.Store.StorePurchasePolicy.*;
+import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
@@ -23,13 +25,18 @@ public class Store implements DataItem<Long> {
     private final List<String> managers;
     private final InMemoryRepositoryStore products;
     private IRepository<Long , IDiscount> discounts;
+    private IRepository<Long, PurchsePoilcy> purchasePolicies;
+    private PurchasePolicyFactory policyFactory;
 
-    public Store(Long id, String founderId, String name, String description, IRepository<Long, IDiscount> discounts){
+    public Store(Long id, String founderId, String name, String description,
+                 IRepository<Long, IDiscount> discounts,
+                 IRepository<Long, PurchsePoilcy> purchasePolicies){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
         this.description = description;
         this.discounts = discounts;
+        this.purchasePolicies = purchasePolicies;
         this.products = new InMemoryRepositoryStore();
         owners = new ArrayList<>();
         managers = new ArrayList<>();
@@ -150,6 +157,13 @@ public class Store implements DataItem<Long> {
         return itemPrice;
     }
 
+    public void setPolicyFactory(PurchasePolicyFactory policyFactory) {
+        this.policyFactory = policyFactory;
+    }
+
+    public IRepository<Long, Item> getProductRepo() {
+        return products;
+    }
     public void addDiscount(String discountDetails) throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerSubtypes(new NamedType(RegularDiscount.class, "RegularDiscount"));
@@ -165,6 +179,34 @@ public class Store implements DataItem<Long> {
         }
         catch (Exception e){
             throw new Exception("Error while creating discount\n" + e.getMessage());
+        }
+
+    }
+    public boolean checkValidBasket(ShoppingBasket basket, String userDetails){
+        HashMap<Item, Integer> itemsInBasket = new HashMap<>();
+        for (Map.Entry<Long, Integer> pair: basket.getItems().entrySet()) {
+            itemsInBasket.put(products.findById(pair.getKey()), pair.getValue());
+        }
+        for (PurchsePoilcy policy:purchasePolicies.findAll()){
+            if(!policy.isValid(itemsInBasket, userDetails))
+                return false;
+        }
+        return true;
+    }
+
+    public void addPolicy(String policyDetails) throws Exception{
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerSubtypes(new NamedType(AgeRestrictedPurchasePolicy.class, "ageRestrictedPolicy"));
+        objectMapper.registerSubtypes(new NamedType(MaximumQuantityPurchasePolicy.class, "MaximumQuantityPolicy"));
+        objectMapper.registerSubtypes(new NamedType(PurchasePolicyComposite.class, "PurchasePolicyComposite"));
+
+        try {
+            PurchsePoilcy purchsePoilcy = objectMapper.readValue(policyDetails, PurchsePoilcy.class);
+            policyFactory.createPolicy(purchsePoilcy);
+            purchasePolicies.save(purchsePoilcy);
+        }
+        catch (Exception e){
+            throw new Exception("Error while creating policy\n" + e.getMessage());
         }
 
     }

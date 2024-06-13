@@ -5,6 +5,7 @@ import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.HiddenDiscount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Discount.RegularDiscount;
+import DomainLayer.Market.Store.StorePurchasePolicy.PurchsePoilcy;
 import DomainLayer.Market.Util.*;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
@@ -37,6 +38,7 @@ public class StoreController implements IStoreFacade{
     private String CHANGE_DISCOUNT_TYPE = "CHANGE_DISCOUNT_TYPE";
     private String REMOVE_STORE = "REMOVE_STORE";
     private String ADD_DISCOUNT = "ADD_DISCOUNT";
+    private String ADD_POLICY = "ADD_POLICY";
 
 
     private StoreController(IRepository<Long, Store> storesRepo) {
@@ -69,8 +71,9 @@ public class StoreController implements IStoreFacade{
     public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, IDiscount> discounts) throws Exception{
         if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
+        IRepository<Long, PurchsePoilcy> policyRepo = new InMemoryRepository<>();
         long storeId = generateStoreId();
-        Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts);
+        Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts, policyRepo);
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);
         return storeId;//for test purposes
@@ -316,10 +319,23 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
+    public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName) {
+        return storesRepo.findById(shoppingBasket.getId())
+                .checkValidBasket(shoppingBasket, userName);
+    }
+
+    @Override
     public void addDiscount(String userName, long storeId, String discountDetails) throws Exception{
         if(userFacade.checkPermission(userName, storeId, ADD_DISCOUNT))
             throw new Exception("User doesn't has permission to view the store purchase history");
         Store store = storesRepo.findById(storeId);
         store.addDiscount(discountDetails);
+    }
+    @Override
+    public void addPolicy(String userName, long storeId, String policyDetails) throws Exception{
+        if(userFacade.checkPermission(userName, storeId, ADD_POLICY))
+            throw new Exception("User doesn't has permission to view the store purchase history");
+        Store store = storesRepo.findById(storeId);
+        store.addPolicy(policyDetails);
     }
 }

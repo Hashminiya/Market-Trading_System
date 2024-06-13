@@ -13,5 +13,6 @@ public enum StorePermission implements StoreEnum {
     CHANGE_POLICY,
     CHANGE_DISCOUNT_TYPE,
     REMOVE_STORE,
-    ADD_DISCOUNT;
+    ADD_DISCOUNT,
+    ADD_POLICY;
 }

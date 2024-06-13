@@ -129,7 +129,7 @@ public class User implements IUser,DataItem<String> {
 
     public List<ItemDTO> checkoutShoppingCart(IStoreFacade storeFacade, String discountCode) throws Exception{
         verifyIsLoggedIn();
-        return shoppingCart.checkoutShoppingCart(storeFacade, discountCode);
+        return shoppingCart.checkoutShoppingCart(userName, storeFacade, discountCode);
     }
 
     public void assignStoreOwner(long storeId) {
