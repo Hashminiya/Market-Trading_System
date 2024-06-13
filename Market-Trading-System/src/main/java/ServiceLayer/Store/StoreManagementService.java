@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.List;
 
-@Service
+@Service("StoreManagementService")
 public class StoreManagementService implements IStoreManagementService {
     private static final Logger logger = LogManager.getLogger(StoreManagementService.class);
     String USER_NOT_VALID = "Authentication failed";

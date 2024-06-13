@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
 
-@Service
+@Service("SystemManagerService")
 public class SystemManagerService implements ISystemManagerService {
     private static final Logger logger = LogManager.getLogger(StoreManagementService.class);
     String USER_NOT_VALID = "Authentication failed";

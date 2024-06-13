@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Optional;
 
-@Service
+@Service("StoreBuyerService")
 public class StoreBuyerService implements IStoreBuyerService {
     private static final Logger logger = LogManager.getLogger(StoreBuyerService.class);
     private static StoreBuyerService instance;

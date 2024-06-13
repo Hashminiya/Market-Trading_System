@@ -1,21 +1,20 @@
 package API.controller;
 
-import ServiceLayer.Store.StoreBuyerService;
+import ServiceLayer.Store.IStoreBuyerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
-
 @RestController
 public class StoreBuyerControllerApi {
 
-    private final StoreBuyerService storeBuyerService;
+    private final IStoreBuyerService storeBuyerService;
 
     @Autowired
-    public StoreBuyerControllerApi(StoreBuyerService storeBuyerService){
+    public StoreBuyerControllerApi(@Qualifier("StoreBuyerService") IStoreBuyerService storeBuyerService){
         this.storeBuyerService = storeBuyerService;
     }
 
