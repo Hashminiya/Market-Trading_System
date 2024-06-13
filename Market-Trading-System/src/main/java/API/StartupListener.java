@@ -29,30 +29,30 @@ public class StartupListener implements ApplicationListener<ContextRefreshedEven
         System.out.println("event received");
         System.out.println("---------------------------------------");
 
-        SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
+//        SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
 
 
-        userService.register("admin", "admin",25);
+        //userService.register("admin", "admin",25);
 
-        Scanner scanner = new Scanner(System.in);
-
-        boolean loggedIn = false;
-        while (!loggedIn) {
-            System.out.println("Enter a Admin user name: ");
-            String username = scanner.nextLine();
-            System.out.print("Enter a Admin password: ");
-            String password = scanner.nextLine();
-            ResponseEntity<String> response = userService.login(username, password);
-            System.out.println("---------------------------------------");
-            System.out.println(response.getStatusCode().value());
-            System.out.println("---------------------------------------");
-            if (response.getStatusCode().value() == 200) {
-                System.out.println("Login successful. Welcome, " + username + "!");
-                loggedIn = true;
-            } else {
-                System.out.println("Invalid credentials. Please try again.");
-            }
-        }
+//        Scanner scanner = new Scanner(System.in);
+//
+//        boolean loggedIn = false;
+//        while (!loggedIn) {
+//            System.out.println("Enter a Admin user name: ");
+//            String username = scanner.nextLine();
+//            System.out.print("Enter a Admin password: ");
+//            String password = scanner.nextLine();
+//            ResponseEntity<String> response = userService.login(username, password);
+//            System.out.println("---------------------------------------");
+//            System.out.println(response.getStatusCode().value());
+//            System.out.println("---------------------------------------");
+//            if (response.getStatusCode().value() == 200) {
+//                System.out.println("Login successful. Welcome, " + username + "!");
+//                loggedIn = true;
+//            } else {
+//                System.out.println("Invalid credentials. Please try again.");
+//            }
+//        }
         // Perform your startup logic here
         // This method will be called when the Spring application context is initialized or refreshed
         // It ensures that the server will only start after this logic is complete
