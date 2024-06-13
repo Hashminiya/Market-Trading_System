@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
@@ -54,51 +55,51 @@ public class SystemManagerService implements ISystemManagerService {
     }
 
     @Override
-    public Response init(String token) {
+    public ResponseEntity<?> init(String token) {
         return null;
     }
 
     @Override
-    public Response viewMarketPurchaseHistory(String token) {
+    public ResponseEntity<?> viewMarketPurchaseHistory(String token) {
         try {
             String userName = jwtService.extractUsername(token);
             if(jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
-                Response response = Response.ok(purchaseFacade.getPurchaseHistory(userName)).build();
+                ResponseEntity<?> response = ResponseEntity.ok(purchaseFacade.getPurchaseHistory(userName));
                 logger.info("View market purchase history by: {}", userName);
                 return response;
             }
             else {
                 logger.warn("Invalid token for creating store: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         }
         catch (Exception exception){
-            return Response.status(500).entity(exception.getMessage()).build();
+            return ResponseEntity.status(500).body(exception.getMessage());
         }
     }
 
     @Override
-    public Response closeStore(String token, long storeId) {
+    public ResponseEntity<?> closeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
             if(jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.removeStore(userName,storeId);
-                Response response = Response.ok().build();
+                ResponseEntity<?> response = ResponseEntity.ok().build();
                 logger.info("remove store {} by: {}", storeId, userName);
                 return response;
             }
             else {
                 logger.warn("Invalid token for removing store: {}", token);
-                return Response.status(500).entity(USER_NOT_VALID).build();
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         }
         catch (Exception exception){
-            return Response.status(500).entity(exception.getMessage()).build();
+            return ResponseEntity.status(500).body(exception.getMessage());
         }
     }
 
     @Override
-    public Response closeMarket(String token) {
+    public ResponseEntity<?> closeMarket(String token) {
         return null;
     }
 
