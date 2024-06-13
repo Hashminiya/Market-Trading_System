@@ -336,6 +336,6 @@ public class StoreController implements IStoreFacade{
         if(userFacade.checkPermission(userName, storeId, ADD_POLICY))
             throw new Exception("User doesn't has permission to view the store purchase history");
         Store store = storesRepo.findById(storeId);
-        store.addDiscount(policyDetails);
+        store.addPolicy(policyDetails);
     }
 }
