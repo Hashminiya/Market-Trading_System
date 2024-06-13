@@ -12,7 +12,6 @@ public abstract class PurchsePoilcy implements DataItem<Long> {
     ///TODO decide how to get relevant user data
     private final Long id;
     private final String name;
-    private IRepository<Long, Item> items;
     private List<Long> itemsList;
     private final List<String> categories;
     private final boolean isStore;
@@ -44,9 +43,10 @@ public abstract class PurchsePoilcy implements DataItem<Long> {
             itemCategories.retainAll(categories);
             return itemCategories.size() > 0;
         }
-        else {
-            return items.findById(item.getId()) != null;
+        else if (itemsList != null) {
+            return itemsList.contains(item.getId());
         }
+        return false;
     }
 
     public abstract boolean isValid(HashMap<Item,Integer> itemsInBasket, String userDetails);
