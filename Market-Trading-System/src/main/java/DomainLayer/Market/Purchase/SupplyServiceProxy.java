@@ -3,6 +3,7 @@ package DomainLayer.Market.Purchase;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.Abstractions.ISupplyService;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class SupplyServiceProxy implements ISupplyService {
     private static SupplyServiceProxy instance;
     private SupplyServiceImpl supplyService;
 
+    @Autowired
     private SupplyServiceProxy(SupplyServiceImpl supplyService) {
         this.supplyService = supplyService;
     }

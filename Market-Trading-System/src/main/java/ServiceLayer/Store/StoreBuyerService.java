@@ -4,20 +4,21 @@ import javax.ws.rs.core.Response;
 import DomainLayer.Market.Store.IStoreFacade;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-@Service
+@Service("StoreBuyerService")
 public class StoreBuyerService implements IStoreBuyerService {
     private static final Logger logger = LogManager.getLogger(StoreBuyerService.class);
     private static StoreBuyerService instance;
     private IStoreFacade storeFacade;
     private final String EMPTY_RESULT_ERROR = "Error: 0 results for search";
 
-    private StoreBuyerService(IStoreFacade storeFacade) {
+    private StoreBuyerService(@Qualifier("StoreController") IStoreFacade storeFacade) {
         this.storeFacade = storeFacade;
     }
 

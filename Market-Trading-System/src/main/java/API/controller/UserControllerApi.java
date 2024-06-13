@@ -1,13 +1,12 @@
 package API.controller;
+import API.Application;
 import ServiceLayer.User.IUserService;
-import API.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-
-import javax.ws.rs.core.Response;
 import java.util.Date;
 
 
@@ -38,12 +37,28 @@ public class UserControllerApi {
     }
 
     @PostMapping("/user/register")
-    public ResponseEntity<String> register(@RequestParam String userName, @RequestParam String password, @RequestParam int userAge) throws Exception{
-        return userService.register(userName,password,userAge);
+    @ResponseBody
+    public ResponseEntity<?> register(@RequestParam String userName, @RequestParam String password, @RequestParam int userAge) throws Exception{
+        ResponseEntity<?> r = userService.register(userName,password,userAge);
+        // Extract the body and headers from the original response
+//        Object body = response.getBody();
+//        HttpHeaders headers = new HttpHeaders();
+//
+//        // Copy the original headers if necessary
+//        headers.addAll(response.getHeaders());
+//
+//        // Set the Content-Type header to application/json
+//        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+//
+//        // Return the new ResponseEntity with the JSON string and updated headers
+//        ResponseEntity<?> r = new ResponseEntity<>(body, headers, response.getStatusCode());
+        return r;
     }
 
     @PostMapping("/user/login")
     public ResponseEntity<String> login(@RequestParam String userName,@RequestParam String password) {
+        if(!Application.systemInitialize && !userName.equals("admin"))
+            return ResponseEntity.status(500).body("Trading system closed, waiting for admin to open the system for trading");
         return userService.login(userName, password);
     }
 

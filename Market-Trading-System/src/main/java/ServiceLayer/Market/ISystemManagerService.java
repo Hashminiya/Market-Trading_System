@@ -1,11 +1,13 @@
 package ServiceLayer.Market;
 
+import org.springframework.http.ResponseEntity;
+
 import javax.ws.rs.core.Response;
 
 public interface ISystemManagerService {
-    public Response init(String token);
-    public Response viewMarketPurchaseHistory(String token);
-    public Response closeStore(String token, long storeId);
-    public Response closeMarket(String token);
+    public ResponseEntity<?> init(String token);
+    public ResponseEntity<?> viewMarketPurchaseHistory(String token);
+    public ResponseEntity<?> closeStore(String token, long storeId);
+    public ResponseEntity<?> closeMarket(String token);
 
 }

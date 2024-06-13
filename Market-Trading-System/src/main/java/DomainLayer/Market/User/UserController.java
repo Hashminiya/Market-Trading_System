@@ -3,6 +3,7 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +27,21 @@ public class UserController implements IUserFacade {
     private int guestId ;
 
     @Autowired
-    private UserController(IRepository<String, User> users, SystemManager admin) {
+    private UserController(@Qualifier("InMemoryRepository") IRepository<String, User> users,
+                           @Qualifier("SystemManager") SystemManager admin,
+                           @Qualifier("StoreController") IStoreFacade storeFacade,
+                           @Qualifier("purchaseController") IPurchaseFacade purchaseFacade) {
         this.users = users;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.guestId = 0;
         this.admin = admin;
+        this.storeFacade = storeFacade;
+        this.purchaseFacade = purchaseFacade;
     }
 
-    public static synchronized UserController getInstance(IRepository<String, User> users, SystemManager admin) {
+    public static synchronized UserController getInstance(IRepository<String, User> users, SystemManager admin, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade) {
         if (userControllerInstance == null) {
-            userControllerInstance = new UserController(users, admin);
+            userControllerInstance = new UserController(users, admin, storeFacade, purchaseFacade);
             // TODO : We assume that when this function called, next line will be setStoreFacade..
         }
         return userControllerInstance;

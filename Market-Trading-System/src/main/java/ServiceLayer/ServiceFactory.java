@@ -45,12 +45,11 @@ public class ServiceFactory {
 
     private ServiceFactory(){
         systemAvailable = false;
-        userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String,User>(), SystemManager.getInstance());
+        userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String,User>(), SystemManager.getInstance(), storeFacadeInstance, purchaseFacadeInstance);
         userServiceInstance = UserService.getInstance(userFacadeInstance);
         jwtService = new JwtService();
         userServiceInstance.setJwtService(jwtService);
         loadUserRepo();
-
     }
 
     private Response loadUserRepo() {
@@ -102,7 +101,7 @@ public class ServiceFactory {
     private void initFacades() {
         purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryRepository<Long, Purchase>(), paymentServiceProxyInstance,supplyServiceProxyInstance);
         purchaseFacadeInstance.setUserFacade(userFacadeInstance);
-        storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>());
+        storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>(), userFacadeInstance,purchaseFacadeInstance);
         userFacadeInstance.setStoreFacade(storeFacadeInstance);
         userFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
         storeFacadeInstance.setUserFacade(userFacadeInstance);
@@ -110,13 +109,13 @@ public class ServiceFactory {
     }
 
     private void initServices(){
-        systemManagerService = SystemManagerService.getInstance();
+        systemManagerService = SystemManagerService.getInstance(purchaseFacadeInstance, storeFacadeInstance, userFacadeInstance);
         systemManagerService.setPurchaseFacade(purchaseFacadeInstance);
         systemManagerService.setStoreFacade(storeFacadeInstance);
         systemManagerService.setUserFacade(userFacadeInstance);
         systemManagerService.setJwtService(new JwtService());
 
-        storeManagementServiceInstance = StoreManagementService.getInstance(storeFacadeInstance);
+        storeManagementServiceInstance = StoreManagementService.getInstance(storeFacadeInstance,userFacadeInstance);
         storeManagementServiceInstance.setJwtService(new JwtService());
         storeManagementServiceInstance.setUserFacade(userFacadeInstance);
 

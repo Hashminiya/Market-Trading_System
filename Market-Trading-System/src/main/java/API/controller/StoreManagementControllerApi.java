@@ -5,6 +5,7 @@ import DomainLayer.Market.Util.IRepository;
 import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.Store.IStoreManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class StoreManagementControllerApi {
     private final IStoreManagementService storeManagementService;
 
     @Autowired
-    public StoreManagementControllerApi(IStoreManagementService storeManagementService){
+    public StoreManagementControllerApi(@Qualifier("StoreManagementService") IStoreManagementService storeManagementService){
         this.storeManagementService = storeManagementService;
     }
 
