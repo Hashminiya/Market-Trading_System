@@ -140,17 +140,19 @@ public class Store implements DataItem<Long> {
                 itemsPrice = discount.calculatePrice(itemsPrice, itemsCount, code);
             }
         }
-        basket.setItemsPrice(itemsPrice);
-        for(Long itemId: itemsPrice.keySet()){
-            price += (items.get(itemId) * itemsPrice.get(itemId));
+        Map<Long, Double> itemsIdPrice = new HashMap<>();
+        for(Item item: itemsPrice.keySet()) {
+            price += (itemsCount.get(item) * itemsPrice.get(item));
+            itemsIdPrice.put(item.getId(), itemsPrice.get(item));
         }
+        basket.setItemsPrice(itemsIdPrice);
         basket.setBasketTotalPrice(price);
     }
 
-    private Map<Long, Double> getItemsPrices(List<Long> items){
-        Map<Long, Double> itemPrice = new HashMap<>();
-        for(Long itemId: items){
-            itemPrice.put(itemId, products.findById(itemId).getPrice());
+    private Map<Item, Double> getItemsPrices(List<Item> items){
+        Map<Item, Double> itemPrice = new HashMap<>();
+        for(Item item: items){
+            itemPrice.put(item, item.getPrice());
         }
         return itemPrice;
     }
