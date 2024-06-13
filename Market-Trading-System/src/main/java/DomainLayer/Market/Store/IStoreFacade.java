@@ -50,5 +50,4 @@ public interface IStoreFacade {
     public void addDiscount(String userName, long storeId, String discountDetails) throws Exception;
 
     public boolean checkValidBasket(ShoppingBasket basket, String userDetails);
-    public void addPolicy(String userName, long storeId, String discountDetails) throws Exception;
 }
