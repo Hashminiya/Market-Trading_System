@@ -49,13 +49,14 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, IDiscount> repository) {
+    public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, IDiscount> repository) {
         try {
             String userName = jwtService.extractUsername(founderToken);
             if (jwtService.isValid(founderToken, userFacade.loadUserByUsername(userName))) {
-                Response response = Response.ok().entity(storeFacade.createStore(userName, storeName, storeDescription, repository)).build();
+                //return ResponseEntity.status(200).body(storeFacade.viewStoreManagementInfo(userName, storeId))
+                ResponseEntity<Long> response = ResponseEntity.status(200).body(storeFacade.createStore(userName, storeName, storeDescription, repository));
                 logger.info("Store created by user: {}", userName);
-                return ResponseEntity.ok().body(String.format("Store created by user %s", userName));
+                return response;
             } else {
                 logger.warn("Invalid token for creating store: {}", founderToken);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
@@ -67,13 +68,14 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public ResponseEntity<String> addItemToStore(String token, long storeId, String itemName, String description, double itemPrice, int stockAmount, List<String> categories) {
+    public ResponseEntity<?> addItemToStore(String token, long storeId, String itemName, String description, double itemPrice, int stockAmount, List<String> categories) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
-                Response response = Response.ok().entity(storeFacade.addItemToStore(userName, storeId, itemName, itemPrice, stockAmount, description, categories)).build();
+                ResponseEntity<Long> response = ResponseEntity.status(200).body(
+                        storeFacade.addItemToStore(userName, storeId, itemName, itemPrice, stockAmount, description, categories));
                 logger.info("Item added to store by user: {}", userName);
-                return ResponseEntity.ok().body(String.format("Item added to store by user %s", userName));
+                return response;
             } else {
                 logger.warn("Invalid token for adding item to store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
