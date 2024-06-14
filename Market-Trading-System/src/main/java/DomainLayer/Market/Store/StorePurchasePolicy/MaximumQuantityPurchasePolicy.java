@@ -14,7 +14,7 @@ public class MaximumQuantityPurchasePolicy extends PurchasePolicy {
     @JsonCreator
     public MaximumQuantityPurchasePolicy(@JsonProperty("name") String name,
                                          @JsonProperty("id") Long id,
-                                         @JsonProperty("minAge") int maxAmount,
+                                         @JsonProperty("maxAmount") int maxAmount,
                                          @JsonProperty("items") List<Long> items,
                                          @JsonProperty("categories") List<String> categories,
                                          @JsonProperty("isStore") boolean isStore){

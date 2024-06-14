@@ -7,6 +7,7 @@ import DomainLayer.Market.Store.Discount.Discount;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.*;
 import org.springframework.http.ResponseEntity;
 
@@ -31,6 +32,24 @@ public class StoreManagementAT{
     private static  Long ITEM_ID;
     private static String TOKEN;
     private static long STORE_ID;
+    private static final String AGE_POLICY_SPECIFIC_ITEM = String.format("{\n" +
+            "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
+            "    \"name\": \"Alcohol 18 and above\",\n" +
+            "    \"id\": 10,\n" +
+            "    \"minAge\": 16,\n"+
+            "    \"items\": [%s],\n" +
+            "    \"categories\": [\"alcohol\"],\n" +
+            "    \"isStore\": false\n" +
+            "}",ITEM_ID); ;
+    private static final String MAXIMUM_QUANTITY_POLICY = String.format("{\n" +
+            "    \"@type\": \"MaximumQuantityPurchasePolicy\",\n" +
+            "    \"name\": \"all store max amount policy\",\n" +
+            "    \"id\": 10,\n" +
+            "    \"maxAmount\": 15,\n"+
+            "    \"items\": null,\n" +
+            "    \"categories\": null ,\n" +
+            "    \"isStore\": true\n" +
+            "}");
     private static StoreManagementService storeManagementService;
     private static IRepository<Long, IDiscount> discountRepository;
     private static UserService userService;
@@ -94,7 +113,26 @@ public class StoreManagementAT{
     @Test
     @Order(5)
     public void test_addDiscount_should_returnOkStatus_for_simple_discount() {
-        String discountDetails = "{}";
+        String discountDetails = "{\n" +
+                "    \"@type\": \"RegularDiscount\",\n" +
+                "    \"id\": 10,\n" +
+                "    \"percent\": 5.0,\n" +
+                "    \"expirationDate\": \"2024-12-31T23:59:59Z\",\n" +
+                "    \"storeId\": 1,\n" +
+                "    \"items\": [1001, 1002],\n" +
+                "    \"categories\": [\"Electronics\"],\n" +
+                "    \"conditions\": {\n" +
+                "        \"@type\": \"ConditionComposite\",\n" +
+                "        \"conditions\": [\n" +
+                "            {\n" +
+                "                \"@type\": \"Condition\",\n" +
+                "                \"itemId\": 3001,\n" +
+                "                \"count\": 2\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"rule\": \"AND\"\n" +
+                "    }\n" +
+                "}";;
         ResponseEntity<?> response = storeManagementService.addDiscount(TOKEN, STORE_ID, discountDetails);
         assertEquals(200, response.getStatusCode());
     }
@@ -102,14 +140,42 @@ public class StoreManagementAT{
     @Test
     @Order(6)
     public void test_addDiscount_should_returnOkStatus_for_complex_discount() {
-        String discountDetails = "{}";
+        String discountDetails = "{\n" +
+                "    \"@type\": \"RegularDiscount\",\n" +
+                "    \"id\": 10,\n" +
+                "    \"percent\": 5.0,\n" +
+                "    \"expirationDate\": \"2024-12-31T23:59:59Z\",\n" +
+                "    \"storeId\": 1,\n" +
+                "    \"items\": [1001, 1002],\n" +
+                "    \"categories\": [\"Electronics\"],\n" +
+                "    \"conditions\": {\n" +
+                "        \"@type\": \"ConditionComposite\",\n" +
+                "        \"conditions\": [\n" +
+                "            {\n" +
+                "                \"@type\": \"Condition\",\n" +
+                "                \"itemId\": 3001,\n" +
+                "                \"count\": 2\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"rule\": \"AND\"\n" +
+                "    }\n" +
+                "}";
         ResponseEntity<?> response = storeManagementService.addDiscount(TOKEN, STORE_ID, discountDetails);
         assertEquals(200, response.getStatusCode());
     }
     @Test
     @Order(7)
     public void test_addPolicy_should_returnOkStatus_for_simple_policy() {
-        String policyDetails = "{}";
+        String policyDetails = "{\n" +
+                "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
+                "    \"name\": \"Alcohol 18 and above\",\n" +
+                "    \"id\": 10,\n" +
+                "    \"minAge\": 18,\n"+
+                "    \"items\": null,\n" +
+                "    \"categories\": [\"alcohol\"],\n" +
+                "    \"isStore\": false\n" +
+                "}";
+
         ResponseEntity<?> response = storeManagementService.addPolicy(TOKEN, STORE_ID, policyDetails);
         assertEquals(200, response.getStatusCode());
     }
@@ -117,7 +183,13 @@ public class StoreManagementAT{
     @Test
     @Order(8)
     public void test_addPolicy_should_returnOkStatus_for_complex_policy() {
-        String policyDetails = "{}";
+        String policyDetails = String.format("{\n" +
+                "    \"@type\": \"PurchasePolicyComposite\",\n" +
+                "    \"id\": 1234,\n" +
+                "    \"name\": \"complex policy\",\n" +
+                "    \"policies\": [%s,%s] " +
+                "    \"logicalRole\": OR\n" +
+                "}",AGE_POLICY_SPECIFIC_ITEM,MAXIMUM_QUANTITY_POLICY);
         ResponseEntity<?> response = storeManagementService.addPolicy(TOKEN, STORE_ID, policyDetails);
         assertEquals(200, response.getStatusCode());
     }
