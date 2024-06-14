@@ -1,11 +1,8 @@
 package DomainLayer.Market.Store;
 
 import DAL.ItemDTO;
-import DomainLayer.Market.Store.Discount.Discount;
-import DomainLayer.Market.Store.Discount.HiddenDiscount;
 import DomainLayer.Market.Store.Discount.IDiscount;
-import DomainLayer.Market.Store.Discount.RegularDiscount;
-import DomainLayer.Market.Store.StorePurchasePolicy.PurchsePoilcy;
+import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
 import DomainLayer.Market.Util.*;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
@@ -17,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -75,7 +71,7 @@ public class StoreController implements IStoreFacade{
     public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, IDiscount> discounts) throws Exception{
         if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
-        IRepository<Long, PurchsePoilcy> policyRepo = new InMemoryRepository<>();
+        IRepository<Long, PurchasePolicy> policyRepo = new InMemoryRepository<>();
         long storeId = generateStoreId();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts, policyRepo);
         storesRepo.save(newStore);

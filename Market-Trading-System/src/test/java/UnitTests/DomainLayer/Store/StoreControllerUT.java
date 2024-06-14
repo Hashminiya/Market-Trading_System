@@ -3,6 +3,7 @@ package UnitTests.DomainLayer.Store;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Purchase.PurchaseController;
 import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
@@ -44,11 +45,11 @@ public class StoreControllerUT {
     private InMemoryRepository<Long, Store> storesRepoMock;
 
     @Mock
-    private IRepository<Long, Discount> discountRepoMock;
-
+    private IRepository<Long, IDiscount> discountRepoMock;
 
     @Mock
     private Store storeMock;
+
     @InjectMocks
     private StoreController storeFacade;
 
@@ -61,19 +62,16 @@ public class StoreControllerUT {
         purchaseFacadeMock = mock(PurchaseController.class);
         storeMock = mock(Store.class);
 
-        storeFacade = StoreController.getInstance(storesRepoMock);
-        storeFacade.setStoersRepo(storesRepoMock);
-        storeFacade.setUserFacade(userFacadeMock);
-        storeFacade.setPurchaseFacade(purchaseFacadeMock);
+        storeFacade = StoreController.getInstance(storesRepoMock, userFacadeMock, purchaseFacadeMock);
     }
 
     @AfterEach
     void tearDown() {
-        // Reset the singleton instance or any shared state here
-        storeFacade.clear();  // Ensure resetInstance() method is available in StoreController
+        storeFacade.clear();
     }
+
     @Test
-    void testCreateStore() throws Exception {
+    void test_createStore_should_saveNewStore() throws Exception {
         when(userFacadeMock.isRegister(FOUNDER_ID)).thenReturn(true);
 
         storeFacade.createStore(FOUNDER_ID, "storeName", "storeDescription", discountRepoMock);
@@ -82,7 +80,7 @@ public class StoreControllerUT {
     }
 
     @Test
-    void testAddItemToStore() throws Exception {
+    void test_addItemToStore_should_saveNewStore() throws Exception {
         Store store = mock(Store.class);
         when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ADD_ITEM")).thenReturn(true);
@@ -93,7 +91,7 @@ public class StoreControllerUT {
     }
 
     @Test
-    void testUpdateItem() throws Exception {
+    void test_updateItem_should_updateStoreItem() throws Exception {
         Store store = mock(Store.class);
         when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "UPDATE_ITEM")).thenReturn(true);
@@ -104,7 +102,7 @@ public class StoreControllerUT {
     }
 
     @Test
-    void testDeleteItem() throws Exception {
+    void test_deleteItem_should_deleteStoreItem() throws Exception {
         Store store = mock(Store.class);
         when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "DELETE_ITEM")).thenReturn(true);
@@ -115,7 +113,7 @@ public class StoreControllerUT {
     }
 
     @Test
-    void testViewInventoryByStoreOwner() throws Exception {
+    void test_viewInventoryByStoreOwner_should_returnInventory() throws Exception {
         Store store = mock(Store.class);
         when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "VIEW_INVENTORY")).thenReturn(true);
@@ -126,22 +124,20 @@ public class StoreControllerUT {
         HashMap<Long, Integer> result = storeFacade.viewInventoryByStoreOwner(USER_ID, STORE_ID);
 
         assertEquals(inventory, result);
-
     }
 
     @Test
-    void testAssignStoreOwner() throws Exception {
+    void test_assignStoreOwner_should_assignNewOwner() throws Exception {
         when(storesRepoMock.findById(anyLong())).thenReturn(storeMock);
         doNothing().when(storeMock).assignOwner("newOwnerId");
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ASSIGN_OWNER")).thenReturn(true);
 
         storeFacade.assignStoreOwner(USER_ID, STORE_ID, "newOwnerId");
-
         verify(storeMock).assignOwner("newOwnerId");
     }
 
     @Test
-    void testAssignStoreManager() throws Exception {
+    void test_assignStoreManager_should_assignNewManager() throws Exception {
         Store store = mock(Store.class);
         when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ASSIGN_MANAGER")).thenReturn(true);
@@ -152,7 +148,7 @@ public class StoreControllerUT {
     }
 
     @Test
-    void testRemoveStore() throws Exception {
+    void test_removeStore_should_removeStore() throws Exception {
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "REMOVE_STORE")).thenReturn(true);
 
         storeFacade.removeStore(USER_ID, STORE_ID);
@@ -161,7 +157,7 @@ public class StoreControllerUT {
     }
 
     @Test
-    void testViewStoreManagementInfo() throws Exception {
+    void test_viewStoreManagementInfo_should_returnManagementInfo() throws Exception {
         Store store = mock(Store.class);
         when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "VIEW_STORE_MANAGEMENT_INFO")).thenReturn(true);
@@ -176,7 +172,7 @@ public class StoreControllerUT {
     }
 
     @Test
-    void testViewPurchaseHistory() throws Exception {
+    void test_viewPurchaseHistory_should_returnPurchaseHistory() throws Exception {
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "VIEW_PURCHASE_HISTORY")).thenReturn(true);
         when(purchaseFacadeMock.getPurchasesByStore(STORE_ID)).thenReturn(new HashMap<>());
 

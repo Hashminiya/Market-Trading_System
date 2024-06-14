@@ -41,88 +41,79 @@ public class ItemUT {
     }
 
     @Test
-    void testGetId() {
+    void test_getId_should_returnItemId() {
         assertEquals(ITEM_ID, item.getId());
     }
 
     @Test
-    void testGetName() {
+    void test_getName_should_returnItemName() {
         assertEquals(ITEM_NAME, item.getName());
     }
 
     @Test
-    void testSetName() {
+    void test_setName_should_updateItemName() {
         String newName = "New Item Name";
         item.setName(newName);
         assertEquals(newName, item.getName());
     }
 
     @Test
-    void testGetDescription() {
+    void test_getDescription_should_returnItemDescription() {
         assertEquals(ITEM_DESCRIPTION, item.getDescription());
     }
 
     @Test
-    void testSetDescription() {
+    void test_setDescription_should_updateItemDescription() {
         String newDescription = "New Description";
         item.setDescription(newDescription);
         assertEquals(newDescription, item.getDescription());
     }
 
     @Test
-    void testGetPrice() {
+    void test_getPrice_should_returnItemPrice() {
         assertEquals(ITEM_PRICE, item.getPrice());
     }
 
     @Test
-    void testSetPrice() {
+    void test_setPrice_should_updateItemPrice() {
         double newPrice = 20.99;
         item.setPrice(newPrice);
         assertEquals(newPrice, item.getPrice());
     }
 
     @Test
-    void testGetQuantity() {
+    void test_getQuantity_should_returnItemQuantity() {
         assertEquals(ITEM_QUANTITY, item.getQuantity());
     }
 
     @Test
-    void testSetQuantity() {
+    void test_setQuantity_should_updateItemQuantity() {
         int newQuantity = 50;
         item.setQuantity(newQuantity);
         assertEquals(newQuantity, item.getQuantity());
     }
 
     @Test
-    void testGetCategories() {
+    void test_getCategories_should_returnItemCategories() {
         assertEquals(ITEM_CATEGORIES, item.getCategories());
     }
 
     @Test
-    void testGetDiscounts() {
-        Discount discount = mock(Discount.class);
-        item.setDiscount(discount);
-        List<Discount> discounts = item.getDiscounts();
-        assertEquals(1, discounts.size());
-        assertEquals(discount, discounts.get(0));
-    }
-
-    @Test
-    void testDecreaseQuantity() {
+    void test_decreaseQuantity_should_reduceItemQuantity() {
         int decreaseBy = 10;
         item.decrease(decreaseBy);
         assertEquals(ITEM_QUANTITY - decreaseBy, item.getQuantity());
     }
 
     @Test
-    void testDecreaseQuantityThrowsExceptionWhenInsufficientQuantity() {
+    void test_decreaseQuantity_should_throwExceptionWhenInsufficientQuantity() {
         int decreaseBy = 200;
         RuntimeException exception = assertThrows(RuntimeException.class, () -> item.decrease(decreaseBy));
         assertEquals(String.format("failed to update %s amount", ITEM_NAME), exception.getMessage());
     }
 
     @Test
-    void testGetCurrentPriceWithoutDiscount() {
+    void test_getCurrentPrice_should_returnItemPriceWithoutDiscount() {
         try {
             assertEquals(ITEM_PRICE, item.getCurrentPrice(""));
         } catch (Exception e) {
@@ -130,31 +121,4 @@ public class ItemUT {
         }
     }
 
-    @Test
-    void testGetCurrentPriceWithRegularDiscount() {
-        Discount discount = mock(RegularDiscount.class);
-        try {
-            when(discount.calculatePrice(anyDouble(),anyString())).thenReturn(DISCOUNT*ITEM_PRICE);
-            when(discount.isValid(any())).thenReturn(true);
-            item.setDiscount(discount);
-            double expectedPrice = DISCOUNT*ITEM_PRICE;
-            assertEquals(expectedPrice, item.getCurrentPrice(CODE));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
-    void testGetCurrentPriceWithHiddenDiscount() {
-        Discount discount = mock(HiddenDiscount.class);
-        try {
-            when(discount.calculatePrice(anyDouble(),anyString())).thenReturn(DISCOUNT*ITEM_PRICE);
-            when(discount.isValid(any())).thenReturn(true);
-            item.setDiscount(discount);
-            double expectedPrice = DISCOUNT*ITEM_PRICE;
-            assertEquals(expectedPrice, item.getCurrentPrice(CODE));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

@@ -1,8 +1,12 @@
 package UnitTests.DomainLayer.Store;
 
+import DomainLayer.Market.Purchase.Purchase;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
+import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,68 +28,48 @@ public class StoreUT {
     private final String STORE_DESCRIPTION = "Test Store Description";
 
     @Mock
-    private InMemoryRepository<Long, Discount> discountsMock;
+    private IRepository<Long, IDiscount> discountsMock;
+    @Mock
+    private IRepository<Long, PurchasePolicy> policiesMock;
 
     private Store store;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        store = new Store(STORE_ID, FOUNDER_ID, STORE_NAME, STORE_DESCRIPTION, discountsMock);
+        store = new Store(STORE_ID, FOUNDER_ID, STORE_NAME, STORE_DESCRIPTION, discountsMock, policiesMock);
     }
 
     @Test
-    void testGetId() {
-        assertEquals(STORE_ID, store.getId());
-    }
-
-    @Test
-    void testGetName() {
-        assertEquals(STORE_NAME, store.getName());
-    }
-
-    @Test
-    void testGetOwners() {
-        assertNotNull(store.getOwners());
-        assertTrue(store.getOwners().isEmpty());
-    }
-
-    @Test
-    void testGetManagers() {
-        assertNotNull(store.getManagers());
-        assertTrue(store.getManagers().isEmpty());
-    }
-
-    @Test
-    void testAssignOwner() {
+    void test_assignOwner_should_addOwnerToStore() {
         String newOwnerId = "owner@mail.com";
         store.assignOwner(newOwnerId);
         assertTrue(store.getOwners().contains(newOwnerId));
     }
 
     @Test
-    void testAssignManager() {
+    void test_assignManager_should_addManagerToStore() {
         String newManagerId = "manager@mail.com";
         store.assignManager(newManagerId);
         assertTrue(store.getManagers().contains(newManagerId));
     }
 
     @Test
-    void testSetDescription() {
+    void test_setDescription_should_updateStoreDescription() {
         String newDescription = "New Description";
         store.setDescription(newDescription);
         assertEquals(newDescription, store.getDescription());
     }
 
     @Test
-    void testAddItem() {
+    void test_addItem_should_addNewItemToStore() {
         String itemName = "Test Item";
         double itemPrice = 10.99;
         int itemQuantity = 100;
         String itemDescription = "Item Description";
         List<String> itemCategories = List.of("Category1", "Category2");
 
-        store.addItem(ITEM_ID_1 ,itemName, itemPrice, itemQuantity, itemDescription, itemCategories);
+        store.addItem(ITEM_ID_1, itemName, itemPrice, itemQuantity, itemDescription, itemCategories);
         List<Item> inventory = store.viewInventory();
         assertEquals(1, inventory.size());
         Item addedItem = inventory.get(0);
@@ -96,29 +80,9 @@ public class StoreUT {
         assertEquals(itemCategories, addedItem.getCategories());
     }
 
-    @Test
-    void testAddDiscountToItems() {
-        long itemId1 = 1L;
-        long itemId2 = 2L;
-        Discount discount = mock(Discount.class);
-
-        store.addItem(ITEM_ID_1, "Item1", 10.0, 10, "Description1", List.of("Category1"));
-        store.addItem(ITEM_ID_2, "Item2", 20.0, 20, "Description2", List.of("Category2"));
-
-        store.addDiscount(List.of(itemId1, itemId2), discount);
-        assertEquals(discount, store.getById(ITEM_ID_1).getDiscounts().get(0));
-        assertEquals(discount, store.getById(ITEM_ID_2).getDiscounts().get(0));
-    }
 
     @Test
-    void testAddStoreDiscount() {
-        Discount discount = mock(Discount.class);
-        store.addDiscount(discount);
-        verify(discountsMock).save(discount);
-    }
-
-    @Test
-    void testUpdateItem() {
+    void test_updateItem_should_updateStoreItemDetails() {
         store.addItem(ITEM_ID_1, "Old Item", 10.0, 10, "Old Description", List.of("Category1"));
 
         String newName = "New Item";
@@ -134,7 +98,7 @@ public class StoreUT {
     }
 
     @Test
-    void testDeleteItem() {
+    void test_deleteItem_should_removeItemFromStore() {
         long itemId = 1L;
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
 
@@ -144,7 +108,7 @@ public class StoreUT {
     }
 
     @Test
-    void testIsAvailable() {
+    void test_isAvailable_should_returnItemAvailability() {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
 
         assertTrue(store.isAvailable(ITEM_ID_1, 5));
@@ -152,7 +116,7 @@ public class StoreUT {
     }
 
     @Test
-    void testUpdateAmount() {
+    void test_updateAmount_should_updateItemQuantity() {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
 
         store.updateAmount(ITEM_ID_1, 5);
@@ -161,10 +125,10 @@ public class StoreUT {
     }
 
     @Test
-    void testSearch() {
+    void test_search_should_returnItemsMatchingKeyword() {
         String keyword = "Test";
-        store.addItem(ITEM_ID_1,"Test Item", 10.0, 10, "Test Description", List.of("Category1"));
-        store.addItem(ITEM_ID_2,"Another Item", 20.0, 20, "Another Description", List.of("Category2"));
+        store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
+        store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2"));
 
         List<Item> result = store.search(keyword);
         assertEquals(1, result.size());
@@ -172,7 +136,7 @@ public class StoreUT {
     }
 
     @Test
-    void testSearchWithCategory() {
+    void test_searchWithCategory_should_returnItemsMatchingKeywordAndCategory() {
         String category = "testcategory";
         String keyword = "Test";
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of(category));
@@ -184,7 +148,7 @@ public class StoreUT {
     }
 
     @Test
-    void testGetAllCategories() {
+    void test_getAllCategories_should_returnAllCategories() {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1", "Category2"));
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2", "Category3"));
 

@@ -1,8 +1,6 @@
 package DomainLayer.Market.Store.StorePurchasePolicy;
 
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.User.IUserFacade;
-import DomainLayer.Market.Util.IRepository;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -11,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public class MaximumQuantityPurchasePolicy extends PurchsePoilcy{
+public class MaximumQuantityPurchasePolicy extends PurchasePolicy {
     private final int maxAmount;
     @JsonCreator
     public MaximumQuantityPurchasePolicy(@JsonProperty("name") String name,
