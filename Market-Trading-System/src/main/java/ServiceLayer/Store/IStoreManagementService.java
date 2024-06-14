@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface IStoreManagementService {
-    public ResponseEntity<String> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, IDiscount> repository);
-    public ResponseEntity<String> addItemToStore(String token, long storeId, String itemName, String description ,double itemPrice, int stockAmount, List<String> categories);
+    public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, IDiscount> repository);
+    public ResponseEntity<?> addItemToStore(String token, long storeId, String itemName, String description ,double itemPrice, int stockAmount, List<String> categories);
     public ResponseEntity<String> updateItem(String token, long storeId, long itemId, String newName, double newPrice, int newAmount);
     public ResponseEntity<String> deleteItem(String token, long storeId, long itemId);
     public ResponseEntity<String> changeStorePolicy(String token, long storeId);

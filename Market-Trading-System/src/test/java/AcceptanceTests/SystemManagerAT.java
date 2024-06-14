@@ -5,6 +5,7 @@ import javax.ws.rs.core.Response;
 
 import ServiceLayer.ServiceFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,15 +29,14 @@ public class SystemManagerAT {
     @Test
     @Order(1)
     public void testViewMarketPurchaseHistory() {
-        Response response = systemManagerService.viewMarketPurchaseHistory(MANAGER_TOKEN);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        ResponseEntity<?> response = systemManagerService.viewMarketPurchaseHistory(MANAGER_TOKEN);
+        assertEquals(200, response.getStatusCode());
     }
 
     @Test
     @Order(2)
     public void testCloseStore() {
         //Place holder test- this functionality is not required right now
-        Response response = systemManagerService.closeStore(MANAGER_TOKEN, 123);
 
         assert (true);
     }
@@ -45,7 +45,6 @@ public class SystemManagerAT {
     @Order(3)
     public void testCloseMarket() {
         //Place holder test- this functionality is not required right now
-        Response response = systemManagerService.closeMarket(MANAGER_TOKEN);
         assert (true);
     }
 }
