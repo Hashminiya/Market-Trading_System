@@ -83,8 +83,8 @@ public class UserControllerApi {
     }
 
     @PutMapping("/user/addItemToBasket")
-    public ResponseEntity<String> addItemToBasket(@RequestParam String token,@RequestParam long basketId,@RequestParam long itemId,@RequestParam int quantity) {
-        return userService.addItemToBasket(token, basketId, itemId, quantity);
+    public ResponseEntity<String> addItemToBasket(@RequestParam String token,@RequestParam long storeId,@RequestParam long itemId,@RequestParam int quantity) {
+        return userService.addItemToBasket(token, storeId, itemId, quantity);
     }
 
     @PutMapping("/user/addPermission")

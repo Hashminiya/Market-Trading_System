@@ -321,7 +321,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName) {
-        return storesRepo.findById(shoppingBasket.getId())
+        return storesRepo.findById(shoppingBasket.getStoreId())
                 .checkValidBasket(shoppingBasket, userName);
     }
 

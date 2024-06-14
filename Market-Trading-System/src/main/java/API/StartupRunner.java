@@ -45,11 +45,11 @@ public class StartupRunner implements CommandLineRunner {
     }
 
     private void runSystem() {
-        //List<String> tokens = createUsers();
-        //List<Long> storeIds = createStores(tokens);
-        //createItems(tokens, storeIds);
-        //initShoppingCart();
-        //createPurchase(tokens);
+        List<String> tokens = createUsers();
+        List<Long> storeIds = createStores(tokens);
+        List<Long> itemIds = createItems(tokens, storeIds);
+        initShoppingCart(tokens,storeIds,itemIds);
+        createPurchase(tokens);
     }
 
     private List<String> createUsers() {
@@ -94,17 +94,29 @@ public class StartupRunner implements CommandLineRunner {
         return storeIds;
     }
 
-    private void initShoppingCart() {
-
+    private void initShoppingCart(List<String> tokens, List<Long> storesId, List<Long> itemIds) {
+        IUserService userService = (IUserService) SpringContext.getBean("userService");
+        userService.addItemToBasket(tokens.get(0),storesId.get(0), itemIds.get(0), 1);
+        userService.addItemToBasket(tokens.get(1),storesId.get(1), itemIds.get(1), 1);
+        userService.addItemToBasket(tokens.get(2),storesId.get(2), itemIds.get(2), 1);
+        userService.addItemToBasket(tokens.get(3),storesId.get(3), itemIds.get(3), 1);
+        userService.addItemToBasket(tokens.get(4),storesId.get(4), itemIds.get(4), 1);
     }
 
-    private void createItems(List<String> tokens, List<Long> storeIds) {
+    private List<Long> createItems(List<String> tokens, List<Long> storeIds) {
         IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
-        storeManagementService.addItemToStore(tokens.get(0), storeIds.get(0), "item1", "item1 description", 10, 5, new ArrayList<>());
-        storeManagementService.addItemToStore(tokens.get(1), storeIds.get(1), "item2", "item2 description", 15, 3, new ArrayList<>());
-        storeManagementService.addItemToStore(tokens.get(2), storeIds.get(2), "item3", "item3 description", 20, 3, new ArrayList<>());
-        storeManagementService.addItemToStore(tokens.get(3), storeIds.get(3), "item4", "item4 description", 12, 3, new ArrayList<>());
-        storeManagementService.addItemToStore(tokens.get(3), storeIds.get(4), "item5", "item5 description", 13, 4, new ArrayList<>());
+        ResponseEntity<?> itemId1 = storeManagementService.addItemToStore(tokens.get(0), storeIds.get(0), "item1", "item1 description", 10, 5, new ArrayList<>());
+        ResponseEntity<?> itemId2 = storeManagementService.addItemToStore(tokens.get(1), storeIds.get(1), "item2", "item2 description", 15, 3, new ArrayList<>());
+        ResponseEntity<?> itemId3 = storeManagementService.addItemToStore(tokens.get(2), storeIds.get(2), "item3", "item3 description", 20, 3, new ArrayList<>());
+        ResponseEntity<?> itemId4 = storeManagementService.addItemToStore(tokens.get(3), storeIds.get(3), "item4", "item4 description", 12, 3, new ArrayList<>());
+        ResponseEntity<?> itemId5 = storeManagementService.addItemToStore(tokens.get(4), storeIds.get(4), "item5", "item5 description", 13, 4, new ArrayList<>());
+        List<Long> itemIds = new ArrayList<>();
+        itemIds.add((long) itemId1.getBody());
+        itemIds.add((long) itemId2.getBody());
+        itemIds.add((long) itemId3.getBody());
+        itemIds.add((long) itemId4.getBody());
+        itemIds.add((long) itemId5.getBody());
+        return itemIds;
     }
 
     private void createPurchase(List<String> tokens) {
