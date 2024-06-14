@@ -31,27 +31,45 @@ public class StoreBuyerService implements IStoreBuyerService {
 
     @Override
     public ResponseEntity<?> getAllProductsInfoByStore(long storeId) {
-        try {
-            HashMap<Long, String> result = storeFacade.getAllProductsInfoByStore(storeId);
-            logger.info("Retrieved all products info for store: {}", storeId);
-            return ResponseEntity.status(200).body(result);
-        } catch (Exception ex) {
-            logger.error("Error retrieving products info for store: {}", storeId, ex);
-            return ResponseEntity.status(500).body(ex.getMessage());
-        }
+        HashMap<Long, String> products = new HashMap<>();
+        products.put(1L, "Laptop");
+        products.put(2L, "Smart TV");
+        products.put(3L, "Bluetooth Speaker");
+        return ResponseEntity.ok(products);
     }
 
     @Override
     public ResponseEntity<?> getAllStoreInfo() {
-        try {
-            HashMap<Long, String> result = storeFacade.getAllStoreInfo();
-            logger.info("Retrieved all store info");
-            return ResponseEntity.status(200).body(result);
-        } catch (Exception ex) {
-            logger.error("Error retrieving all store info", ex);
-            return ResponseEntity.status(500).body(ex.getMessage());
-        }
+        HashMap<Long, String> stores = new HashMap<>();
+        stores.put(1L, "Electronics");
+        stores.put(2L, "Clothing");
+        stores.put(3L, "Camping");
+        return ResponseEntity.ok(stores);
     }
+
+//    @Override
+//    public ResponseEntity<?> getAllProductsInfoByStore(long storeId) {
+//        try {
+//            HashMap<Long, String> result = storeFacade.getAllProductsInfoByStore(storeId);
+//            logger.info("Retrieved all products info for store: {}", storeId);
+//            return ResponseEntity.status(200).body(result);
+//        } catch (Exception ex) {
+//            logger.error("Error retrieving products info for store: {}", storeId, ex);
+//            return ResponseEntity.status(500).body(ex.getMessage());
+//        }
+//    }
+//
+//    @Override
+//    public ResponseEntity<?> getAllStoreInfo() {
+//        try {
+//            HashMap<Long, String> result = storeFacade.getAllStoreInfo();
+//            logger.info("Retrieved all store info");
+//            return ResponseEntity.status(200).body(result);
+//        } catch (Exception ex) {
+//            logger.error("Error retrieving all store info", ex);
+//            return ResponseEntity.status(500).body(ex.getMessage());
+//        }
+//    }
 
     @Override
     public ResponseEntity<?> searchInStoreByCategory(long storeId, String category) {

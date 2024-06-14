@@ -25,7 +25,7 @@ public class StoreManagementControllerApi {
 
     @PostMapping("storeManagement/createStore")
     public ResponseEntity<String> createStore(@RequestParam String founderToken, @RequestParam String storeName, @RequestParam String storeDescription,@RequestParam IRepository<Long, Discount> repository) {
-        return storeManagementService.createStore(founderToken, storeName, storeDescription, repository);
+        return storeManagementService.createStore(founderToken, storeName, storeDescription, null);
     }
 
     @PutMapping("storeManagement/addItemToStore")
