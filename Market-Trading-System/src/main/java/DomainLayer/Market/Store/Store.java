@@ -4,10 +4,8 @@ package DomainLayer.Market.Store;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Store.StorePurchasePolicy.*;
-import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Market.Util.InMemoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 
@@ -25,12 +23,12 @@ public class Store implements DataItem<Long> {
     private final List<String> managers;
     private final InMemoryRepositoryStore products;
     private IRepository<Long , IDiscount> discounts;
-    private IRepository<Long, PurchsePoilcy> purchasePolicies;
+    private IRepository<Long, PurchasePolicy> purchasePolicies;
     private PurchasePolicyFactory policyFactory;
 
     public Store(Long id, String founderId, String name, String description,
                  IRepository<Long, IDiscount> discounts,
-                 IRepository<Long, PurchsePoilcy> purchasePolicies){
+                 IRepository<Long, PurchasePolicy> purchasePolicies){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
@@ -187,7 +185,7 @@ public class Store implements DataItem<Long> {
         for (Map.Entry<Long, Integer> pair: basket.getItems().entrySet()) {
             itemsInBasket.put(products.findById(pair.getKey()), pair.getValue());
         }
-        for (PurchsePoilcy policy:purchasePolicies.findAll()){
+        for (PurchasePolicy policy:purchasePolicies.findAll()){
             if(!policy.isValid(itemsInBasket, userDetails))
                 return false;
         }
@@ -201,7 +199,7 @@ public class Store implements DataItem<Long> {
         objectMapper.registerSubtypes(new NamedType(PurchasePolicyComposite.class, "PurchasePolicyComposite"));
 
         try {
-            PurchsePoilcy purchsePoilcy = objectMapper.readValue(policyDetails, PurchsePoilcy.class);
+            PurchasePolicy purchsePoilcy = objectMapper.readValue(policyDetails, PurchasePolicy.class);
             policyFactory.createPolicy(purchsePoilcy);
             purchasePolicies.save(purchsePoilcy);
         }

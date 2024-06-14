@@ -2,20 +2,19 @@ package DomainLayer.Market.Store.StorePurchasePolicy;
 
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
-import DomainLayer.Market.Util.IRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class PurchsePoilcy implements DataItem<Long> {
+public abstract class PurchasePolicy implements DataItem<Long> {
     ///TODO decide how to get relevant user data
     private final Long id;
     private final String name;
     private List<Long> itemsList;
     private final List<String> categories;
     private final boolean isStore;
-    public PurchsePoilcy(Long id, String name, List<Long> itemsList,List<String> categories,boolean isStore){
+    public PurchasePolicy(Long id, String name, List<Long> itemsList, List<String> categories, boolean isStore){
         this.id = id;
         this.name = name;
         this.itemsList = itemsList;
@@ -51,7 +50,7 @@ public abstract class PurchsePoilcy implements DataItem<Long> {
 
     public abstract boolean isValid(HashMap<Item,Integer> itemsInBasket, String userDetails);
 
-    public List<PurchsePoilcy> getPolicies() {
+    public List<PurchasePolicy> getPolicies() {
         return null;
     }
 }
