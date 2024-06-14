@@ -25,7 +25,6 @@ public class RegularDiscountUT {
     private final String INVALID_CODE = "INVALIDCODE";
     static Date FUTURE_EXPIRATION = new Date(125, 11, 31, 23, 59, 59); // December 31, 2025
     static Date PAST_EXPIRATION = new Date(120, 0, 1, 0, 0, 0); // January 1, 2020
-    //test[FUNCTION NAME]should[WHAT SHOULD THE TEST DO]for[FOR THE GIVEN PARAMS]
     private static RegularDiscount validDiscount;
 
     private static ICondition condition;
