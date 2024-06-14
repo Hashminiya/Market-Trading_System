@@ -68,11 +68,12 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public long createStore(String founderId, String storeName, String storeDescription, IRepository<Long, IDiscount> discounts) throws Exception{
+    public long createStore(String founderId, String storeName, String storeDescription) throws Exception{
         if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
         IRepository<Long, PurchasePolicy> policyRepo = new InMemoryRepository<>();
         long storeId = generateStoreId();
+        IRepository<Long, IDiscount> discounts = new InMemoryRepository<>();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts, policyRepo);
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);

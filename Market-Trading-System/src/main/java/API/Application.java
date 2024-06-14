@@ -1,11 +1,9 @@
 package API;
 
-import ServiceLayer.ServiceFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Scanner;
 
