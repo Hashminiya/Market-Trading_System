@@ -63,4 +63,9 @@ public class StoreBuyerControllerApi {
         return storeBuyerService.getAllStoresWithItems();
     }
 
+    @GetMapping("storeBuyer/getAllCategories")
+    public ResponseEntity<?> getAllCategories() {
+        return storeBuyerService.getAllCategories();
+    }
+
 }
