@@ -341,4 +341,9 @@ public class StoreController implements IStoreFacade{
         Store store = storesRepo.findById(storeId);
         store.addPolicy(policyDetails);
     }
+
+    @Override
+    public List<Store> findAll() {
+        return storesRepo.findAll();
+    }
 }

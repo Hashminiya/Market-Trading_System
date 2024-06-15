@@ -58,4 +58,9 @@ public class StoreBuyerControllerApi {
         return storeBuyerService.searchGenerallyByKeyWordAndCategory(category, keyWord);
     }
 
+    @GetMapping("storeBuyer/getAllStores")
+    public ResponseEntity<?> getAllStoresWithItems() {
+        return storeBuyerService.getAllStoresWithItems();
+    }
+
 }
