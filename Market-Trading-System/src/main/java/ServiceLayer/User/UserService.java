@@ -29,11 +29,17 @@ public class UserService implements IUserService {
         }
         return instance;
     }
+
+    public void clear(){
+        userFacade.clear();
+        instance = null;
+    }
+
     public void setJwtService(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 
-    public ResponseEntity<String> GuestEntry() {
+    public ResponseEntity<String> guestEntry() {
         try {
             String userName = userFacade.createGuestSession();
             String token = jwtService.generateToken(userName, "GUEST");
@@ -45,7 +51,7 @@ public class UserService implements IUserService {
         }
     }
 
-    public ResponseEntity<String> GuestExit(String token) {
+    public ResponseEntity<String> guestExit(String token) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
@@ -165,9 +171,8 @@ public class UserService implements IUserService {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                ResponseEntity<Long> response = ResponseEntity.ok(userFacade.addItemToBasket(userName, storeId, itemId, quantity));
                 logger.info("Added item to basket for user: {}", userName);
-                return ResponseEntity.ok(String.format("Added item to basket for user %s", userName));
+                return ResponseEntity.ok(userFacade.addItemToBasket(userName, storeId, itemId, quantity).toString());
             } else {
                 logger.warn("Invalid token for adding item to basket: {}", token);
                 return ResponseEntity.status(401).body(token);

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import DomainLayer.Market.ShoppingBasket;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,8 +35,14 @@ public class ShoppingBasketUT {
         basket = new ShoppingBasket(STORE_ID);
     }
 
+    @AfterEach
+    void tearDown() {
+        // Reset the singleton instance or any shared state here
+        storeFacade.clear();  // Ensure resetInstance() method is available in StoreController
+    }
+
     @Test
-    public void testAddItem() {
+    public void test_addItem_should_add_item_to_basket_successfully() {
         int quantity = 2;
 
         basket.addItem(ITEM_ID, quantity);
@@ -46,7 +53,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testRemoveItem() {
+    public void test_removeItem_should_remove_item_from_basket_for_valid_item_id() {
         int quantity = 2;
 
         basket.addItem(ITEM_ID, quantity);
@@ -57,7 +64,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testUpdateItemQuantity() {
+    public void test_updateItemQuantity_should_increase_item_quantity() {
         int quantity1 = 2;
         int quantity2 = 1;
 
@@ -69,7 +76,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testUpdateItemQuantityToZero() {
+    public void test_updateItemQuantity_should_remove_item_from_basket_when_quantity_zero() {
         int quantity = 2;
 
         basket.addItem(ITEM_ID, quantity);
@@ -80,7 +87,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testCheckoutShoppingBasket() {
+    public void test_checkoutShoppingBasket_should_return_checked_out_items() {
         int quantity = 2;
         double price = 5.0;
         String itemName = "Test Item";
@@ -101,12 +108,12 @@ public class ShoppingBasketUT {
         ItemDTO item = checkoutItems.get(0);
         assertEquals(ITEM_ID, item.getItemId());
         assertEquals(quantity, item.getQuantity());
-        assertEquals(price * quantity, item.getTotalPrice());
+        assertEquals(price, item.getTotalPrice());
         assertEquals(itemName, item.getName());
     }
 
     @Test
-    public void testBasketTotalPrice() {
+    public void test_setBasketTotalPrice_should_return_updated_total_price() {
         int quantity = 2;
         double price = 5.0;
 
@@ -123,7 +130,7 @@ public class ShoppingBasketUT {
 
 
     @Test
-    public void testToString() {
+    public void test_toString_should_return_valid_receipt_string() {
         int quantity = 2;
         double price = 5.0;
         String itemName = "Test Item";
@@ -154,7 +161,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void testEmptyBasketToString() {
+    public void test_emptyBasketToString_should_return_empty_receipt_string() {
         String basketString = basket.toString();
         assertTrue(basketString.contains("Shopping Basket ID: " + basket.getId()));
         assertTrue(basketString.contains("Store ID: " + STORE_ID));

@@ -174,4 +174,26 @@ public class ServiceFactory {
         return systemAvailable;
     }
 
+    public void clear(){
+        systemAvailable= false;
+        // Controllers
+        storeFacadeInstance = null;
+        userFacadeInstance = null;
+        purchaseFacadeInstance = null;
+
+        // Services
+        systemManagerService.clear();
+        storeManagementServiceInstance.clear();
+        storeBuyerServiceInstance.clear();
+        userServiceInstance.clear();
+        paymentServiceInstance = null;
+        supplyServiceInstance = null;
+        paymentServiceProxyInstance = null;
+        supplyServiceProxyInstance = null;
+
+        // Factory instance
+        serviceFactoryInstance = null;
+        jwtService = null;
+    }
+
 }

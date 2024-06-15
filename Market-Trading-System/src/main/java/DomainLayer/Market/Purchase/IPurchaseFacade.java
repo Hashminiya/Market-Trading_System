@@ -22,5 +22,6 @@ public interface IPurchaseFacade {
     List<ItemDTO> getPurchasedItems();
     List<Purchase> getPurchaseHistory(String userName);
     public void setUserFacade(IUserFacade userFacade);
+    public void clear();
 
 }

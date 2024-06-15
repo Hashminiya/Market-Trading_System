@@ -26,6 +26,9 @@ public class ShoppingBasket implements DataItem<Long> {
     }
 
     public void addItem(long itemId, int quantity){
+        if(itemsQuantity.containsKey(itemId)){
+            itemsQuantity.replace(itemId, itemsQuantity.get(itemId) + quantity);
+        }
         itemsQuantity.put(itemId,quantity);
     }
 
@@ -50,8 +53,10 @@ public class ShoppingBasket implements DataItem<Long> {
     public void updateItemQuantity(long itemId, int quantity){
         if(quantity == 0)
             removeItem(itemId);
-        //TODO: check stock?
-        itemsQuantity.put(itemId,quantity);
+        else {
+            //TODO: check stock?
+            itemsQuantity.put(itemId, quantity);
+        }
     }
 
     public void setItemsPrice(Map<Long, Double> itemsPrice){

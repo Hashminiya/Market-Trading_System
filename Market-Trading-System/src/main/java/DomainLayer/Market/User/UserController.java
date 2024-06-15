@@ -19,8 +19,8 @@ import java.util.List;
 @Component("userController")
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
-    private final IRepository<String, User> users;
-    private final SystemManager admin;
+    private IRepository<String, User> users;
+    private SystemManager admin;
     private IStoreFacade storeFacade;
     private IPurchaseFacade purchaseFacade;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -46,6 +46,15 @@ public class UserController implements IUserFacade {
         }
         return userControllerInstance;
     }
+
+    public void clear() {
+        userControllerInstance = null;
+        storeFacade = null;
+        purchaseFacade.clear();
+        users = null;
+        admin = null;
+    }
+
 
     @Override
     public void setStoreFacade(IStoreFacade storeFacadeInstance) {
@@ -127,7 +136,7 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public long addItemToBasket(String userName,long storeId, long itemId, int quantity) {
+    public Long addItemToBasket(String userName,long storeId, long itemId, int quantity) {
         User user = getUser(userName);
         return user.addItemToBasket(storeId, itemId, quantity);
     }

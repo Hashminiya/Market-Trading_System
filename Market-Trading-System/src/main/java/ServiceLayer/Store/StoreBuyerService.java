@@ -29,6 +29,11 @@ public class StoreBuyerService implements IStoreBuyerService {
         return instance;
     }
 
+    public void clear(){
+        storeFacade.clear();
+        instance = null;
+    }
+
     @Override
     public ResponseEntity<?> getAllProductsInfoByStore(long storeId) {
         try {

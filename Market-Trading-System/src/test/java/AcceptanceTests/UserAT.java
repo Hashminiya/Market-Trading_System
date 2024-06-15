@@ -1,14 +1,17 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
 import org.junit.jupiter.api.*;
+import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -40,99 +43,110 @@ public class UserAT {
     @BeforeAll
     public static void setUp() {
         SetUp.setUp();
-        ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
+        serviceFactory = ServiceFactory.getServiceFactory();
         userService = serviceFactory.getUserService();
         storeSevice = serviceFactory.getStoreManagementService();
         userService.register(USERNAME1, PASSWORD, AGE);
-        USERNAME1_TOKEN = (String) userService.login(USERNAME1, PASSWORD).getEntity();
-        STOREID = (long) storeSevice.createStore(USERNAME1_TOKEN, "new test store- userAT", "description",new InMemoryRepository<>()).getEntity();
-        ITEMID = (long) storeSevice.addItemToStore(USERNAME1_TOKEN, STOREID,"new item", "desctiprion",50,100, List.of("electronics")).getEntity();
+        USERNAME1_TOKEN = userService.login(USERNAME1, PASSWORD).getBody();
+        STOREID = (Long) storeSevice.createStore(USERNAME1_TOKEN, "new test store- userAT", "description").getBody();
+        ITEMID = (Long)  storeSevice.addItemToStore(USERNAME1_TOKEN, STOREID,"new item", "desctiprion",50,100, List.of("electronics")).getBody();
     }
+
     @AfterAll
-    public static void tearDown()
+    public static void tearDown() throws Exception
     {
-        userService.login(USERNAME1,PASSWORD);
-        storeSevice.removeStore(USERNAME1_TOKEN,STOREID);
+        //userService.login(USERNAME1,PASSWORD);
+        //storeSevice.removeStore(USERNAME1_TOKEN,STOREID);
+        serviceFactory.clear();
+        //resetUserControllerInstance();
+
+    }
+
+    private static void resetUserControllerInstance() throws Exception {
+        Field instance = UserController.class.getDeclaredField("userControllerInstance");
+        instance.setAccessible(true);
+        instance.set(null, null);
     }
 
     @Test
     @Order(1)
-    public void testGuestEntry() {
-        Response response = userService.GuestEntry();
-        GUEST_TOKEN = (String) response.getEntity();
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_guestEntry_should_return_token_successfully() {
+        ResponseEntity<String> response = userService.guestEntry();
+        GUEST_TOKEN = response.getBody();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(2)
-    public void testGuestExit() {
-        Response response = userService.GuestExit(GUEST_TOKEN);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_guestExit_should_return_ok_status() {
+        ResponseEntity<String> response = userService.guestExit(GUEST_TOKEN);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(3)
-    public void testRegister() {
-        Response response = userService.register(USERNAME2, PASSWORD, AGE);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_register_should_return_ok_status() {
+        ResponseEntity<String> response = userService.register(USERNAME2, PASSWORD, AGE);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(4)
-    public void testLogin() {
-        Response response = userService.login(USERNAME2,PASSWORD);
-        USERNAME2_TOKEN = (String) response.getEntity();
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_login_should_return_ok_status() {
+        ResponseEntity<String> response = userService.login(USERNAME2,PASSWORD);
+        USERNAME2_TOKEN = response.getBody();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(5)
-    public void testLogout() {
-        Response response = userService.logout(USERNAME2_TOKEN);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_logout_should_return_ok_status() {
+        ResponseEntity<String> response = userService.logout(USERNAME2_TOKEN);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(6)
-    public void testViewShoppingCart() {
-        Response response2 = userService.viewShoppingCart(USERNAME1_TOKEN);
-        assertEquals(Response.Status.OK.getStatusCode(), response2.getStatus());
-        assertEquals("", response2.getEntity());
+    public void test_viewShoppingCart_should_return_ok_status() {
+        ResponseEntity<String> response2 = userService.viewShoppingCart(USERNAME1_TOKEN);
+        assertEquals(Response.Status.OK.getStatusCode(), response2.getStatusCode().value());
+        assertEquals("", response2.getBody());
     }
 
     @Test
     @Order(7)
-    public void testAddPermission() {
-        Response response = userService.addPermission(USERNAME1_TOKEN, USERNAME2,STOREID, StorePermission.REMOVE_STORE.toString());
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_addPermission_should_return_ok_status() {
+        ResponseEntity<String> response = userService.addPermission(USERNAME1_TOKEN, USERNAME2,STOREID, StorePermission.REMOVE_STORE.toString());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(8)
-    public void testRemovePermission() {
-        Response response = userService.removePermission(USERNAME1_TOKEN, USERNAME2,STOREID, StorePermission.REMOVE_STORE.toString());
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_removePermission_should_return_ok_status() {
+        ResponseEntity<String> response = userService.removePermission(USERNAME1_TOKEN, USERNAME2,STOREID, StorePermission.REMOVE_STORE.toString());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(9)
-    public void testAddItemToBasket() {
-        Response response = userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID, 3);
-        BASKET_ID = (long) response.getEntity();
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_addItemToBasket_should_return_ok_status() {
+        ResponseEntity<String> response = userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID, 3);
+        BASKET_ID = Long.parseLong(response.getBody());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(10)
-    public void testModifyShoppingCart() {
-        Response response = userService.modifyShoppingCart(USERNAME1_TOKEN, BASKET_ID, ITEMID, 5);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_modifyShoppingCart_should_return_ok_status() {
+        ResponseEntity<String> response = userService.modifyShoppingCart(USERNAME1_TOKEN, BASKET_ID, ITEMID, 5);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     @Order(11)
-    public void testCheckoutShoppingCart() {
-        Response response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void test_checkoutShoppingCart_should_return_ok_status() {
+        //ResponseEntity<String> response1 = userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID, 3);
+        ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 }

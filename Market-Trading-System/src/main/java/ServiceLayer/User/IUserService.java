@@ -4,8 +4,8 @@ import org.springframework.http.ResponseEntity;
 
 
 public interface IUserService{
-    public ResponseEntity<String> GuestEntry();
-    public ResponseEntity<String> GuestExit(String token);
+    public ResponseEntity<String> guestEntry();
+    public ResponseEntity<String> guestExit(String token);
     public ResponseEntity<String> register(String userName, String password, int userAge);
     public ResponseEntity<String> login(String userName, String password);
     public ResponseEntity<String> logout(String userName);
