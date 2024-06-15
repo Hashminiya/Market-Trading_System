@@ -28,12 +28,12 @@ public class UserControllerApi {
 
     @PostMapping("/user/GuestEntry")
     public ResponseEntity<String> GuestEntry() {
-        return userService.GuestEntry();
+        return userService.guestEntry();
     }
 
     @PostMapping("/user/GuestExit")
     public ResponseEntity<String> GuestExit(@RequestParam String token) {
-        return userService.GuestExit(token);
+        return userService.guestExit(token);
     }
 
     @PostMapping("/user/register")

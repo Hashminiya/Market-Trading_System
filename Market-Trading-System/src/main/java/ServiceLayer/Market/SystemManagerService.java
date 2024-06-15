@@ -36,6 +36,13 @@ public class SystemManagerService implements ISystemManagerService {
         this.userFacade = userFacade;
     }
 
+    public void clear(){
+        storeFacade.clear();
+        userFacade.clear();
+        purchaseFacade.clear();
+        instance = null;
+    }
+
     public static synchronized SystemManagerService getInstance(IPurchaseFacade purchaseFacade, IStoreFacade storeFacade, IUserFacade userFacade) {
         if (instance == null) {
             instance = new SystemManagerService(purchaseFacade, storeFacade, userFacade);

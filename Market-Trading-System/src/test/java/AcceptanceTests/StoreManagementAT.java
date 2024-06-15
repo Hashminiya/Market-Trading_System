@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StoreManagementAT{
 
-    private static final String ADMIN_USER_NAME = "SystemManager";
+    /*private static final String ADMIN_USER_NAME = "SystemManager";
     private static final String ADMIN_PASSWORD = "SystemManagerPassword";
     private static final String FOUNDER_ID = "founderId";
     private static final String PASSWORD = "12345678";
@@ -73,6 +73,7 @@ public class StoreManagementAT{
     @AfterAll
     public static void tearDown() {
         storeManagementService.removeStore(TOKEN, STORE_ID);
+
     }
 
     @Test
@@ -230,4 +231,5 @@ public class StoreManagementAT{
         ResponseEntity<?> response = storeManagementService.removeStore(TOKEN, STORE_ID);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
 }

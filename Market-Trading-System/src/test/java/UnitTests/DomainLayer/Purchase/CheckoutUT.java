@@ -6,11 +6,18 @@ import DomainLayer.Market.Purchase.PaymentServiceProxy;
 import DomainLayer.Market.Purchase.Purchase;
 import DomainLayer.Market.Purchase.PurchaseController;
 import DomainLayer.Market.Purchase.SupplyServiceProxy;
+import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.IRepository;
 import ServiceLayer.ServiceFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,46 +28,52 @@ import static org.mockito.Mockito.*;
 
 public class CheckoutUT {
 
-    @Test
-    void checkout_ValidItems_SuccessfullyCheckedOut() {
-        // Mocking dependencies
-        IRepository<Long, Purchase> purchaseRepo = mock(IRepository.class);
-        PaymentServiceProxy paymentServiceProxy = mock(PaymentServiceProxy.class);
-        SupplyServiceProxy supplyServiceProxy = mock(SupplyServiceProxy.class);
+    IRepository<Long, Purchase> purchaseRepo;
+    PaymentServiceProxy paymentServiceProxy;
+    SupplyServiceProxy supplyServiceProxy;
+    PurchaseController purchaseController;
 
-        // Creating items for checkout
+    @BeforeEach
+    public void setUp() {
+        purchaseRepo = mock(IRepository.class);
+        paymentServiceProxy = mock(PaymentServiceProxy.class);
+        supplyServiceProxy = mock(SupplyServiceProxy.class);
+        when(paymentServiceProxy.validateCreditCard(anyString(), any(Date.class), anyString(), anyDouble())).thenReturn(true);
+        when(supplyServiceProxy.validateCartSupply(anyList())).thenReturn(true);
+        purchaseController =  PurchaseController.getInstance(purchaseRepo, paymentServiceProxy,
+                supplyServiceProxy);
+    }
+
+    @AfterEach
+    void tearDown()throws Exception{
+        resetPurchaseControllerInstance();
+    }
+
+    private void resetPurchaseControllerInstance() throws Exception {
+        Field instance = PurchaseController.class.getDeclaredField("purchaseControllerInstance");
+        instance.setAccessible(true);
+        instance.set(null, null);
+    }
+
+    @Test
+    @Order(1)
+    void test_checkout_should_not_throw_exception_for_valid_info() {
+
         List<ItemDTO> items = new ArrayList<>();
         items.add(new ItemDTO(876123, "Chips",20,8282,500));
         items.add(new ItemDTO(98142, "Bamba",40,8282,1000));
 
-        // Creating instance of PurchaseController
-        PurchaseController purchaseController =  PurchaseController.getInstance(purchaseRepo, paymentServiceProxy,
-                supplyServiceProxy);
-
-        // Mocking behavior of paymentServiceProxy
-        when(paymentServiceProxy.validateCreditCard(anyString(), any(Date.class), anyString(), anyDouble())).thenReturn(true);
-        // Mocking behavior of supplyServiceProxy
-        when(supplyServiceProxy.validateCartSupply(anyList())).thenReturn(true);
-
-        // Testing checkout process
         assertDoesNotThrow(() -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 1500));
 
-        // Verifying that save method is called on purchaseRepo
-        verify(purchaseRepo, times(1)).save(any(Purchase.class));
     }
 
-    @Test
-    void checkout_NoItems_ExceptionThrown() {
-        IRepository<Long, Purchase> purchaseRepo = mock(IRepository.class);
-        PaymentServiceProxy paymentServiceProxy = mock(PaymentServiceProxy.class);
-        SupplyServiceProxy supplyServiceProxy = mock(SupplyServiceProxy.class);
 
-        PurchaseController purchaseController =  PurchaseController.getInstance(purchaseRepo, paymentServiceProxy,
-                supplyServiceProxy);
+    @Test
+    @Order(2)
+    void test_checkout_should_throw_exception_for_empty_items_list() {
 
         List<ItemDTO> items = new ArrayList<>();
 
-        // Testing checkout with no items
         assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
     }
 }

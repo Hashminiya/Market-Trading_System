@@ -27,11 +27,12 @@ public interface IUserFacade {
     public void assignStoreOwner(String userName, long storeId);
     public void assignStoreManager(String userName, long storeId, List<String> storePermissions);
     public List<String> getUserPermission(String userName,long storeId);
-    public long addItemToBasket(String userName,long storeId, long itemId, int quantity);
+    public Long addItemToBasket(String userName,long storeId, long itemId, int quantity);
     public void addPermission(String userName, String userToPermit ,long storeId, String permission);
     public void removePermission(String userName, String userToUnPermit,long storeId, String permission);
     public boolean isRegister(String founderId);
     UserDetails loadUserByUsername(String userName);
     public boolean isAdmin(String userName);
     public int getUserAge(String userName);
+    public void clear();
 }

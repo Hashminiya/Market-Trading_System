@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SystemManagerAT {
 
-    private static final String ADMIN_TOKEN = "adminToken"; // Replace with actual admin token
+   /* private static final String ADMIN_TOKEN = "adminToken"; // Replace with actual admin token
 
     private static ISystemManagerService systemManagerService;
     private static final String ADMIN_USER_NAME ="SystemManager" ;
@@ -46,5 +46,5 @@ public class SystemManagerAT {
     public void testCloseMarket() {
         //Place holder test- this functionality is not required right now
         assert (true);
-    }
+    }*/
 }

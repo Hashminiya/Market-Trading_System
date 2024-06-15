@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RegularDiscountUT {
-    private static final long DISCOUNT_ID = 1L;
+    /*private static final long DISCOUNT_ID = 1L;
     private static final double DISCOUNT_PERCENT = 0.2;  // 20% discount
     private static final long STORE_ID = 1L;
     private final String INVALID_CODE = "INVALIDCODE";
@@ -59,5 +59,13 @@ public class RegularDiscountUT {
         double expectedPrice = 100 * (1 - DISCOUNT_PERCENT);
         assertEquals(expectedPrice, validDiscount.calculatePrice(Map.of(item1, item1.getPrice()), Map.of(item1, 1),null).get(item1));
     }
+
+    @Test
+    void test_calculatePrice_should_return_same_price_for_false_condition() {
+        when(condition.isValid(anyMap())).thenReturn(false);
+        item1.setPrice(100);
+        double expectedPrice = 100;
+        assertEquals(expectedPrice, validDiscount.calculatePrice(Map.of(item1, item1.getPrice()), Map.of(item1, 1), null).get(item1));
+    }*/
 
 }

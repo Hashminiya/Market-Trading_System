@@ -311,9 +311,10 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void clear() {
+        this.storeControllerInstance = null;
         this.storesRepo = null;
-        this.purchaseFacade = null;
-        this.userFacade = null;
+        this.purchaseFacade.clear();
+        this.userFacade.clear();
     }
 
     @Override

@@ -5,6 +5,7 @@ import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DAL.ItemDTO;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -40,9 +41,17 @@ public class UserControllerUT {
         MockitoAnnotations.openMocks(this);
         passwordEncoder = new BCryptPasswordEncoder();
         resetUserControllerInstance();
-        userController = UserController.getInstance(users, SystemManager.getInstance());
+        userController = UserController.getInstance(users, SystemManager.getInstance(), null, null);
         userController.setStoreFacade(storeFacade);
         userController.setPurchaseFacade(purchaseFacade);
+    }
+
+    @AfterEach
+    void tearDown()throws Exception{
+        // Reset the singleton instance or any shared state here
+        userController.clear();
+        storeFacade.clear();
+        purchaseFacade.clear();
     }
 
     private void resetUserControllerInstance() throws Exception {
@@ -52,28 +61,28 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testCreateGuestSession() {
+    public void test_createGuestSession_should_return_guest_name() {
         String guestName = userController.createGuestSession();
         assertTrue(guestName.startsWith("guest"));
         verify(users, times(1)).save(any(User.class));
     }
 
     @Test
-    public void testTerminateGuestSession() {
+    public void test_terminateGuestSession_should_return_guest_name() {
         String guestName = userController.createGuestSession();
         userController.terminateGuestSession(guestName);
         verify(users, times(1)).delete(guestName);
     }
 
     @Test
-    public void testRegister() throws Exception {
+    public void test_register_should_register_given_user() throws Exception {
         when(users.findById(USERNAME_TEST)).thenReturn(null);
         userController.register(USERNAME_TEST, TEST_PASSWORD, 25);
         verify(users, times(1)).save(any(User.class));
     }
 
     @Test
-    public void testRegisterUserAlreadyExists() {
+    public void test_register_should_throw_exception_for_user_already_registered() {
         when(users.findById(USERNAME_TEST)).thenReturn(mock(User.class));
         Exception exception = assertThrows(Exception.class, () -> {
             userController.register(USERNAME_TEST, TEST_PASSWORD, 25);
@@ -82,7 +91,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testLogin() throws Exception {
+    public void test_login_should_return_true() throws Exception {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
         when(user.getPassword()).thenReturn(passwordEncoder.encode(TEST_PASSWORD));
@@ -92,7 +101,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testLoginWrongPassword() throws Exception {
+    public void test_login_should_throw_exception_for_invalid_password() throws Exception {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
         when(user.getPassword()).thenReturn(passwordEncoder.encode(TEST_PASSWORD));
@@ -104,7 +113,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testLoginUserNotExist() {
+    public void test_login_should_throw_exception_for_user_doesnt_exist() {
         when(users.findById(USERNAME_TEST)).thenReturn(null);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -114,7 +123,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testLogout() {
+    public void test_logout_should_log_user_out() {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
 
@@ -123,7 +132,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testViewShoppingCart() {
+    public void test_viewShoppingCart_return_shopping_cart_string() {
         User user = mock(User.class);
         ShoppingCart cart = mock(ShoppingCart.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
@@ -135,7 +144,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testModifyShoppingCart() {
+    public void test_modifyShoppingCart_should_call_function_once() {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
 
@@ -144,7 +153,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testCheckoutShoppingCart() throws Exception {
+    public void test_checkoutShoppingCart_should_call_functions_once() throws Exception {
         User user = mock(User.class);
         List<ItemDTO> items = Arrays.asList(mock(ItemDTO.class));
         when(users.findById(USERNAME_TEST)).thenReturn(user);
@@ -159,7 +168,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testAssignStoreOwner() {
+    public void test_assignStoreOwner_should_call_function_once() {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
 
@@ -168,7 +177,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testAssignStoreManager() {
+    public void test_assignStoreManager_should_call_function_once() {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
         List<String> permissions = Arrays.asList("MANAGE_PRODUCTS", "VIEW_STATS");
@@ -178,7 +187,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testAddItemToBasket() {
+    public void test_addItemToBasket_should_call_function_once() {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
 
@@ -187,7 +196,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testGetUserPermission() {
+    public void test_getUserPermission_should_return_user_store_permissions() {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
         List<String> permissions = Arrays.asList("MANAGE_PRODUCTS", "VIEW_STATS");
@@ -198,7 +207,7 @@ public class UserControllerUT {
     }
 
     @Test
-    public void testIsRegister() {
+    public void test_isRegister_should_return_true() {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
         when(user.isRegister()).thenReturn(true);

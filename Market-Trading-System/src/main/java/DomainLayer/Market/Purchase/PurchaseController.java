@@ -23,11 +23,11 @@ import java.util.concurrent.PriorityBlockingQueue;
 @Component("purchaseController")
 public class PurchaseController implements IPurchaseFacade {
     private static PurchaseController purchaseControllerInstance;
-    private final BlockingQueue<ItemDTO> inventoryReduceItems; // queue to remove products from inventory
-    private final IRepository<Long,Purchase> purchaseRepo;
+    private BlockingQueue<ItemDTO> inventoryReduceItems; // queue to remove products from inventory
+    private IRepository<Long,Purchase> purchaseRepo;
 
-    private final PaymentServiceProxy paymentServiceProxy;
-    private final SupplyServiceProxy supplyServiceProxy;
+    private PaymentServiceProxy paymentServiceProxy;
+    private SupplyServiceProxy supplyServiceProxy;
     private IUserFacade userFacade;
 
     @Autowired
@@ -93,6 +93,25 @@ public class PurchaseController implements IPurchaseFacade {
 
     public void setUserFacade(IUserFacade userFacade) {
         this.userFacade = userFacade;
+    }
+
+    public void setPaymentServiceProxy(PaymentServiceProxy paymentServiceProxy) {
+        this.paymentServiceProxy = paymentServiceProxy;
+    }
+    public void setSupplyServiceProxy(SupplyServiceProxy supplyServiceProxy) {this.supplyServiceProxy = supplyServiceProxy;}
+
+    public void setPurchaseRepo(IRepository<Long, Purchase> purchaseRepo) {
+        this.purchaseRepo = purchaseRepo;
+    }
+
+    public void clear(){
+        purchaseControllerInstance = null;
+        inventoryReduceItems = null; // queue to remove products from inventory
+        purchaseRepo = null;
+
+        paymentServiceProxy = null;
+        supplyServiceProxy = null;
+        userFacade = null;
     }
 }
 

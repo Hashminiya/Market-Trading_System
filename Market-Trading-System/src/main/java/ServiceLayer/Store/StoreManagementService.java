@@ -48,6 +48,12 @@ public class StoreManagementService implements IStoreManagementService {
         return instance;
     }
 
+    public void clear(){
+        storeFacade.clear();
+        userFacade.clear();
+        instance = null;
+    }
+
     @Override
     public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription) {
         try {
