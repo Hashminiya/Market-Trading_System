@@ -85,4 +85,12 @@ public class ShoppingCart {
         }
         return totalPrice;
     }
+    public void clear(){
+        List<Long> ids = baskets.findAll().stream().map(ShoppingBasket::getId).toList();
+        for (long id: ids
+             ) {
+            baskets.delete(id);
+        }
+
+    }
 }

@@ -172,4 +172,7 @@ public class User implements IUser,DataItem<String> {
             storePermissionsAndRole.put(storeId, new HashSet<>());
         storePermissionsAndRole.get(storeId).add(storePermission);
     }
+    public void clearShoppingCart(){
+        this.shoppingCart.clear();
+    }
 }
