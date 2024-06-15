@@ -167,6 +167,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                     itemDetail.put("itemName", item.getName());
                     itemDetail.put("itemPrice", item.getPrice());
                     itemDetail.put("stockAmount", item.getQuantity());
+                    itemDetail.put("category", item.getCategories());
                     itemDetails.add(itemDetail);
                 }
                 storeDetails.put("items", itemDetails);
@@ -175,6 +176,18 @@ public class StoreBuyerService implements IStoreBuyerService {
             return ResponseEntity.status(200).body(storesWithItems);
         } catch (Exception ex) {
             logger.error("Error retrieving all stores with items", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getAllCategories() {
+        try {
+            Set<String> categories = storeFacade.getAllCategories();
+            logger.info("Retrieved all categories");
+            return ResponseEntity.status(200).body(categories);
+        } catch (Exception ex) {
+            logger.error("Error retrieving all categories", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }

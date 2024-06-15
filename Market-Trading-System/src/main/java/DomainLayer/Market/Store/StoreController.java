@@ -17,6 +17,10 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 @Component("StoreController")
 public class StoreController implements IStoreFacade{
@@ -346,4 +350,14 @@ public class StoreController implements IStoreFacade{
     public List<Store> findAll() {
         return storesRepo.findAll();
     }
+
+    @Override
+    public Set<String> getAllCategories() {
+        return storesRepo.findAll().stream()
+                .map(Store::getAllCategories)
+                .flatMap(List::stream)
+                .collect(Collectors.toSet());
+    }
+
+
 }
