@@ -121,6 +121,7 @@ public class UserController implements IUserFacade {
         double totalAmount = user.getShoppingCart().getShoppingCartPrice();
         purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items, totalAmount);
         storeFacade.purchaseOccurs();
+        user.clearShoppingCart();
     }
 
     @Override

@@ -23,5 +23,6 @@ public interface IPurchaseFacade {
     List<Purchase> getPurchaseHistory(String userName);
     public void setUserFacade(IUserFacade userFacade);
     public void clear();
+    public void setPaymentServiceProxy(PaymentServiceProxy paymentServiceProxy);
 
 }
