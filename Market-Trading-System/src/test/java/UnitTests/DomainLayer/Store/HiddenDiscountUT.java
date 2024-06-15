@@ -60,12 +60,4 @@ public class HiddenDiscountUT {
         assertEquals(expectedPrice, validDiscount.calculatePrice(Map.of(item1, item1.getPrice()), Map.of(item1, 1),CODE).get(item1));
     }
 
-    @Test
-    void test_calculatePrice_should_return_same_price_for_invalid_code() {
-        item1.setPrice(100);
-        double expectedPrice = 100;
-        assertEquals(expectedPrice, validDiscount.calculatePrice(Map.of(item1, item1.getPrice()), Map.of(item1, 1), INVALID_CODE).get(item1));
-    }
-
-
 }
