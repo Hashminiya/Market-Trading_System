@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 public class StoreControllerUT {
 
-    /*private final long STORE_ID = 1L;
+    private final long STORE_ID = 1L;
     private final long ITEM_ID = 1L;
     private final String FOUNDER_ID = "founderId";
     private final String USER_ID = "userId";
@@ -182,5 +182,5 @@ public class StoreControllerUT {
         HashMap<Long, HashMap<Long, Integer>> result = storeFacade.viewPurchaseHistory(USER_ID, STORE_ID);
 
         assertNotNull(result);
-    }*/
+    }
 }

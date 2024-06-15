@@ -1,5 +1,6 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Purchase.PaymentServiceProxy;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
@@ -7,6 +8,9 @@ import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
 import org.junit.jupiter.api.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;
@@ -14,9 +18,13 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserAT {
@@ -31,6 +39,8 @@ public class UserAT {
     private static final Date EXPIRY_DATE = new Date(); // Set an appropriate expiry date
     private static final String CVV = "123";
     private static final String DISCOUNT_CODE = "DISCOUNT10";
+    private static long ITEM2_ID;
+    private static long STOREID2 ;
     private static long ITEMID_VODKA;
     private static long ITEMID;
     private static long BASKET_ID;
@@ -51,17 +61,24 @@ public class UserAT {
             "    \"isStore\": false\n" +
             "}";
 
+    @Mock
+    private static PaymentServiceProxy paymentServiceProxy;
     @BeforeAll
     public static void setUp() {
         SetUp.setUp();
+
         serviceFactory = ServiceFactory.getServiceFactory();
         userService = serviceFactory.getUserService();
         storeSevice = serviceFactory.getStoreManagementService();
+
+
         userService.register(USERNAME1, PASSWORD, AGE);
         USERNAME1_TOKEN = userService.login(USERNAME1, PASSWORD).getBody();
         STOREID = (Long) storeSevice.createStore(USERNAME1_TOKEN, "new test store- userAT", "description").getBody();
+        STOREID2 = (Long) storeSevice.createStore(USERNAME1_TOKEN,"second store- userAT ", "descrption").getBody();
         ITEMID = (Long)  storeSevice.addItemToStore(USERNAME1_TOKEN, STOREID,"new item", "desctiprion",50,100, List.of("electronics")).getBody();
         ITEMID_VODKA = (Long) storeSevice.addItemToStore(USERNAME1_TOKEN, STOREID, "vodka", "alcoholic drink",100,50, List.of("alcohol")).getBody();
+        ITEM2_ID = (Long)  storeSevice.addItemToStore(USERNAME1_TOKEN, STOREID2,"new item", "desctiprion",50,15, List.of("electronics")).getBody();
     }
 
     @AfterAll
@@ -157,9 +174,11 @@ public class UserAT {
     @Test
     @Order(11)
     public void test_checkoutShoppingCart_should_return_ok_status() {
-        //ResponseEntity<String> response1 = userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID, 3);
         ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        HashMap<Long, Integer> inventory = (HashMap<Long, Integer>)
+                storeSevice.viewInventory(USERNAME1_TOKEN,STOREID).getBody();
+        assertEquals(95, inventory.get(ITEMID));
     }
     @Test
     @Order(12)
@@ -170,4 +189,47 @@ public class UserAT {
         ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME2_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
+    @Test
+    @Order(13)
+    public void test_checkoutShoppingCart_should_return_okResponse_and_update_inventory_with_2_baskets() {
+
+        HashMap<Long, Integer> inventory_before_action_store1 = (HashMap<Long, Integer>)
+                storeSevice.viewInventory(USERNAME1_TOKEN,STOREID).getBody();
+        HashMap<Long, Integer> inventory_before_action_store2 = (HashMap<Long, Integer>)
+                storeSevice.viewInventory(USERNAME1_TOKEN,STOREID2).getBody();
+
+        userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID_VODKA, 1);
+        userService.addItemToBasket(USERNAME1_TOKEN, STOREID2, ITEM2_ID,10);
+
+        ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        HashMap<Long, Integer> inventory_after_action_store1 = (HashMap<Long, Integer>)
+                storeSevice.viewInventory(USERNAME1_TOKEN,STOREID).getBody();
+        HashMap<Long, Integer> inventory_after_action_store2 = (HashMap<Long, Integer>)
+                storeSevice.viewInventory(USERNAME1_TOKEN,STOREID2).getBody();
+
+        inventory_before_action_store1.put(ITEMID_VODKA,inventory_before_action_store1.get(ITEMID_VODKA) - 1);
+        inventory_before_action_store2.put(ITEM2_ID, inventory_before_action_store2.get(ITEM2_ID)- 10);
+        assertEquals(inventory_before_action_store1, inventory_after_action_store1);
+        assertEquals(inventory_before_action_store2, inventory_after_action_store2);
+    }
+    @Test
+    @Order(14)
+    public void test_checkoutShoppingCart_should_return_error_with_false_from_credit_card_services() {
+        paymentServiceProxy = mock(PaymentServiceProxy.class);
+        when(paymentServiceProxy.chargeCreditCard(anyString(),any(),anyString(),anyDouble())).thenReturn(false);
+        serviceFactory.getPurchaseFacade().setPaymentServiceProxy(paymentServiceProxy);
+
+        HashMap<Long, Integer> inventory_before_action = (HashMap<Long, Integer>)
+                storeSevice.viewInventory(USERNAME1_TOKEN,STOREID).getBody();
+
+        userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID_VODKA, 1);
+
+        ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        HashMap<Long, Integer> inventory_after_action = (HashMap<Long, Integer>)
+                storeSevice.viewInventory(USERNAME1_TOKEN,STOREID).getBody();
+        assertEquals(inventory_before_action, inventory_after_action);
+    }
+
 }

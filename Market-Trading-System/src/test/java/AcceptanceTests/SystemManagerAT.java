@@ -5,6 +5,7 @@ import javax.ws.rs.core.Response;
 
 import ServiceLayer.ServiceFactory;
 import org.junit.jupiter.api.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SystemManagerAT {
 
-   /* private static final String ADMIN_TOKEN = "adminToken"; // Replace with actual admin token
+   private static final String ADMIN_TOKEN = "adminToken"; // Replace with actual admin token
 
     private static ISystemManagerService systemManagerService;
     private static final String ADMIN_USER_NAME ="SystemManager" ;
@@ -30,7 +31,7 @@ public class SystemManagerAT {
     @Order(1)
     public void testViewMarketPurchaseHistory() {
         ResponseEntity<?> response = systemManagerService.viewMarketPurchaseHistory(MANAGER_TOKEN);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -46,5 +47,5 @@ public class SystemManagerAT {
     public void testCloseMarket() {
         //Place holder test- this functionality is not required right now
         assert (true);
-    }*/
+    }
 }
