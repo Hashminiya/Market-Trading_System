@@ -42,7 +42,7 @@ public abstract class Discount implements IDiscount {
     public Map<Item, Double> calculatePrice(Map<Item, Double> itemsPrices, Map<Item, Integer> itemsCount, String code) {
         Map<Item, Double> newItemsPrices = new HashMap<>(itemsPrices);
         for(Item item: itemsCount.keySet().stream().toList()){
-            if(!categories.isEmpty()){
+            if(categories != null && !categories.isEmpty()){
                 boolean found = false;
                 for(String category: categories){
                     if(item.getCategories().contains(category)){
@@ -51,14 +51,14 @@ public abstract class Discount implements IDiscount {
                     }
                 }
                 if(found){
-                    newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent/100) * item.getPrice());
+                    newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent) * item.getPrice());
                 }
             }
             else if(isStore)
-                newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent/100) * newItemsPrices.get(item));
+                newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent) * newItemsPrices.get(item));
             else
                 if(items.contains(item.getId()))
-                    newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent/100) * newItemsPrices.get(item));
+                    newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent) * newItemsPrices.get(item));
 
         }
         return newItemsPrices;

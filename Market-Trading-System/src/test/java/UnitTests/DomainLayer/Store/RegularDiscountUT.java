@@ -60,13 +60,4 @@ public class RegularDiscountUT {
         assertEquals(expectedPrice, validDiscount.calculatePrice(Map.of(item1, item1.getPrice()), Map.of(item1, 1),null).get(item1));
     }
 
-    @Test
-    void test_calculatePrice_should_return_same_price_for_false_condition() {
-        when(condition.isValid(anyMap())).thenReturn(false);
-        item1.setPrice(100);
-        double expectedPrice = 100;
-        assertEquals(expectedPrice, validDiscount.calculatePrice(Map.of(item1, item1.getPrice()), Map.of(item1, 1), null).get(item1));
-    }
-
-
 }

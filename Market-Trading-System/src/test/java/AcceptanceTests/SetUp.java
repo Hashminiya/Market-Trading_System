@@ -1,6 +1,7 @@
 package AcceptanceTests;
 
 import ServiceLayer.ServiceFactory;
+import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;
 
@@ -11,8 +12,8 @@ public class SetUp {
     public static void setUp(){
         ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
         if(!serviceFactory.systemAvailable()) {
-            Response loginResponse = serviceFactory.getUserService().login(ADMIN_USER_NAME, ADMIN_PASSWORD);
-            ADMIN_TOKEN = (String) loginResponse.getEntity();
+            ResponseEntity<String> loginResponse = serviceFactory.getUserService().login(ADMIN_USER_NAME, ADMIN_PASSWORD);
+            ADMIN_TOKEN = loginResponse.getBody();
             serviceFactory.initFactory(ADMIN_TOKEN);
         }
     }
