@@ -34,6 +34,7 @@ public class SystemManagerService implements ISystemManagerService {
         this.purchaseFacade = purchaseFacade;
         this.storeFacade = storeFacade;
         this.userFacade = userFacade;
+        this.jwtService = new JwtService();
     }
 
     public void clear(){
