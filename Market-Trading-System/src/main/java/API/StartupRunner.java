@@ -74,6 +74,7 @@ public class StartupRunner implements CommandLineRunner {
         tokens.add(response3.getBody());
         tokens.add(response4.getBody());
         tokens.add(response5.getBody());
+        userService.logout("admin");
         return tokens;
     }
 
