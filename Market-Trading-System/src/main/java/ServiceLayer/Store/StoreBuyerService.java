@@ -2,6 +2,7 @@ package ServiceLayer.Store;
 
 import javax.ws.rs.core.Response;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Store;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service("StoreBuyerService")
@@ -29,47 +31,45 @@ public class StoreBuyerService implements IStoreBuyerService {
         return instance;
     }
 
+
+
+    @Override
+    public ResponseEntity<?> getAllStores() {
+      try {
+          //rerurn list of all stores
+          List<Store> stores = storeFacade.getAllStores();
+            logger.info("Retrieved all stores");
+            return ResponseEntity.status(200).body(stores);
+        } catch (Exception ex) {
+            logger.error("Error retrieving all stores", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+
+      }
+    }
+
     @Override
     public ResponseEntity<?> getAllProductsInfoByStore(long storeId) {
-        HashMap<Long, String> products = new HashMap<>();
-        products.put(1L, "Laptop");
-        products.put(2L, "Smart TV");
-        products.put(3L, "Bluetooth Speaker");
-        return ResponseEntity.ok(products);
+        try {
+            HashMap<Long, String> result = storeFacade.getAllProductsInfoByStore(storeId);
+            logger.info("Retrieved all products info for store: {}", storeId);
+            return ResponseEntity.status(200).body(result);
+        } catch (Exception ex) {
+            logger.error("Error retrieving products info for store: {}", storeId, ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
     }
 
     @Override
     public ResponseEntity<?> getAllStoreInfo() {
-        HashMap<Long, String> stores = new HashMap<>();
-        stores.put(1L, "Electronics");
-        stores.put(2L, "Clothing");
-        stores.put(3L, "Camping");
-        return ResponseEntity.ok(stores);
+        try {
+            HashMap<Long, String> result = storeFacade.getAllStoreInfo();
+            logger.info("Retrieved all store info");
+            return ResponseEntity.status(200).body(result);
+        } catch (Exception ex) {
+            logger.error("Error retrieving all store info", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
     }
-
-//    @Override
-//    public ResponseEntity<?> getAllProductsInfoByStore(long storeId) {
-//        try {
-//            HashMap<Long, String> result = storeFacade.getAllProductsInfoByStore(storeId);
-//            logger.info("Retrieved all products info for store: {}", storeId);
-//            return ResponseEntity.status(200).body(result);
-//        } catch (Exception ex) {
-//            logger.error("Error retrieving products info for store: {}", storeId, ex);
-//            return ResponseEntity.status(500).body(ex.getMessage());
-//        }
-//    }
-//
-//    @Override
-//    public ResponseEntity<?> getAllStoreInfo() {
-//        try {
-//            HashMap<Long, String> result = storeFacade.getAllStoreInfo();
-//            logger.info("Retrieved all store info");
-//            return ResponseEntity.status(200).body(result);
-//        } catch (Exception ex) {
-//            logger.error("Error retrieving all store info", ex);
-//            return ResponseEntity.status(500).body(ex.getMessage());
-//        }
-//    }
 
     @Override
     public ResponseEntity<?> searchInStoreByCategory(long storeId, String category) {
@@ -166,4 +166,6 @@ public class StoreBuyerService implements IStoreBuyerService {
         logger.warn("No results found for general search by keyword: {} and category: {}", keyWord, category);
         return ResponseEntity.status(204).body(EMPTY_RESULT_ERROR);
     }
+
+
 }

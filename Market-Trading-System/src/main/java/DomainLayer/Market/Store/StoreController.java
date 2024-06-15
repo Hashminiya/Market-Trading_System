@@ -193,7 +193,7 @@ public class StoreController implements IStoreFacade{
         Store store = storesRepo.findById(storeId);
         List<Item> items = store.viewInventory();
         HashMap<Long, String> result = new HashMap<>();
-        for(Item item: items){
+        for (Item item : items) {
             result.put(item.getId(), item.getName());
         }
         return result;
@@ -202,11 +202,31 @@ public class StoreController implements IStoreFacade{
     @Override
     public HashMap<Long, String> getAllStoreInfo() {
         HashMap<Long, String> result = new HashMap<>();
-        for(Store store: storesRepo.findAll()){
+        for (Store store : storesRepo.findAll()) {
             result.put(store.getId(), store.getName());
         }
         return result;
     }
+
+//    @Override
+//    public HashMap<Long, String> getAllProductsInfoByStore(long storeId) {
+//        Store store = storesRepo.findById(storeId);
+//        List<Item> items = store.viewInventory();
+//        HashMap<Long, String> result = new HashMap<>();
+//        for(Item item: items){
+//            result.put(item.getId(), item.getName());
+//        }
+//        return result;
+//    }
+//
+//    @Override
+//    public HashMap<Long, String> getAllStoreInfo() {
+//        HashMap<Long, String> result = new HashMap<>();
+//        for(Store store: storesRepo.findAll()){
+//            result.put(store.getId(), store.getName());
+//        }
+//        return result;
+//    }
 
     @Override
     public HashMap<Long, String> searchInStoreByCategory(long storeId, String category) {
@@ -337,5 +357,20 @@ public class StoreController implements IStoreFacade{
             throw new Exception("User doesn't has permission to view the store purchase history");
         Store store = storesRepo.findById(storeId);
         store.addPolicy(policyDetails);
+    }
+
+    @Override
+    public List<Store> getAllStores() {
+        // create a new list to avoid returning the actual list (just for testing purposes)
+
+        //create 10 stores and add them to the list
+        for (int i = 0; i < 10; i++) {
+            Store store = new Store(IdGenerator.generateId(), "store" + i, "store" + i,"this is store number:" + i , new InMemoryRepository<>(), new InMemoryRepository<>());
+            storesRepo.save(store);
+
+
+        }
+        return storesRepo.findAll();
+
     }
 }
