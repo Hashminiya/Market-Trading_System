@@ -11,6 +11,7 @@ import DomainLayer.Market.User.IUserFacade;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public interface IStoreFacade {
     public static IStoreFacade getInstance(IRepository<Long, Store> storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance)
@@ -52,4 +53,6 @@ public interface IStoreFacade {
     public void addPolicy(String userName, long storeId, String policyDetails) throws Exception;
 
     List<Store> findAll();
+
+    Set<String> getAllCategories();
 }

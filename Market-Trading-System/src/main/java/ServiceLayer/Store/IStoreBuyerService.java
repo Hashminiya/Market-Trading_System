@@ -17,4 +17,5 @@ public interface IStoreBuyerService {
     public ResponseEntity<?> searchGenerallyByKeyWordAndCategory(String category, String keyWord);
     ResponseEntity<?> getAllStoresWithItems();
 
+    ResponseEntity<?> getAllCategories();
 }
