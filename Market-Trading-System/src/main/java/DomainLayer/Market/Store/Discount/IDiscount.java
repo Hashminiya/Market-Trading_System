@@ -2,12 +2,13 @@ package DomainLayer.Market.Store.Discount;
 
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Date;
 import java.util.Map;
 import java.util.List;
 
-
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public interface IDiscount extends DataItem<Long> {
 
     public Long getId();

@@ -2,14 +2,15 @@ package ServiceLayer.Store;
 
 import javax.ws.rs.core.Response;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.Store;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 @Service("StoreBuyerService")
 public class StoreBuyerService implements IStoreBuyerService {
@@ -152,5 +153,34 @@ public class StoreBuyerService implements IStoreBuyerService {
         }
         logger.warn("No results found for general search by keyword: {} and category: {}", keyWord, category);
         return ResponseEntity.status(204).body(EMPTY_RESULT_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<?> getAllStoresWithItems() {
+        try {
+            List<Store> stores = storeFacade.findAll();
+            Map<Long, Map<String, Object>> storesWithItems = new HashMap<>();
+            for (Store store : stores) {
+                Map<String, Object> storeDetails = new HashMap<>();
+                storeDetails.put("storeName", store.getName());
+                storeDetails.put("storeDescription", store.getDescription());
+                List<Item> items = store.viewInventory();
+                List<Map<String, Object>> itemDetails = new ArrayList<>();
+                for (Item item : items) {
+                    Map<String, Object> itemDetail = new HashMap<>();
+                    itemDetail.put("itemId", item.getId());
+                    itemDetail.put("itemName", item.getName());
+                    itemDetail.put("itemPrice", item.getPrice());
+                    itemDetail.put("stockAmount", item.getQuantity());
+                    itemDetails.add(itemDetail);
+                }
+                storeDetails.put("items", itemDetails);
+                storesWithItems.put(store.getId(), storeDetails);
+            }
+            return ResponseEntity.status(200).body(storesWithItems);
+        } catch (Exception ex) {
+            logger.error("Error retrieving all stores with items", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
     }
 }

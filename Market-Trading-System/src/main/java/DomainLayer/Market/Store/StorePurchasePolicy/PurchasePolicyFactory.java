@@ -7,11 +7,9 @@ import DomainLayer.Market.Util.IRepository;
 public class PurchasePolicyFactory {
 
     private final IUserFacade userFacade;
-    IRepository<Long, Item> productsRepo;
 
-    public PurchasePolicyFactory(IUserFacade userFacade, IRepository<Long, Item> productsRepo) {
+    public PurchasePolicyFactory(IUserFacade userFacade) {
         this.userFacade = userFacade;
-        this.productsRepo = productsRepo;
     }
 
     public void createPolicy(PurchasePolicy policy) {

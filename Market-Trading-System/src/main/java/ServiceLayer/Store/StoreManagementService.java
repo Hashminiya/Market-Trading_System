@@ -299,7 +299,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error adding discount", ex);
+            logger.error("Error adding policy", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }

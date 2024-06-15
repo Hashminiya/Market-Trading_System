@@ -68,5 +68,4 @@ public class RegularDiscountUT {
         assertEquals(expectedPrice, validDiscount.calculatePrice(Map.of(item1, item1.getPrice()), Map.of(item1, 1), null).get(item1));
     }*/
 
-
 }

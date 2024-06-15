@@ -63,6 +63,9 @@ public class StoreControllerUT {
         storeMock = mock(Store.class);
 
         storeFacade = StoreController.getInstance(storesRepoMock, userFacadeMock, purchaseFacadeMock);
+        storeFacade.setUserFacade(userFacadeMock);
+        storeFacade.setStoersRepo(storesRepoMock);
+        storeFacade.setPurchaseFacade(purchaseFacadeMock);
     }
 
     @AfterEach
@@ -74,7 +77,7 @@ public class StoreControllerUT {
     void test_createStore_should_saveNewStore() throws Exception {
         when(userFacadeMock.isRegister(FOUNDER_ID)).thenReturn(true);
 
-        storeFacade.createStore(FOUNDER_ID, "storeName", "storeDescription", discountRepoMock);
+        storeFacade.createStore(FOUNDER_ID, "storeName", "storeDescription");
 
         verify(storesRepoMock).save(any(Store.class));
     }
