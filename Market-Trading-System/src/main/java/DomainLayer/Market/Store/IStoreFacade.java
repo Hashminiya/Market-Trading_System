@@ -50,4 +50,6 @@ public interface IStoreFacade {
 
     public void addDiscount(String userName, long storeId, String discountDetails) throws Exception;
     public void addPolicy(String userName, long storeId, String policyDetails) throws Exception;
+
+    List<Store> findAll();
 }
