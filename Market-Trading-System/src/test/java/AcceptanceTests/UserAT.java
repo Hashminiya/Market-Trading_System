@@ -163,11 +163,11 @@ public class UserAT {
     }
     @Test
     @Order(12)
-    public void test_checkoutShoppingCart_should_return_error_with_policy_restricting() {
+    public void test_checkoutShoppingCart_should_return_error_with_alcohol_item_user_under_18() {
         storeSevice.addPolicy(USERNAME1_TOKEN, STOREID,ALCOHOL_POLICY);
         USERNAME2_TOKEN = userService.login(USERNAME2, PASSWORD).getBody();
         userService.addItemToBasket(USERNAME2_TOKEN, STOREID, ITEMID_VODKA, 1);
-        ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME2_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
 }
