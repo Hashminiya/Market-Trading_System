@@ -26,10 +26,12 @@ public class UserAT {
     private static final String USERNAME2 = "testUser2";
     private static final String PASSWORD = "password123";
     private static final int AGE = 25;
+    private static final int AGE_UNDER_18 = 15;
     private static final String CREDIT_CARD = "1234-5678-9876-5432";
     private static final Date EXPIRY_DATE = new Date(); // Set an appropriate expiry date
     private static final String CVV = "123";
     private static final String DISCOUNT_CODE = "DISCOUNT10";
+    private static long ITEMID_VODKA;
     private static long ITEMID;
     private static long BASKET_ID;
     private static long STOREID;
@@ -39,6 +41,15 @@ public class UserAT {
     private static UserService userService;
     private static ServiceFactory serviceFactory;
     private static StoreManagementService storeSevice;
+    private static String ALCOHOL_POLICY = "{\n" +
+            "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
+            "    \"name\": \"Alcohol 18 and above\",\n" +
+            "    \"id\": 10002,\n" +
+            "    \"minAge\": 18,\n"+
+            "    \"items\": null,\n" +
+            "    \"categories\": [\"alcohol\"],\n" +
+            "    \"isStore\": false\n" +
+            "}";
 
     @BeforeAll
     public static void setUp() {
@@ -50,6 +61,7 @@ public class UserAT {
         USERNAME1_TOKEN = userService.login(USERNAME1, PASSWORD).getBody();
         STOREID = (Long) storeSevice.createStore(USERNAME1_TOKEN, "new test store- userAT", "description").getBody();
         ITEMID = (Long)  storeSevice.addItemToStore(USERNAME1_TOKEN, STOREID,"new item", "desctiprion",50,100, List.of("electronics")).getBody();
+        ITEMID_VODKA = (Long) storeSevice.addItemToStore(USERNAME1_TOKEN, STOREID, "vodka", "alcoholic drink",100,50, List.of("alcohol")).getBody();
     }
 
     @AfterAll
@@ -86,7 +98,7 @@ public class UserAT {
     @Test
     @Order(3)
     public void test_register_should_return_ok_status() {
-        ResponseEntity<String> response = userService.register(USERNAME2, PASSWORD, AGE);
+        ResponseEntity<String> response = userService.register(USERNAME2, PASSWORD, AGE_UNDER_18);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
@@ -146,6 +158,15 @@ public class UserAT {
     @Order(11)
     public void test_checkoutShoppingCart_should_return_ok_status() {
         //ResponseEntity<String> response1 = userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID, 3);
+        ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
+    @Test
+    @Order(12)
+    public void test_checkoutShoppingCart_should_return_error_with_policy_restricting() {
+        storeSevice.addPolicy(USERNAME1_TOKEN, STOREID,ALCOHOL_POLICY);
+        USERNAME2_TOKEN = userService.login(USERNAME2, PASSWORD).getBody();
+        userService.addItemToBasket(USERNAME2_TOKEN, STOREID, ITEMID_VODKA, 1);
         ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
