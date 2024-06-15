@@ -3,6 +3,7 @@ package DomainLayer.Market.Store;
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
+import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicyFactory;
 import DomainLayer.Market.Util.*;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
@@ -75,6 +76,7 @@ public class StoreController implements IStoreFacade{
         long storeId = generateStoreId();
         IRepository<Long, IDiscount> discounts = new InMemoryRepository<>();
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts, policyRepo);
+        newStore.setPolicyFactory(new PurchasePolicyFactory(userFacade));
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);
         return storeId;//for test purposes
@@ -327,15 +329,15 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void addDiscount(String userName, long storeId, String discountDetails) throws Exception{
-        if(userFacade.checkPermission(userName, storeId, ADD_DISCOUNT))
-            throw new Exception("User doesn't has permission to view the store purchase history");
+        if(!userFacade.checkPermission(userName, storeId, ADD_DISCOUNT))
+            throw new Exception("User doesn't has permission to add discount");
         Store store = storesRepo.findById(storeId);
         store.addDiscount(discountDetails);
     }
     @Override
     public void addPolicy(String userName, long storeId, String policyDetails) throws Exception{
-        if(userFacade.checkPermission(userName, storeId, ADD_POLICY))
-            throw new Exception("User doesn't has permission to view the store purchase history");
+        if(!userFacade.checkPermission(userName, storeId, ADD_POLICY))
+            throw new Exception("User doesn't has permission to add policy");
         Store store = storesRepo.findById(storeId);
         store.addPolicy(policyDetails);
     }
