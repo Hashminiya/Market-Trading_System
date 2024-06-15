@@ -194,8 +194,8 @@ public class Store implements DataItem<Long> {
 
     public void addPolicy(String policyDetails) throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerSubtypes(new NamedType(AgeRestrictedPurchasePolicy.class, "ageRestrictedPolicy"));
-        objectMapper.registerSubtypes(new NamedType(MaximumQuantityPurchasePolicy.class, "MaximumQuantityPolicy"));
+        objectMapper.registerSubtypes(new NamedType(AgeRestrictedPurchasePolicy.class, "AgeRestrictedPurchasePolicy"));
+        objectMapper.registerSubtypes(new NamedType(MaximumQuantityPurchasePolicy.class, "PurchasePolicyComposite"));
         objectMapper.registerSubtypes(new NamedType(PurchasePolicyComposite.class, "PurchasePolicyComposite"));
 
         try {
