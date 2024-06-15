@@ -1,6 +1,7 @@
 package DomainLayer.Market.Util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.List;
 
 
 @Repository("InMemoryRepository")
+@Scope("prototype")
 public class InMemoryRepository<K,T extends DataItem<K>> implements IRepository<K,T> {
 
     protected HashMap<K,T> data = new HashMap<K,T>();
