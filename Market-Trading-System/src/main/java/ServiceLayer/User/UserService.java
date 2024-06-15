@@ -2,7 +2,6 @@ package ServiceLayer.User;
 
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.JwtService;
-import API.model.UserModel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.logging.log4j.LogManager;
@@ -215,11 +214,5 @@ public class UserService implements IUserService {
             logger.error("Error removing permission", e);
             return ResponseEntity.status(500).body("Error removing permission");
         }
-    }
-
-    public ResponseEntity<UserModel> getUser(String userName){
-        if(userName.equals("noam"))
-            return ResponseEntity.ok(new UserModel("noam", "12345", 1));
-        else return ResponseEntity.status(500).build();
     }
 }

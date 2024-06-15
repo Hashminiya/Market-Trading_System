@@ -49,12 +49,12 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
-    public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription, IRepository<Long, IDiscount> repository) {
+    public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription) {
         try {
             String userName = jwtService.extractUsername(founderToken);
             if (jwtService.isValid(founderToken, userFacade.loadUserByUsername(userName))) {
                 //return ResponseEntity.status(200).body(storeFacade.viewStoreManagementInfo(userName, storeId))
-                ResponseEntity<Long> response = ResponseEntity.status(200).body(storeFacade.createStore(userName, storeName, storeDescription, repository));
+                ResponseEntity<Long> response = ResponseEntity.status(200).body(storeFacade.createStore(userName, storeName, storeDescription));
                 logger.info("Store created by user: {}", userName);
                 return response;
             } else {
@@ -72,8 +72,7 @@ public class StoreManagementService implements IStoreManagementService {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
-                ResponseEntity<Long> response = ResponseEntity.status(200).body(
-                        storeFacade.addItemToStore(userName, storeId, itemName, itemPrice, stockAmount, description, categories));
+                ResponseEntity<Long> response = ResponseEntity.status(200).body(storeFacade.addItemToStore(userName, storeId, itemName, itemPrice, stockAmount, description, categories));
                 logger.info("Item added to store by user: {}", userName);
                 return response;
             } else {

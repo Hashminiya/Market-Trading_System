@@ -1,6 +1,7 @@
 package API.controller;
 
 import DomainLayer.Market.Store.Discount.Discount;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Util.IRepository;
 import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.Store.IStoreManagementService;
@@ -24,12 +25,12 @@ public class StoreManagementControllerApi {
     }
 
     @PostMapping("storeManagement/createStore")
-    public ResponseEntity<String> createStore(@RequestParam String founderToken, @RequestParam String storeName, @RequestParam String storeDescription,@RequestParam IRepository<Long, Discount> repository) {
-        return storeManagementService.createStore(founderToken, storeName, storeDescription, repository);
+    public ResponseEntity<?> createStore(@RequestParam String founderToken, @RequestParam String storeName, @RequestParam String storeDescription) {
+        return storeManagementService.createStore(founderToken, storeName, storeDescription);
     }
 
     @PutMapping("storeManagement/addItemToStore")
-    public ResponseEntity<String> addItemToStore(@RequestParam String token,@RequestParam long storeId,@RequestParam String itemName,@RequestParam String description,@RequestParam double itemPrice,@RequestParam int stockAmount,@RequestParam List<String> categories) {
+    public ResponseEntity<?> addItemToStore(@RequestParam String token,@RequestParam long storeId,@RequestParam String itemName,@RequestParam String description,@RequestParam double itemPrice,@RequestParam int stockAmount,@RequestParam List<String> categories) {
         return storeManagementService.addItemToStore(token, storeId, itemName, description, itemPrice, stockAmount, categories);
     }
 
