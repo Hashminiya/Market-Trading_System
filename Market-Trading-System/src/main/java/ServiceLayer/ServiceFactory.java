@@ -196,4 +196,7 @@ public class ServiceFactory {
         jwtService = null;
     }
 
+    public void setPaymentServiceInstance(PaymentServiceImpl paymentServiceInstance) {
+        ServiceFactory.paymentServiceInstance = paymentServiceInstance;
+    }
 }
