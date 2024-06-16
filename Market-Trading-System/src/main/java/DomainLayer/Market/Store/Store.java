@@ -73,7 +73,7 @@ public class Store implements DataItem<Long> {
         return products.findAll();
     }
 
-    public void addItem(Long itemId, String name, double price, int quantity, String description, List<String> categories){
+    public void addItem(Long itemId, String name, double price, int quantity, String description, List<String> categories)throws InterruptedException{
         Item newItem = new Item(itemId, name, description, categories);
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
@@ -81,7 +81,7 @@ public class Store implements DataItem<Long> {
     }
 
 
-    public void updateItem(long itemId, String newName, double newPrice, int quantity){
+    public void updateItem(long itemId, String newName, double newPrice, int quantity)throws InterruptedException{
         Item toEdit = products.findById(itemId);
         toEdit.setName(newName);
         toEdit.setPrice(newPrice);
@@ -115,7 +115,7 @@ public class Store implements DataItem<Long> {
         return products.findById(itemId).getQuantity() >= amount;
     }
 
-    public void updateAmount(long itemId, int toDecrease){
+    public void updateAmount(long itemId, int toDecrease)throws InterruptedException{
         products.findById(itemId).decrease(toDecrease);
     }
 
@@ -180,10 +180,15 @@ public class Store implements DataItem<Long> {
         }
 
     }
-    public boolean checkValidBasket(ShoppingBasket basket, String userDetails){
+    public boolean checkValidBasket(ShoppingBasket basket, String userDetails) throws InterruptedException{
         HashMap<Item, Integer> itemsInBasket = new HashMap<>();
         for (Map.Entry<Long, Integer> pair: basket.getItems().entrySet()) {
+            products.findById(pair.getKey()).lock(); //sync
             itemsInBasket.put(products.findById(pair.getKey()), pair.getValue());
+            if(products.findById(pair.getKey()).getQuantity() < pair.getValue()) {
+                products.findById(pair.getKey()).unlock(); //sync
+                return false;
+            }
         }
         for (PurchasePolicy policy:purchasePolicies.findAll()){
             if(!policy.isValid(itemsInBasket, userDetails))
@@ -207,5 +212,9 @@ public class Store implements DataItem<Long> {
             throw new Exception("Error while creating policy\n" + e.getMessage());
         }
 
+    }
+
+    public void releaseLocks(long itemId) {
+        products.findById(itemId).unlock(); //sync
     }
 }

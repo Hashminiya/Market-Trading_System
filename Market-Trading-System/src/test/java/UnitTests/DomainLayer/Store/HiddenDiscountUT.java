@@ -54,7 +54,7 @@ public class HiddenDiscountUT {
     }
 
     @Test
-    void test_calculatePrice_should_return_correct_map_after_discounts_for_validDiscount() {
+    void test_calculatePrice_should_return_correct_map_after_discounts_for_validDiscount() throws InterruptedException {
         item1.setPrice(100);
         double expectedPrice = 100 * (1 - DISCOUNT_PERCENT);
         assertEquals(expectedPrice, validDiscount.calculatePrice(Map.of(item1, item1.getPrice()), Map.of(item1, 1),CODE).get(item1));

@@ -146,7 +146,7 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -163,7 +163,7 @@ public class UserService implements IUserService {
             logger.error("Error during checkout", e);
             return ResponseEntity.status(500).body("Error during checkout");
         }
-    }
+    }*/
 
     @Override
     public ResponseEntity<String> addItemToBasket(String token, long storeId, long itemId, int quantity) {

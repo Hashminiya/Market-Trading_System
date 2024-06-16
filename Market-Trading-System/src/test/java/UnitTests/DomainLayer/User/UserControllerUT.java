@@ -137,9 +137,13 @@ public class UserControllerUT {
         ShoppingCart cart = mock(ShoppingCart.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
         when(user.getShoppingCart()).thenReturn(cart);
-        when(cart.viewShoppingCart()).thenReturn("Shopping cart content");
-
-        String content = userController.viewShoppingCart(USERNAME_TEST);
+        try {
+            when(cart.viewShoppingCart(storeFacade)).thenReturn("Shopping cart content");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        String content = assertDoesNotThrow(() -> userController.viewShoppingCart(USERNAME_TEST));
+        //String content = userController.viewShoppingCart(USERNAME_TEST);
         assertEquals("Shopping cart content", content);
     }
 

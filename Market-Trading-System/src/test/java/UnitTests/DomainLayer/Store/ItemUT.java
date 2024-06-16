@@ -32,7 +32,7 @@ public class ItemUT {
     private Item item;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InterruptedException {
         MockitoAnnotations.openMocks(this);
         discountsMock = new InMemoryRepository<Long,Discount>();
         item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, ITEM_CATEGORIES);
@@ -51,7 +51,7 @@ public class ItemUT {
     }
 
     @Test
-    void test_setName_should_updateItemName() {
+    void test_setName_should_updateItemName() throws InterruptedException {
         String newName = "New Item Name";
         item.setName(newName);
         assertEquals(newName, item.getName());
@@ -63,7 +63,7 @@ public class ItemUT {
     }
 
     @Test
-    void test_setDescription_should_updateItemDescription() {
+    void test_setDescription_should_updateItemDescription() throws InterruptedException {
         String newDescription = "New Description";
         item.setDescription(newDescription);
         assertEquals(newDescription, item.getDescription());
@@ -75,7 +75,7 @@ public class ItemUT {
     }
 
     @Test
-    void test_setPrice_should_updateItemPrice() {
+    void test_setPrice_should_updateItemPrice() throws InterruptedException {
         double newPrice = 20.99;
         item.setPrice(newPrice);
         assertEquals(newPrice, item.getPrice());
@@ -87,7 +87,7 @@ public class ItemUT {
     }
 
     @Test
-    void test_setQuantity_should_updateItemQuantity() {
+    void test_setQuantity_should_updateItemQuantity() throws InterruptedException {
         int newQuantity = 50;
         item.setQuantity(newQuantity);
         assertEquals(newQuantity, item.getQuantity());
@@ -99,7 +99,7 @@ public class ItemUT {
     }
 
     @Test
-    void test_decreaseQuantity_should_reduceItemQuantity() {
+    void test_decreaseQuantity_should_reduceItemQuantity() throws InterruptedException{
         int decreaseBy = 10;
         item.decrease(decreaseBy);
         assertEquals(ITEM_QUANTITY - decreaseBy, item.getQuantity());

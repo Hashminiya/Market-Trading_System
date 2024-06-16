@@ -8,10 +8,8 @@ import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.User.IUserFacade;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public interface IStoreFacade {
     public static IStoreFacade getInstance(IRepository<Long, Store> storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance)
@@ -41,13 +39,13 @@ public interface IStoreFacade {
     public HashMap<Long,String> searchGenerallyByKeyWord(String keyWord);
     public HashMap<Long,String> searchGenerallyByKeyWordAndCategory(String category, String keyWord);
     public boolean addItemToShoppingBasket(ShoppingBasket basket, long storeId, long itemId, int quantity);
-    public void purchaseOccurs();
+    public void purchaseOccurs()throws InterruptedException;
     public void calculateBasketPrice(ShoppingBasket basket, String code)throws Exception;
 
     void clear();
 
     void setStoersRepo(IRepository<Long,Store> storesRepo);
-    public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName);
+    public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName) throws InterruptedException;
 
     public void addDiscount(String userName, long storeId, String discountDetails) throws Exception;
     public void addPolicy(String userName, long storeId, String policyDetails) throws Exception;
@@ -55,4 +53,6 @@ public interface IStoreFacade {
     List<Store> findAll();
 
     Set<String> getAllCategories();
+    public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception;
+
 }

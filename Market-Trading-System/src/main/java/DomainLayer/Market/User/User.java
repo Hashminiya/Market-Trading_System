@@ -8,6 +8,7 @@ import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Market.Util.StoreRole;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class User implements IUser,DataItem<String> {
     private String userName;

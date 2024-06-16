@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -84,4 +85,8 @@ public class StoreManagementControllerApi {
         return storeManagementService.assignStoreManager(token, storeId, newManagerI, permissions);
     }
 
+    @PostMapping("/user/checkoutShoppingCart")
+    public ResponseEntity<String> checkoutShoppingCart(@RequestParam String token, @RequestParam String creditCard, @RequestParam Date expiryDate, @RequestParam String cvv, @RequestParam String discountCode) {
+        return storeManagementService.checkoutShoppingCart(token, creditCard, expiryDate, cvv, discountCode);
+    }
 }

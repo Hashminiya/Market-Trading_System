@@ -62,7 +62,7 @@ public class StoreUT {
     }
 
     @Test
-    void test_addItem_should_addNewItemToStore() {
+    void test_addItem_should_addNewItemToStore() throws InterruptedException {
         String itemName = "Test Item";
         double itemPrice = 10.99;
         int itemQuantity = 100;
@@ -82,7 +82,7 @@ public class StoreUT {
 
 
     @Test
-    void test_updateItem_should_updateStoreItemDetails() {
+    void test_updateItem_should_updateStoreItemDetails() throws InterruptedException {
         store.addItem(ITEM_ID_1, "Old Item", 10.0, 10, "Old Description", List.of("Category1"));
 
         String newName = "New Item";
@@ -98,7 +98,7 @@ public class StoreUT {
     }
 
     @Test
-    void test_deleteItem_should_removeItemFromStore() {
+    void test_deleteItem_should_removeItemFromStore() throws InterruptedException {
         long itemId = 1L;
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
 
@@ -108,7 +108,7 @@ public class StoreUT {
     }
 
     @Test
-    void test_isAvailable_should_returnItemAvailability() {
+    void test_isAvailable_should_returnItemAvailability() throws InterruptedException {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
 
         assertTrue(store.isAvailable(ITEM_ID_1, 5));
@@ -116,7 +116,7 @@ public class StoreUT {
     }
 
     @Test
-    void test_updateAmount_should_updateItemQuantity() {
+    void test_updateAmount_should_updateItemQuantity() throws InterruptedException {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
 
         store.updateAmount(ITEM_ID_1, 5);
@@ -125,7 +125,7 @@ public class StoreUT {
     }
 
     @Test
-    void test_search_should_returnItemsMatchingKeyword() {
+    void test_search_should_returnItemsMatchingKeyword() throws InterruptedException {
         String keyword = "Test";
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2"));
@@ -136,7 +136,7 @@ public class StoreUT {
     }
 
     @Test
-    void test_searchWithCategory_should_returnItemsMatchingKeywordAndCategory() {
+    void test_searchWithCategory_should_returnItemsMatchingKeywordAndCategory() throws InterruptedException {
         String category = "testcategory";
         String keyword = "Test";
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of(category));
@@ -148,7 +148,7 @@ public class StoreUT {
     }
 
     @Test
-    void test_getAllCategories_should_returnAllCategories() {
+    void test_getAllCategories_should_returnAllCategories() throws InterruptedException {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1", "Category2"));
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2", "Category3"));
 

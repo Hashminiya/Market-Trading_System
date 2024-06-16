@@ -2,6 +2,8 @@ package DomainLayer.Market.User;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
@@ -20,7 +22,7 @@ public interface IUserFacade {
     public void terminateGuestSession(String userName);
     public void register(String userName, String password, int dateOfBirth) throws Exception;
     public void logout(String userName);
-    public String viewShoppingCart(String userName);
+    public String viewShoppingCart(String userName) throws Exception;
     public void modifyShoppingCart(String userName, long storeId, long itemId, int newQuantity);
     public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception;
     public boolean checkPermission(String userName,long storeId, String permission);
