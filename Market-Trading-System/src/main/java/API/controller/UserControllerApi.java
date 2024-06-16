@@ -57,8 +57,6 @@ public class UserControllerApi {
 
     @PostMapping("/user/login")
     public ResponseEntity<String> login(@RequestParam String userName,@RequestParam String password) {
-        if(!Application.systemInitialize && !userName.equals("admin"))
-            return ResponseEntity.status(500).body("Trading system closed, waiting for admin to open the system for trading");
         return userService.login(userName, password);
     }
 
