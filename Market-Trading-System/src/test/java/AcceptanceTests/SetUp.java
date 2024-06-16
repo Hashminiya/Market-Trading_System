@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import javax.ws.rs.core.Response;
 
 public class SetUp {
-    private static final String ADMIN_USER_NAME ="SystemManager" ;
-    private static final String ADMIN_PASSWORD = "SystemManagerPassword";
+    private static final String ADMIN_USER_NAME ="admin" ;
+    private static final String ADMIN_PASSWORD = "admin";
     public static String ADMIN_TOKEN;
     public static void setUp(){
         ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
