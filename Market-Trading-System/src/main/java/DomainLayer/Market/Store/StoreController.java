@@ -56,6 +56,16 @@ public class StoreController implements IStoreFacade{
         return storeControllerInstance;
     }
 
+    public Item getItem(Long key) {
+        //go over all store and find item:
+        List<Store> stores = storesRepo.findAll();
+        for (Store store : stores ){
+            if (store.getById(key) != null)
+                return store.getById(key);
+        }
+        return null;
+    }
+
     @Override
     public void setUserFacade(IUserFacade userFacadeInstance) {
         userFacade = userFacadeInstance;

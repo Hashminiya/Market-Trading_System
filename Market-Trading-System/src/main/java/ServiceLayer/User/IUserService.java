@@ -2,6 +2,7 @@ package ServiceLayer.User;
 import java.util.Date;
 import java.util.List;
 
+
 import org.springframework.http.ResponseEntity;
 
 
@@ -18,4 +19,6 @@ public interface IUserService{
     public ResponseEntity<String> addPermission(String token, String userToPermit,long storeId, String permission);
     public ResponseEntity<String> removePermission(String token, String userToUnPermit,long storeId, String permission);
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token);
+
+    ResponseEntity<?> getShoppingCart(String token);
 }

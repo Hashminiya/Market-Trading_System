@@ -1,6 +1,12 @@
 package ServiceLayer.User;
 
+import API.SpringContext;
+import DAL.ItemDTO;
+import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,11 +16,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import java.util.Date;
 import java.util.List;
+import java.lang.reflect.Field;
+
+import java.util.*;
 
 
 @Service("userService")
 public class UserService implements IUserService {
     private static final Logger logger = LogManager.getLogger(UserService.class);
+
     private IUserFacade userFacade;
     private JwtService jwtService;
     private static UserService instance;
@@ -22,6 +32,7 @@ public class UserService implements IUserService {
     private UserService(@Qualifier("userController") IUserFacade userFacade) {
         this.userFacade = userFacade;
         this.jwtService = new JwtService();
+
     }
 
     public static synchronized UserService getInstance(IUserFacade userFacade) {
@@ -31,7 +42,7 @@ public class UserService implements IUserService {
         return instance;
     }
 
-    public void clear(){
+    public void clear() {
         userFacade.clear();
         instance = null;
     }
@@ -190,9 +201,9 @@ public class UserService implements IUserService {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                userFacade.addPermission(userName, userToPermit,storeId, permission);
+                userFacade.addPermission(userName, userToPermit, storeId, permission);
                 logger.info("Added permission for user: {}", userName);
-                return ResponseEntity.ok(String.format("Added permission for user %s",userName));
+                return ResponseEntity.ok(String.format("Added permission for user %s", userName));
             } else {
                 logger.warn("Invalid token for adding permission: {}", token);
                 return ResponseEntity.status(401).body(token);
@@ -209,7 +220,7 @@ public class UserService implements IUserService {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                userFacade.removePermission(userName, userToUnPermit,storeId, permission);
+                userFacade.removePermission(userName, userToUnPermit, storeId, permission);
                 logger.info("Removed permission for user: {}", userName);
                 return ResponseEntity.ok(String.format("Removed permission for user %s", userName));
             } else {
@@ -221,6 +232,40 @@ public class UserService implements IUserService {
             return ResponseEntity.status(500).body("Error removing permission");
         }
     }
+
+    @Override
+    public ResponseEntity<?> getShoppingCart(String token) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if (userName != null && jwtService.isValid(token, userDetails)) {
+                logger.info("Getting shopping cart for user: {}", userName);
+                ShoppingCart shoppingCart = userFacade.getShoppingCart(userName);
+                StringBuilder sb = new StringBuilder();
+                List<ShoppingBasket> baskets = shoppingCart.getBaskets();
+                for (ShoppingBasket basket : baskets) {
+                    for (Map.Entry<Long, Integer> item : basket.getItems().entrySet()) {
+                        sb.append("[id: ").append(item.getKey()).append(", amount: ").append(item.getValue()).append("], ");
+                    }
+                }
+                // Remove the last comma and space
+                if (sb.length() > 0) {
+                    sb.setLength(sb.length() - 2);
+                }
+                return ResponseEntity.ok(sb.toString());
+            } else {
+                return ResponseEntity.status(401).body("Invalid token");
+            }
+        } catch (Exception e) {
+            logger.error("An error occurred while getting the shopping cart", e);
+            return ResponseEntity.status(500).body("An error occurred");
+        }
+    }
+
+
+
+
+
 
     @Override
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token){

@@ -1,5 +1,6 @@
 package API.controller;
 import API.Application;
+import DomainLayer.Market.User.ShoppingCart;
 import ServiceLayer.User.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -94,6 +95,12 @@ public class UserControllerApi {
     @DeleteMapping("/user/removePermission")
     public ResponseEntity<String> removePermission(@RequestParam String token, @RequestParam String userToUnPermit, @RequestParam long storeId,@RequestParam String permission) {
         return userService.removePermission(token, userToUnPermit, storeId, permission);
+    }
+
+    @GetMapping("/user/getShoppingCart")
+    public ResponseEntity<?> getShoppingCart(@RequestParam String token) {
+        ResponseEntity<?> r = userService.getShoppingCart(token);
+        return r;
     }
 
     @PutMapping("/user/viewUserStoresOwnership")
