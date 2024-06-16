@@ -88,7 +88,7 @@ public class UserService implements IUserService {
             return ResponseEntity.ok(token);
         } catch (Exception e) {
             //logger.error("Error logging in user: {}", userName, e);
-            return ResponseEntity.status(500).body(String.format("Error logging in user %s", userName));
+            return ResponseEntity.status(500).body(String.format("Error logging in user %s- %s", userName, e.getMessage()));
         }
     }
 

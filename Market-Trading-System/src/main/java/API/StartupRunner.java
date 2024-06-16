@@ -22,8 +22,8 @@ public class StartupRunner implements CommandLineRunner {
     private final IUserService userService;
 
     @Autowired
-    public StartupRunner(@Qualifier("userService") IUserService userService) {
-        this.userService = userService;
+    public StartupRunner() {
+        userService = (IUserService) SpringContext.getBean("userService");
     }
 
     @Override
@@ -49,10 +49,16 @@ public class StartupRunner implements CommandLineRunner {
         List<Long> itemIds = createItems(tokens, storeIds);
         initShoppingCart(tokens, storeIds, itemIds);
         createPurchase(tokens);
+        logoutUsers(tokens);
+    }
+
+    private void logoutUsers(List<String> tokens) {
+        for (String token: tokens) {
+            userService.logout(token);
+        }
     }
 
     private List<String> createUsers() {
-        IUserService userService = (IUserService) SpringContext.getBean("userService");
         userService.register("user1", "user1", 25);
         userService.register("user2", "user2", 30);
         userService.register("user3", "user3", 22);
@@ -104,7 +110,6 @@ public class StartupRunner implements CommandLineRunner {
     }
 
     private void initShoppingCart(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
-        IUserService userService = (IUserService) SpringContext.getBean("userService");
         userService.addItemToBasket(tokens.get(0), storeIds.get(0), itemIds.get(0), 1);
         userService.addItemToBasket(tokens.get(1), storeIds.get(1), itemIds.get(1), 1);
         userService.addItemToBasket(tokens.get(2), storeIds.get(2), itemIds.get(2), 1);
@@ -351,7 +356,6 @@ public class StartupRunner implements CommandLineRunner {
     }
 
     private void createPurchase(List<String> tokens) {
-        IUserService userService = (IUserService) SpringContext.getBean("userService");
         userService.checkoutShoppingCart(tokens.get(0), "1234567812345678", new Date(2025), "123", null);
     }
 }
