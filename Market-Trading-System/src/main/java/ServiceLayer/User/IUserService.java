@@ -8,7 +8,7 @@ public interface IUserService{
     public ResponseEntity<String> guestExit(String token);
     public ResponseEntity<String> register(String userName, String password, int userAge);
     public ResponseEntity<String> login(String userName, String password);
-    public ResponseEntity<String> logout(String userName);
+    public ResponseEntity<String> logout(String token);
     public ResponseEntity<String> viewShoppingCart(String token);
     public ResponseEntity<String> modifyShoppingCart(String token, long basketId, long itemId, int newQuantity);
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate , String cvv, String discountCode);
