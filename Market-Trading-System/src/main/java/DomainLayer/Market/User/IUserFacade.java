@@ -2,8 +2,6 @@ package DomainLayer.Market.User;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
@@ -38,4 +36,6 @@ public interface IUserFacade {
     public int getUserAge(String userName);
     public void clear();
     public List<Long> viewUserStoresOwnership(String userName);
+
+    ShoppingCart getShoppingCart(String userName);
 }

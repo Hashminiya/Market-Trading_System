@@ -14,7 +14,7 @@ public class ShoppingBasket implements DataItem<Long> {
 
     private final long basketId;
     private final Map<Long,Integer> itemsQuantity;     //map<itemId,quantity>
-    private Map<Long, Double> itemsPrice;        //map<itemId, price>
+    public Map<Long, Double> itemsPrice;        //map<itemId, price>
     private double basketTotalPrice;
     private final long storeId;
 

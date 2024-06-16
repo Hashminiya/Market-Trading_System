@@ -57,6 +57,11 @@ public class UserController implements IUserFacade {
         admin = null;
     }
 
+    @Override
+    public ShoppingCart getShoppingCart(String userName) {
+        return users.findById(userName).getShoppingCart();
+    }
+
 
     @Override
     public void setStoreFacade(IStoreFacade storeFacadeInstance) {
