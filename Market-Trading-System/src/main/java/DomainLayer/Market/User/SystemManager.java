@@ -14,10 +14,10 @@ import java.util.List;
 
 @Component("SystemManager")
 public class SystemManager extends User{
-    private static final String USER_NAME = "SystemManager";
-    private static final String PASSWORD = "SystemManagerPassword";
+    private static final String USER_NAME = "admin";
+    private static final String PASSWORD = "admin";
     private static final int USER_AGE = 35;
-    private static final boolean LOGGED_IN = true; // Assuming the SystemManager is logged in by default
+    private static final boolean LOGGED_IN = false;
     private static final ShoppingCart SHOPPING_CART = new ShoppingCart(new InMemoryRepository<Long, ShoppingBasket>()); // Assuming ShoppingCart is the correct type
     private static final Istate STATE = new Registered();
 
