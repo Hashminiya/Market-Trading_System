@@ -76,4 +76,32 @@ public class CheckoutUT {
 
         assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
     }
+
+    @Test
+    @Order(3)
+    void test_checkout_should_throw_exception_for_invalid_credit() {
+
+        when(paymentServiceProxy.validateCreditCard(anyString(), any(Date.class), anyString(), anyDouble())).thenReturn(false);
+        purchaseController.setPaymentServiceProxy(paymentServiceProxy);
+
+        List<ItemDTO> items = new ArrayList<>();
+        items.add(new ItemDTO(876123, "Chips",20,8282,500));
+        items.add(new ItemDTO(98142, "Bamba",40,8282,1000));
+
+        assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
+    }
+
+    @Test
+    @Order(4)
+    void test_checkout_should_throw_exception_for_invalid_supply_details() {
+
+        when(supplyServiceProxy.validateCartSupply(anyList())).thenReturn(false);
+        purchaseController.setSupplyServiceProxy(supplyServiceProxy);
+
+        List<ItemDTO> items = new ArrayList<>();
+        items.add(new ItemDTO(876123, "Chips",20,8282,500));
+        items.add(new ItemDTO(98142, "Bamba",40,8282,1000));
+
+        assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
+    }
 }
