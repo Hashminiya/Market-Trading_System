@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import java.util.Date;
+import java.util.List;
 
 
 @Service("userService")
@@ -218,6 +219,27 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             logger.error("Error removing permission", e);
             return ResponseEntity.status(500).body("Error removing permission");
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<Long>> viewUserStoresOwnership(String token){
+        try {
+            String userName = jwtService.extractUsername(token);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if (userName != null && jwtService.isValid(token, userDetails)) {
+                List<Long> ownedStoreIds = userFacade.viewUserStoresOwnership(userName);
+                logger.info("User store ownership: {}", ownedStoreIds);
+                return ResponseEntity.ok(ownedStoreIds);
+            }
+            else {
+                logger.warn("Invalid token for adding permission: {}", token);
+                return ResponseEntity.status(401).build();
+            }
+        }
+        catch (Exception e) {
+            logger.error("Error display user store ownership: {}", token, e);
+            return ResponseEntity.status(500).build();
         }
     }
 }

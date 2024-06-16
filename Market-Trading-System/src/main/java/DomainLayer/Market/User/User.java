@@ -176,4 +176,20 @@ public class User implements IUser,DataItem<String> {
     public void clearShoppingCart(){
         this.shoppingCart.clear();
     }
+
+    public List<Long> viewUserStoresOwnership() {
+        List<Long> ownedStoreIds = new ArrayList<>();
+
+        for (Map.Entry<Long, Set<StoreEnum>> entry : storePermissionsAndRole.entrySet()) {
+            Long storeId = entry.getKey();
+            Set<StoreEnum> roles = entry.getValue();
+
+            // Check if the user is an OWNER of this store
+            if (roles.contains(StoreRole.OWNER)) {
+                ownedStoreIds.add(storeId);
+            }
+        }
+
+        return ownedStoreIds;
+    }
 }
