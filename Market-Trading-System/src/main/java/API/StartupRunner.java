@@ -2,6 +2,7 @@ package API;
 
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
+import ServiceLayer.Store.IStoreBuyerService;
 import ServiceLayer.Store.IStoreManagementService;
 import ServiceLayer.User.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -356,6 +357,7 @@ public class StartupRunner implements CommandLineRunner {
     }
 
     private void createPurchase(List<String> tokens) {
-        userService.checkoutShoppingCart(tokens.get(0), "1234567812345678", new Date(2025), "123", null);
+        IStoreManagementService managementServiceService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
+        managementServiceService.checkoutShoppingCart(tokens.get(0), "1234567812345678", new Date(2025), "123", null);
     }
 }

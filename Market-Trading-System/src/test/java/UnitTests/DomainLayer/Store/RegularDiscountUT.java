@@ -53,7 +53,7 @@ public class RegularDiscountUT {
     }
 
     @Test
-    void test_calculatePrice_should_return_correct_map_after_discounts_for_validDiscount() {
+    void test_calculatePrice_should_return_correct_map_after_discounts_for_validDiscount() throws InterruptedException {
         when(condition.isValid(anyMap())).thenReturn(true);
         item1.setPrice(100);
         double expectedPrice = 100 * (1 - DISCOUNT_PERCENT);

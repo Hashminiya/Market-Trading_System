@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Component("userController")
 public class UserController implements IUserFacade {
@@ -103,9 +105,9 @@ public class UserController implements IUserFacade {
         user.logout();
     }
 
-    public String viewShoppingCart(String userName) {
+    public String viewShoppingCart(String userName) throws Exception{
         User user = getUser(userName);
-        return user.getShoppingCart().viewShoppingCart();
+        return user.getShoppingCart().viewShoppingCart(this.storeFacade);
     }
 
     @Override
@@ -122,6 +124,7 @@ public class UserController implements IUserFacade {
         purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items, totalAmount);
         storeFacade.purchaseOccurs();
         user.clearShoppingCart();
+        //for(Long storeId: locks.keySet()) locks.get(storeId).unlock();
     }
 
     @Override

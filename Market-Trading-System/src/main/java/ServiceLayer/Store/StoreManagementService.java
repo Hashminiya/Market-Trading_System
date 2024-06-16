@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -301,6 +303,25 @@ public class StoreManagementService implements IStoreManagementService {
         } catch (Exception ex) {
             logger.error("Error adding policy", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if (userName != null && jwtService.isValid(token, userDetails)) {
+                storeFacade.checkoutShoppingCart(userName, creditCard, expiryDate, cvv, discountCode);
+                logger.info("Checkout shopping cart for user: {}", userName);
+                return ResponseEntity.ok(String.format("Checkout shopping cart for user %s", userName));
+            } else {
+                logger.warn("Invalid token for checkout: {}", token);
+                return ResponseEntity.status(401).body(token);
+            }
+        } catch (Exception e) {
+            logger.error("Error during checkout", e);
+            return ResponseEntity.status(500).body("Error during checkout");
         }
     }
 }

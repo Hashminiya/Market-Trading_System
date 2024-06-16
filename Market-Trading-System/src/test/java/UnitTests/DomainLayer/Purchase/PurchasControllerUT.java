@@ -26,7 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class PurchaseRepoUT {
+public class PurchasControllerUT {
 
     IRepository<Long, Purchase> purchaseRepo;
     PaymentServiceProxy paymentServiceProxy;

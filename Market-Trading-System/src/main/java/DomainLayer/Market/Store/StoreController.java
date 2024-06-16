@@ -14,10 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Component("StoreController")
@@ -26,6 +25,7 @@ public class StoreController implements IStoreFacade{
     private IRepository<Long, Store> storesRepo;
     private IPurchaseFacade purchaseFacade;
     private IUserFacade userFacade;
+    //private static final Map<Long, ReentrantLock> locks = new HashMap<Long, ReentrantLock>();;
 
     private String VIEW_INVENTORY = "VIEW_INVENTORY";
     private String ADD_ITEM = "ADD_ITEM";
@@ -81,6 +81,7 @@ public class StoreController implements IStoreFacade{
         newStore.setPolicyFactory(new PurchasePolicyFactory(userFacade));
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);
+        //locks.put(storeId, new ReentrantLock());
         return storeId;//for test purposes
     }
 
@@ -296,11 +297,12 @@ public class StoreController implements IStoreFacade{
         return false;
     }
 
-    public void purchaseOccurs(){
+    public void purchaseOccurs()throws InterruptedException{
         List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
         for (ItemDTO itemDto: purchasedItems){
             Store store = storesRepo.findById(itemDto.getStoreId());
             store.updateAmount(itemDto.getItemId(), itemDto.getQuantity());
+            store.releaseLocks(itemDto.getItemId()); //sync
         }
     }
 
@@ -325,7 +327,7 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName) {
+    public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName) throws InterruptedException{
         return storesRepo.findById(shoppingBasket.getStoreId())
                 .checkValidBasket(shoppingBasket, userName);
     }
@@ -357,4 +359,10 @@ public class StoreController implements IStoreFacade{
                 .flatMap(List::stream)
                 .collect(Collectors.toSet());
     }
-}
+
+    public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception {
+        userFacade.checkoutShoppingCart(userName, creditCard, expiryDate, cvv, discountCode);
+
+    }
+
+    }

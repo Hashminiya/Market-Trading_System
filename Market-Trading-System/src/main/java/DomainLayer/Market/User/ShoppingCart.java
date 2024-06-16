@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 @Component
@@ -21,10 +24,11 @@ public class ShoppingCart {
         this.baskets = baskets;
     }
 
-    public String viewShoppingCart(){
+    public String viewShoppingCart(IStoreFacade storeFacade) throws Exception{
         StringBuilder res = new StringBuilder();
         List<ShoppingBasket> l = baskets.findAll();
         for(ShoppingBasket s : l){
+            storeFacade.calculateBasketPrice(s, null);
             res.append(s.toString());
         }
         return res.toString();
@@ -44,16 +48,25 @@ public class ShoppingCart {
         return sb.getId();
     }
 
-    public List<ItemDTO> checkoutShoppingCart(String userName,IStoreFacade storeFacade, String code) throws Exception{
+    public List<ItemDTO> checkoutShoppingCart(String userName, IStoreFacade storeFacade, String code) throws Exception{
         List<ShoppingBasket> l = getBaskets();
-        List<ItemDTO> items = new ArrayList<ItemDTO>();
+        List<ItemDTO> items = new ArrayList<>();
         for(ShoppingBasket sb : l){
-            if(!storeFacade.checkValidBasket(sb, userName)){
-                throw new RuntimeException("couldn't complete checkout- invalid basket");
+            try {
+                //if(locks.get(sb.getStoreId()).tryLock(10, TimeUnit.SECONDS)) {
+                if (!storeFacade.checkValidBasket(sb, userName)) {
+                    throw new RuntimeException("couldn't complete checkout- invalid basket");
+                }
+                storeFacade.calculateBasketPrice(sb, code);
+                List<ItemDTO> basketItems = sb.checkoutShoppingBasket(storeFacade);
+                items.addAll(basketItems);
+                //}
             }
-            storeFacade.calculateBasketPrice(sb,code);
-            List<ItemDTO> basketItems = sb.checkoutShoppingBasket(storeFacade);
-            items.addAll(basketItems);
+            catch(InterruptedException e) {
+                throw new InterruptedException("Unable to acquire lock for basket");
+            } catch (Exception e){
+                throw new Exception(e.getMessage());
+            }
         }
         return items;
     }
