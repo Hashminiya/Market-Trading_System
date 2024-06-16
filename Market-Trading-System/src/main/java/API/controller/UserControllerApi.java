@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Date;
+import java.util.List;
 
 
 @RestController
@@ -93,6 +94,11 @@ public class UserControllerApi {
     @DeleteMapping("/user/removePermission")
     public ResponseEntity<String> removePermission(@RequestParam String token, @RequestParam String userToUnPermit, @RequestParam long storeId,@RequestParam String permission) {
         return userService.removePermission(token, userToUnPermit, storeId, permission);
+    }
+
+    @PutMapping("/user/viewUserStoresOwnership")
+    public ResponseEntity<List<Long>> viewUserStoresOwnership(@RequestParam String token) {
+        return userService.viewUserStoresOwnership(token);
     }
 
 }
