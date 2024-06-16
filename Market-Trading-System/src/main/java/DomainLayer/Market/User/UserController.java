@@ -234,4 +234,8 @@ public class UserController implements IUserFacade {
         return users.findById(userName).getUserAge();
     }
 
+    public List<Long> viewUserStoresOwnership(String userName){
+        User user = getUser(userName);
+        return user.viewUserStoresOwnership();
+    }
 }

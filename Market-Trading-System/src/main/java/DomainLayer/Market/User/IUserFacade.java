@@ -35,4 +35,6 @@ public interface IUserFacade {
     public boolean isAdmin(String userName);
     public int getUserAge(String userName);
     public void clear();
+    public List<Long> viewUserStoresOwnership(String userName);
+
 }
