@@ -55,4 +55,5 @@ public interface IStoreFacade {
     Set<String> getAllCategories();
     public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception;
 
+    Item getItem(Long key);
 }

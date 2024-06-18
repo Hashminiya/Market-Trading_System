@@ -2,6 +2,7 @@ package DomainLayer.Market;
 
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IdGenerator;
 
@@ -37,13 +38,16 @@ public class ShoppingBasket implements DataItem<Long> {
 
     public List<ItemDTO> checkoutShoppingBasket(IStoreFacade storeFacade) {
         List<ItemDTO> items = new ArrayList<>();
-        Map<Long, String> itemsNames = storeFacade.getAllProductsInfoByStore(storeId);
         for (Map.Entry<Long, Integer> entry : itemsQuantity.entrySet()) {
-            items.add(new ItemDTO(entry.getKey(),
-                    itemsNames.getOrDefault(entry.getKey(), "Unknown"),
+            Long itemId = entry.getKey();
+            Item item = storeFacade.getItem(itemId);
+            items.add(new ItemDTO(itemId,
+                    item.getName(),
                     entry.getValue(),
                     storeId,
-                    itemsPrice.getOrDefault(entry.getKey(), 0.0))); // Handle missing price
+                    itemsPrice.getOrDefault(itemId, 0.0),
+                    item.getCategories(),
+                    item.getDescription()));
         }
         return items;
     }
@@ -102,7 +106,6 @@ public class ShoppingBasket implements DataItem<Long> {
     public String getName() {
         return "";
     }
-
 
     public double getBasketTotalPrice() {
         return basketTotalPrice;

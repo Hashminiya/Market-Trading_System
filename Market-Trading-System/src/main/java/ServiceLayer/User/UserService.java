@@ -242,7 +242,7 @@ public class UserService implements IUserService {
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 ShoppingCart shoppingCart = userFacade.getShoppingCart(userName);
-                ShoppingCartDTO shoppingCartDTO = new ShoppingCartDTO(shoppingCart);
+                ShoppingCartDTO shoppingCartDTO = new ShoppingCartDTO(shoppingCart, SpringContext.getBean(StoreController.class));
                 logger.info("Shopping cart retrieved for user: {}", userName);
                 return ResponseEntity.ok(shoppingCartDTO);
             } else {

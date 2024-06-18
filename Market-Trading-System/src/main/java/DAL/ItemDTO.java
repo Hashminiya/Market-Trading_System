@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class ItemDTO implements DataItem <Long>, Comparable {
+public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
     @JsonProperty("itemId")
     private final long itemId;
 
@@ -21,18 +21,26 @@ public class ItemDTO implements DataItem <Long>, Comparable {
     @JsonProperty("totalPrice")
     private final double totalPrice;
 
+    @JsonProperty("categories")
+    private final List<String> categories;
 
-    public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice) {
+    @JsonProperty("description")
+    private final String description;
+
+    public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice, List<String> categories, String description) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.quantity = quantity;
         this.storeId = storeId;
         this.totalPrice = totalPrice;
+        this.categories = categories;
+        this.description = description;
     }
 
     public Long getId() {
         return itemId;
     }
+
     public long getItemId() {
         return itemId;
     }
@@ -53,9 +61,16 @@ public class ItemDTO implements DataItem <Long>, Comparable {
         return totalPrice;
     }
 
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     @Override
-    public int compareTo(Object o) {
-        return 0;
+    public int compareTo(ItemDTO o) {
+        return Long.compare(this.itemId, o.getItemId());
     }
 }
