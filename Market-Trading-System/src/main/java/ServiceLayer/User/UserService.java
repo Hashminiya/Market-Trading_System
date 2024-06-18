@@ -2,6 +2,7 @@ package ServiceLayer.User;
 
 import API.SpringContext;
 import DAL.ItemDTO;
+import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StoreController;
@@ -9,6 +10,7 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -239,28 +241,20 @@ public class UserService implements IUserService {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                logger.info("Getting shopping cart for user: {}", userName);
                 ShoppingCart shoppingCart = userFacade.getShoppingCart(userName);
-                StringBuilder sb = new StringBuilder();
-                List<ShoppingBasket> baskets = shoppingCart.getBaskets();
-                for (ShoppingBasket basket : baskets) {
-                    for (Map.Entry<Long, Integer> item : basket.getItems().entrySet()) {
-                        sb.append("[id: ").append(item.getKey()).append(", amount: ").append(item.getValue()).append("], ");
-                    }
-                }
-                // Remove the last comma and space
-                if (sb.length() > 0) {
-                    sb.setLength(sb.length() - 2);
-                }
-                return ResponseEntity.ok(sb.toString());
+                ShoppingCartDTO shoppingCartDTO = new ShoppingCartDTO(shoppingCart);
+                logger.info("Shopping cart retrieved for user: {}", userName);
+                return ResponseEntity.ok(shoppingCartDTO);
             } else {
-                return ResponseEntity.status(401).body("Invalid token");
+                logger.warn("Invalid token for getting shopping cart: {}", token);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (Exception e) {
-            logger.error("An error occurred while getting the shopping cart", e);
-            return ResponseEntity.status(500).body("An error occurred");
+            logger.error("Error getting shopping cart", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 
 

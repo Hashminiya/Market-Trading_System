@@ -1,22 +1,48 @@
 package DAL;
 
 import DomainLayer.Market.Util.DataItem;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
+import java.util.List;
 
 public class ItemDTO implements DataItem <Long>, Comparable {
-    private final long storeId;
-    private final double totalPrice;
-    private final int quantity;
-    private final String itemName;
+    @JsonProperty("itemId")
     private final long itemId;
 
-    public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice){
+    @JsonProperty("itemName")
+    private final String itemName;
+
+    @JsonProperty("quantity")
+    private final int quantity;
+
+    @JsonProperty("storeId")
+    private final long storeId;
+
+    @JsonProperty("totalPrice")
+    private final double totalPrice;
+
+
+    public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.quantity = quantity;
         this.storeId = storeId;
         this.totalPrice = totalPrice;
+    }
+
+    public Long getId() {
+        return itemId;
+    }
+    public long getItemId() {
+        return itemId;
+    }
+
+    public String getName() {
+        return itemName;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 
     public long getStoreId() {
@@ -27,23 +53,6 @@ public class ItemDTO implements DataItem <Long>, Comparable {
         return totalPrice;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public long getItemId() {
-        return itemId;
-    }
-
-    @Override
-    public Long getId() {
-        return itemId;
-    }
-
-    @Override
-    public String getName() {
-        return itemName;
-    }
 
     @Override
     public int compareTo(Object o) {
