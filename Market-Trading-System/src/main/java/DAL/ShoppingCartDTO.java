@@ -1,8 +1,8 @@
 package DAL;
 
+import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.ShoppingCart;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,19 +18,10 @@ public class ShoppingCartDTO {
         this.totalPrice = totalPrice;
     }
 
-    // Constructor to initialize from a ShoppingCart entity
-    public ShoppingCartDTO(ShoppingCart shoppingCart) {
+    // Constructor to initialize from a ShoppingCart entity with storeFacade
+    public ShoppingCartDTO(ShoppingCart shoppingCart, IStoreFacade storeFacade) {
         this.items = shoppingCart.getBaskets().stream()
-                .flatMap(basket -> basket.getItems().entrySet().stream()
-                        .map(entry -> {
-                            Double price = basket.getItemsPrice().get(entry.getKey());
-                            return new ItemDTO(entry.getKey(),
-                                    "ItemName", // Replace with actual item name if available
-                                    entry.getValue(),
-                                    basket.getStoreId(),
-                                    price != null ? price : 0.0); // Handle null price
-
-                        }))
+                .flatMap(basket -> basket.checkoutShoppingBasket(storeFacade).stream())
                 .collect(Collectors.toList());
         this.totalPrice = shoppingCart.getShoppingCartPrice();
     }
