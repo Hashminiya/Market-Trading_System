@@ -38,6 +38,7 @@ public class Store implements DataItem<Long> {
         this.products = new InMemoryRepositoryStore();
         owners = new ArrayList<>();
         managers = new ArrayList<>();
+        assignOwner(founderId);
     }
 
     @Override
