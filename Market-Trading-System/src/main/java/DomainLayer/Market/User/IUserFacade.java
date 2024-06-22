@@ -36,6 +36,7 @@ public interface IUserFacade {
     public int getUserAge(String userName);
     public void clear();
     public List<Long> viewUserStoresOwnership(String userName);
+    public List<String> viewUserStoresNamesOwnership(String userName);
 
     ShoppingCart getShoppingCart(String userName);
 }

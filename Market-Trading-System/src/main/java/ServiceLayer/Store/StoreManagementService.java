@@ -3,6 +3,8 @@ package ServiceLayer.Store;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.JwtService;
@@ -15,9 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service("StoreManagementService")
 public class StoreManagementService implements IStoreManagementService {
@@ -322,6 +322,42 @@ public class StoreManagementService implements IStoreManagementService {
         } catch (Exception e) {
             logger.error("Error during checkout", e);
             return ResponseEntity.status(500).body("Error during checkout");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> viewInventoryByStoreNameAndToken(String token, String storeName) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                List<Store> userStores = storeFacade.findStoresByOwner(userName);
+
+                for (Store store : userStores) {
+                    if (store.getName().equalsIgnoreCase(storeName)) {
+                        List<Item> items = store.viewInventory();
+                        List<Map<String, Object>> itemDetails = new ArrayList<>();
+
+                        for (Item item : items) {
+                            Map<String, Object> itemDetail = new HashMap<>();
+                            itemDetail.put("itemId", item.getId());
+                            itemDetail.put("itemName", item.getName());
+                            itemDetail.put("itemPrice", item.getPrice());
+                            itemDetail.put("stockAmount", item.getQuantity());
+                            itemDetail.put("category", item.getCategories());
+                            itemDetails.add(itemDetail);
+                        }
+
+                        return ResponseEntity.ok(itemDetails);
+                    }
+                }
+                return ResponseEntity.status(404).body("Store not found");
+            } else {
+                logger.warn("Invalid token for viewing inventory: {}", token);
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
+            }
+        } catch (Exception ex) {
+            logger.error("Error viewing inventory by store name and token", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 }

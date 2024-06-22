@@ -247,4 +247,10 @@ public class UserController implements IUserFacade {
         return user.viewUserStoresOwnership();
     }
 
+    public List<String> viewUserStoresNamesOwnership(String userName){
+        User user = getUser(userName);
+        List<Long> storesId = user.viewUserStoresOwnership();
+        return storeFacade.getListOfStorNamesByIds(storesId);
+    }
+
 }

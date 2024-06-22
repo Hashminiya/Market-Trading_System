@@ -19,6 +19,7 @@ public interface IUserService{
     public ResponseEntity<String> addPermission(String token, String userToPermit,long storeId, String permission);
     public ResponseEntity<String> removePermission(String token, String userToUnPermit,long storeId, String permission);
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token);
+    public ResponseEntity<List<String>> viewUserStoresNamesOwnership(String token);
 
     ResponseEntity<?> getShoppingCart(String token);
 }

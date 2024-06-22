@@ -103,9 +103,13 @@ public class UserControllerApi {
         return r;
     }
 
-    @PutMapping("/user/viewUserStoresOwnership")
+    @PutMapping("/user/viewUserStoresNamesOwnership")
     public ResponseEntity<List<Long>> viewUserStoresOwnership(@RequestParam String token) {
         return userService.viewUserStoresOwnership(token);
     }
 
+    @PutMapping("/user/viewStoresByNameForUserOwnership")
+    public ResponseEntity<List<String>> viewUserStoresNamesOwnership(@RequestParam String token) {
+        return userService.viewUserStoresNamesOwnership(token);
+    }
 }
