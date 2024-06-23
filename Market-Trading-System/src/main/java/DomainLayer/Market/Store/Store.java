@@ -6,16 +6,19 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Store.StorePurchasePolicy.*;
 import DomainLayer.Market.Util.DataItem;
+
 import DomainLayer.Repositories.DiscountRepository;
 import DomainLayer.Repositories.ItemRepository;
 import DomainLayer.Repositories.ItemSpecifications;
 import DomainLayer.Repositories.PurchasePolicyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
+
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
@@ -28,6 +31,7 @@ public class Store implements DataItem<Long> {
     private String founderId;
     private String name;
     private String description;
+
     @Transient
     private List<String> owners;
     @Transient
@@ -116,6 +120,7 @@ public class Store implements DataItem<Long> {
         toEdit.setPrice(newPrice);
         toEdit.setQuantity(quantity);
         toEdit.unlock();
+
         products.save(toEdit);
     }
     public void deleteItem(long itemId){
@@ -147,9 +152,9 @@ public class Store implements DataItem<Long> {
     }
     public List<String> getAllCategories(){
         //return products.getAllCategoryValues();
-        //return products.findAllCategories();
-        //TODO: change return
-        return new ArrayList<>();
+
+        return products.findAllCategories();
+
     }
 
     public boolean isAvailable(long itemId, int amount){
@@ -170,6 +175,7 @@ public class Store implements DataItem<Long> {
         item.increase(toIncrease);
         products.save(item);
         item.unlock();
+
     }
 
     public Item getById(long itemId) {
@@ -297,6 +303,7 @@ public class Store implements DataItem<Long> {
         }
 
     }
+
 
 
     public void clearCache(Long id) {

@@ -13,6 +13,5 @@ import java.util.List;
 @Profile("db")
 @Scope("prototype")
 public interface DbItemRepository extends ItemRepository{
-
-    //List<String> findAllCategories();
+    List<String> findAllCategories();
 }

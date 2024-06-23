@@ -13,9 +13,12 @@ import java.util.Properties;
 import java.util.Scanner;
 
 @SpringBootApplication
+
 @ComponentScan(basePackages = {"API", "ServiceLayer", "DomainLayer", "DAL"})
 @EnableJpaRepositories(basePackages = {"API", "ServiceLayer", "DomainLayer", "DAL"})
 @EntityScan(basePackages = {"API", "ServiceLayer", "DomainLayer", "DAL"})
+
+
 @DependsOn("startupListener")
 public class Application {
 

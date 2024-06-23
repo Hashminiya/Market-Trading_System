@@ -6,6 +6,7 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Repositories.*;
 import jakarta.transaction.Transactional;
+import DomainLayer.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

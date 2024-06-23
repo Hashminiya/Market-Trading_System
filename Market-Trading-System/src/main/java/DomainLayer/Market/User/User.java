@@ -12,6 +12,9 @@ import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Market.Util.StoreRole;
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +34,7 @@ public class User implements IUser,DataItem<String> {
     protected boolean loggedIn;
     @Transient
     private ShoppingCart shoppingCart;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_store_permissions", joinColumns = @JoinColumn(name = "user_name"))
     @MapKeyColumn(name = "store_id")

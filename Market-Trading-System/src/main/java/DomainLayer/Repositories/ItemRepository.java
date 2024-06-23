@@ -3,6 +3,7 @@ package DomainLayer.Repositories;
 import DomainLayer.Market.Store.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificat
     //List<Item> findByCategoriesIn(List<String> categories);
     //List<String> findAllCategories();
     List<Item> findByStoreIdAndNameContaining(long storeId, String name);
+
 }

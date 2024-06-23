@@ -7,6 +7,7 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IdGenerator;
+
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
 import DomainLayer.Repositories.DbBasketRepository;
@@ -14,6 +15,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -144,12 +148,14 @@ public class ShoppingCart {
     }
     public void clear(){
         shoppingBaskets.clear();
+        //TODO:: Delete all from DB
 //        List<Long> ids = baskets.findAll().stream().map(ShoppingBasket::getId).toList();
 //        for (long id: ids
 //             ) {
 //            baskets.deleteById(id);
 //        }
     }
+
 
     public void setShoppingBaskets(List<ShoppingBasket> shoppingBaskets) {
         this.shoppingBaskets.clear();

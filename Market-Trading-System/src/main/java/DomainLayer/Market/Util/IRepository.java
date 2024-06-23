@@ -1,3 +1,4 @@
+
 //package DomainLayer.Market.Util;
 //
 //import DomainLayer.Market.Util.DataItem;
@@ -16,3 +17,4 @@
 //    //void update(T entity);
 //    //void delete(K key);
 //}
+
