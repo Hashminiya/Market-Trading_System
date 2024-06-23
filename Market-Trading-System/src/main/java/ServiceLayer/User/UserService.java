@@ -2,8 +2,12 @@ package ServiceLayer.User;
 
 import API.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Market.Notification.Event;
+import DomainLayer.Market.Notification.Publisher;
 import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
@@ -215,7 +219,6 @@ public class UserService implements IUserService {
         }
     }
 
-
     @Override
     public ResponseEntity<?> getShoppingCart(String token) {
         try {
@@ -235,7 +238,6 @@ public class UserService implements IUserService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
     @Override
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token) {
