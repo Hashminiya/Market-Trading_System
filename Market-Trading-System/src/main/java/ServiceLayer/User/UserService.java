@@ -2,6 +2,8 @@ package ServiceLayer.User;
 
 import API.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Market.Notification.Event;
+import DomainLayer.Market.Notification.Publisher;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StoreController;
@@ -108,6 +110,11 @@ public class UserService implements IUserService {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if(Objects.equals(userName, "ido")) {
+                Event loginEvent = new Event(this, "logout occurd", new HashSet<>(Arrays.asList(userName)));
+                Publisher publisher = (Publisher) SpringContext.getBean("Publisher");
+                publisher.publish(loginEvent);
+            }
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.logout(userName);
                 logger.info("User logged out: {}", userName);
