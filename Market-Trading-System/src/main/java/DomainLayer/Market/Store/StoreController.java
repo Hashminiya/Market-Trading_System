@@ -1,5 +1,6 @@
 package DomainLayer.Market.Store;
 
+import API.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
@@ -10,6 +11,9 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
 import jdk.jshell.spi.ExecutionControl;
+import DomainLayer.Repositories.DiscountRepository;
+import DomainLayer.Repositories.ItemRepository;
+import DomainLayer.Repositories.PurchasePolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -85,10 +89,13 @@ public class StoreController implements IStoreFacade{
     public long createStore(String founderId, String storeName, String storeDescription) throws Exception{
         if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
-        IRepository<Long, PurchasePolicy> policyRepo = new InMemoryRepository<>();
+        //IRepository<Long, PurchasePolicy> policyRepo = new InMemoryRepository<>();
+        PurchasePolicyRepository policyRepo = SpringContext.getBean(PurchasePolicyRepository.class);
         long storeId = generateStoreId();
-        IRepository<Long, IDiscount> discounts = new InMemoryRepository<>();
-        Store newStore = new Store(storeId, founderId, storeName, storeDescription, discounts, policyRepo);
+        //IRepository<Long, IDiscount> discounts = new InMemoryRepository<>();
+        DiscountRepository discounts = SpringContext.getBean(DiscountRepository.class);
+        ItemRepository items = SpringContext.getBean(ItemRepository.class);
+        Store newStore = new Store(storeId, founderId, storeName, storeDescription, items, discounts, policyRepo);
         newStore.setPolicyFactory(new PurchasePolicyFactory(userFacade));
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);
@@ -100,7 +107,7 @@ public class StoreController implements IStoreFacade{
     public HashMap<Long, Integer> viewInventoryByStoreOwner(String userId, long storeId)throws Exception {
         if(!userFacade.checkPermission(userId, storeId, VIEW_INVENTORY))
             throw new Exception("User doesn't has permission to view the store inventory");
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         List<Item> inventory = store.viewInventory();
         HashMap<Long, Integer> itemsInfo = new HashMap<>();
         for(Item item: inventory){
@@ -113,7 +120,7 @@ public class StoreController implements IStoreFacade{
     public long addItemToStore(String userId, long storeId, String itemName, double itemPrice, int stockAmount, String description, List<String> categories) throws Exception{
         if(!userFacade.checkPermission(userId, storeId, ADD_ITEM))
             throw new Exception("User doesn't has permission to add item to the store");
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         Long id = IdGenerator.generateId();
         store.addItem(id, itemName, itemPrice, stockAmount, description, categories);
         return id; //for test purposes
@@ -123,7 +130,7 @@ public class StoreController implements IStoreFacade{
     public void updateItem(String userId, long storeId, long itemId, String newName, double newPrice, int stockAmount) throws Exception{
         if(!userFacade.checkPermission(userId, storeId, UPDATE_ITEM))
             throw new Exception("User doesn't has permission to update item in the store");
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         store.updateItem(itemId, newName, newPrice, stockAmount);
     }
 
@@ -131,7 +138,7 @@ public class StoreController implements IStoreFacade{
     public void deleteItem(String userId, long storeId, long itemId) throws Exception{
         if(!userFacade.checkPermission(userId, storeId, DELETE_ITEM))
             throw new Exception("User doesn't has permission to delete item in the store");
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         store.deleteItem(itemId);
     }
 
@@ -143,14 +150,14 @@ public class StoreController implements IStoreFacade{
     @Override
     public void changeDiscountType(String userId, long storeId, String newType) {
         //TODO: implement in the next version
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
     }
 
     @Override
     public void assignStoreOwner(String userId, long storeId, String newOwnerId)throws Exception{
         if(!userFacade.checkPermission(userId, storeId, ASSIGN_OWNER))
             throw new Exception("User doesn't has permission to assign store owner");
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         userFacade.assignStoreOwner(newOwnerId, storeId);
         store.assignOwner(newOwnerId);
     }
@@ -159,7 +166,7 @@ public class StoreController implements IStoreFacade{
     public void assignStoreManager(String userId, long storeId, String newManagerId, List<String> permissions)throws Exception{
         if(!userFacade.checkPermission(userId, storeId, ASSIGN_MANAGER))
             throw new Exception("User doesn't has permission to assign store manager");
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         userFacade.assignStoreManager(newManagerId, storeId, permissions);
         store.assignManager(newManagerId);
     }
@@ -168,7 +175,7 @@ public class StoreController implements IStoreFacade{
     public void removeStore(String userId, long storeId) throws Exception{
         if(!userFacade.checkPermission(userId, storeId, REMOVE_STORE) && !userFacade.isAdmin(userId))
             throw new Exception("User doesn't has permission to remove store");
-        storesRepo.delete(storeId);
+        storesRepo.delete(getStore(storeId));
     }
 
     @Override
@@ -176,7 +183,7 @@ public class StoreController implements IStoreFacade{
         if (!userFacade.checkPermission(userId, storeId, "VIEW_STORE_MANAGEMENT_INFO")) {
             throw new Exception("User doesn't have permission to view the store management information");
         }
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
 
         List<String> managementIds = new ArrayList<>(store.getManagers());
         managementIds.addAll(store.getOwners());
@@ -207,7 +214,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public HashMap<Long, String> getAllProductsInfoByStore(long storeId) {
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         List<Item> items = store.viewInventory();
         HashMap<Long, String> result = new HashMap<>();
         for(Item item: items){
@@ -227,7 +234,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public HashMap<Long, String> searchInStoreByCategory(long storeId, String category) {
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         List<Item> items = store.searchByCategory(category);
         HashMap<Long, String> result = new HashMap<>();
         for(Item item: items){
@@ -238,7 +245,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public HashMap<Long, String> searchInStoreByKeyWord(long storeId, String keyWord) {
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         List<Item> items = store.search(keyWord);
         HashMap<Long, String> result = new HashMap<>();
         for(Item item: items){
@@ -249,7 +256,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public HashMap<Long, String> searchInStoreByKeyWordAndCategory(long storeId, String category, String keyWord) {
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         List<Item> items = store.searchKeyWordWithCategory(category, keyWord);
         HashMap<Long, String> result = new HashMap<>();
         for(Item item: items){
@@ -299,7 +306,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public boolean addItemToShoppingBasket(ShoppingBasket basket, long storeId, long itemId, int quantity) {
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         boolean isAvailable = store.isAvailable(itemId, quantity);
         if(isAvailable) {
             basket.addItem(itemId, quantity);
@@ -311,7 +318,7 @@ public class StoreController implements IStoreFacade{
     public void purchaseOccurs()throws InterruptedException{
         List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
         for (ItemDTO itemDto: purchasedItems){
-            Store store = storesRepo.findById(itemDto.getStoreId());
+            Store store = getStore(itemDto.getStoreId());
             store.updateAmount(itemDto.getItemId(), itemDto.getQuantity());
             store.releaseLocks(itemDto.getItemId()); //sync
         }
@@ -319,7 +326,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception {
-        Store store = storesRepo.findById(basket.getStoreId());
+        Store store = getStore(basket.getStoreId());
         store.calculateBasketPrice(basket, code);
     }
 
@@ -339,7 +346,7 @@ public class StoreController implements IStoreFacade{
 
     @Override
     public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName) throws InterruptedException{
-        return storesRepo.findById(shoppingBasket.getStoreId())
+        return getStore(shoppingBasket.getStoreId())
                 .checkValidBasket(shoppingBasket, userName);
     }
 
@@ -347,14 +354,14 @@ public class StoreController implements IStoreFacade{
     public void addDiscount(String userName, long storeId, String discountDetails) throws Exception{
         if(!userFacade.checkPermission(userName, storeId, ADD_DISCOUNT))
             throw new Exception("User doesn't has permission to add discount");
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         store.addDiscount(discountDetails);
     }
     @Override
     public void addPolicy(String userName, long storeId, String policyDetails) throws Exception{
         if(!userFacade.checkPermission(userName, storeId, ADD_POLICY))
             throw new Exception("User doesn't has permission to add policy");
-        Store store = storesRepo.findById(storeId);
+        Store store = getStore(storeId);
         store.addPolicy(policyDetails);
     }
 
@@ -380,12 +387,17 @@ public class StoreController implements IStoreFacade{
     public List<String> getListOfStorNamesByIds(List<Long> listOfIds) {
         List<String> storeNames = new ArrayList<>();
         for (Long id : listOfIds) {
-            Store store = storesRepo.findById(id);
-            if (store != null) {
-                storeNames.add(store.getName());
-            }
+            Store store = getStore(id);
+            storeNames.add(store.getName());
         }
         return storeNames;
+    }
+
+    private Store getStore(long storeId){
+        Optional<Store> store = storesRepo.findById(storeId);
+        if(store.isEmpty())
+            throw new RuntimeException("there is no store with id " + storeId);
+        return store.get();
     }
 
     @Override
