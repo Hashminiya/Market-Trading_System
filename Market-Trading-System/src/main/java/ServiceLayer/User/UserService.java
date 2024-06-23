@@ -2,8 +2,12 @@ package ServiceLayer.User;
 
 import API.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Market.Notification.Event;
+import DomainLayer.Market.Notification.Publisher;
 import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
@@ -16,8 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import java.util.Date;
 import java.util.List;
+import java.lang.reflect.Field;
 
 import java.util.*;
+
 
 @Service("userService")
 public class UserService implements IUserService {
@@ -106,6 +112,11 @@ public class UserService implements IUserService {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if(Objects.equals(userName, "ido")) {
+                Event loginEvent = new Event(this, "logout occurd", new HashSet<>(Arrays.asList(userName)));
+                Publisher publisher = (Publisher) SpringContext.getBean("Publisher");
+                publisher.publish(loginEvent);
+            }
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.logout(userName);
                 logger.info("User logged out: {}", userName);
@@ -218,6 +229,7 @@ public class UserService implements IUserService {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
+                logger.info("Getting shopping cart for user: {}", userName);
                 ShoppingCart shoppingCart = userFacade.getShoppingCart(userName);
                 ShoppingCartDTO shoppingCartDTO = new ShoppingCartDTO(shoppingCart, SpringContext.getBean(StoreController.class));
                 logger.info("Shopping cart retrieved for user: {}", userName);
@@ -231,6 +243,11 @@ public class UserService implements IUserService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+
+
+
 
     @Override
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token){
