@@ -4,6 +4,7 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
+import DomainLayer.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,16 +14,13 @@ import DAL.ItemDTO;
 import DomainLayer.Market.Util.IRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component("userController")
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
-    private IRepository<String, User> users;
+    private UserRepository users;
     private SystemManager admin;
     private IStoreFacade storeFacade;
     private IPurchaseFacade purchaseFacade;
@@ -30,7 +28,7 @@ public class UserController implements IUserFacade {
     private int guestId ;
 
     @Autowired
-    private UserController(@Qualifier("InMemoryRepository") IRepository<String, User> users,
+    private UserController(@Qualifier("dbUserRepository") UserRepository users,
                            @Qualifier("SystemManager") SystemManager admin,
                            @Qualifier("StoreController") IStoreFacade storeFacade,
                            @Qualifier("purchaseController") IPurchaseFacade purchaseFacade) {
@@ -42,7 +40,7 @@ public class UserController implements IUserFacade {
         this.purchaseFacade = purchaseFacade;
     }
 
-    public static synchronized UserController getInstance(IRepository<String, User> users, SystemManager admin, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade) {
+    public static synchronized UserController getInstance(UserRepository users, SystemManager admin, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade) {
         if (userControllerInstance == null) {
             userControllerInstance = new UserController(users, admin, storeFacade, purchaseFacade);
             // TODO : We assume that when this function called, next line will be setStoreFacade..
@@ -60,7 +58,7 @@ public class UserController implements IUserFacade {
 
     @Override
     public ShoppingCart getShoppingCart(String userName) {
-        return users.findById(userName).getShoppingCart();
+        return getUser(userName).getShoppingCart();
     }
 
 
@@ -85,12 +83,12 @@ public class UserController implements IUserFacade {
 
     @Override
     public void terminateGuestSession(String userName) {
-        users.delete(userName);
+        users.deleteById(userName);
     }
 
     public void register(String userName,String password, int userAge) throws Exception {
-        if (users.findById(userName) != null) {
-            throw new Exception("username already exists");
+        if(users.existsById(userName)){
+            throw new Exception("User already exists");
         }
         String encodedPassword = passwordEncoder.encode(password);
         Istate registered = new Registered();
@@ -186,16 +184,16 @@ public class UserController implements IUserFacade {
     }
 
     private User getUser(String userName) {
-        User user = users.findById(userName);
-        if (user == null) {
+        Optional<User> user = users.findById(userName);
+        if (user.isEmpty()) {
             throw new IllegalArgumentException("user not exists");
         }
-        return user;
+        return user.get();
     }
 
     @Override
     public UserDetails loadUserByUsername(String userName) {
-        User user = users.findById(userName);
+        User user = getUser(userName);
         return new UserDetails() {
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -246,7 +244,7 @@ public class UserController implements IUserFacade {
 
     @Override
     public int getUserAge(String userName) {
-        return users.findById(userName).getUserAge();
+        return getUser(userName).getUserAge();
     }
 
     public List<Long> viewUserStoresOwnership(String userName){

@@ -7,6 +7,7 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Market.Util.InMemoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
@@ -22,6 +24,7 @@ import java.util.stream.Stream;
 public class ShoppingCart {
     private final IRepository<Long,ShoppingBasket> baskets;
 
+    @Autowired
     public ShoppingCart(IRepository<Long,ShoppingBasket> baskets){
         this.baskets = baskets;
     }
@@ -37,11 +40,11 @@ public class ShoppingCart {
     }
 
     public void modifyShoppingCart(long basketId, long itemId, int quantity){
-        ShoppingBasket sb = baskets.findById(basketId);
-        if (sb == null){
+        Optional<ShoppingBasket> sb = baskets.findById(basketId);
+        if (sb.isEmpty()){
             throw new IllegalArgumentException("no such basket");
         }
-        sb.updateItemQuantity(itemId,quantity);
+        sb.get().updateItemQuantity(itemId,quantity);
     }
 
     public Long addItemBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade) throws Exception {
@@ -96,7 +99,8 @@ public class ShoppingCart {
     }
 
     public void deleteShoppingBasket(long id){
-        baskets.delete(id);
+        //baskets.delete(id);
+        baskets.deleteById(id);
     }
 
     private ShoppingBasket getShoppingBasket(long storeId){
@@ -122,7 +126,7 @@ public class ShoppingCart {
         List<Long> ids = baskets.findAll().stream().map(ShoppingBasket::getId).toList();
         for (long id: ids
              ) {
-            baskets.delete(id);
+            baskets.deleteById(id);
         }
 
     }

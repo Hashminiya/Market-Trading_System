@@ -7,13 +7,15 @@ import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Store.StorePurchasePolicy.*;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Repositories.DiscountRepository;
+import DomainLayer.Repositories.ItemRepository;
+import DomainLayer.Repositories.ItemSpecifications;
+import DomainLayer.Repositories.PurchasePolicyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import org.springframework.data.jpa.domain.Specification;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Store implements DataItem<Long> {
     private final Long id;
@@ -22,22 +24,22 @@ public class Store implements DataItem<Long> {
     private String description;
     private final List<String> owners;
     private final List<String> managers;
-    private final InMemoryRepositoryStore products;
-    private IRepository<Long , IDiscount> discounts;
-    private IRepository<Long, PurchasePolicy> purchasePolicies;
+    private ItemRepository products;
+    private DiscountRepository discounts;
+    private PurchasePolicyRepository purchasePolicies;
     private PurchasePolicyFactory policyFactory;
     private Map<Long, ItemsCache> itemsCache;
 
-    public Store(Long id, String founderId, String name, String description,
-                 IRepository<Long, IDiscount> discounts,
-                 IRepository<Long, PurchasePolicy> purchasePolicies){
+    public Store(Long id, String founderId, String name, String description, ItemRepository products,
+                 DiscountRepository discounts,
+                 PurchasePolicyRepository purchasePolicies){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
         this.description = description;
+        this.products = products;
         this.discounts = discounts;
         this.purchasePolicies = purchasePolicies;
-        this.products = new InMemoryRepositoryStore();
         owners = new ArrayList<>();
         managers = new ArrayList<>();
         itemsCache = new HashMap<>();
@@ -86,16 +88,16 @@ public class Store implements DataItem<Long> {
 
 
     public void updateItem(long itemId, String newName, double newPrice, int quantity)throws InterruptedException{
-        Item toEdit = products.findById(itemId);
+        Item toEdit = getItem(itemId);
         toEdit.lock();
         toEdit.setName(newName);
         toEdit.setPrice(newPrice);
         toEdit.setQuantity(quantity);
         toEdit.unlock();
-        products.update(toEdit);
+        products.save(toEdit);
     }
     public void deleteItem(long itemId){
-        products.delete(itemId);
+        products.deleteById(itemId);
     }
 
     public void changeDiscountPolicy(){
@@ -103,42 +105,51 @@ public class Store implements DataItem<Long> {
         throw new UnsupportedOperationException("changeDiscountPolicy method is not implemented yet");
     }
     public List<Item> search(String keyWord){
-        return products.search(null ,keyWord,false);
+        //return products.search(null ,keyWord,false);
+        return products.findAll(Specification.where(ItemSpecifications.nameContains(keyWord)));
     }
 
     public List<Item> searchKeyWordWithCategory(String category,String keyWord){
-        return products.search(category ,keyWord,true);
+        //return products.search(category ,keyWord,true);
+        List<String> categories = new ArrayList<>();
+        categories.add(category);
+        return products.findAll(Specification.where(ItemSpecifications.nameContains(keyWord))
+                .and(ItemSpecifications.categoriesIn(categories)));
     }
     public List<Item> searchByCategory(String category){
         /* Empty string for fetching all result with the relevant category */
-        return products.search(category,"",true);
+        //return products.search(category,"",true);
+        List<String> categories = new ArrayList<>();
+        categories.add(category);
+        return products.findAll(Specification.where(ItemSpecifications.categoriesIn(categories)));
     }
     public List<String> getAllCategories(){
-        return products.getAllCategoryValues();
+        //return products.getAllCategoryValues();
+        return products.findAllCategories();
     }
 
     public boolean isAvailable(long itemId, int amount){
-        return products.findById(itemId).getQuantity() >= amount;
+        return getItem(itemId).getQuantity() >= amount;
     }
 
     public void decreaseAmount(long itemId, int toDecrease)throws InterruptedException{
-        Item item = products.findById(itemId);
+        Item item = getItem(itemId);
         item.lock();
         item.decrease(toDecrease);
-        products.update(item);
+        products.save(item);
         item.unlock();
     }
 
     public void increaseAmount(long itemId, int toIncrease)throws InterruptedException{
-        Item item = products.findById(itemId);
+        Item item = getItem(itemId);
         item.lock();
         item.increase(toIncrease);
-        products.update(item);
+        products.save(item);
         item.unlock();
     }
 
     public Item getById(long itemId) {
-        return products.findById(itemId);
+        return getItem(itemId);
     }
 
     public String getDescription() {
@@ -148,7 +159,7 @@ public class Store implements DataItem<Long> {
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception{
         Map<Item,Integer> itemsCount = new HashMap<>();
         for(Long itemId: basket.getItems().keySet())
-            itemsCount.put(products.findById(itemId), basket.getItems().get(itemId));
+            itemsCount.put(getItem(itemId), basket.getItems().get(itemId));
         Map<Item, Double> itemsPrice = getItemsPrices(itemsCount.keySet().stream().toList());
         double price = 0;
         for(IDiscount discount: discounts.findAll()){
@@ -183,7 +194,7 @@ public class Store implements DataItem<Long> {
         this.policyFactory = policyFactory;
     }
 
-    public IRepository<Long, Item> getProductRepo() {
+    public ItemRepository getProductRepo() {
         return products;
     }
     public void addDiscount(String discountDetails) throws Exception{
@@ -208,7 +219,7 @@ public class Store implements DataItem<Long> {
         HashMap<Item, Integer> itemsInBasket = new HashMap<>();
         //Map<Item, Integer> decreasedItems = new HashMap<>();
         for (Map.Entry<Long, Integer> pair: basket.getItems().entrySet()) {
-            Item item = products.findById(pair.getKey());
+            Item item = getItem(pair.getKey());
             item.lock(); //sync
             itemsInBasket.put(item, pair.getValue());
             if (item.getQuantity() < pair.getValue()) {
@@ -263,8 +274,16 @@ public class Store implements DataItem<Long> {
 
     }
 
+
     public void clearCache(Long id) {
         itemsCache.remove(id);
+    }
+
+    private Item getItem(long itemId){
+        Optional<Item> item = products.findById(itemId);
+        if(item.isEmpty())
+            throw new NoSuchElementException("Item not found");
+        return item.get();
     }
 
     public void clearCache() {
