@@ -16,7 +16,7 @@ import java.util.List;
 public class SystemManager extends User{
     private static final String USER_NAME = "admin";
     private static final String PASSWORD = "admin";
-    private static final int USER_AGE = 35;
+    private static final int USER_AGE = 25;
     private static final boolean LOGGED_IN = false;
     private static final ShoppingCart SHOPPING_CART = new ShoppingCart(new InMemoryRepository<Long, ShoppingBasket>()); // Assuming ShoppingCart is the correct type
     private static final Istate STATE = new Registered();

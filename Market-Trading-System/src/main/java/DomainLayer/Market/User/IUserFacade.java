@@ -6,10 +6,11 @@ import java.util.List;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface IUserFacade {
-    public static IUserFacade getInstance(IRepository<String, User> users, SystemManager systemManager, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade)
+    public static IUserFacade getInstance(UserRepository users, SystemManager systemManager, IStoreFacade storeFacade, IPurchaseFacade purchaseFacade)
     {
         return UserController.getInstance(users, systemManager, storeFacade, purchaseFacade);
     }

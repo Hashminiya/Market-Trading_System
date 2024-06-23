@@ -21,4 +21,8 @@ public class SpringContext implements ApplicationContextAware {
     public static Object getBean(String beanName) {
         return context.getBean(beanName);
     }
+
+    public static <T> T getNewBean(Class<T> beanClass) {
+        return context.getAutowireCapableBeanFactory().createBean(beanClass);
+    }
 }

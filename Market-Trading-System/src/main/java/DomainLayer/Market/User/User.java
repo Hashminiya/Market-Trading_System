@@ -6,17 +6,29 @@ import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Market.Util.StoreRole;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Entity
+@Component
+@Scope("prototype")
 public class User implements IUser,DataItem<String> {
+    @Id
     private String userName;
     private String password;
     private int userAge;
+    @Transient
     private Istate state;
     protected boolean loggedIn;
+    @Transient
     private ShoppingCart shoppingCart;
+    @Transient
     private Map<Long, Set<StoreEnum>> storePermissionsAndRole;
 
     public User(String userName, String password, int userAge, Istate state, boolean loggedIn, ShoppingCart shoppingCart) {
@@ -27,6 +39,10 @@ public class User implements IUser,DataItem<String> {
         this.loggedIn = loggedIn;
         this.shoppingCart = shoppingCart;
         this.storePermissionsAndRole = new HashMap<>();
+    }
+
+    public User() {
+
     }
 
     public String getUserName() {

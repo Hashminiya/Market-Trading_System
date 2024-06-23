@@ -11,6 +11,7 @@ import DomainLayer.Market.User.User;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.JwtService;
+import DomainLayer.Repositories.InMemoryUserRepository;
 import ServiceLayer.Market.ISystemManagerService;
 import ServiceLayer.Market.SystemManagerService;
 import ServiceLayer.Store.StoreManagementService;
@@ -45,7 +46,7 @@ public class ServiceFactory {
 
     private ServiceFactory(){
         systemAvailable = false;
-        userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String,User>(), SystemManager.getInstance(), storeFacadeInstance, purchaseFacadeInstance);
+        userFacadeInstance = IUserFacade.getInstance(new InMemoryUserRepository(), SystemManager.getInstance(), storeFacadeInstance, purchaseFacadeInstance);
         userServiceInstance = UserService.getInstance(userFacadeInstance);
         jwtService = new JwtService();
         userServiceInstance.setJwtService(jwtService);
