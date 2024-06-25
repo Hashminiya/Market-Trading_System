@@ -18,20 +18,20 @@ public class Application {
         systemInitialize = false;
         Scanner scanner = new Scanner(System.in);
         System.out.println("To initialize the server an admin verification is needed, please log in:\n");
-//        boolean loggedIn = false;
-//        while (!loggedIn) {
-//            System.out.print("Enter a Admin user name: ");
-//            String username = scanner.nextLine();
-//            System.out.print("Enter a Admin password: ");
-//            String password = scanner.nextLine();
-//            if (username.equals("admin") && password.equals("admin")) {
-//                System.out.println("\nLogin successful. Welcome, " + username + "!\n");
-//                loggedIn = true;
-//            }
-//            else {
-//                System.out.println("\nInvalid credentials. Please try again.\n");
-//            }
-//        }
+        boolean loggedIn = false;
+        while (!loggedIn) {
+            System.out.print("Enter a Admin user name: ");
+            String username = scanner.nextLine();
+            System.out.print("Enter a Admin password: ");
+            String password = scanner.nextLine();
+            if (username.equals("admin") && password.equals("admin")) {
+                System.out.println("\nLogin successful. Welcome, " + username + "!\n");
+                loggedIn = true;
+            }
+            else {
+                System.out.println("\nInvalid credentials. Please try again.\n");
+            }
+        }
         SpringApplication.run(Application.class, args);
     }
 }
