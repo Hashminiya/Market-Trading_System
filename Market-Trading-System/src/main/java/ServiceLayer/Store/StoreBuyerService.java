@@ -173,6 +173,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                     itemDetail.put("itemPrice", item.getPrice());
                     itemDetail.put("stockAmount", item.getQuantity());
                     itemDetail.put("category", item.getCategories());
+                    itemDetail.put("description", item.getDescription());
                     itemDetails.add(itemDetail);
                 }
                 storeDetails.put("items", itemDetails);
