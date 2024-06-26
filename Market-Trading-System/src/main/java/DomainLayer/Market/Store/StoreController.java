@@ -50,8 +50,6 @@ public class StoreController implements IStoreFacade{
                             @Qualifier("purchaseController") IPurchaseFacade purchaseFacadeInstance) {
         this.storesRepo = storesRepo;
         this.purchaseFacade = purchaseFacadeInstance;
-        publisher = (Publisher) SpringContext.getBean("Publisher");
-
     }
 
     public static synchronized StoreController getInstance(IRepository<Long, Store> storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance) {
@@ -159,7 +157,7 @@ public class StoreController implements IStoreFacade{
         userFacade.assignStoreOwner(newOwnerId, storeId);
         store.assignOwner(newOwnerId);
 
-        publisher.publish(this, String.format("You've been asigned as store owner at %s",store.getName()),newOwnerId);
+        publishMessage(String.format("You've been asigned as store owner at %s",store.getName()),newOwnerId);
     }
 
     @Override
@@ -170,7 +168,7 @@ public class StoreController implements IStoreFacade{
         userFacade.assignStoreManager(newManagerId, storeId, permissions);
         store.assignManager(newManagerId);
 
-        publisher.publish(this, String.format("You've been asigned as store manager at %s",store.getName()),newManagerId);
+        publishMessage(String.format("You've been asigned as store manager at %s",store.getName()),newManagerId);
     }
 
     @Override
@@ -324,7 +322,7 @@ public class StoreController implements IStoreFacade{
             store.updateAmount(itemDto.getItemId(), itemDto.getQuantity());
             store.releaseLocks(itemDto.getItemId()); //sync
 
-            publisher.publish(this, String.format("A purchase occurred in your store %s",store.getName()),store.getOwners());
+            publishMessage(String.format("A purchase occurred in your store %s",store.getName()),store.getOwners());
         }
 
 
@@ -407,6 +405,19 @@ public class StoreController implements IStoreFacade{
         return allStores.stream()
                 .filter(store -> store.getOwners().contains(userName))
                 .collect(Collectors.toList());
+    }
+    private void publishMessage(String message, String userName){
+        if(publisher == null) {
+            publisher = (Publisher) SpringContext.getBean("Publisher");
+        }
+        publisher.publish(this, message,userName);
+    }
+
+    private void publishMessage(String message, List<String> userNames){
+        if(publisher == null) {
+            publisher = (Publisher) SpringContext.getBean("Publisher");
+        }
+        publisher.publish(this, message,userNames);
     }
 
 }

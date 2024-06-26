@@ -15,7 +15,6 @@ import java.util.List;
 @Service("Publisher")
 public class Publisher {
     private final ApplicationEventPublisher eventPublisher;
-    private Publisher instance;
 
     @Autowired
     private Publisher(ApplicationEventPublisher eventPublisher) {
@@ -30,4 +29,5 @@ public class Publisher {
         Event event = new Event(source, eventMessage, new HashSet<>(userNames));
         eventPublisher.publishEvent(event);
     }
+
 }
