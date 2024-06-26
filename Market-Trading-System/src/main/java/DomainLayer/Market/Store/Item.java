@@ -36,6 +36,10 @@ public class Item implements DataItem<Long> {
 
     }
 
+    public Item() {
+
+    }
+
     @Override
     public Long getId() {
         return this.id;

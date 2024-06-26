@@ -8,6 +8,7 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IdGenerator;
 
+
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
 import DomainLayer.Repositories.DbBasketRepository;
@@ -16,7 +17,6 @@ import jakarta.persistence.OneToMany;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
 

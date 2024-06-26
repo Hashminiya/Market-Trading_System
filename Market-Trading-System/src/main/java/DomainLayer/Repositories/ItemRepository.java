@@ -17,4 +17,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificat
     //List<String> findAllCategories();
     List<Item> findByStoreIdAndNameContaining(long storeId, String name);
 
+
 }

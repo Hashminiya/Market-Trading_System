@@ -13,12 +13,10 @@ import DomainLayer.Repositories.ItemSpecifications;
 import DomainLayer.Repositories.PurchasePolicyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
-
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
@@ -66,6 +64,7 @@ public class Store implements DataItem<Long> {
     public Store() {
 
     }
+
 
     @PostLoad
     private void loadItems() {
@@ -152,9 +151,7 @@ public class Store implements DataItem<Long> {
     }
     public List<String> getAllCategories(){
         //return products.getAllCategoryValues();
-
         return products.findAllCategories();
-
     }
 
     public boolean isAvailable(long itemId, int amount){

@@ -6,7 +6,9 @@ import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IdGenerator;
 import jakarta.persistence.*;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,12 +19,16 @@ public class ShoppingBasket implements DataItem<Long> {
 
     @Id
     private long basketId;
+
     @Transient
     private Map<Long, Integer> itemsQuantity; // map<itemId, quantity>
+
     @Transient
     private Map<Long, Double> itemsPrice; // map<itemId, price>
+
     private double basketTotalPrice;
     private long storeId;
+
     @Column(name = "user_name")
     private String userName;
 
@@ -32,6 +38,10 @@ public class ShoppingBasket implements DataItem<Long> {
         this.itemsQuantity = new HashMap<>();
         this.itemsPrice = new HashMap<>();
         this.userName = userName;
+    }
+
+    public ShoppingBasket() {
+
     }
 
     public ShoppingBasket() {

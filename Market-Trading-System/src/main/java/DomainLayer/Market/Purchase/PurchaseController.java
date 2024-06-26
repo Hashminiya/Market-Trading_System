@@ -25,6 +25,7 @@ public class PurchaseController implements IPurchaseFacade {
 
     @Autowired
     private PurchaseController(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+
         this.purchaseRepo = purchaseRepo;
         this.paymentServiceProxy = paymentServiceProxy;
         this.supplyServiceProxy = supplyServiceProxy;
