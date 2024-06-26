@@ -224,7 +224,8 @@ public class UserService implements IUserService {
                 ShoppingCart shoppingCart = userFacade.getShoppingCart(userName);
                 ShoppingCartDTO shoppingCartDTO = new ShoppingCartDTO(shoppingCart, SpringContext.getBean(StoreController.class));
                 logger.info("Shopping cart retrieved for user: {}", userName);
-                return ResponseEntity.ok(shoppingCartDTO);
+                ResponseEntity response = ResponseEntity.ok(shoppingCartDTO);
+                return response;
             } else {
                 logger.warn("Invalid token for getting shopping cart: {}", token);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

@@ -10,6 +10,7 @@ import DomainLayer.Market.Util.InMemoryRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -105,5 +106,13 @@ public class ShoppingCart {
             baskets.delete(id);
         }
 
+    }
+
+    public List<Long> getItems() {
+        List<Long> items = new ArrayList<>();
+        for(ShoppingBasket sb: getBaskets()){
+            items.addAll(sb.getItems().keySet());
+        }
+        return items;
     }
 }

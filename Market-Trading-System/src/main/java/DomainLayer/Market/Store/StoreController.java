@@ -396,4 +396,16 @@ public class StoreController implements IStoreFacade{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Item> getItemsByIdList(Set<Long> longs){
+        List<Item> items = new ArrayList<>();
+        for (Long id : longs){
+            Item item = getItem(id);
+            if (item != null){
+                items.add(item);
+            }
+        }
+        return items;
+    }
+
 }
