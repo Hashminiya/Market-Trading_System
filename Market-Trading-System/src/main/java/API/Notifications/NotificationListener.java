@@ -1,19 +1,17 @@
-package API.controller;
+package API.Notifications;
 
-import API.WebSocketHandler;
-import DomainLayer.Market.Notification.Event;
+import DomainLayer.Market.Notifications.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 @Component
-public class NotifiactionController {
+public class NotificationListener {
     @Autowired
-    private static WebSocketHandler webSocketServer;
+    private WebSocketHandler webSocketServer;
     @Autowired
-    public  NotifiactionController(WebSocketHandler webSocketServer) {
+    public NotificationListener(WebSocketHandler webSocketServer) {
         this.webSocketServer =  webSocketServer;
     }
 

@@ -1,5 +1,8 @@
-package API;
+package API.Notifications;
 
+import API.SpringContext;
+import DomainLayer.Market.Notifications.Event;
+import DomainLayer.Market.Notifications.Publisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -8,6 +11,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,6 +44,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (userName != null) {
             usersSessions.put(userName, session);
         }
+        Event event = new Event(new Object(), "connect message from server!!!",new HashSet<>(Arrays.asList(userName)));
+        Publisher publisher = (Publisher) SpringContext.getBean("Publisher");
+        publisher.publish(event);
     }
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String userName = (String) session.getAttributes().get("username");

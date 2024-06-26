@@ -1,10 +1,7 @@
-package DomainLayer.Market.Notification;
+package DomainLayer.Market.Notifications;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 @Service("Publisher")
 public class Publisher {

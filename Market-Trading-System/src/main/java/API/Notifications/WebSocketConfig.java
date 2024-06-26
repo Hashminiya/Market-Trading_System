@@ -1,4 +1,4 @@
-package API;
+package API.Notifications;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.*;
@@ -6,16 +6,16 @@ import org.springframework.web.socket.config.annotation.*;
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-    private final WebSocketHandler webSocketServer;
+    private final WebSocketHandler webSocketHandler;
 
     public WebSocketConfig(WebSocketHandler webSocketServer) {
-        this.webSocketServer = webSocketServer;
+        this.webSocketHandler = webSocketServer;
     }
-
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketServer, "/ws")
+        registry.addHandler(webSocketHandler, "/ws")
+                .addInterceptors(new WebSocketHandshakeInterceptor())
                 .setAllowedOrigins("*");
     }
 }
