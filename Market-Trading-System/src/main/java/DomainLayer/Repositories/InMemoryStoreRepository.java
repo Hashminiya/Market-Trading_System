@@ -18,6 +18,7 @@ import java.util.function.Function;
 @Profile("in-memory")
 @Scope("singleton")
 public class InMemoryStoreRepository implements StoreRepository {
+
     @Override
     public void flush() {
 
@@ -39,7 +40,7 @@ public class InMemoryStoreRepository implements StoreRepository {
     }
 
     @Override
-    public void deleteAllByIdInBatch(Iterable<Integer> integers) {
+    public void deleteAllByIdInBatch(Iterable<Long> longs) {
 
     }
 
@@ -49,17 +50,17 @@ public class InMemoryStoreRepository implements StoreRepository {
     }
 
     @Override
-    public Store getOne(Integer integer) {
+    public Store getOne(Long aLong) {
         return null;
     }
 
     @Override
-    public Store getById(Integer integer) {
+    public Store getById(Long aLong) {
         return null;
     }
 
     @Override
-    public Store getReferenceById(Integer integer) {
+    public Store getReferenceById(Long aLong) {
         return null;
     }
 
@@ -109,12 +110,12 @@ public class InMemoryStoreRepository implements StoreRepository {
     }
 
     @Override
-    public Optional<Store> findById(Integer integer) {
+    public Optional<Store> findById(Long aLong) {
         return Optional.empty();
     }
 
     @Override
-    public boolean existsById(Integer integer) {
+    public boolean existsById(Long aLong) {
         return false;
     }
 
@@ -124,7 +125,7 @@ public class InMemoryStoreRepository implements StoreRepository {
     }
 
     @Override
-    public List<Store> findAllById(Iterable<Integer> integers) {
+    public List<Store> findAllById(Iterable<Long> longs) {
         return List.of();
     }
 
@@ -134,7 +135,7 @@ public class InMemoryStoreRepository implements StoreRepository {
     }
 
     @Override
-    public void deleteById(Integer integer) {
+    public void deleteById(Long aLong) {
 
     }
 
@@ -144,7 +145,7 @@ public class InMemoryStoreRepository implements StoreRepository {
     }
 
     @Override
-    public void deleteAllById(Iterable<? extends Integer> integers) {
+    public void deleteAllById(Iterable<? extends Long> longs) {
 
     }
 

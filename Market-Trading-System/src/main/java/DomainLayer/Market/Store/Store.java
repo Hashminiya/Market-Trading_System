@@ -6,27 +6,38 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Store.StorePurchasePolicy.*;
 import DomainLayer.Market.Util.DataItem;
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Repositories.DiscountRepository;
 import DomainLayer.Repositories.ItemRepository;
 import DomainLayer.Repositories.ItemSpecifications;
 import DomainLayer.Repositories.PurchasePolicyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
 
+@Entity
 public class Store implements DataItem<Long> {
-    private final Long id;
+
+    @Id
+    private Long id;
     private String founderId;
     private String name;
     private String description;
-    private final List<String> owners;
-    private final List<String> managers;
+    @Transient
+    private List<String> owners;
+    @Transient
+    private List<String> managers;
+    @Transient
     private ItemRepository products;
+    @Transient
     private DiscountRepository discounts;
+    @Transient
     private PurchasePolicyRepository purchasePolicies;
+    @Transient
     private PurchasePolicyFactory policyFactory;
     private Map<Long, ItemsCache> itemsCache;
 
@@ -44,6 +55,10 @@ public class Store implements DataItem<Long> {
         managers = new ArrayList<>();
         itemsCache = new HashMap<>();
         assignOwner(founderId);
+    }
+
+    public Store() {
+
     }
 
     @Override
@@ -125,7 +140,9 @@ public class Store implements DataItem<Long> {
     }
     public List<String> getAllCategories(){
         //return products.getAllCategoryValues();
-        return products.findAllCategories();
+        //return products.findAllCategories();
+        //TODO: change return
+        return new ArrayList<>();
     }
 
     public boolean isAvailable(long itemId, int amount){
@@ -207,7 +224,7 @@ public class Store implements DataItem<Long> {
         objectMapper.registerSubtypes(new NamedType(ConditionComposite.class, "ConditionComposite"));
 
         try {
-            IDiscount discount = objectMapper.readValue(discountDetails, IDiscount.class);
+            BaseDiscount discount = objectMapper.readValue(discountDetails, BaseDiscount.class);
             discounts.save(discount);
         }
         catch (Exception e){

@@ -22,7 +22,7 @@ public class InMemoryItemRepository implements ItemRepository {
     private ConcurrentHashMap<Long, Item> storage = new ConcurrentHashMap<>();
     private AtomicLong idCounter = new AtomicLong();
 
-    @Override
+    //@Override
     public List<String> findAllCategories() {
         Set<String> categories = new HashSet<>();
         for (Item item : storage.values()) {
@@ -95,7 +95,7 @@ public class InMemoryItemRepository implements ItemRepository {
 
     }
 
-    @Override
+    //@Override
     public List<Item> findByName(String name) {
         List<Item> result = new ArrayList<>();
         for (Item item : storage.values()) {
@@ -106,17 +106,17 @@ public class InMemoryItemRepository implements ItemRepository {
         return result;
     }
 
-    @Override
+    //@Override
     public List<Item> findByPriceGreaterThan(double price) {
         return List.of();
     }
 
-    @Override
+    //@Override
     public List<Item> findByNameContaining(String keyword) {
         return List.of();
     }
 
-    @Override
+    //@Override
     public List<Item> findByCategoriesIn(List<String> categories) {
         return List.of();
     }

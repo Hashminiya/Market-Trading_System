@@ -4,10 +4,10 @@ import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
-import DomainLayer.Market.Util.InMemoryRepository;
+import DomainLayer.Repositories.BasketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -22,10 +22,10 @@ import java.util.stream.Stream;
 
 @Component
 public class ShoppingCart {
-    private final IRepository<Long,ShoppingBasket> baskets;
+    private final BasketRepository baskets;
 
     @Autowired
-    public ShoppingCart(IRepository<Long,ShoppingBasket> baskets){
+    public ShoppingCart(@Qualifier("dbBasketRepository")BasketRepository baskets){
         this.baskets = baskets;
     }
 

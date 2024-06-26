@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import java.util.Scanner;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"API", "ServiceLayer", "DomainLayer"})
-@EnableJpaRepositories(basePackages = {"API", "ServiceLayer", "DomainLayer"})
-@EntityScan(basePackages = {"API", "ServiceLayer", "DomainLayer"})
+@ComponentScan(basePackages = {"API", "ServiceLayer", "DomainLayer", "DAL"})
+@EnableJpaRepositories(basePackages = {"API", "ServiceLayer", "DomainLayer", "DAL"})
+@EntityScan(basePackages = {"API", "ServiceLayer", "DomainLayer", "DAL"})
 @DependsOn("startupListener")
 public class Application {
 

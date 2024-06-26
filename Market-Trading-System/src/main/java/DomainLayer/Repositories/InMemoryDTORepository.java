@@ -1,7 +1,6 @@
 package DomainLayer.Repositories;
 
-import DomainLayer.Market.Store.Discount.BaseDiscount;
-import DomainLayer.Market.Store.Discount.IDiscount;
+import DAL.ItemDTO;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Example;
@@ -18,25 +17,24 @@ import java.util.function.Function;
 @Repository
 @Profile("in-memory")
 @Scope("prototype")
-public class InMemoryDiscountRepository implements DiscountRepository {
-
+public class InMemoryDTORepository implements ItemDTORepository{
     @Override
     public void flush() {
 
     }
 
     @Override
-    public <S extends BaseDiscount> S saveAndFlush(S entity) {
+    public <S extends ItemDTO> S saveAndFlush(S entity) {
         return null;
     }
 
     @Override
-    public <S extends BaseDiscount> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends ItemDTO> List<S> saveAllAndFlush(Iterable<S> entities) {
         return List.of();
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<BaseDiscount> entities) {
+    public void deleteAllInBatch(Iterable<ItemDTO> entities) {
 
     }
 
@@ -51,67 +49,67 @@ public class InMemoryDiscountRepository implements DiscountRepository {
     }
 
     @Override
-    public BaseDiscount getOne(Long aLong) {
+    public ItemDTO getOne(Long aLong) {
         return null;
     }
 
     @Override
-    public BaseDiscount getById(Long aLong) {
+    public ItemDTO getById(Long aLong) {
         return null;
     }
 
     @Override
-    public BaseDiscount getReferenceById(Long aLong) {
+    public ItemDTO getReferenceById(Long aLong) {
         return null;
     }
 
     @Override
-    public <S extends BaseDiscount> Optional<S> findOne(Example<S> example) {
+    public <S extends ItemDTO> Optional<S> findOne(Example<S> example) {
         return Optional.empty();
     }
 
     @Override
-    public <S extends BaseDiscount> List<S> findAll(Example<S> example) {
+    public <S extends ItemDTO> List<S> findAll(Example<S> example) {
         return List.of();
     }
 
     @Override
-    public <S extends BaseDiscount> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends ItemDTO> List<S> findAll(Example<S> example, Sort sort) {
         return List.of();
     }
 
     @Override
-    public <S extends BaseDiscount> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends ItemDTO> Page<S> findAll(Example<S> example, Pageable pageable) {
         return null;
     }
 
     @Override
-    public <S extends BaseDiscount> long count(Example<S> example) {
+    public <S extends ItemDTO> long count(Example<S> example) {
         return 0;
     }
 
     @Override
-    public <S extends BaseDiscount> boolean exists(Example<S> example) {
+    public <S extends ItemDTO> boolean exists(Example<S> example) {
         return false;
     }
 
     @Override
-    public <S extends BaseDiscount, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends ItemDTO, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
 
     @Override
-    public <S extends BaseDiscount> S save(S entity) {
+    public <S extends ItemDTO> S save(S entity) {
         return null;
     }
 
     @Override
-    public <S extends BaseDiscount> List<S> saveAll(Iterable<S> entities) {
+    public <S extends ItemDTO> List<S> saveAll(Iterable<S> entities) {
         return List.of();
     }
 
     @Override
-    public Optional<BaseDiscount> findById(Long aLong) {
+    public Optional<ItemDTO> findById(Long aLong) {
         return Optional.empty();
     }
 
@@ -121,12 +119,12 @@ public class InMemoryDiscountRepository implements DiscountRepository {
     }
 
     @Override
-    public List<BaseDiscount> findAll() {
+    public List<ItemDTO> findAll() {
         return List.of();
     }
 
     @Override
-    public List<BaseDiscount> findAllById(Iterable<Long> longs) {
+    public List<ItemDTO> findAllById(Iterable<Long> longs) {
         return List.of();
     }
 
@@ -141,7 +139,7 @@ public class InMemoryDiscountRepository implements DiscountRepository {
     }
 
     @Override
-    public void delete(BaseDiscount entity) {
+    public void delete(ItemDTO entity) {
 
     }
 
@@ -151,7 +149,7 @@ public class InMemoryDiscountRepository implements DiscountRepository {
     }
 
     @Override
-    public void deleteAll(Iterable<? extends BaseDiscount> entities) {
+    public void deleteAll(Iterable<? extends ItemDTO> entities) {
 
     }
 
@@ -161,12 +159,12 @@ public class InMemoryDiscountRepository implements DiscountRepository {
     }
 
     @Override
-    public List<BaseDiscount> findAll(Sort sort) {
+    public List<ItemDTO> findAll(Sort sort) {
         return List.of();
     }
 
     @Override
-    public Page<BaseDiscount> findAll(Pageable pageable) {
+    public Page<ItemDTO> findAll(Pageable pageable) {
         return null;
     }
 }

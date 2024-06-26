@@ -3,18 +3,26 @@ package DomainLayer.Market.Store.StorePurchasePolicy;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+@Entity
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class PurchasePolicy implements DataItem<Long> {
     ///TODO decide how to get relevant user data
-    private final Long id;
-    private final String name;
+    @Id
+    private Long id;
+    private String name;
+    @Transient
     private List<Long> itemsList;
-    private final List<String> categories;
-    private final boolean isStore;
+    @Transient
+    private List<String> categories;
+    private boolean isStore;
     public PurchasePolicy(Long id, String name, List<Long> itemsList, List<String> categories, boolean isStore){
         this.id = id;
         this.name = name;
@@ -22,6 +30,11 @@ public abstract class PurchasePolicy implements DataItem<Long> {
         this.categories = categories;
         this.isStore = isStore;
     }
+
+    public PurchasePolicy() {
+
+    }
+
     @Override
     public Long getId() {
         return id;

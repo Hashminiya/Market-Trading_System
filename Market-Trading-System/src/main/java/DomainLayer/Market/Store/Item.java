@@ -2,18 +2,24 @@ package DomainLayer.Market.Store;
 
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.DataItem;
-import DomainLayer.Market.Util.IRepository;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Entity
 public class Item implements DataItem<Long> {
-    private final Long id;
+
+    @Id
+    private Long id;
     private String name;
     private String description;
     private int quantity;
     private double price;
+    @Transient
     private List<String> categories;
     private static ReentrantLock lock = new ReentrantLock();
 
@@ -22,6 +28,10 @@ public class Item implements DataItem<Long> {
         this.name = name;
         this.description = description;
         this.categories = categories;
+    }
+
+    public Item() {
+
     }
 
     @Override

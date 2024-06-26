@@ -2,30 +2,37 @@ package DAL;
 
 import DomainLayer.Market.Util.DataItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 import java.util.List;
 
+@Entity
 public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
+
+    @Id
     @JsonProperty("itemId")
-    private final long itemId;
+    private long itemId;
 
     @JsonProperty("itemName")
-    private final String itemName;
+    private String itemName;
 
     @JsonProperty("quantity")
-    private final int quantity;
+    private int quantity;
 
     @JsonProperty("storeId")
-    private final long storeId;
+    private long storeId;
 
     @JsonProperty("totalPrice")
-    private final double totalPrice;
+    private double totalPrice;
 
+    @Transient
     @JsonProperty("categories")
-    private final List<String> categories;
+    private List<String> categories;
 
     @JsonProperty("description")
-    private final String description;
+    private String description;
 
     public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice, List<String> categories, String description) {
         this.itemId = itemId;
@@ -35,6 +42,10 @@ public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
         this.totalPrice = totalPrice;
         this.categories = categories;
         this.description = description;
+    }
+
+    public ItemDTO() {
+
     }
 
     public Long getId() {
