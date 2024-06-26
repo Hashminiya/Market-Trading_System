@@ -1,13 +1,16 @@
 package DomainLayer.Market.Purchase;
 
+import API.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Util.DataItem;
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
-import DomainLayer.Market.Util.InMemoryRepository;
+import DomainLayer.Repositories.ItemDTORepository;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,17 +18,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Entity
 public class Purchase implements IPurchase, DataItem<Long> {
 
-        private PaymentServiceProxy paymentServiceProxy;
-        private SupplyServiceProxy supplyServiceProxy;
+    @Transient
+    private PaymentServiceProxy paymentServiceProxy;
+    @Transient
+    private SupplyServiceProxy supplyServiceProxy;
 
-        private long purchaseId;
-        private List<ItemDTO> purchasedItemsList;
-        private double totalAmount;
-        private String userId;
-        private IRepository<Long,ItemDTO> itemsRepo;
-        String purchaseDate;
+    @Id
+    private long purchaseId;
+    @Transient
+    private List<ItemDTO> purchasedItemsList;
+    private double totalAmount;
+    private String userId;
+    @Transient
+    private ItemDTORepository itemsRepo;
+    String purchaseDate;
 
 
     public Purchase(String userId,double totalAmount,Long purchaseId,List<ItemDTO> purchasedItemsList, PaymentServiceProxy paymentService, SupplyServiceProxy supplyService) {
@@ -35,12 +44,16 @@ public class Purchase implements IPurchase, DataItem<Long> {
             this.purchasedItemsList=purchasedItemsList;
             this.totalAmount = totalAmount;
             this.userId = userId;
-            itemsRepo = new InMemoryRepository<>();
+            itemsRepo = SpringContext.getBean(ItemDTORepository.class);
             for (ItemDTO item:purchasedItemsList) {
                 itemsRepo.save(item);
             }
             purchaseDate =LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
+
+    public Purchase() {
+
+    }
 
     @Override
     public void checkout(String creditCard, Date expiryDate, String CVV) {

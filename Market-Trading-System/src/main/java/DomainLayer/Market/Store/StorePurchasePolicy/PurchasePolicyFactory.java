@@ -2,7 +2,6 @@ package DomainLayer.Market.Store.StorePurchasePolicy;
 
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.User.IUserFacade;
-import DomainLayer.Market.Util.IRepository;
 
 public class PurchasePolicyFactory {
 
