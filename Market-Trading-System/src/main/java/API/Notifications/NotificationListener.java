@@ -9,16 +9,16 @@ import org.springframework.web.socket.TextMessage;
 @Component
 public class NotificationListener {
     @Autowired
-    private WebSocketHandler webSocketServer;
+    private WebSocketHandler webSocketHandler;
     @Autowired
-    public NotificationListener(WebSocketHandler webSocketServer) {
-        this.webSocketServer =  webSocketServer;
+    public NotificationListener(WebSocketHandler webSocketHandler) {
+        this.webSocketHandler =  webSocketHandler;
     }
 
     @EventListener
     public void processMessage(Event event){
         String userId = (String) event.getUserIds().toArray()[0];
-        webSocketServer.handleMessage(userId, new TextMessage(event.getMessage()));
+        webSocketHandler.handleMessage(userId, new TextMessage(event.getMessage()));
 
     }
 }
