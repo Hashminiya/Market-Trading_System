@@ -1,8 +1,11 @@
 package DomainLayer.Market.User;
+import API.SpringContext;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
+import DomainLayer.Repositories.BasketRepository;
+import DomainLayer.Repositories.DbBasketRepository;
+import DomainLayer.Repositories.InMemoryBasketRepository;
 import DomainLayer.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
-import DomainLayer.Market.Util.IRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -75,7 +77,8 @@ public class UserController implements IUserFacade {
         long id = generateId();
         String userName = "guest" + id;
         Istate guest = new Guest();
-        User user = new User(userName, null, 0, guest, true, new ShoppingCart(new InMemoryRepository<>()));//TODO: Shopping cart should get IRepository as parameter.
+        InMemoryBasketRepository inMemoryBasketRepository = SpringContext.getBean(InMemoryBasketRepository.class);
+        User user = new User(userName, null, 0, guest, true, new ShoppingCart(inMemoryBasketRepository));//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
         return userName;
     }
@@ -91,7 +94,8 @@ public class UserController implements IUserFacade {
         }
         String encodedPassword = passwordEncoder.encode(password);
         Istate registered = new Registered();
-        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart(new InMemoryRepository<>()));//TODO: Shopping cart should get IRepository as parameter.
+        DbBasketRepository baskets = SpringContext.getBean(DbBasketRepository.class);
+        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart(baskets));//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
     }
 

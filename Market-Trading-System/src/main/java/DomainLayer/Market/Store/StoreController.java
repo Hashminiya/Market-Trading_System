@@ -13,6 +13,7 @@ import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.DiscountRepository;
 import DomainLayer.Repositories.ItemRepository;
 import DomainLayer.Repositories.PurchasePolicyRepository;
+import DomainLayer.Repositories.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @Component("StoreController")
 public class StoreController implements IStoreFacade{
     private static StoreController storeControllerInstance;
-    private IRepository<Long, Store> storesRepo;
+    private StoreRepository storesRepo;
     private IPurchaseFacade purchaseFacade;
     private IUserFacade userFacade;
     //private static final Map<Long, ReentrantLock> locks = new HashMap<Long, ReentrantLock>();;
@@ -46,13 +47,13 @@ public class StoreController implements IStoreFacade{
     private String ADD_POLICY = "ADD_POLICY";
 
     @Autowired
-    private StoreController(@Qualifier("InMemoryRepository") IRepository<Long, Store> storesRepo,
+    private StoreController(@Qualifier("dbStoreRepository") StoreRepository storesRepo,
                             @Qualifier("purchaseController") IPurchaseFacade purchaseFacadeInstance) {
         this.storesRepo = storesRepo;
         this.purchaseFacade = purchaseFacadeInstance;
     }
 
-    public static synchronized StoreController getInstance(IRepository<Long, Store> storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance) {
+    public static synchronized StoreController getInstance(StoreRepository storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance) {
         if (storeControllerInstance == null) {
             storeControllerInstance = new StoreController(storesRepo, purchaseFacadeInstance);
             // TODO : We assume that when this function called, next line will be setUserFacade..
@@ -339,7 +340,7 @@ public class StoreController implements IStoreFacade{
     }
 
     @Override
-    public void setStoersRepo(IRepository<Long,Store> storesRepo) {
+    public void setStoersRepo(StoreRepository storesRepo) {
         this.storesRepo = storesRepo;
     }
 

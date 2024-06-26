@@ -4,25 +4,36 @@ import DAL.ItemDTO;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IdGenerator;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Entity
 public class ShoppingBasket implements DataItem<Long> {
 
-    private final long basketId;
-    private final Map<Long, Integer> itemsQuantity; // map<itemId, quantity>
-    private final Map<Long, Double> itemsPrice; // map<itemId, price>
+    @Id
+    private long basketId;
+    @Transient
+    private Map<Long, Integer> itemsQuantity; // map<itemId, quantity>
+    @Transient
+    private Map<Long, Double> itemsPrice; // map<itemId, price>
     private double basketTotalPrice;
-    private final long storeId;
+    private long storeId;
 
     public ShoppingBasket(Long storeId) {
         this.basketId = IdGenerator.generateId();
         this.storeId = storeId;
         this.itemsQuantity = new HashMap<>();
         this.itemsPrice = new HashMap<>();
+    }
+
+    public ShoppingBasket() {
+
     }
 
     public void addItem(long itemId, int quantity) {

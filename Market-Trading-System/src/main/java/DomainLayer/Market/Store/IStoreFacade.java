@@ -4,15 +4,15 @@ package DomainLayer.Market.Store;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Repositories.StoreRepository;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 public interface IStoreFacade {
-    public static IStoreFacade getInstance(IRepository<Long, Store> storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance)
+    public static IStoreFacade getInstance(StoreRepository storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance)
     {
         return StoreController.getInstance(storesRepo, userFacadeInstance, purchaseFacadeInstance);
     }
@@ -44,7 +44,7 @@ public interface IStoreFacade {
 
     void clear();
 
-    void setStoersRepo(IRepository<Long,Store> storesRepo);
+    void setStoersRepo(StoreRepository storesRepo);
     public boolean checkValidBasket(ShoppingBasket shoppingBasket, String userName) throws InterruptedException;
 
     public void addDiscount(String userName, long storeId, String discountDetails) throws Exception;
