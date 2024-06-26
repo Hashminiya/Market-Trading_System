@@ -44,9 +44,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (userName != null) {
             usersSessions.put(userName, session);
         }
-        Event event = new Event(new Object(), "connect message from server!!!",new HashSet<>(Arrays.asList(userName)));
-        Publisher publisher = (Publisher) SpringContext.getBean("Publisher");
-        publisher.publish(event);
     }
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String userName = (String) session.getAttributes().get("username");

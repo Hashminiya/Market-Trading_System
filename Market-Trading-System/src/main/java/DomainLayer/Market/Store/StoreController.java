@@ -1,6 +1,8 @@
 package DomainLayer.Market.Store;
 
+import API.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Market.Notifications.Publisher;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicyFactory;
@@ -41,12 +43,15 @@ public class StoreController implements IStoreFacade{
     private String REMOVE_STORE = "REMOVE_STORE";
     private String ADD_DISCOUNT = "ADD_DISCOUNT";
     private String ADD_POLICY = "ADD_POLICY";
+    private Publisher publisher;
 
     @Autowired
     private StoreController(@Qualifier("InMemoryRepository") IRepository<Long, Store> storesRepo,
                             @Qualifier("purchaseController") IPurchaseFacade purchaseFacadeInstance) {
         this.storesRepo = storesRepo;
         this.purchaseFacade = purchaseFacadeInstance;
+        publisher = (Publisher) SpringContext.getBean("Publisher");
+
     }
 
     public static synchronized StoreController getInstance(IRepository<Long, Store> storesRepo, IUserFacade userFacadeInstance, IPurchaseFacade purchaseFacadeInstance) {
@@ -153,6 +158,8 @@ public class StoreController implements IStoreFacade{
         Store store = storesRepo.findById(storeId);
         userFacade.assignStoreOwner(newOwnerId, storeId);
         store.assignOwner(newOwnerId);
+
+        publisher.publish(this, String.format("You've been asigned as store owner at %s",store.getName()),newOwnerId);
     }
 
     @Override
@@ -162,6 +169,8 @@ public class StoreController implements IStoreFacade{
         Store store = storesRepo.findById(storeId);
         userFacade.assignStoreManager(newManagerId, storeId, permissions);
         store.assignManager(newManagerId);
+
+        publisher.publish(this, String.format("You've been asigned as store manager at %s",store.getName()),newManagerId);
     }
 
     @Override
@@ -314,7 +323,11 @@ public class StoreController implements IStoreFacade{
             Store store = storesRepo.findById(itemDto.getStoreId());
             store.updateAmount(itemDto.getItemId(), itemDto.getQuantity());
             store.releaseLocks(itemDto.getItemId()); //sync
+
+            publisher.publish(this, String.format("A purchase occurred in your store %s",store.getName()),store.getOwners());
         }
+
+
     }
 
     @Override
