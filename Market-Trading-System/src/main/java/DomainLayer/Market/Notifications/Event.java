@@ -1,4 +1,4 @@
-package DomainLayer.Market.Notification;
+package DomainLayer.Market.Notifications;
 import java.util.Set;
 import org.springframework.context.ApplicationEvent;
 
