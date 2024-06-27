@@ -45,8 +45,8 @@ public class ShoppingCart {
         sb.get().updateItemQuantity(itemId,quantity);
     }
 
-    public Long addItemBasket(long storeId, long itemId, int quantity){
-        ShoppingBasket sb = getShoppingBasket(storeId);
+    public Long addItemBasket(long storeId, long itemId, int quantity, String userName){
+        ShoppingBasket sb = getShoppingBasket(storeId,userName);
         sb.addItem(itemId,quantity);
         return sb.getId();
     }
@@ -83,11 +83,11 @@ public class ShoppingCart {
         baskets.deleteById(id);
     }
 
-    private ShoppingBasket getShoppingBasket(long storeId){
+    private ShoppingBasket getShoppingBasket(long storeId, String userName){
         ShoppingBasket sb;
         List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
         if(currentBasket.size() == 0) {
-            sb = new ShoppingBasket(storeId);
+            sb = new ShoppingBasket(storeId, userName);
             baskets.save(sb);
         }
         else
