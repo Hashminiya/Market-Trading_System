@@ -48,7 +48,7 @@ public class StartupRunner implements CommandLineRunner {
 
     private void runSystem() {
         List<String> tokens = createUsers();
-        //List<Long> storeIds = createStores(tokens);
+        List<Long> storeIds = createStores(tokens);
         //List<Long> itemIds = createItems(tokens, storeIds);
         //initShoppingCart(tokens, storeIds, itemIds);
         //createPurchase(tokens);

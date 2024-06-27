@@ -1,5 +1,6 @@
 package DomainLayer.Market.User;
 
+import API.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
@@ -9,6 +10,7 @@ import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Market.Util.StoreRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -44,6 +46,11 @@ public class User implements IUser,DataItem<String> {
 
     public User() {
 
+    }
+
+    @PostLoad
+    private void initializeState() {
+        this.state = (Istate) SpringContext.getBean("registered");
     }
 
     public String getUserName() {

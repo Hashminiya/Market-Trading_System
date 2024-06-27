@@ -28,9 +28,10 @@ public class UserController implements IUserFacade {
     private IPurchaseFacade purchaseFacade;
     private final BCryptPasswordEncoder passwordEncoder;
     private int guestId ;
+    private List<User> guests = new ArrayList<>();
 
     @Autowired
-    private UserController(@Qualifier("dbUserRepository") UserRepository users,
+    private UserController(UserRepository users,
                            @Qualifier("SystemManager") SystemManager admin,
                            @Qualifier("StoreController") IStoreFacade storeFacade,
                            @Qualifier("purchaseController") IPurchaseFacade purchaseFacade) {
@@ -80,13 +81,13 @@ public class UserController implements IUserFacade {
         Istate guest = new Guest();
         InMemoryBasketRepository inMemoryBasketRepository = SpringContext.getBean(InMemoryBasketRepository.class);
         User user = new User(userName, null, 0, guest, true, new ShoppingCart(inMemoryBasketRepository));//TODO: Shopping cart should get IRepository as parameter.
-        users.save(user);
+        guests.add(user);
         return userName;
     }
 
     @Override
     public void terminateGuestSession(String userName) {
-        users.deleteById(userName);
+        guests.remove(getUser(userName));
     }
 
     public void register(String userName,String password, int userAge) throws Exception {
