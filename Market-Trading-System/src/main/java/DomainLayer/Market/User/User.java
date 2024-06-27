@@ -2,16 +2,15 @@ package DomainLayer.Market.User;
 
 import API.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Converters.StoreEnumConverter;
+import DomainLayer.Converters.StoreEnumSetConverter;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Market.Util.StoreRole;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PostLoad;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +30,11 @@ public class User implements IUser,DataItem<String> {
     protected boolean loggedIn;
     @Transient
     private ShoppingCart shoppingCart;
-    @Transient
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_store_permissions", joinColumns = @JoinColumn(name = "user_name"))
+    @MapKeyColumn(name = "store_id")
+    @Column(name = "permission", length = 500)
+    @Convert(converter = StoreEnumSetConverter.class)
     private Map<Long, Set<StoreEnum>> storePermissionsAndRole;
 
     public User(String userName, String password, int userAge, Istate state, boolean loggedIn, ShoppingCart shoppingCart) {
