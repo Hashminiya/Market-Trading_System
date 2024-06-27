@@ -1,10 +1,6 @@
 package ServiceLayer.User;
 
-import API.SpringContext;
-import DAL.ItemDTO;
 import DomainLayer.Market.ShoppingBasket;
-import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
@@ -16,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import java.util.Date;
 import java.util.List;
-import java.lang.reflect.Field;
 
 import java.util.*;
 
@@ -263,10 +258,6 @@ public class UserService implements IUserService {
     }
 
 
-
-
-
-
     @Override
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token){
         try {
@@ -285,6 +276,25 @@ public class UserService implements IUserService {
         catch (Exception e) {
             logger.error("Error display user store ownership: {}", token, e);
             return ResponseEntity.status(500).build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if (userName != null && jwtService.isValid(token, userDetails)) {
+                userFacade.checkoutShoppingCart(userName, creditCard, expiryDate, cvv, discountCode);
+                logger.info("Checkout shopping cart for user: {}", userName);
+                return ResponseEntity.ok(String.format("Checkout shopping cart for user %s", userName));
+            } else {
+                logger.warn("Invalid token for checkout: {}", token);
+                return ResponseEntity.status(401).body(token);
+            }
+        } catch (Exception e) {
+            logger.error("Error during checkout", e);
+            return ResponseEntity.status(500).body("Error during checkout");
         }
     }
 }

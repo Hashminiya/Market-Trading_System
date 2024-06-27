@@ -172,17 +172,17 @@ public class UserUT {
     }
 
     @Test
-    public void test_addItemToBasket_should_call_ShppingCart_once() {
+    public void test_addItemToBasket_should_call_ShppingCart_once() throws Exception{
         user.setLoggedIn(true);
-        user.addItemToBasket(1L, 2L, 3);
-        verify(shoppingCart, times(1)).addItemBasket(1L, 2L, 3);
+        user.addItemToBasket(1L, 2L, 3, storeFacade);
+        verify(shoppingCart, times(1)).addItemBasket(1L, 2L, 3, storeFacade);
     }
 
     @Test
     public void test_addItemToBasket_should_throw_exception_when_user_logged_out() {
         user.setLoggedIn(false);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            user.addItemToBasket(1L, 2L, 3);
+            user.addItemToBasket(1L, 2L, 3, storeFacade);
         });
         assertEquals("user not logged in", exception.getMessage());
     }

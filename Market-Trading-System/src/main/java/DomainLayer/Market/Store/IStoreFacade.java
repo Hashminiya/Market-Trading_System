@@ -1,6 +1,7 @@
 package DomainLayer.Market.Store;
 
 
+import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
@@ -39,7 +40,7 @@ public interface IStoreFacade {
     public HashMap<Long,String> searchGenerallyByKeyWord(String keyWord);
     public HashMap<Long,String> searchGenerallyByKeyWordAndCategory(String category, String keyWord);
     public boolean addItemToShoppingBasket(ShoppingBasket basket, long storeId, long itemId, int quantity);
-    public void purchaseOccurs()throws InterruptedException;
+    public void purchaseOccurs(List<ShoppingBasket> baskets)throws InterruptedException;
     public void calculateBasketPrice(ShoppingBasket basket, String code)throws Exception;
 
     void clear();
@@ -53,6 +54,7 @@ public interface IStoreFacade {
     List<Store> findAll();
 
     Set<String> getAllCategories();
-    public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception;
+    //public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception;
+    public void restoreStock(List<ShoppingBasket> baskets)throws InterruptedException;
 
 }

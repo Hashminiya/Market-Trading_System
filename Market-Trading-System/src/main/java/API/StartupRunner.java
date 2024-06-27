@@ -357,7 +357,7 @@ public class StartupRunner implements CommandLineRunner {
     }
 
     private void createPurchase(List<String> tokens) {
-        IStoreManagementService managementServiceService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
-        managementServiceService.checkoutShoppingCart(tokens.get(0), "1234567812345678", new Date(2025), "123", null);
+        IUserService userService = (IUserService) SpringContext.getBean("userService");
+        userService.checkoutShoppingCart(tokens.get(0), "1234567812345678", new Date(2025), "123", null);
     }
 }

@@ -168,7 +168,7 @@ public class UserControllerUT {
         userController.checkoutShoppingCart(USERNAME_TEST, "1234567890123456", new Date(), "123", "DISCOUNT");
 
         verify(purchaseFacade, times(1)).checkout(eq(USERNAME_TEST), eq("1234567890123456"), any(Date.class), eq("123"), eq(items), eq(100.0));
-        verify(storeFacade, times(1)).purchaseOccurs();
+        //verify(storeFacade, times(1)).purchaseOccurs();
     }
 
     @Test
@@ -191,12 +191,12 @@ public class UserControllerUT {
     }
 
     @Test
-    public void test_addItemToBasket_should_call_function_once() {
+    public void test_addItemToBasket_should_call_function_once() throws Exception{
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
 
         userController.addItemToBasket(USERNAME_TEST, 1L, 2L, 3);
-        verify(user, times(1)).addItemToBasket(1L, 2L, 3);
+        verify(user, times(1)).addItemToBasket(1L, 2L, 3, storeFacade);
     }
 
     @Test

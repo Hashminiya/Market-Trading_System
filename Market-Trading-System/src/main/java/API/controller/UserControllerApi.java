@@ -77,10 +77,10 @@ public class UserControllerApi {
         return userService.modifyShoppingCart(token, basketId, itemId, newQuantity);
     }
 
-    /*@PostMapping("/user/checkoutShoppingCart")
+    @PostMapping("/user/checkoutShoppingCart")
     public ResponseEntity<String> checkoutShoppingCart(@RequestParam String token,@RequestParam String creditCard,@RequestParam Date expiryDate,@RequestParam String cvv,@RequestParam String discountCode) {
         return userService.checkoutShoppingCart(token, creditCard, expiryDate, cvv, discountCode);
-    }*/
+    }
 
     @PutMapping("/user/addItemToBasket")
     public ResponseEntity<String> addItemToBasket(@RequestParam String token,@RequestParam long storeId,@RequestParam long itemId,@RequestParam int quantity) {
