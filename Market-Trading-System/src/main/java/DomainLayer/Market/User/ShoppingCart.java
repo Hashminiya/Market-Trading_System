@@ -69,6 +69,7 @@ public class ShoppingCart {
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
         BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
         basketItemRepository.save(basketItem);
+
         return sb.getId();
     }
 
@@ -130,6 +131,7 @@ public class ShoppingCart {
         //List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
         List<ShoppingBasket> currentBasket = shoppingBaskets.stream().filter(basket -> basket.getStoreId() == storeId).toList();
         if(currentBasket.isEmpty()) {
+
             sb = new ShoppingBasket(storeId, userName);
             baskets.save(sb);
             shoppingBaskets.add(sb);
