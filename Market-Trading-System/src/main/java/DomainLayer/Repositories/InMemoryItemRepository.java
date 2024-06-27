@@ -251,5 +251,10 @@ public class InMemoryItemRepository implements ItemRepository {
         return null;
     }
 
+    @Override
+    public List<Item> findByStoreIdAndNameContaining(long storeId, String name) {
+        return List.of();
+    }
+
     // Implement other methods from JpaRepository as needed
 }
