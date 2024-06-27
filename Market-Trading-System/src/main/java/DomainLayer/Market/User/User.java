@@ -52,8 +52,11 @@ public class User implements IUser,DataItem<String> {
     }
 
     @PostLoad
-    private void initializeState() {
+    private void initFields() {
+        //init state
         this.state = (Istate) SpringContext.getBean("registered");
+        //load shopping cart
+        this.shoppingCart = (ShoppingCart) SpringContext.getBean("shoppingCart");
     }
 
     public String getUserName() {
