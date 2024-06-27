@@ -22,12 +22,14 @@ public class Item implements DataItem<Long> {
     @Transient
     private List<String> categories;
     private static ReentrantLock lock = new ReentrantLock();
+    private long storeId;
 
-    public Item(Long id, String name,String description, List<String> categories){
+    public Item(Long id, String name,String description, List<String> categories, long storeId){
         this.id = id;
         this.name = name;
         this.description = description;
         this.categories = categories;
+        this.storeId = storeId;
     }
 
     public Item() {

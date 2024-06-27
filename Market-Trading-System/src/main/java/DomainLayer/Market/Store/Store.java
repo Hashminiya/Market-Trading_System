@@ -1,7 +1,7 @@
 package DomainLayer.Market.Store;
 
-
 import DAL.ItemDTO;
+import API.SpringContext;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Store.StorePurchasePolicy.*;
@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -61,6 +62,11 @@ public class Store implements DataItem<Long> {
 
     }
 
+    @PostLoad
+    private void loadItems() {
+        products = SpringContext.getBean(ItemRepository.class);
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -95,7 +101,7 @@ public class Store implements DataItem<Long> {
     }
 
     public void addItem(Long itemId, String name, double price, int quantity, String description, List<String> categories)throws InterruptedException{
-        Item newItem = new Item(itemId, name, description, categories);
+        Item newItem = new Item(itemId, name, description, categories, id);
         newItem.setPrice(price);
         newItem.setQuantity(quantity);
         products.save(newItem);
