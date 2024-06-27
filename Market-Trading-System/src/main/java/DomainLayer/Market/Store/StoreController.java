@@ -10,11 +10,8 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
+import DomainLayer.Repositories.*;
 import jdk.jshell.spi.ExecutionControl;
-import DomainLayer.Repositories.DiscountRepository;
-import DomainLayer.Repositories.ItemRepository;
-import DomainLayer.Repositories.PurchasePolicyRepository;
-import DomainLayer.Repositories.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -48,7 +45,7 @@ public class StoreController implements IStoreFacade{
     private String ADD_POLICY = "ADD_POLICY";
 
     @Autowired
-    private StoreController(@Qualifier("dbStoreRepository") StoreRepository storesRepo,
+    private StoreController(StoreRepository storesRepo,
                             @Qualifier("purchaseController") IPurchaseFacade purchaseFacadeInstance) {
         this.storesRepo = storesRepo;
         this.purchaseFacade = purchaseFacadeInstance;

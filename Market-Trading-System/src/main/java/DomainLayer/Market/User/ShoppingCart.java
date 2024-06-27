@@ -23,7 +23,7 @@ public class ShoppingCart {
     private final BasketRepository baskets;
 
     @Autowired
-    public ShoppingCart(@Qualifier("dbBasketRepository")BasketRepository baskets){
+    public ShoppingCart(BasketRepository baskets){
         this.baskets = baskets;
     }
 
