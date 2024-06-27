@@ -7,6 +7,7 @@ import DomainLayer.Repositories.BasketRepository;
 import DomainLayer.Repositories.DbBasketRepository;
 import DomainLayer.Repositories.InMemoryBasketRepository;
 import DomainLayer.Repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -141,6 +142,7 @@ public class UserController implements IUserFacade {
     public void assignStoreOwner(String userName, long storeId) {
         User user = getUser(userName);
         user.assignStoreOwner(storeId);
+        users.save(user);
     }
 
     @Override
