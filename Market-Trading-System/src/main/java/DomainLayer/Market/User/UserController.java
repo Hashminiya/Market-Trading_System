@@ -3,10 +3,7 @@ import API.SpringContext;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.StorePermission;
-import DomainLayer.Repositories.BasketRepository;
-import DomainLayer.Repositories.DbBasketRepository;
-import DomainLayer.Repositories.InMemoryBasketRepository;
-import DomainLayer.Repositories.UserRepository;
+import DomainLayer.Repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
@@ -80,7 +77,8 @@ public class UserController implements IUserFacade {
         String userName = "guest" + id;
         Istate guest = new Guest();
         InMemoryBasketRepository inMemoryBasketRepository = SpringContext.getBean(InMemoryBasketRepository.class);
-        User user = new User(userName, null, 0, guest, true, new ShoppingCart(inMemoryBasketRepository));//TODO: Shopping cart should get IRepository as parameter.
+        BasketItemRepository basketItemRepository = SpringContext.getBean(BasketItemRepository.class);
+        User user = new User(userName, null, 0, guest, true, new ShoppingCart(inMemoryBasketRepository, basketItemRepository));//TODO: Shopping cart should get IRepository as parameter.
         guests.add(user);
         return userName;
     }
@@ -97,7 +95,8 @@ public class UserController implements IUserFacade {
         String encodedPassword = passwordEncoder.encode(password);
         Istate registered = new Registered();
         DbBasketRepository baskets = SpringContext.getBean(DbBasketRepository.class);
-        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart(baskets));//TODO: Shopping cart should get IRepository as parameter.
+        BasketItemRepository basketItemRepository = SpringContext.getBean(BasketItemRepository.class);
+        User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart(baskets, basketItemRepository));//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
     }
 

@@ -5,10 +5,7 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IdGenerator;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,10 +23,6 @@ public class ShoppingBasket implements DataItem<Long> {
 //    @Column(name = "quantity")
     @Transient
     private Map<Long, Integer> itemsQuantity; // map<itemId, quantity>
-//    @ElementCollection
-//    @CollectionTable(name = "basket_items_price", joinColumns = @JoinColumn(name = "basket_id"))
-//    @MapKeyColumn(name = "item_id")
-//    @Column(name = "price")
     @Transient
     private Map<Long, Double> itemsPrice; // map<itemId, price>
     private double basketTotalPrice;
