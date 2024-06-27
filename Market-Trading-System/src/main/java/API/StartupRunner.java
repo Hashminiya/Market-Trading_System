@@ -35,22 +35,24 @@ public class StartupRunner implements CommandLineRunner {
 
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
 
-//        ResponseEntity<?> response = userService.register("admin", "admin", 25);
-//        if(!response.getStatusCode().is2xxSuccessful()){
-//            throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
-//        }
+        //TODO: delete the following 3 lines before submission: the admin is always registered
+        ResponseEntity<?> response = userService.register("admin", "admin", 25);
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
+        }
+
         System.out.println("Payment and Supply external services connected successfully");
         System.out.println("The server is running...");
-        //runSystem();
+        runSystem();
     }
 
     private void runSystem() {
         List<String> tokens = createUsers();
-        List<Long> storeIds = createStores(tokens);
-        List<Long> itemIds = createItems(tokens, storeIds);
-        initShoppingCart(tokens, storeIds, itemIds);
-        createPurchase(tokens);
-        logoutUsers(tokens);
+        //List<Long> storeIds = createStores(tokens);
+        //List<Long> itemIds = createItems(tokens, storeIds);
+        //initShoppingCart(tokens, storeIds, itemIds);
+        //createPurchase(tokens);
+        //logoutUsers(tokens);
     }
 
     private void logoutUsers(List<String> tokens) {

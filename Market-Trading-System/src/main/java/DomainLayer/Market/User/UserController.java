@@ -103,7 +103,9 @@ public class UserController implements IUserFacade {
     public boolean login(String userName, String rawPassword) throws Exception {
         User user = getUser(userName);
         if (passwordEncoder.matches(rawPassword, user.getPassword())) {
-            return user.login();
+            boolean result = user.login();
+            users.save(user);
+            return result;
         }
         throw new IllegalArgumentException("wrong password");
     }
