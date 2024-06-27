@@ -113,6 +113,7 @@ public class UserController implements IUserFacade {
     public void logout(String userName) {
         User user = getUser(userName);
         user.logout();
+        users.save(user);
     }
 
     public String viewShoppingCart(String userName) throws Exception{

@@ -52,7 +52,7 @@ public class StartupRunner implements CommandLineRunner {
         List<Long> itemIds = createItems(tokens, storeIds);
         initShoppingCart(tokens, storeIds, itemIds);
         //createPurchase(tokens);
-        //logoutUsers(tokens);
+        logoutUsers(tokens);
     }
 
     private void logoutUsers(List<String> tokens) {
