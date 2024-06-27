@@ -47,8 +47,8 @@ public class ShoppingCart {
         sb.get().updateItemQuantity(itemId,quantity);
     }
 
-    public Long addItemBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade) throws Exception {
-        ShoppingBasket sb = getShoppingBasket(storeId);
+    public Long addItemBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade, String userName) throws Exception {
+        ShoppingBasket sb = getShoppingBasket(storeId,userName);
         boolean hasStock = storeFacade.addItemToShoppingBasket(sb, storeId, itemId, quantity);
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
         return sb.getId();
@@ -103,11 +103,11 @@ public class ShoppingCart {
         baskets.deleteById(id);
     }
 
-    private ShoppingBasket getShoppingBasket(long storeId){
+    private ShoppingBasket getShoppingBasket(long storeId, String userName){
         ShoppingBasket sb;
         List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
         if(currentBasket.isEmpty()) {
-            sb = new ShoppingBasket(storeId);
+            sb = new ShoppingBasket(storeId, userName);
             baskets.save(sb);
         }
         else

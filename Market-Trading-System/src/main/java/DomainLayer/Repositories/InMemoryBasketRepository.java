@@ -168,4 +168,9 @@ public class InMemoryBasketRepository implements BasketRepository {
     public Page<ShoppingBasket> findAll(Pageable pageable) {
         return null;
     }
+
+    @Override
+    public List<ShoppingBasket> findByUserName(String userName) {
+        return List.of();
+    }
 }

@@ -184,7 +184,7 @@ public class User implements IUser,DataItem<String> {
 
     public Long addItemToBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade) throws Exception {
         verifyIsLoggedIn();
-        return shoppingCart.addItemBasket(storeId, itemId, quantity, storeFacade);
+        return shoppingCart.addItemBasket(storeId, itemId, quantity, storeFacade, userName);
     }
 
     public boolean isRegister() {
