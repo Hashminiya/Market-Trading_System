@@ -35,10 +35,10 @@ public class StartupRunner implements CommandLineRunner {
 
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
 
-        ResponseEntity<?> response = userService.register("admin", "admin", 25);
-        if(!response.getStatusCode().is2xxSuccessful()){
-            throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
-        }
+//        ResponseEntity<?> response = userService.register("admin", "admin", 25);
+//        if(!response.getStatusCode().is2xxSuccessful()){
+//            throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
+//        }
         System.out.println("Payment and Supply external services connected successfully");
         System.out.println("The server is running...");
         //runSystem();
