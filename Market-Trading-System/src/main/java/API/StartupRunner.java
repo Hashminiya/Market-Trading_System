@@ -58,6 +58,7 @@ public class StartupRunner implements CommandLineRunner {
         List<Long> storeIds = createStores(tokens);
         List<Long> itemIds = createItems(tokens, storeIds);
         initShoppingCart(tokens, storeIds, itemIds);
+
         //createPurchase(tokens);
         logoutUsers(tokens);
     }

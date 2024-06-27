@@ -1,6 +1,6 @@
 package DomainLayer.Market.Store;
-
 import DAL.ItemDTO;
+
 import API.SpringContext;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
@@ -64,7 +64,6 @@ public class Store implements DataItem<Long> {
     public Store() {
 
     }
-
 
     @PostLoad
     private void loadItems() {
