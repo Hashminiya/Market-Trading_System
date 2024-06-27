@@ -7,8 +7,6 @@ import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IdGenerator;
-
-
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
 import DomainLayer.Repositories.DbBasketRepository;
@@ -35,6 +33,7 @@ public class ShoppingCart {
     private final BasketRepository baskets;
     private final BasketItemRepository basketItemRepository;
     private final List<ShoppingBasket> shoppingBaskets;
+
 
     @Autowired
     public ShoppingCart(BasketRepository baskets, BasketItemRepository basketItemRepository){
@@ -69,7 +68,6 @@ public class ShoppingCart {
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
         BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
         basketItemRepository.save(basketItem);
-
         return sb.getId();
     }
 
