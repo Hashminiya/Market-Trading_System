@@ -17,10 +17,6 @@ public class ShoppingBasket implements DataItem<Long> {
 
     @Id
     private long basketId;
-//    @ElementCollection
-//    @CollectionTable(name = "basket_items_quantity", joinColumns = @JoinColumn(name = "basket_id"))
-//    @MapKeyColumn(name = "item_id")
-//    @Column(name = "quantity")
     @Transient
     private Map<Long, Integer> itemsQuantity; // map<itemId, quantity>
     @Transient
