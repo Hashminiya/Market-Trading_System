@@ -10,8 +10,10 @@ import DomainLayer.Market.Util.InMemoryRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
@@ -42,19 +44,26 @@ public class ShoppingCart {
         sb.updateItemQuantity(itemId,quantity);
     }
 
-    public Long addItemBasket(long storeId, long itemId, int quantity){
+    public Long addItemBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade) throws Exception {
         ShoppingBasket sb = getShoppingBasket(storeId);
-        sb.addItem(itemId,quantity);
+        boolean hasStock = storeFacade.addItemToShoppingBasket(sb, storeId, itemId, quantity);
+        if(!hasStock) throw new Exception("Item's quantity isn't in stock");
         return sb.getId();
     }
 
     public List<ItemDTO> checkoutShoppingCart(String userName, IStoreFacade storeFacade, String code) throws Exception{
         List<ShoppingBasket> l = getBaskets();
         List<ItemDTO> items = new ArrayList<>();
+        List<ShoppingBasket> decreasedBaskets = new ArrayList<>();
+        int num = 0;
         for(ShoppingBasket sb : l){
             try {
-                //if(locks.get(sb.getStoreId()).tryLock(10, TimeUnit.SECONDS)) {
+                decreasedBaskets.add(sb);
                 if (!storeFacade.checkValidBasket(sb, userName)) {
+                    System.out.println("check valid false "+ Thread.currentThread().getName());
+                    num = 1;
+                    storeFacade.restoreStock(decreasedBaskets);
+                    num = 2;
                     throw new RuntimeException("couldn't complete checkout- invalid basket");
                 }
                 storeFacade.calculateBasketPrice(sb, code);
@@ -62,12 +71,23 @@ public class ShoppingCart {
                 items.addAll(basketItems);
                 //}
             }
-            catch(InterruptedException e) {
-                throw new InterruptedException("Unable to acquire lock for basket");
-            } catch (Exception e){
-                throw new Exception(e.getMessage());
+            catch(Exception e) {
+                if(e instanceof RuntimeException) {
+                    System.out.println("throw1 " + Thread.currentThread().getName() + " ---- " + num);
+                    throw new RuntimeException(e.getMessage());
+                }
+                storeFacade.restoreStock(decreasedBaskets);
+                if(e instanceof InterruptedException) {
+                    System.out.println("throw2 "+ Thread.currentThread().getName());
+                    throw new InterruptedException("Unable to acquire lock for basket");
+                }
+                else {
+                    System.out.println("throw3 "+ Thread.currentThread().getName());
+                    throw new Exception(e.getMessage());
+                }
             }
         }
+        System.out.println("check valid true "+ Thread.currentThread().getName());
         return items;
     }
 
@@ -82,7 +102,7 @@ public class ShoppingCart {
     private ShoppingBasket getShoppingBasket(long storeId){
         ShoppingBasket sb;
         List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
-        if(currentBasket.size() == 0) {
+        if(currentBasket.isEmpty()) {
             sb = new ShoppingBasket(storeId);
             baskets.save(sb);
         }

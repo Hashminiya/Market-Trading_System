@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 
 
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Component("StoreController")
@@ -308,12 +306,15 @@ public class StoreController implements IStoreFacade{
         return false;
     }
 
-    public void purchaseOccurs()throws InterruptedException{
-        List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
+    public void purchaseOccurs(List<ShoppingBasket> baskets)throws InterruptedException{
+        /*List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
         for (ItemDTO itemDto: purchasedItems){
             Store store = storesRepo.findById(itemDto.getStoreId());
-            store.updateAmount(itemDto.getItemId(), itemDto.getQuantity());
-            store.releaseLocks(itemDto.getItemId()); //sync
+            store.decreaseAmount(itemDto.getItemId(), itemDto.getQuantity());
+        }*/
+        for(ShoppingBasket basket: baskets){
+            Store store = storesRepo.findById(basket.getStoreId());
+            store.clearCache(basket.getId());
         }
     }
 
@@ -371,10 +372,19 @@ public class StoreController implements IStoreFacade{
                 .collect(Collectors.toSet());
     }
 
-    public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception {
-        userFacade.checkoutShoppingCart(userName, creditCard, expiryDate, cvv, discountCode);
-
+    @Override
+    public void restoreStock(List<ShoppingBasket> baskets) throws InterruptedException{
+        for(ShoppingBasket basket: baskets) {
+            Store store = storesRepo.findById(basket.getStoreId());
+            while(true){
+                try{
+                    store.restoreStock(basket.getId());
+                    break;
+                }catch (Exception e){}
+            }
+        }
     }
+
 
     @Override
     public List<String> getListOfStorNamesByIds(List<Long> listOfIds) {

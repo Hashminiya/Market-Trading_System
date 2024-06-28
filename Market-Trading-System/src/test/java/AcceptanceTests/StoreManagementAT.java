@@ -260,7 +260,7 @@ public class StoreManagementAT{
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    @Test
+    /*@Test
     @Order(11)
     public void test_checkoutShoppingCart_should_return_ok_status() {
         beforeCheckouts();
@@ -332,5 +332,5 @@ public class StoreManagementAT{
         ITEM1_ID = (Long)  storeManagementService.addItemToStore(USERNAME1_TOKEN, STORE_ID1,"new item", "desctiprion",50,100, List.of("electronics")).getBody();
         ITEM3_ID = (Long) storeManagementService.addItemToStore(USERNAME1_TOKEN, STORE_ID1, "vodka", "alcoholic drink",100,50, List.of("alcohol")).getBody();
         ITEM2_ID = (Long)  storeManagementService.addItemToStore(USERNAME1_TOKEN, STORE_ID2,"new item", "desctiprion",50,15, List.of("electronics")).getBody();
-    }
+    }*/
 }

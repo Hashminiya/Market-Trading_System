@@ -171,7 +171,7 @@ public class UserAT {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
-    /*@Test
+    @Test
     @Order(11)
     public void test_checkoutShoppingCart_should_return_ok_status() {
         ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
@@ -230,6 +230,6 @@ public class UserAT {
         HashMap<Long, Integer> inventory_after_action = (HashMap<Long, Integer>)
                 storeSevice.viewInventory(USERNAME1_TOKEN,STOREID).getBody();
         assertEquals(inventory_before_action, inventory_after_action);
-    }*/
+    }
 
 }
