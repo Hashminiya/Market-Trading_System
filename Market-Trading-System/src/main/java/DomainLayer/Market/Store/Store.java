@@ -72,10 +72,10 @@ public class Store implements DataItem<Long> {
         purchasePolicies = SpringContext.getBean(PurchasePolicyRepository.class);
         policyFactory = SpringContext.getBean(PurchasePolicyFactory.class);
 
-        //TODO:: Update owners and managers with appropriate values
+        //TODO:: Update owners and managers and itemsCache with appropriate values
         owners=new ArrayList<>();
         managers=new ArrayList<>();
-
+        itemsCache = new HashMap<>();
     }
 
     @Override
@@ -158,7 +158,9 @@ public class Store implements DataItem<Long> {
     }
     public List<String> getAllCategories(){
         //return products.getAllCategoryValues();
-        return products.findAllCategories();
+        //TODO:: enter Category to table of item and enable findAllCategories
+        //return products.findAllCategories();
+        return new ArrayList<>();
     }
 
     public boolean isAvailable(long itemId, int amount){

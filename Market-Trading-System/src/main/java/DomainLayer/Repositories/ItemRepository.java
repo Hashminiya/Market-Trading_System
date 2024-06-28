@@ -14,8 +14,8 @@ public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificat
     //List<Item> findByPriceGreaterThan(double price);
     //List<Item> findByNameContaining(String keyword);
     //List<Item> findByCategoriesIn(List<String> categories);
-    //List<String> findAllCategories();
+    //List<String> findAllCategory();
+    //TODO:: enter Category to table of item
     List<Item> findByStoreIdAndNameContaining(long storeId, String name);
-
 
 }
