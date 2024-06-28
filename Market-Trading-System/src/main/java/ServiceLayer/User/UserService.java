@@ -2,8 +2,8 @@ package ServiceLayer.User;
 
 import API.SpringContext;
 import DAL.ItemDTO;
-import DomainLayer.Market.Notification.Event;
-import DomainLayer.Market.Notification.Publisher;
+import DomainLayer.Market.Notifications.Event;
+import DomainLayer.Market.Notifications.Publisher;
 import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Item;
@@ -246,9 +246,6 @@ public class UserService implements IUserService {
 
 
 
-
-
-
     @Override
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token){
         try {
@@ -272,7 +269,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
-   try {
+        try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
@@ -286,7 +283,9 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             logger.error("Error during checkout", e);
             return ResponseEntity.status(500).body("Error during checkout");
-   }
+        }
+    }
+
       
     public ResponseEntity<List<String>> viewUserStoresNamesOwnership(String token) {
       try {
