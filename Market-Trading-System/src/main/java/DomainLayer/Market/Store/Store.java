@@ -63,6 +63,14 @@ public class Store implements DataItem<Long> {
     @PostLoad
     private void loadItems() {
         products = SpringContext.getBean(ItemRepository.class);
+        discounts = SpringContext.getBean(DiscountRepository.class);
+        purchasePolicies = SpringContext.getBean(PurchasePolicyRepository.class);
+        policyFactory = SpringContext.getBean(PurchasePolicyFactory.class);
+
+        //TODO:: Update owners and managers with appropriate values
+        owners=new ArrayList<>();
+        managers=new ArrayList<>();
+
     }
 
     @Override
@@ -94,6 +102,7 @@ public class Store implements DataItem<Long> {
     public void setDescription(String description) {
         this.description = description;
     }
+
     public List<Item> viewInventory(){
         return products.findAll();
     }
@@ -104,7 +113,6 @@ public class Store implements DataItem<Long> {
         newItem.setQuantity(quantity);
         products.save(newItem);
     }
-
 
     public void updateItem(long itemId, String newName, double newPrice, int quantity)throws InterruptedException{
         Item toEdit = getItem(itemId);
@@ -218,7 +226,7 @@ public class Store implements DataItem<Long> {
     }
     public boolean checkValidBasket(ShoppingBasket basket, String userDetails) throws InterruptedException{
         HashMap<Item, Integer> itemsInBasket = new HashMap<>();
-        for (Map.Entry<Long, Integer> pair: basket.getItems().entrySet()) {
+        for (Map.Entry<Long, Integer> pair: basket.getItems().entrySet()) { //error
             getItem(pair.getKey()).lock(); //sync
             itemsInBasket.put(getItem(pair.getKey()), pair.getValue());
             if(getItem(pair.getKey()).getQuantity() < pair.getValue()) {

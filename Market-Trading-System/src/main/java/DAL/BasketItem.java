@@ -1,7 +1,11 @@
 package DAL;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "basket_items")
 public class BasketItem {
@@ -20,21 +24,6 @@ public class BasketItem {
 
     // Getters and setters
 
-    public BasketItemId getId() {
-        return id;
-    }
-
-    public void setId(BasketItemId id) {
-        this.id = id;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 }
 
 

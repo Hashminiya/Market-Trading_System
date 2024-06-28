@@ -37,5 +37,16 @@ public class ShutdownHandler {
         System.out.println("Deleting all basketItems...");
         basketItemRepository.deleteAll();
         System.out.println("All basketItems deleted.\n");
+
+        PurchaseRepository purchaseRepository  = SpringContext.getBean(PurchaseRepository.class);
+        System.out.println("Deleting all purchases...");
+        purchaseRepository.deleteAll();
+        System.out.println("All purchases deleted.\n");
+
+        ItemDTORepository itemDTORepository  = SpringContext.getBean(ItemDTORepository.class);
+        System.out.println("Deleting all itemDTOs...");
+        itemDTORepository.deleteAll();
+        System.out.println("All itemDTOs deleted.\n");
+
     }
 }

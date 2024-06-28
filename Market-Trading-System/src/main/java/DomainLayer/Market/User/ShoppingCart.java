@@ -1,5 +1,6 @@
 package DomainLayer.Market.User;
 
+import API.SpringContext;
 import DAL.BasketItem;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
@@ -8,6 +9,7 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
+import jakarta.persistence.PostLoad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -23,12 +25,10 @@ import java.util.stream.Stream;
 @Component
 public class ShoppingCart {
     private final BasketRepository baskets;
-    private final BasketItemRepository basketItemRepository;
 
     @Autowired
     public ShoppingCart(BasketRepository baskets, BasketItemRepository basketItemRepository){
         this.baskets = baskets;
-        this.basketItemRepository = basketItemRepository;
     }
 
     public String viewShoppingCart(IStoreFacade storeFacade) throws Exception{
@@ -51,9 +51,7 @@ public class ShoppingCart {
 
     public Long addItemBasket(long storeId, long itemId, int quantity, String userName){
         ShoppingBasket sb = getShoppingBasket(storeId,userName);
-        BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
         sb.addItem(itemId,quantity);
-        basketItemRepository.save(basketItem);
         return sb.getId();
     }
 
@@ -91,8 +89,11 @@ public class ShoppingCart {
 
     private ShoppingBasket getShoppingBasket(long storeId, String userName){
         ShoppingBasket sb;
-        List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
-        if(currentBasket.size() == 0) {
+        List<ShoppingBasket> currentBasket = baskets.findAll().stream()
+                .filter(basket -> basket.getStoreId() == storeId)
+                .filter(basket->basket.getUserName().equals(userName))
+                .toList();
+        if(currentBasket.isEmpty()) {
             sb = new ShoppingBasket(storeId, userName);
             baskets.save(sb);
         }
