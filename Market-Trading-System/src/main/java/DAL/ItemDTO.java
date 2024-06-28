@@ -1,5 +1,6 @@
 package DAL;
 
+import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -35,6 +36,16 @@ public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
         this.totalPrice = totalPrice;
         this.categories = categories;
         this.description = description;
+    }
+
+    public ItemDTO(Item item, long storeId){
+        this.itemId = item.getId();
+        this.itemName = item.getName();
+        this.quantity = item.getQuantity();
+        this.storeId = storeId;
+        this.totalPrice = item.getPrice();
+        this.categories = item.getCategories();
+        this.description = item.getDescription();
     }
 
     public Long getId() {
