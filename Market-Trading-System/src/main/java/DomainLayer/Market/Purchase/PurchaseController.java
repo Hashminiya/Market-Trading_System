@@ -101,7 +101,7 @@ public class PurchaseController implements IPurchaseFacade {
     public void clearPurchases(){
         List<Purchase> purchases = purchaseRepo.findAll();
         for(Purchase purchase: purchases)
-            purchaseRepo.delete(purchase.getId());
+            purchaseRepo.delete(purchase);
     }
 
     public void clear(){

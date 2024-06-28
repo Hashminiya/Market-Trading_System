@@ -318,7 +318,7 @@ public class StoreController implements IStoreFacade{
             store.decreaseAmount(itemDto.getItemId(), itemDto.getQuantity());
         }*/
         for(ShoppingBasket basket: baskets){
-            Store store = storesRepo.findById(basket.getStoreId());
+            Store store = getStore(basket.getStoreId());
             store.clearCache(basket.getId());
         }
     }
@@ -380,7 +380,7 @@ public class StoreController implements IStoreFacade{
     @Override
     public void restoreStock(List<ShoppingBasket> baskets) throws InterruptedException{
         for(ShoppingBasket basket: baskets) {
-            Store store = storesRepo.findById(basket.getStoreId());
+            Store store = getStore(basket.getStoreId());
             while(true){
                 try{
                     store.restoreStock(basket.getId());

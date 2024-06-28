@@ -40,6 +40,7 @@ public class Store implements DataItem<Long> {
     private PurchasePolicyRepository purchasePolicies;
     @Transient
     private PurchasePolicyFactory policyFactory;
+    @Transient
     private Map<Long, ItemsCache> itemsCache;
 
     public Store(Long id, String founderId, String name, String description, ItemRepository products,

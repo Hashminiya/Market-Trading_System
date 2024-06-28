@@ -131,7 +131,7 @@ public class UserController implements IUserFacade {
     @Override
     public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception{
         User user = getUser(userName);
-        List<ShoppingBasket> baskets = users.findById(userName).getShoppingCart().getBaskets();
+        List<ShoppingBasket> baskets = getUser(userName).getShoppingCart().getBaskets();
         List<ItemDTO> items = user.checkoutShoppingCart(this.storeFacade, discountCode);
         double totalAmount = user.getShoppingCart().getShoppingCartPrice();
         try {
