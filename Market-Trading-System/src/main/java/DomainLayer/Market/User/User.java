@@ -34,6 +34,8 @@ public class User implements IUser,DataItem<String> {
     protected boolean loggedIn;
     @Transient
     private ShoppingCart shoppingCart;
+    @Transient
+    private Map<Long, Set<String>> assigners;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_store_permissions", joinColumns = @JoinColumn(name = "user_name"))
@@ -41,6 +43,8 @@ public class User implements IUser,DataItem<String> {
     @Column(name = "permission", length = 500)
     @Convert(converter = StoreEnumSetConverter.class)
     private Map<Long, Set<StoreEnum>> storePermissionsAndRole;
+    @Transient
+    private ReentrantLock lock;
 
     public User(String userName, String password, int userAge, Istate state, boolean loggedIn, ShoppingCart shoppingCart) {
         this.userName = userName;
@@ -50,6 +54,8 @@ public class User implements IUser,DataItem<String> {
         this.loggedIn = loggedIn;
         this.shoppingCart = shoppingCart;
         this.storePermissionsAndRole = new HashMap<>();
+        this.assigners = new HashMap<>();
+        this.lock = new ReentrantLock();
     }
 
     public User() {
@@ -97,6 +103,10 @@ public class User implements IUser,DataItem<String> {
         return userName;
     }
 
+    public Set<String> getAssigners(long storeId) {
+        return assigners.getOrDefault(storeId, new HashSet<>());
+    }
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -116,6 +126,13 @@ public class User implements IUser,DataItem<String> {
     public void setShoppingCart(ShoppingCart shoppingCart) {
         this.shoppingCart = shoppingCart;
     }
+
+    public void setAssigners(long storeId, Set<String> newAssigners) {
+        if(!this.assigners.containsKey(storeId))
+            assigners.put(storeId, newAssigners);
+        this.assigners.replace(storeId, newAssigners);
+    }
+
 
     public boolean login() {
         if (loggedIn) {
@@ -208,8 +225,10 @@ public class User implements IUser,DataItem<String> {
     }
 
     public void addPermission(long storeId, StorePermission storePermission) {
-        if (!storePermissionsAndRole.containsKey(storeId))
+        if (!storePermissionsAndRole.containsKey(storeId)) {
             storePermissionsAndRole.put(storeId, new HashSet<>());
+            assigners.put(storeId, new HashSet<>());
+        }
         storePermissionsAndRole.get(storeId).add(storePermission);
     }
     public void clearShoppingCart(){
@@ -230,4 +249,8 @@ public class User implements IUser,DataItem<String> {
         }
         return ownedStoreIds;
     }
+
+    public void lock(){ lock.lock();}
+
+    public void unlock() {lock.unlock();}
 }

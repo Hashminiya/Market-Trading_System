@@ -176,7 +176,7 @@ public class UserControllerUT {
         User user = mock(User.class);
         when(users.findById(USERNAME_TEST)).thenReturn(user);
 
-        userController.assignStoreOwner(USERNAME_TEST, 1L);
+        userController.assignStoreOwner(USERNAME_TEST, USERNAME_TEST, 1L);
         verify(user, times(1)).assignStoreOwner(1L);
     }
 
@@ -186,7 +186,7 @@ public class UserControllerUT {
         when(users.findById(USERNAME_TEST)).thenReturn(user);
         List<String> permissions = Arrays.asList("MANAGE_PRODUCTS", "VIEW_STATS");
 
-        userController.assignStoreManager(USERNAME_TEST, 1L, permissions);
+        userController.assignStoreManager(USERNAME_TEST, USERNAME_TEST, 1L, permissions);
         verify(user, times(1)).assignStoreManager(1L, permissions);
     }
 
