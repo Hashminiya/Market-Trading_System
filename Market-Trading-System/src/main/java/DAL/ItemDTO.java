@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
+import lombok.Getter;
 
 import java.util.List;
 
 @Entity
 public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
 
+    @Getter
     @Id
     @JsonProperty("itemId")
     private long itemId;
@@ -18,19 +20,24 @@ public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
     @JsonProperty("itemName")
     private String itemName;
 
+    @Getter
     @JsonProperty("quantity")
     private int quantity;
 
+    @Getter
     @JsonProperty("storeId")
     private long storeId;
 
+    @Getter
     @JsonProperty("totalPrice")
     private double totalPrice;
 
+    @Getter
     @Transient
     @JsonProperty("categories")
     private List<String> categories;
 
+    @Getter
     @JsonProperty("description")
     private String description;
 
@@ -52,32 +59,8 @@ public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
         return itemId;
     }
 
-    public long getItemId() {
-        return itemId;
-    }
-
     public String getName() {
         return itemName;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public long getStoreId() {
-        return storeId;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public List<String> getCategories() {
-        return categories;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     @Override

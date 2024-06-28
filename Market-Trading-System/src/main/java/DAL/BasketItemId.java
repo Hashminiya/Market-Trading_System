@@ -1,12 +1,17 @@
 package DAL;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class BasketItemId implements Serializable {
+
+    @Getter
     private Long basketId;
+    @Getter
     private Long itemId;
 
     public BasketItemId() {}

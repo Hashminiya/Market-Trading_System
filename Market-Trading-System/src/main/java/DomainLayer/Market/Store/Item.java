@@ -19,8 +19,10 @@ public class Item implements DataItem<Long> {
     private String description;
     private int quantity;
     private double price;
+
     @Transient
     private List<String> categories;
+
     private static ReentrantLock lock = new ReentrantLock();
     private long storeId;
 

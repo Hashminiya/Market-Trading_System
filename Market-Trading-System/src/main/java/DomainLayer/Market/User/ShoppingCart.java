@@ -9,9 +9,12 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
+
 import DomainLayer.Repositories.DbBasketRepository;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+
+import jakarta.persistence.PostLoad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -33,7 +36,6 @@ public class ShoppingCart {
     private final BasketRepository baskets;
     private final BasketItemRepository basketItemRepository;
     private final List<ShoppingBasket> shoppingBaskets;
-
 
     @Autowired
     public ShoppingCart(BasketRepository baskets, BasketItemRepository basketItemRepository){
@@ -68,6 +70,7 @@ public class ShoppingCart {
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
         BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
         basketItemRepository.save(basketItem);
+
         return sb.getId();
     }
 
@@ -129,7 +132,6 @@ public class ShoppingCart {
         //List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
         List<ShoppingBasket> currentBasket = shoppingBaskets.stream().filter(basket -> basket.getStoreId() == storeId).toList();
         if(currentBasket.isEmpty()) {
-
             sb = new ShoppingBasket(storeId, userName);
             baskets.save(sb);
             shoppingBaskets.add(sb);

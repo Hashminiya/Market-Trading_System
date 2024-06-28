@@ -68,6 +68,14 @@ public class Store implements DataItem<Long> {
     @PostLoad
     private void loadItems() {
         products = SpringContext.getBean(ItemRepository.class);
+        discounts = SpringContext.getBean(DiscountRepository.class);
+        purchasePolicies = SpringContext.getBean(PurchasePolicyRepository.class);
+        policyFactory = SpringContext.getBean(PurchasePolicyFactory.class);
+
+        //TODO:: Update owners and managers with appropriate values
+        owners=new ArrayList<>();
+        managers=new ArrayList<>();
+
     }
 
     @Override
@@ -99,6 +107,7 @@ public class Store implements DataItem<Long> {
     public void setDescription(String description) {
         this.description = description;
     }
+
     public List<Item> viewInventory(){
         return products.findAll();
     }
@@ -109,7 +118,6 @@ public class Store implements DataItem<Long> {
         newItem.setQuantity(quantity);
         products.save(newItem);
     }
-
 
     public void updateItem(long itemId, String newName, double newPrice, int quantity)throws InterruptedException{
         Item toEdit = getItem(itemId);

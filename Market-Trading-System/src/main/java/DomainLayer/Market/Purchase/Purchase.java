@@ -8,14 +8,14 @@ import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.ItemDTORepository;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
@@ -27,13 +27,26 @@ public class Purchase implements IPurchase, DataItem<Long> {
     private SupplyServiceProxy supplyServiceProxy;
 
     @Id
+    @Getter
     private long purchaseId;
-    @Transient
+
+    @ManyToMany
+    @JoinTable(
+            name = "purchase_items",
+            joinColumns = @JoinColumn(name = "purchase_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+
     private List<ItemDTO> purchasedItemsList;
+
     private double totalAmount;
+
+    @Getter
     private String userId;
+
     @Transient
     private ItemDTORepository itemsRepo;
+
     String purchaseDate;
 
 
@@ -51,8 +64,15 @@ public class Purchase implements IPurchase, DataItem<Long> {
             purchaseDate =LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
 
-    public Purchase() {
+    public Purchase() {}
 
+    @PostLoad
+    private void initFields() {
+        //init state
+        this.itemsRepo = SpringContext.getBean(ItemDTORepository.class);
+        this.paymentServiceProxy = SpringContext.getBean(PaymentServiceProxy.class);
+        this.supplyServiceProxy = SpringContext.getBean(SupplyServiceProxy.class);
+        //load shopping cart
     }
 
     @Override
@@ -65,8 +85,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
         }
         else if(!isValidCard)
             throw new RuntimeException("Checkout Failed\nTransaction cannot be made with that credit card");
-        else if(!canBeSupplied)
-            throw new RuntimeException("Checkout Failed\nOne of the items can not be supplied");
+        else throw new RuntimeException("Checkout Failed\nOne of the items can not be supplied");
     }
 
     public List<ItemDTO> getItemByStore(Long storeId){
@@ -89,7 +108,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
         return null;
     }
 
-    public String getUserId() {return userId;}
+
 
 }
 
