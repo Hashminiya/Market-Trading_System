@@ -70,6 +70,11 @@ public class StoreManagementControllerApi {
         return storeManagementService.viewInventory(token, storeId);
     }
 
+    @GetMapping("storeManagement/viewInventoryByStoreNameAndToken")
+    public ResponseEntity<?> viewInventoryByStoreNameAndToken(@RequestParam String token,@RequestParam String storeName) {
+        return storeManagementService.viewInventoryByStoreNameAndToken(token,storeName);
+    }
+
     @GetMapping("storeManagement/viewPurchasesHistory")
     public ResponseEntity<?> viewPurchasesHistory(@RequestParam String token,@RequestParam long storeId) {
         return storeManagementService.viewPurchasesHistory(token, storeId);

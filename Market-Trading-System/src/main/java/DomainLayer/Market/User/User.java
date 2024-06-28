@@ -2,6 +2,7 @@ package DomainLayer.Market.User;
 
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
@@ -189,7 +190,6 @@ public class User implements IUser,DataItem<String> {
                 ownedStoreIds.add(storeId);
             }
         }
-
         return ownedStoreIds;
     }
 }

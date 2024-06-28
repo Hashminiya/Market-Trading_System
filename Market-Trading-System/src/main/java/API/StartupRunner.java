@@ -107,6 +107,7 @@ public class StartupRunner implements CommandLineRunner {
         storeIds.add((long) storeId8.getBody());
         storeIds.add((long) storeId9.getBody());
         storeIds.add((long) storeId10.getBody());
+//        storeManagementService.assignStoreOwner(tokens.get(0),(long) storeId1.getBody())
         return storeIds;
     }
 

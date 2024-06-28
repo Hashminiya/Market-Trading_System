@@ -39,8 +39,9 @@ public class StoreBuyerService implements IStoreBuyerService {
     public ResponseEntity<?> getAllProductsInfoByStore(long storeId) {
         try {
             HashMap<Long, String> result = storeFacade.getAllProductsInfoByStore(storeId);
+            List<Item> items = getItemsFromItemIdToItemName(result);
             logger.info("Retrieved all products info for store: {}", storeId);
-            return ResponseEntity.status(200).body(result);
+            return ResponseEntity.status(200).body(items);
         } catch (Exception ex) {
             logger.error("Error retrieving products info for store: {}", storeId, ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -111,8 +112,9 @@ public class StoreBuyerService implements IStoreBuyerService {
     public ResponseEntity<?> searchGenerallyByCategory(String category) {
         try {
             HashMap<Long, String> result = storeFacade.searchGenerallyByCategory(category);
+            List<Item> items = getItemsFromItemIdToItemName(result);
             if (!result.isEmpty()) {
-                logger.info("General search by category: {}", category);
+                logger.info("General search by category: {}", items);
                 return ResponseEntity.status(200).body(result);
             }
         } catch (Exception ex) {
@@ -126,10 +128,11 @@ public class StoreBuyerService implements IStoreBuyerService {
     @Override
     public ResponseEntity<?> searchGenerallyByKeyWord(String keyWord) {
         try {
-            HashMap<Long, String> result = storeFacade.searchGenerallyByKeyWord(keyWord);
-            if (!result.isEmpty()) {
+            HashMap<Long, String> itemIdToItemName = storeFacade.searchGenerallyByKeyWord(keyWord);//this is map of itemId to itemName
+            List<Item> items = getItemsFromItemIdToItemName(itemIdToItemName);
+            if (!items.isEmpty()) {
                 logger.info("General search by keyword: {}", keyWord);
-                return ResponseEntity.status(200).body(result);
+                return ResponseEntity.status(200).body(items);
             }
         } catch (Exception ex) {
             logger.error("Error in general search by keyword: {}", keyWord, ex);
@@ -173,6 +176,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                     itemDetail.put("itemPrice", item.getPrice());
                     itemDetail.put("stockAmount", item.getQuantity());
                     itemDetail.put("category", item.getCategories());
+                    itemDetail.put("description", item.getDescription());
                     itemDetails.add(itemDetail);
                 }
                 storeDetails.put("items", itemDetails);
@@ -195,5 +199,15 @@ public class StoreBuyerService implements IStoreBuyerService {
             logger.error("Error retrieving all categories", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
+    }
+
+    //create private method that get dictionary of itemsId and itemName and return list of items
+    private List<Item> getItemsFromItemIdToItemName(HashMap<Long, String> itemIdToItemName) {
+        List<Item> items = new ArrayList<>();
+        for (Map.Entry<Long, String> entry : itemIdToItemName.entrySet()) {
+            Item item = storeFacade.getItem(entry.getKey());
+            items.add(item);
+        }
+        return items;
     }
 }

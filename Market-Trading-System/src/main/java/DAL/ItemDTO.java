@@ -1,22 +1,56 @@
 package DAL;
 
 import DomainLayer.Market.Util.DataItem;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
+import java.util.List;
 
-public class ItemDTO implements DataItem <Long>, Comparable {
-    private final long storeId;
-    private final double totalPrice;
-    private final int quantity;
-    private final String itemName;
+public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
+    @JsonProperty("itemId")
     private final long itemId;
 
-    public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice){
+    @JsonProperty("itemName")
+    private final String itemName;
+
+    @JsonProperty("quantity")
+    private final int quantity;
+
+    @JsonProperty("storeId")
+    private final long storeId;
+
+    @JsonProperty("totalPrice")
+    private final double totalPrice;
+
+    @JsonProperty("categories")
+    private final List<String> categories;
+
+    @JsonProperty("description")
+    private final String description;
+
+    public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice, List<String> categories, String description) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.quantity = quantity;
         this.storeId = storeId;
         this.totalPrice = totalPrice;
+        this.categories = categories;
+        this.description = description;
+    }
+
+    public Long getId() {
+        return itemId;
+    }
+
+    public long getItemId() {
+        return itemId;
+    }
+
+    public String getName() {
+        return itemName;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 
     public long getStoreId() {
@@ -27,26 +61,16 @@ public class ItemDTO implements DataItem <Long>, Comparable {
         return totalPrice;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public List<String> getCategories() {
+        return categories;
     }
 
-    public long getItemId() {
-        return itemId;
-    }
-
-    @Override
-    public Long getId() {
-        return itemId;
+    public String getDescription() {
+        return description;
     }
 
     @Override
-    public String getName() {
-        return itemName;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        return 0;
+    public int compareTo(ItemDTO o) {
+        return Long.compare(this.itemId, o.getItemId());
     }
 }

@@ -1,10 +1,14 @@
 package ServiceLayer.User;
 
+import API.SpringContext;
+import DAL.ItemDTO;
+import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +18,6 @@ import java.util.Date;
 import java.util.List;
 
 import java.util.*;
-
 
 @Service("userService")
 public class UserService implements IUserService {
@@ -153,25 +156,6 @@ public class UserService implements IUserService {
         }
     }
 
-    /*@Override
-    public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
-        try {
-            String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
-            if (userName != null && jwtService.isValid(token, userDetails)) {
-                userFacade.checkoutShoppingCart(userName, creditCard, expiryDate, cvv, discountCode);
-                logger.info("Checkout shopping cart for user: {}", userName);
-                return ResponseEntity.ok(String.format("Checkout shopping cart for user %s", userName));
-            } else {
-                logger.warn("Invalid token for checkout: {}", token);
-                return ResponseEntity.status(401).body(token);
-            }
-        } catch (Exception e) {
-            logger.error("Error during checkout", e);
-            return ResponseEntity.status(500).body("Error during checkout");
-        }
-    }*/
-
     @Override
     public ResponseEntity<String> addItemToBasket(String token, long storeId, long itemId, int quantity) {
         try {
@@ -234,29 +218,19 @@ public class UserService implements IUserService {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                logger.info("Getting shopping cart for user: {}", userName);
                 ShoppingCart shoppingCart = userFacade.getShoppingCart(userName);
-                StringBuilder sb = new StringBuilder();
-                List<ShoppingBasket> baskets = shoppingCart.getBaskets();
-                for (ShoppingBasket basket : baskets) {
-                    for (Map.Entry<Long, Integer> item : basket.getItems().entrySet()) {
-                        sb.append("[id: ").append(item.getKey()).append(", amount: ").append(item.getValue()).append("], ");
-                    }
-                }
-                // Remove the last comma and space
-                if (sb.length() > 0) {
-                    sb.setLength(sb.length() - 2);
-                }
-                return ResponseEntity.ok(sb.toString());
+                ShoppingCartDTO shoppingCartDTO = new ShoppingCartDTO(shoppingCart, SpringContext.getBean(StoreController.class));
+                logger.info("Shopping cart retrieved for user: {}", userName);
+                return ResponseEntity.ok(shoppingCartDTO);
             } else {
-                return ResponseEntity.status(401).body("Invalid token");
+                logger.warn("Invalid token for getting shopping cart: {}", token);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (Exception e) {
-            logger.error("An error occurred while getting the shopping cart", e);
-            return ResponseEntity.status(500).body("An error occurred");
+            logger.error("Error getting shopping cart", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
     @Override
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token){
@@ -281,7 +255,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
-        try {
+   try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
@@ -295,6 +269,23 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             logger.error("Error during checkout", e);
             return ResponseEntity.status(500).body("Error during checkout");
+   }
+      
+    public ResponseEntity<List<String>> viewUserStoresNamesOwnership(String token) {
+      try {
+            String userName = jwtService.extractUsername(token);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if (userName != null && jwtService.isValid(token, userDetails)) {
+                List<String> ownedStoreNames = userFacade.viewUserStoresNamesOwnership(userName);
+                logger.info("User store ownership: {}", ownedStoreNames);
+                return ResponseEntity.ok(ownedStoreNames);
+            } else {
+                logger.warn("Invalid token for adding permission: {}", token);
+                return ResponseEntity.status(401).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error display user store ownership: {}", token, e);
+            return ResponseEntity.status(500).build();
         }
     }
 }

@@ -41,6 +41,7 @@ public class Store implements DataItem<Long> {
         owners = new ArrayList<>();
         managers = new ArrayList<>();
         itemsCache = new HashMap<>();
+        assignOwner(founderId);
     }
 
     @Override

@@ -57,4 +57,8 @@ public interface IStoreFacade {
     //public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception;
     public void restoreStock(List<ShoppingBasket> baskets)throws InterruptedException;
 
+    public List<String> getListOfStorNamesByIds(List<Long> listOfIds);
+
+    public List<Store> findStoresByOwner(String userName);
+    Item getItem(Long key);
 }

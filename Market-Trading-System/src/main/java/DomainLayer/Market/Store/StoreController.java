@@ -9,6 +9,7 @@ import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
+import jdk.jshell.spi.ExecutionControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -382,6 +383,27 @@ public class StoreController implements IStoreFacade{
                 }catch (Exception e){}
             }
         }
+    }
+
+
+    @Override
+    public List<String> getListOfStorNamesByIds(List<Long> listOfIds) {
+        List<String> storeNames = new ArrayList<>();
+        for (Long id : listOfIds) {
+            Store store = storesRepo.findById(id);
+            if (store != null) {
+                storeNames.add(store.getName());
+            }
+        }
+        return storeNames;
+    }
+
+    @Override
+    public List<Store> findStoresByOwner(String userName) {
+        List<Store> allStores = storesRepo.findAll();
+        return allStores.stream()
+                .filter(store -> store.getOwners().contains(userName))
+                .collect(Collectors.toList());
     }
 
 }
