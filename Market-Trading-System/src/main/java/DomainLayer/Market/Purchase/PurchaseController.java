@@ -1,12 +1,6 @@
 package DomainLayer.Market.Purchase;
 
 import DAL.ItemDTO;
-import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
-import DomainLayer.Market.Purchase.Abstractions.ISupplyService;
-import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
-import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
-import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
@@ -15,8 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -102,6 +94,13 @@ public class PurchaseController implements IPurchaseFacade {
 
     public void setPurchaseRepo(IRepository<Long, Purchase> purchaseRepo) {
         this.purchaseRepo = purchaseRepo;
+    }
+
+    @Override
+    public void clearPurchases(){
+        List<Purchase> purchases = purchaseRepo.findAll();
+        for(Purchase purchase: purchases)
+            purchaseRepo.delete(purchase.getId());
     }
 
     public void clear(){

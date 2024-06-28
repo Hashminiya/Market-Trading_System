@@ -1,5 +1,6 @@
 package DomainLayer.Market.User;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
+import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.StorePermission;
@@ -124,12 +125,18 @@ public class UserController implements IUserFacade {
     @Override
     public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception{
         User user = getUser(userName);
+        List<ShoppingBasket> baskets = users.findById(userName).getShoppingCart().getBaskets();
         List<ItemDTO> items = user.checkoutShoppingCart(this.storeFacade, discountCode);
         double totalAmount = user.getShoppingCart().getShoppingCartPrice();
-        purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items, totalAmount);
-        storeFacade.purchaseOccurs();
+        try {
+            purchaseFacade.checkout(userName, creditCard, expiryDate, cvv, items, totalAmount);
+        }
+        catch (Exception e) {
+            storeFacade.restoreStock(baskets);
+            throw new Exception(e.getMessage());
+        }
+        storeFacade.purchaseOccurs(baskets); //change this function to clear items cache
         user.clearShoppingCart();
-        //for(Long storeId: locks.keySet()) locks.get(storeId).unlock();
     }
 
     @Override
@@ -145,9 +152,9 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public Long addItemToBasket(String userName,long storeId, long itemId, int quantity) {
+    public Long addItemToBasket(String userName,long storeId, long itemId, int quantity) throws Exception {
         User user = getUser(userName);
-        return user.addItemToBasket(storeId, itemId, quantity);
+        return user.addItemToBasket(storeId, itemId, quantity, storeFacade);
     }
 
     @Override

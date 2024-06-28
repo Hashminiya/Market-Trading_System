@@ -14,7 +14,7 @@ public interface IUserService{
     public ResponseEntity<String> logout(String token);
     public ResponseEntity<String> viewShoppingCart(String token);
     public ResponseEntity<String> modifyShoppingCart(String token, long basketId, long itemId, int newQuantity);
-    //public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate , String cvv, String discountCode);
+    public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate , String cvv, String discountCode);
     public ResponseEntity<String> addItemToBasket(String token, long storeId, long itemId, int quantity);
     public ResponseEntity<String> addPermission(String token, String userToPermit,long storeId, String permission);
     public ResponseEntity<String> removePermission(String token, String userToUnPermit,long storeId, String permission);
@@ -22,4 +22,5 @@ public interface IUserService{
     public ResponseEntity<List<String>> viewUserStoresNamesOwnership(String token);
 
     ResponseEntity<?> getShoppingCart(String token);
+
 }

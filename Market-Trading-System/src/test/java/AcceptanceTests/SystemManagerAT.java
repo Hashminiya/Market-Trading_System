@@ -16,15 +16,21 @@ public class SystemManagerAT {
    private static final String ADMIN_TOKEN = "adminToken"; // Replace with actual admin token
 
     private static ISystemManagerService systemManagerService;
+    private static ServiceFactory serviceFactory;
     private static final String ADMIN_USER_NAME ="SystemManager" ;
     private static final String ADMIN_PASSWORD = "SystemManagerPassword";
     private static String MANAGER_TOKEN;
     @BeforeAll
     public static void setUp() {
-        ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
+        serviceFactory = ServiceFactory.getServiceFactory();
         SetUp.setUp();
         MANAGER_TOKEN = SetUp.ADMIN_TOKEN;
         systemManagerService = serviceFactory.getSystemManagerService();
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        serviceFactory.clear();
     }
 
     @Test

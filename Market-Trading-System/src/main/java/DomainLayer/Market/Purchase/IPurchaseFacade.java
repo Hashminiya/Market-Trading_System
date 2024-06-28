@@ -22,6 +22,9 @@ public interface IPurchaseFacade {
     List<ItemDTO> getPurchasedItems();
     List<Purchase> getPurchaseHistory(String userName);
     public void setUserFacade(IUserFacade userFacade);
+
+    void clearPurchases();
+
     public void clear();
     public void setPaymentServiceProxy(PaymentServiceProxy paymentServiceProxy);
 

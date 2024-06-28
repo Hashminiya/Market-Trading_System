@@ -81,9 +81,21 @@ public class Item implements DataItem<Long> {
     public void decrease(int toDecrease) throws InterruptedException{
         lock();
         if(this.quantity < toDecrease){
+            unlock();
             throw new RuntimeException(String.format("failed to update %s amount",name));
         }
-        else {this.quantity -= toDecrease;}
+        else {
+            this.quantity -= toDecrease;
+            if(this.quantity == 0){
+                //TODO: should delete from repo?
+            }
+        }
+        unlock();
+    }
+
+    public void increase(int toIncrease) throws InterruptedException{
+        lock();
+        this.quantity += toIncrease;
         unlock();
     }
 

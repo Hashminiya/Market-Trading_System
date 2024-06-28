@@ -1,6 +1,7 @@
 package DomainLayer.Market.Store;
 
 
+import DAL.ItemDTO;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Store.StorePurchasePolicy.*;
@@ -25,6 +26,7 @@ public class Store implements DataItem<Long> {
     private IRepository<Long , IDiscount> discounts;
     private IRepository<Long, PurchasePolicy> purchasePolicies;
     private PurchasePolicyFactory policyFactory;
+    private Map<Long, ItemsCache> itemsCache;
 
     public Store(Long id, String founderId, String name, String description,
                  IRepository<Long, IDiscount> discounts,
@@ -38,6 +40,7 @@ public class Store implements DataItem<Long> {
         this.products = new InMemoryRepositoryStore();
         owners = new ArrayList<>();
         managers = new ArrayList<>();
+        itemsCache = new HashMap<>();
         assignOwner(founderId);
     }
 
@@ -84,9 +87,11 @@ public class Store implements DataItem<Long> {
 
     public void updateItem(long itemId, String newName, double newPrice, int quantity)throws InterruptedException{
         Item toEdit = products.findById(itemId);
+        toEdit.lock();
         toEdit.setName(newName);
         toEdit.setPrice(newPrice);
         toEdit.setQuantity(quantity);
+        toEdit.unlock();
         products.update(toEdit);
     }
     public void deleteItem(long itemId){
@@ -116,8 +121,20 @@ public class Store implements DataItem<Long> {
         return products.findById(itemId).getQuantity() >= amount;
     }
 
-    public void updateAmount(long itemId, int toDecrease)throws InterruptedException{
-        products.findById(itemId).decrease(toDecrease);
+    public void decreaseAmount(long itemId, int toDecrease)throws InterruptedException{
+        Item item = products.findById(itemId);
+        item.lock();
+        item.decrease(toDecrease);
+        products.update(item);
+        item.unlock();
+    }
+
+    public void increaseAmount(long itemId, int toIncrease)throws InterruptedException{
+        Item item = products.findById(itemId);
+        item.lock();
+        item.increase(toIncrease);
+        products.update(item);
+        item.unlock();
     }
 
     public Item getById(long itemId) {
@@ -136,7 +153,13 @@ public class Store implements DataItem<Long> {
         double price = 0;
         for(IDiscount discount: discounts.findAll()){
             if(discount.isValid(itemsCount, code)) {
-                itemsPrice = discount.calculatePrice(itemsPrice, itemsCount, code);
+                try {
+                    itemsPrice = discount.calculatePrice(itemsPrice, itemsCount, code);
+                }
+                catch(Exception e){
+                    //restoreStock(basket.getId());
+                    throw new Exception(e.getMessage());
+                }
             }
         }
         Map<Long, Double> itemsIdPrice = new HashMap<>();
@@ -183,20 +206,45 @@ public class Store implements DataItem<Long> {
     }
     public boolean checkValidBasket(ShoppingBasket basket, String userDetails) throws InterruptedException{
         HashMap<Item, Integer> itemsInBasket = new HashMap<>();
+        //Map<Item, Integer> decreasedItems = new HashMap<>();
         for (Map.Entry<Long, Integer> pair: basket.getItems().entrySet()) {
-            products.findById(pair.getKey()).lock(); //sync
-            itemsInBasket.put(products.findById(pair.getKey()), pair.getValue());
-            if(products.findById(pair.getKey()).getQuantity() < pair.getValue()) {
-                products.findById(pair.getKey()).unlock(); //sync
+            Item item = products.findById(pair.getKey());
+            item.lock(); //sync
+            itemsInBasket.put(item, pair.getValue());
+            if (item.getQuantity() < pair.getValue()) {
+                //restoreStock(decreasedItems);
+                item.unlock(); //sync
                 return false;
             }
+            decreaseAmount(pair.getKey(), pair.getValue());
+            item.unlock();
+            itemsCache.putIfAbsent(basket.getId(), new ItemsCache(basket.getId()));
+            itemsCache.get(basket.getId()).lock();
+            itemsCache.get(basket.getId()).addItem(item, pair.getValue());
+            itemsCache.get(basket.getId()).unlock();
         }
         for (PurchasePolicy policy:purchasePolicies.findAll()){
             if(!policy.isValid(itemsInBasket, userDetails))
+                //restoreStock(itemsInBasket);
                 return false;
         }
         return true;
     }
+
+    public void restoreStock(Long basketId) throws InterruptedException{
+        if(!itemsCache.containsKey(basketId))
+            return;
+        ItemsCache cacheBasket = itemsCache.get(basketId);
+
+        cacheBasket.lock();
+        Map<Item, Integer> restoreItems = cacheBasket.getItems();
+        for (Item item: restoreItems.keySet()) {
+            increaseAmount(item.getId(), restoreItems.get(item));
+            itemsCache.get(basketId).removeItem(item);
+        }
+        itemsCache.get(basketId).unlock();
+    }
+
 
     public void addPolicy(String policyDetails) throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
@@ -215,7 +263,13 @@ public class Store implements DataItem<Long> {
 
     }
 
-    public void releaseLocks(long itemId) {
-        products.findById(itemId).unlock(); //sync
+    public void clearCache(Long id) {
+        itemsCache.remove(id);
     }
+
+    public void clearCache() {
+        itemsCache = new HashMap<>();
+    }
+
+    public Map<Long, ItemsCache> getCache(){ return itemsCache; }
 }

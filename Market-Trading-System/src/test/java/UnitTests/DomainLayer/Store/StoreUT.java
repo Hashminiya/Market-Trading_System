@@ -1,13 +1,10 @@
 package UnitTests.DomainLayer.Store;
 
-import DomainLayer.Market.Purchase.Purchase;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
 import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Market.Util.InMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -16,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class StoreUT {
 
@@ -116,10 +112,10 @@ public class StoreUT {
     }
 
     @Test
-    void test_updateAmount_should_updateItemQuantity() throws InterruptedException {
+    void test_decreaseAmount_should_updateItemQuantity() throws InterruptedException {
         store.addItem(ITEM_ID_1, "Test Item", 10.0, 10, "Test Description", List.of("Category1"));
 
-        store.updateAmount(ITEM_ID_1, 5);
+        store.decreaseAmount(ITEM_ID_1, 5);
 
         assertEquals(5, store.viewInventory().get(0).getQuantity());
     }
