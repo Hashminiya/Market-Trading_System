@@ -2,8 +2,8 @@ package ServiceLayer.User;
 
 import API.SpringContext;
 import DAL.ItemDTO;
-import DomainLayer.Market.Notification.Event;
-import DomainLayer.Market.Notification.Publisher;
+import DomainLayer.Market.Notifications.Event;
+import DomainLayer.Market.Notifications.Publisher;
 import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Item;

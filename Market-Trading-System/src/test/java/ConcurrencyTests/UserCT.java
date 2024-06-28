@@ -261,4 +261,54 @@ public class UserCT {
             throw new Exception(e.getMessage());
         }
     }
+
+    @Test
+    public void test_addPermission_should_addBothPermissions() throws Exception {
+        String user3 = "user3";
+        userService.register(user3, password1, age1);
+        String user3_token = userService.login(user3, password1).getBody();
+
+        String user4 = "user4";
+        userService.register(user4, password1, age1);
+        String user4_token = userService.login(user4, password1).getBody();
+
+        List<String> permissions = new ArrayList<>();
+        permissions.add("ADD_ITEM");
+        permissions.add("ASSIGN_MANAGER");
+        storeSevice.assignStoreManager(user1_token, store1, user3, permissions);
+
+        storeSevice.assignStoreManager(user3_token, store1, user4, permissions);
+
+        int threadCount = 3;
+        CountDownLatch latch = new CountDownLatch(threadCount);
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        final boolean[] _throw = {false, false};
+
+        Future<Boolean> f1 = executor.submit(() -> {
+            ResponseEntity<String> response = userService.addPermission(user1_token, user4, store1, "VIEW_INVENTORY");
+            latch.countDown();
+            return response.getStatusCode().value() == 500 || response.getStatusCode().value() == 401;
+        });
+        Future<Boolean> f2 = executor.submit(() -> {
+            ResponseEntity<String> response = userService.addPermission(user3_token, user4, store1, "VIEW_STORE_MANAGEMENT_INFO");
+            latch.countDown();
+            return response.getStatusCode().value() == 500 || response.getStatusCode().value() == 401;
+        });
+
+        latch.await(5, TimeUnit.SECONDS);
+        executor.shutdown();
+
+        try {
+            if (f1.get()) _throw[0] = true;
+            if (f2.get()) _throw[1] = true;
+        } catch (Exception e) {
+            System.out.println("future get failed");
+        }
+
+        assertThat(_throw[0] || _throw[1]).isEqualTo(false);
+        IUserFacade userFacade = IUserFacade.getInstance(null, null, null, null);
+        assertThat(userFacade.checkPermission(user4, store1, "VIEW_INVENTORY")).isEqualTo(true);
+        assertThat(userFacade.checkPermission(user4, store1, "VIEW_STORE_MANAGEMENT_INFO")).isEqualTo(true);
+
+    }
 }
