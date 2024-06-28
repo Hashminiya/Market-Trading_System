@@ -43,6 +43,7 @@ public class StartupRunner implements CommandLineRunner {
 
         System.out.println("Payment and Supply external services connected successfully");
         System.out.println("The server is running...");
+
         runSystem();
     }
 

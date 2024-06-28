@@ -4,6 +4,7 @@ import API.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Converters.StoreEnumConverter;
 import DomainLayer.Converters.StoreEnumSetConverter;
+import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Util.DataItem;
@@ -57,6 +58,9 @@ public class User implements IUser,DataItem<String> {
         this.state = (Istate) SpringContext.getBean("registered");
         //load shopping cart
         this.shoppingCart = (ShoppingCart) SpringContext.getBean("shoppingCart");
+
+        List<ShoppingBasket> baskets = shoppingCart.loadBasketsForUser(userName);
+        shoppingCart.setShoppingBaskets(baskets);
     }
 
     public String getUserName() {
