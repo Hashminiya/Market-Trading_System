@@ -32,7 +32,6 @@ public class Item implements DataItem<Long> {
         this.description = description;
         this.categories = categories;
         this.storeId = storeId;
-
     }
 
     public Item() {
