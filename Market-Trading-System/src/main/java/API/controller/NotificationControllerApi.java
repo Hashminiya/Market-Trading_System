@@ -24,5 +24,8 @@ public class NotificationControllerApi {
         return notificationService.getMessages(token);
     }
 
+    @GetMapping("/user/viewMessages/clear")
+    public ResponseEntity<?> clearMessages(@RequestParam String token){return  notificationService.clear(token);}
+
 
 }

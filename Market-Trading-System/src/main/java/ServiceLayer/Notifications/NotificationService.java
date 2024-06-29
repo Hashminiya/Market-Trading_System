@@ -53,4 +53,22 @@ public class NotificationService implements INotificationService {
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<?> clear(String token) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                ResponseEntity<List<String>> response = ResponseEntity.status(200).body(notificationFacade.clear(userName));
+                logger.info("user {} received messages", userName);
+                return response;
+            } else {
+                logger.warn("Invalid token for get messages: {}", token);
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
+            }
+        } catch (Exception ex) {
+            logger.error("Error getting messages store", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
 }
