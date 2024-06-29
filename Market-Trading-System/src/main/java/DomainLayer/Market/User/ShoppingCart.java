@@ -1,12 +1,24 @@
 package DomainLayer.Market.User;
 
+import API.SpringContext;
+import DAL.BasketItem;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
-import DomainLayer.Market.Util.InMemoryRepository;
+import DomainLayer.Repositories.BasketItemRepository;
+import DomainLayer.Repositories.BasketRepository;
+
+import DomainLayer.Repositories.DbBasketRepository;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+
+import jakarta.persistence.PostLoad;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,22 +26,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 @Component
 public class ShoppingCart {
-    private final IRepository<Long,ShoppingBasket> baskets;
+    private final BasketRepository baskets;
+    private final BasketItemRepository basketItemRepository;
+    private final List<ShoppingBasket> shoppingBaskets;
 
-    public ShoppingCart(IRepository<Long,ShoppingBasket> baskets){
+    @Autowired
+    public ShoppingCart(BasketRepository baskets, BasketItemRepository basketItemRepository){
         this.baskets = baskets;
+        this.basketItemRepository = basketItemRepository;
+        this.shoppingBaskets = new ArrayList<>();
     }
 
     public String viewShoppingCart(IStoreFacade storeFacade) throws Exception{
         StringBuilder res = new StringBuilder();
-        List<ShoppingBasket> l = baskets.findAll();
-        for(ShoppingBasket s : l){
+        //List<ShoppingBasket> l = baskets.findAll();
+        for(ShoppingBasket s : shoppingBaskets){
             storeFacade.calculateBasketPrice(s, null);
             res.append(s.toString());
         }
@@ -37,17 +55,22 @@ public class ShoppingCart {
     }
 
     public void modifyShoppingCart(long basketId, long itemId, int quantity){
-        ShoppingBasket sb = baskets.findById(basketId);
+        ShoppingBasket sb = getBacketIfExist(basketId);
         if (sb == null){
             throw new IllegalArgumentException("no such basket");
         }
         sb.updateItemQuantity(itemId,quantity);
+        BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
+        basketItemRepository.save(basketItem);
     }
 
-    public Long addItemBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade) throws Exception {
-        ShoppingBasket sb = getShoppingBasket(storeId);
+    public Long addItemBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade, String userName) throws Exception {
+        ShoppingBasket sb = getShoppingBasket(storeId,userName);
         boolean hasStock = storeFacade.addItemToShoppingBasket(sb, storeId, itemId, quantity);
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
+        BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
+        basketItemRepository.save(basketItem);
+
         return sb.getId();
     }
 
@@ -92,19 +115,26 @@ public class ShoppingCart {
     }
 
     public List<ShoppingBasket> getBaskets() {
-        return baskets.findAll();
+        return shoppingBaskets;
+        //return baskets.findAll();
     }
 
     public void deleteShoppingBasket(long id){
-        baskets.delete(id);
+        Optional<ShoppingBasket> bas = shoppingBaskets.stream().filter(b -> b.getId() == id).findFirst();
+        if (bas.isPresent()){
+            shoppingBaskets.remove(bas.get());
+        }
+        baskets.deleteById(id);
     }
 
-    private ShoppingBasket getShoppingBasket(long storeId){
+    private ShoppingBasket getShoppingBasket(long storeId, String userName){
         ShoppingBasket sb;
-        List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
+        //List<ShoppingBasket> currentBasket = baskets.findAll().stream().filter(basket -> basket.getStoreId() == storeId).toList();
+        List<ShoppingBasket> currentBasket = shoppingBaskets.stream().filter(basket -> basket.getStoreId() == storeId).toList();
         if(currentBasket.isEmpty()) {
-            sb = new ShoppingBasket(storeId);
+            sb = new ShoppingBasket(storeId, userName);
             baskets.save(sb);
+            shoppingBaskets.add(sb);
         }
         else
             sb = currentBasket.get(0);
@@ -119,11 +149,32 @@ public class ShoppingCart {
         return totalPrice;
     }
     public void clear(){
-        List<Long> ids = baskets.findAll().stream().map(ShoppingBasket::getId).toList();
-        for (long id: ids
-             ) {
-            baskets.delete(id);
-        }
+        shoppingBaskets.clear();
+        //TODO:: Delete all from DB
+//        List<Long> ids = baskets.findAll().stream().map(ShoppingBasket::getId).toList();
+//        for (long id: ids
+//             ) {
+//            baskets.deleteById(id);
+//        }
+    }
 
+
+    public void setShoppingBaskets(List<ShoppingBasket> shoppingBaskets) {
+        this.shoppingBaskets.clear();
+        if (shoppingBaskets != null) {
+            this.shoppingBaskets.addAll(shoppingBaskets);
+        }
+    }
+
+    public List<ShoppingBasket> loadBasketsForUser(String userName) {
+        return baskets.findByUserName(userName);
+    }
+
+    private ShoppingBasket getBacketIfExist(long basketId){
+        Optional<ShoppingBasket> bas = shoppingBaskets.stream().filter(b -> b.getId() == basketId).findFirst();
+        if (bas.isPresent()){
+            return bas.get();
+        }
+        return null;
     }
 }

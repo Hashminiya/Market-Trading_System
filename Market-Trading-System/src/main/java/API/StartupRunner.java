@@ -22,7 +22,7 @@ public class StartupRunner implements CommandLineRunner {
 
     private final IUserService userService;
 
-    @Autowired
+
     public StartupRunner() {
         userService = (IUserService) SpringContext.getBean("userService");
     }
@@ -35,12 +35,20 @@ public class StartupRunner implements CommandLineRunner {
 
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
 
-        ResponseEntity<?> response = userService.register("admin", "admin", 35);
+
+        //TODO: delete the following 3 lines before submission: the admin is always registered
+
+
+        ResponseEntity<?> response = userService.register("admin", "admin", 25);
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
         }
+
         System.out.println("Payment and Supply external services connected successfully");
         System.out.println("The server is running...");
+
+//        CommandParserService commandParserService = SpringContext.getBean(CommandParserService.class);
+//        commandParserService.parseAndExecuteCommands();
         runSystem();
     }
 
@@ -65,11 +73,11 @@ public class StartupRunner implements CommandLineRunner {
         userService.register("user3", "user3", 22);
         userService.register("user4", "user4", 28);
         userService.register("user5", "user5", 35);
-        userService.register("user6", "user6", 26);
-        userService.register("user7", "user7", 29);
-        userService.register("user8", "user8", 31);
-        userService.register("user9", "user9", 24);
-        userService.register("user10", "user10", 27);
+//        userService.register("user6", "user6", 26);
+//        userService.register("user7", "user7", 29);
+//        userService.register("user8", "user8", 31);
+//        userService.register("user9", "user9", 24);
+//        userService.register("user10", "user10", 27);
         ResponseEntity<String> response1 = userService.login("user1", "user1");
         ResponseEntity<String> response2 = userService.login("user2", "user2");
         ResponseEntity<String> response3 = userService.login("user3", "user3");
@@ -91,32 +99,32 @@ public class StartupRunner implements CommandLineRunner {
         ResponseEntity<?> storeId3 = storeManagementService.createStore(tokens.get(2), "Art Supplies","Wide range of art supplies");
         ResponseEntity<?> storeId4 = storeManagementService.createStore(tokens.get(3), "DIY Tools","Everything you need for your DIY projects");
         ResponseEntity<?> storeId5 = storeManagementService.createStore(tokens.get(4), "Garden Center","All you need for your garden");
-        ResponseEntity<?> storeId6 = storeManagementService.createStore(tokens.get(0), "Shoe Store", "Stylish and comfortable shoes");
-        ResponseEntity<?> storeId7 = storeManagementService.createStore(tokens.get(1), "Audio Store", "High fidelity audio equipment");
-        ResponseEntity<?> storeId8 = storeManagementService.createStore(tokens.get(2), "Home Goods", "Essentials for your home");
-        ResponseEntity<?> storeId9 = storeManagementService.createStore(tokens.get(3), "Sports Store", "All your sports needs");
-        ResponseEntity<?> storeId10 = storeManagementService.createStore(tokens.get(4), "Office Supplies", "Everything for your office");
+//        ResponseEntity<?> storeId6 = storeManagementService.createStore(tokens.get(0), "Shoe Store", "Stylish and comfortable shoes");
+//        ResponseEntity<?> storeId7 = storeManagementService.createStore(tokens.get(1), "Audio Store", "High fidelity audio equipment");
+//        ResponseEntity<?> storeId8 = storeManagementService.createStore(tokens.get(2), "Home Goods", "Essentials for your home");
+//        ResponseEntity<?> storeId9 = storeManagementService.createStore(tokens.get(3), "Sports Store", "All your sports needs");
+//        ResponseEntity<?> storeId10 = storeManagementService.createStore(tokens.get(4), "Office Supplies", "Everything for your office");
         List<Long> storeIds = new ArrayList<>();
         storeIds.add((long) storeId1.getBody());
         storeIds.add((long) storeId2.getBody());
         storeIds.add((long) storeId3.getBody());
         storeIds.add((long) storeId4.getBody());
         storeIds.add((long) storeId5.getBody());
-        storeIds.add((long) storeId6.getBody());
-        storeIds.add((long) storeId7.getBody());
-        storeIds.add((long) storeId8.getBody());
-        storeIds.add((long) storeId9.getBody());
-        storeIds.add((long) storeId10.getBody());
+//        storeIds.add((long) storeId6.getBody());
+//        storeIds.add((long) storeId7.getBody());
+//        storeIds.add((long) storeId8.getBody());
+//        storeIds.add((long) storeId9.getBody());
+//        storeIds.add((long) storeId10.getBody());
 //        storeManagementService.assignStoreOwner(tokens.get(0),(long) storeId1.getBody())
         return storeIds;
     }
 
     private void initShoppingCart(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
         userService.addItemToBasket(tokens.get(0), storeIds.get(0), itemIds.get(0), 1);
-        userService.addItemToBasket(tokens.get(1), storeIds.get(1), itemIds.get(1), 1);
-        userService.addItemToBasket(tokens.get(2), storeIds.get(2), itemIds.get(2), 1);
-        userService.addItemToBasket(tokens.get(3), storeIds.get(3), itemIds.get(3), 1);
-        userService.addItemToBasket(tokens.get(4), storeIds.get(4), itemIds.get(4), 1);
+//        userService.addItemToBasket(tokens.get(1), storeIds.get(1), itemIds.get(1), 1);
+//        userService.addItemToBasket(tokens.get(2), storeIds.get(2), itemIds.get(2), 1);
+//        userService.addItemToBasket(tokens.get(3), storeIds.get(3), itemIds.get(3), 1);
+//        userService.addItemToBasket(tokens.get(4), storeIds.get(4), itemIds.get(4), 1);
     }
 
     private List<Long> createItems(List<String> tokens, List<Long> storeIds) {
@@ -128,31 +136,31 @@ public class StartupRunner implements CommandLineRunner {
         itemIds.addAll(createElectronicsItems(tokens.get(0), storeIds.get(0), storeManagementService));
 
         // Camping Gear
-        itemIds.addAll(createCampingItems(tokens.get(1), storeIds.get(1), storeManagementService));
+        //itemIds.addAll(createCampingItems(tokens.get(1), storeIds.get(1), storeManagementService));
 
         // Art Supplies
-        itemIds.addAll(createArtItems(tokens.get(2), storeIds.get(2), storeManagementService));
+        //itemIds.addAll(createArtItems(tokens.get(2), storeIds.get(2), storeManagementService));
 
         // DIY Tools
-        itemIds.addAll(createDiyItems(tokens.get(3), storeIds.get(3), storeManagementService));
+        //itemIds.addAll(createDiyItems(tokens.get(3), storeIds.get(3), storeManagementService));
 
         // Garden Center
-        itemIds.addAll(createGardenItems(tokens.get(4), storeIds.get(4), storeManagementService));
+        //itemIds.addAll(createGardenItems(tokens.get(4), storeIds.get(4), storeManagementService));
 
         // Shoe Store
-        itemIds.addAll(createShoeItems(tokens.get(0), storeIds.get(5), storeManagementService));
+        //itemIds.addAll(createShoeItems(tokens.get(0), storeIds.get(5), storeManagementService));
 
         // Audio Store
-        itemIds.addAll(createAudioItems(tokens.get(1), storeIds.get(6), storeManagementService));
+        //itemIds.addAll(createAudioItems(tokens.get(1), storeIds.get(6), storeManagementService));
 
         // Home Goods
-        itemIds.addAll(createHomeItems(tokens.get(2), storeIds.get(7), storeManagementService));
+        //itemIds.addAll(createHomeItems(tokens.get(2), storeIds.get(7), storeManagementService));
 
         // Sports Store
-        itemIds.addAll(createSportsItems(tokens.get(3), storeIds.get(8), storeManagementService));
+        //itemIds.addAll(createSportsItems(tokens.get(3), storeIds.get(8), storeManagementService));
 
         // Office Supplies
-        itemIds.addAll(createOfficeItems(tokens.get(4), storeIds.get(9), storeManagementService));
+        //itemIds.addAll(createOfficeItems(tokens.get(4), storeIds.get(9), storeManagementService));
 
         return itemIds;
     }
@@ -160,20 +168,20 @@ public class StartupRunner implements CommandLineRunner {
     private List<Long> createElectronicsItems(String token, Long storeId, IStoreManagementService storeManagementService) {
         List<Long> itemIds = new ArrayList<>();
         itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Smartphone", "Latest model smartphone", 700, 50, new ArrayList<>(Arrays.asList("Electronics", "Gadgets"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Laptop", "High performance laptop", 1200, 30, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Tablet", "Lightweight and powerful tablet", 500, 20, new ArrayList<>(Arrays.asList("Electronics", "Gadgets"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Smartwatch", "Feature-rich smartwatch", 200, 100, new ArrayList<>(Arrays.asList("Electronics", "Wearables"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Headphones", "Noise-cancelling headphones", 150, 40, new ArrayList<>(Arrays.asList("Electronics", "Audio"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camera", "High resolution digital camera", 800, 15, new ArrayList<>(Arrays.asList("Electronics", "Photography"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Speaker", "Portable Bluetooth speaker", 100, 60, new ArrayList<>(Arrays.asList("Electronics", "Audio"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Monitor", "4K Ultra HD monitor", 300, 25, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Keyboard", "Mechanical keyboard", 80, 70, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Mouse", "Wireless mouse", 50, 90, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Router", "High-speed internet router", 100, 40, new ArrayList<>(Arrays.asList("Electronics", "Networking"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Smart TV", "4K Smart TV", 500, 20, new ArrayList<>(Arrays.asList("Electronics", "Entertainment"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "VR Headset", "Virtual reality headset", 300, 10, new ArrayList<>(Arrays.asList("Electronics", "Gaming"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "External Hard Drive", "1TB external hard drive", 80, 50, new ArrayList<>(Arrays.asList("Electronics", "Storage"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Drone", "Quadcopter drone with camera", 400, 15, new ArrayList<>(Arrays.asList("Electronics", "Gadgets"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Laptop", "High performance laptop", 1200, 30, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Tablet", "Lightweight and powerful tablet", 500, 20, new ArrayList<>(Arrays.asList("Electronics", "Gadgets"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Smartwatch", "Feature-rich smartwatch", 200, 100, new ArrayList<>(Arrays.asList("Electronics", "Wearables"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Headphones", "Noise-cancelling headphones", 150, 40, new ArrayList<>(Arrays.asList("Electronics", "Audio"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camera", "High resolution digital camera", 800, 15, new ArrayList<>(Arrays.asList("Electronics", "Photography"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Speaker", "Portable Bluetooth speaker", 100, 60, new ArrayList<>(Arrays.asList("Electronics", "Audio"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Monitor", "4K Ultra HD monitor", 300, 25, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Keyboard", "Mechanical keyboard", 80, 70, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Mouse", "Wireless mouse", 50, 90, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Router", "High-speed internet router", 100, 40, new ArrayList<>(Arrays.asList("Electronics", "Networking"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Smart TV", "4K Smart TV", 500, 20, new ArrayList<>(Arrays.asList("Electronics", "Entertainment"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "VR Headset", "Virtual reality headset", 300, 10, new ArrayList<>(Arrays.asList("Electronics", "Gaming"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "External Hard Drive", "1TB external hard drive", 80, 50, new ArrayList<>(Arrays.asList("Electronics", "Storage"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Drone", "Quadcopter drone with camera", 400, 15, new ArrayList<>(Arrays.asList("Electronics", "Gadgets"))).getBody());
         return itemIds;
     }
 

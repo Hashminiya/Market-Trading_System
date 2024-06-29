@@ -1,15 +1,14 @@
 package DomainLayer.Market.Store.Discount;
 
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Util.IRepository;
 
+import java.awt.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public abstract class DiscountComposite implements IDiscount {
+public abstract class DiscountComposite extends BaseDiscount {
 
-    protected Long id;
     /*protected double percent;
     protected Date expirationDate;
     protected Long storeId;*/
