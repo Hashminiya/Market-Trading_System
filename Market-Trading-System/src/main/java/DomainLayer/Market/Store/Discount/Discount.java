@@ -1,15 +1,15 @@
 package DomainLayer.Market.Store.Discount;
 
 import DomainLayer.Market.Store.Item;
+import jakarta.persistence.Entity;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Discount implements IDiscount {
+public abstract class Discount extends BaseDiscount {
 
-    protected Long id;
     protected double percent;
     protected Date expirationDate;
     protected Long storeId;

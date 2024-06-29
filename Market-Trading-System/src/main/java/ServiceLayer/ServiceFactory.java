@@ -8,9 +8,10 @@ import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.SystemManager;
 import DomainLayer.Market.User.User;
-import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Market.Util.InMemoryRepository;
 import DomainLayer.Market.Util.JwtService;
+import DomainLayer.Repositories.InMemoryPurchaseRepository;
+import DomainLayer.Repositories.InMemoryStoreRepository;
+import DomainLayer.Repositories.InMemoryUserRepository;
 import ServiceLayer.Market.ISystemManagerService;
 import ServiceLayer.Market.SystemManagerService;
 import ServiceLayer.Store.StoreManagementService;
@@ -45,7 +46,7 @@ public class ServiceFactory {
 
     private ServiceFactory(){
         systemAvailable = false;
-        userFacadeInstance = IUserFacade.getInstance(new InMemoryRepository<String,User>(), SystemManager.getInstance(), storeFacadeInstance, purchaseFacadeInstance);
+        userFacadeInstance = IUserFacade.getInstance(new InMemoryUserRepository(), SystemManager.getInstance(), storeFacadeInstance, purchaseFacadeInstance);
         userServiceInstance = UserService.getInstance(userFacadeInstance);
         jwtService = new JwtService();
         userServiceInstance.setJwtService(jwtService);
@@ -99,9 +100,9 @@ public class ServiceFactory {
         supplyServiceProxyInstance =  SupplyServiceProxy.getInstance(supplyServiceInstance);
     }
     private void initFacades() {
-        purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryRepository<Long, Purchase>(), paymentServiceProxyInstance,supplyServiceProxyInstance);
+        purchaseFacadeInstance = IPurchaseFacade.getInstance(new InMemoryPurchaseRepository(), paymentServiceProxyInstance,supplyServiceProxyInstance);
         purchaseFacadeInstance.setUserFacade(userFacadeInstance);
-        storeFacadeInstance = IStoreFacade.getInstance(new InMemoryRepository<Long, Store>(), userFacadeInstance,purchaseFacadeInstance);
+        storeFacadeInstance = IStoreFacade.getInstance(new InMemoryStoreRepository(), userFacadeInstance,purchaseFacadeInstance);
         userFacadeInstance.setStoreFacade(storeFacadeInstance);
         userFacadeInstance.setPurchaseFacade(purchaseFacadeInstance);
         storeFacadeInstance.setUserFacade(userFacadeInstance);

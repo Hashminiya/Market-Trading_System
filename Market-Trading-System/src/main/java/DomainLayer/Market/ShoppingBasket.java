@@ -1,39 +1,103 @@
 package DomainLayer.Market;
 
+import API.SpringContext;
+import DAL.BasketItem;
+import DAL.BasketItemId;
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.User.Istate;
+import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IdGenerator;
-
+import DomainLayer.Repositories.BasketItemRepository;
+import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@Entity
 public class ShoppingBasket implements DataItem<Long> {
+    @Id
+    private long basketId;
 
-    private final long basketId;
-    private final Map<Long, Integer> itemsQuantity; // map<itemId, quantity>
-    private final Map<Long, Double> itemsPrice; // map<itemId, price>
+    @Transient
+    private Map<Long, Integer> itemsQuantity; // map<itemId, quantity>
+
+    @Transient
+    private Map<Long, Double> itemsPrice; // map<itemId, price>
+
+
+    @Transient
+    private BasketItemRepository basketItemRepository;
+
+    @Setter
+    @Getter
     private double basketTotalPrice;
-    private final long storeId;
 
-    public ShoppingBasket(Long storeId) {
+    @Getter
+    private long storeId;
+
+    @Getter
+    @Column(name = "user_name")
+    private String userName;
+
+    public ShoppingBasket(Long storeId, String userName) {
         this.basketId = IdGenerator.generateId();
         this.storeId = storeId;
         this.itemsQuantity = new HashMap<>();
         this.itemsPrice = new HashMap<>();
+        this.userName = userName;
+        this.basketItemRepository =SpringContext.getBean(BasketItemRepository.class);
+
+    }
+
+    public ShoppingBasket() {
+
+    }
+
+    @PostLoad
+    private void initFields() throws Exception {
+        this.itemsQuantity = new HashMap<>();
+        this.itemsPrice = new HashMap<>();
+        this.basketItemRepository = SpringContext.getBean(BasketItemRepository.class);
+
+        this.itemsQuantity = basketItemRepository.findAll()
+                .stream()
+                .filter(x -> x.getId().getBasketId() == this.basketId)
+                .collect(Collectors.toMap(
+                        basketItem -> basketItem.getId().getItemId(),  // Key: item ID
+                        basketItem -> basketItem.getQuantity() // Value: item quantity
+                ));
+
+        IStoreFacade storeController = (IStoreFacade) SpringContext.getBean(StoreController.class);
+        storeController.calculateBasketPrice(this,null);
+
+
+        //load shopping cart
     }
 
     public void addItem(long itemId, int quantity) {
         itemsQuantity.put(itemId, itemsQuantity.getOrDefault(itemId, 0) + quantity);
+        basketItemRepository.save(new BasketItem(basketId,itemId,quantity));
+
         // Ensure itemsPrice has a default value or is set elsewhere in your logic
     }
 
     public void removeItem(long itemId) {
         itemsQuantity.remove(itemId);
         itemsPrice.remove(itemId);
+        basketItemRepository.deleteById(new BasketItemId(basketId,itemId));
+
     }
 
     public List<ItemDTO> checkoutShoppingBasket(IStoreFacade storeFacade) {
@@ -65,15 +129,12 @@ public class ShoppingBasket implements DataItem<Long> {
             removeItem(itemId);
         } else {
             itemsQuantity.put(itemId, quantity);
+            basketItemRepository.save(new BasketItem(basketId,itemId,quantity));
         }
     }
 
     public void setItemsPrice(Map<Long, Double> itemsPrice) {
         this.itemsPrice.putAll(itemsPrice);
-    }
-
-    public void setBasketTotalPrice(double basketTotalPrice) {
-        this.basketTotalPrice = basketTotalPrice;
     }
 
     @Override
@@ -107,11 +168,4 @@ public class ShoppingBasket implements DataItem<Long> {
         return "";
     }
 
-    public double getBasketTotalPrice() {
-        return basketTotalPrice;
-    }
-
-    public long getStoreId() {
-        return storeId;
-    }
 }

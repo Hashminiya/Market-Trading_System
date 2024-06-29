@@ -2,8 +2,9 @@ package DomainLayer.Market.Store.StorePurchasePolicy;
 
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.User.IUserFacade;
-import DomainLayer.Market.Util.IRepository;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PurchasePolicyFactory {
 
     private final IUserFacade userFacade;

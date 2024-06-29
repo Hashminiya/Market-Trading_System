@@ -1,23 +1,45 @@
 package DomainLayer.Market.User;
 
+import API.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Converters.StoreEnumConverter;
+import DomainLayer.Converters.StoreEnumSetConverter;
+import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Market.Util.StoreRole;
+import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Entity
+@Component
+@Scope("prototype")
 public class User implements IUser,DataItem<String> {
+    @Id
     private String userName;
     private String password;
     private int userAge;
+    @Transient
     private Istate state;
     protected boolean loggedIn;
+    @Transient
     private ShoppingCart shoppingCart;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_store_permissions", joinColumns = @JoinColumn(name = "user_name"))
+    @MapKeyColumn(name = "store_id")
+    @Column(name = "permission", length = 500)
+    @Convert(converter = StoreEnumSetConverter.class)
     private Map<Long, Set<StoreEnum>> storePermissionsAndRole;
 
     public User(String userName, String password, int userAge, Istate state, boolean loggedIn, ShoppingCart shoppingCart) {
@@ -28,6 +50,21 @@ public class User implements IUser,DataItem<String> {
         this.loggedIn = loggedIn;
         this.shoppingCart = shoppingCart;
         this.storePermissionsAndRole = new HashMap<>();
+    }
+
+    public User() {
+
+    }
+
+    @PostLoad
+    private void initFields() {
+        //init state
+        this.state = (Istate) SpringContext.getBean("registered");
+        //load shopping cart
+        this.shoppingCart = (ShoppingCart) SpringContext.getBean("shoppingCart");
+
+        List<ShoppingBasket> baskets = shoppingCart.loadBasketsForUser(userName);
+        shoppingCart.setShoppingBaskets(baskets);
     }
 
     public String getUserName() {
@@ -158,7 +195,8 @@ public class User implements IUser,DataItem<String> {
 
     public Long addItemToBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade) throws Exception {
         verifyIsLoggedIn();
-        return shoppingCart.addItemBasket(storeId, itemId, quantity, storeFacade);
+        return shoppingCart.addItemBasket(storeId, itemId, quantity, storeFacade, userName);
+
     }
 
     public boolean isRegister() {

@@ -1,31 +1,53 @@
 package DomainLayer.Market.Purchase;
 
+import API.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Util.DataItem;
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
-import DomainLayer.Market.Util.InMemoryRepository;
+import DomainLayer.Repositories.ItemDTORepository;
+import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+@Entity
 public class Purchase implements IPurchase, DataItem<Long> {
 
-        private PaymentServiceProxy paymentServiceProxy;
-        private SupplyServiceProxy supplyServiceProxy;
+    @Transient
+    private PaymentServiceProxy paymentServiceProxy;
+    @Transient
+    private SupplyServiceProxy supplyServiceProxy;
 
-        private long purchaseId;
-        private List<ItemDTO> purchasedItemsList;
-        private double totalAmount;
-        private String userId;
-        private IRepository<Long,ItemDTO> itemsRepo;
-        String purchaseDate;
+    @Id
+    @Getter
+    private long purchaseId;
+
+    @ManyToMany
+    @JoinTable(
+            name = "purchase_items",
+            joinColumns = @JoinColumn(name = "purchase_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+
+    private List<ItemDTO> purchasedItemsList;
+
+    private double totalAmount;
+
+    @Getter
+    private String userId;
+
+    @Transient
+    private ItemDTORepository itemsRepo;
+
+    String purchaseDate;
 
 
     public Purchase(String userId,double totalAmount,Long purchaseId,List<ItemDTO> purchasedItemsList, PaymentServiceProxy paymentService, SupplyServiceProxy supplyService) {
@@ -35,12 +57,23 @@ public class Purchase implements IPurchase, DataItem<Long> {
             this.purchasedItemsList=purchasedItemsList;
             this.totalAmount = totalAmount;
             this.userId = userId;
-            itemsRepo = new InMemoryRepository<>();
+            itemsRepo = SpringContext.getBean(ItemDTORepository.class);
             for (ItemDTO item:purchasedItemsList) {
                 itemsRepo.save(item);
             }
             purchaseDate =LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
+
+    public Purchase() {}
+
+    @PostLoad
+    private void initFields() {
+        //init state
+        this.itemsRepo = SpringContext.getBean(ItemDTORepository.class);
+        this.paymentServiceProxy = SpringContext.getBean(PaymentServiceProxy.class);
+        this.supplyServiceProxy = SpringContext.getBean(SupplyServiceProxy.class);
+        //load shopping cart
+    }
 
     @Override
     public void checkout(String creditCard, Date expiryDate, String CVV) {
@@ -52,8 +85,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
         }
         else if(!isValidCard)
             throw new RuntimeException("Checkout Failed\nTransaction cannot be made with that credit card");
-        else if(!canBeSupplied)
-            throw new RuntimeException("Checkout Failed\nOne of the items can not be supplied");
+        else throw new RuntimeException("Checkout Failed\nOne of the items can not be supplied");
     }
 
     public List<ItemDTO> getItemByStore(Long storeId){
@@ -76,7 +108,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
         return null;
     }
 
-    public String getUserId() {return userId;}
+
 
 }
 

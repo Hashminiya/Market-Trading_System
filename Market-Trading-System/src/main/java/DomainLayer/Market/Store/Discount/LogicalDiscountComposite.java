@@ -1,7 +1,6 @@
 package DomainLayer.Market.Store.Discount;
 
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.LogicalRule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
