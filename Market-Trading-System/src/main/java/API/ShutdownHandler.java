@@ -13,15 +13,20 @@ public class ShutdownHandler {
     public void handleContextClosedEvent() {
         System.out.println("Application is shutting down!");
 
-        UserRepository users = SpringContext.getBean(DbUserRepository.class);
-        System.out.println("Deleting all users...");
-        users.deleteAll();
-        System.out.println("All users deleted.\n");
+        PurchaseRepository purchaseRepository  = SpringContext.getBean(PurchaseRepository.class);
+        System.out.println("Deleting all purchases...");
+        purchaseRepository.deleteAll();
+        System.out.println("All purchases deleted.\n");
 
-        StoreRepository stores = SpringContext.getBean(DbStoreRepository.class);
-        System.out.println("Deleting all stores...");
-        stores.deleteAll();
-        System.out.println("All stores deleted.\n");
+        ItemDTORepository itemDTORepository  = SpringContext.getBean(ItemDTORepository.class);
+        System.out.println("Deleting all itemDTOs...");
+        itemDTORepository.deleteAll();
+        System.out.println("All itemDTOs deleted.\n");
+
+        BasketItemRepository basketItemRepository  = SpringContext.getBean(BasketItemRepository.class);
+        System.out.println("Deleting all basketItems...");
+        basketItemRepository.deleteAll();
+        System.out.println("All basketItems deleted.\n");
 
         ItemRepository items = SpringContext.getBean(DbItemRepository.class);
         System.out.println("Deleting all items...");
@@ -33,20 +38,14 @@ public class ShutdownHandler {
         baskets.deleteAll();
         System.out.println("All baskets deleted.\n");
 
-        BasketItemRepository basketItemRepository  = SpringContext.getBean(BasketItemRepository.class);
-        System.out.println("Deleting all basketItems...");
-        basketItemRepository.deleteAll();
-        System.out.println("All basketItems deleted.\n");
+        StoreRepository stores = SpringContext.getBean(DbStoreRepository.class);
+        System.out.println("Deleting all stores...");
+        stores.deleteAll();
+        System.out.println("All stores deleted.\n");
 
-        PurchaseRepository purchaseRepository  = SpringContext.getBean(PurchaseRepository.class);
-        System.out.println("Deleting all purchases...");
-        purchaseRepository.deleteAll();
-        System.out.println("All purchases deleted.\n");
-
-        ItemDTORepository itemDTORepository  = SpringContext.getBean(ItemDTORepository.class);
-        System.out.println("Deleting all itemDTOs...");
-        itemDTORepository.deleteAll();
-        System.out.println("All itemDTOs deleted.\n");
-
+        UserRepository users = SpringContext.getBean(DbUserRepository.class);
+        System.out.println("Deleting all users...");
+        users.deleteAll();
+        System.out.println("All users deleted.\n");
     }
 }
