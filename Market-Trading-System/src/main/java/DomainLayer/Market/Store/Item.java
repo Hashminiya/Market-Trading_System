@@ -18,7 +18,7 @@ public class Item implements DataItem<Long> {
     private int quantity;
     private double price;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "item_categories", joinColumns = @JoinColumn(name = "item_id"))
     @Column(name = "category")
     private List<String> categories;
