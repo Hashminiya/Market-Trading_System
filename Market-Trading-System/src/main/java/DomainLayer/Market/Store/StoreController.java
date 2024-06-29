@@ -169,6 +169,7 @@ public class StoreController implements IStoreFacade{
         Store store = getStore(storeId);
         userFacade.assignStoreManager(newManagerId, storeId, permissions);
         store.assignManager(newManagerId);
+        storesRepo.save(store);
     }
 
     @Override
