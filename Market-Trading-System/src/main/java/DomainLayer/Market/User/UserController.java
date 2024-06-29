@@ -84,9 +84,9 @@ public class UserController implements IUserFacade {
         long id = generateId();
         String userName = "guest" + id;
         Istate guest = new Guest();
-        InMemoryBasketRepository inMemoryBasketRepository = SpringContext.getBean(InMemoryBasketRepository.class);
+        DbBasketRepository dbMemoryBasketRepository = SpringContext.getBean(DbBasketRepository.class);
         BasketItemRepository basketItemRepository = SpringContext.getBean(BasketItemRepository.class);
-        User user = new User(userName, null, 0, guest, true, new ShoppingCart(inMemoryBasketRepository, basketItemRepository));//TODO: Shopping cart should get IRepository as parameter.
+        User user = new User(userName, null, 0, guest, true, new ShoppingCart(dbMemoryBasketRepository, basketItemRepository));//TODO: Shopping cart should get IRepository as parameter.
         guests.add(user);
         return userName;
     }
@@ -202,7 +202,11 @@ public class UserController implements IUserFacade {
     private User getUser(String userName) {
         Optional<User> user = users.findById(userName);
         if (user.isEmpty()) {
-            throw new IllegalArgumentException("user not exists");
+            User guest = getGuest(userName);
+            if (guest == null) {
+                throw new IllegalArgumentException("user not exists");
+            }
+            return guest;
         }
         return user.get();
     }
@@ -272,6 +276,15 @@ public class UserController implements IUserFacade {
         User user = getUser(userName);
         List<Long> storesId = user.viewUserStoresOwnership();
         return storeFacade.getListOfStorNamesByIds(storesId);
+    }
+
+    private User getGuest(String userName){
+        for (User guest : guests){
+            if (guest.getUserName().equals(userName)){
+                return guest;
+            }
+        }
+        return null;
     }
 
 }
