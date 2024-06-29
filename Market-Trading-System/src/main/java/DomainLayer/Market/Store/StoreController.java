@@ -160,6 +160,7 @@ public class StoreController implements IStoreFacade{
         Store store = getStore(storeId);
         userFacade.assignStoreOwner(newOwnerId, storeId);
         store.assignOwner(newOwnerId);
+        storesRepo.save(store);
     }
 
     @Override
@@ -169,6 +170,7 @@ public class StoreController implements IStoreFacade{
         Store store = getStore(storeId);
         userFacade.assignStoreManager(newManagerId, storeId, permissions);
         store.assignManager(newManagerId);
+        storesRepo.save(store);
     }
 
     @Override

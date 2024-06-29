@@ -72,6 +72,12 @@ public class CommandParserService {
                 List<String> permissions = parseList(args.get(3));
                 storeManagementService.assignStoreManager(tokens.get(args.get(0)), storeIds.get(args.get(1)), args.get(2), permissions);
                 break;
+            case "assignStoreOwner":
+                storeManagementService.assignStoreOwner(tokens.get(args.get(0)), storeIds.get(args.get(1)), args.get(2));
+                break;
+            case "logout":
+                userService.logout(tokens.get(args.get(0)));
+                break;
             default:
                 System.out.println("Unknown command: " + commandName);
         }
