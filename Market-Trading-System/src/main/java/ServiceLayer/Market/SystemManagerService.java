@@ -87,7 +87,6 @@ public class SystemManagerService implements ISystemManagerService {
         }
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> closeStore(String token, long storeId) {
         try {
@@ -108,7 +107,6 @@ public class SystemManagerService implements ISystemManagerService {
         }
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> closeMarket(String token) {
         return null;
