@@ -17,8 +17,9 @@ public class NotificationListener {
 
     @EventListener
     public void processMessage(Event event){
-        String userId = (String) event.getUserIds().toArray()[0];
-        webSocketHandler.handleMessage(userId, new TextMessage(event.getMessage()));
-
+        for (String userName: event.getUserIds()
+             ) {
+            webSocketHandler.handleMessage(userName, new TextMessage(event.getMessage()));
+        }
     }
 }
