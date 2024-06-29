@@ -13,10 +13,7 @@ import DomainLayer.Repositories.ItemSpecifications;
 import DomainLayer.Repositories.PurchasePolicyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PostLoad;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
@@ -30,9 +27,14 @@ public class Store implements DataItem<Long> {
     private String name;
     private String description;
 
-    @Transient
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "store_owners", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
+    @Column(name = "owner_username")
     private List<String> owners;
-    @Transient
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "store_managers", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
+    @Column(name = "manager_username")
     private List<String> managers;
     @Transient
     private ItemRepository products;
@@ -72,9 +74,6 @@ public class Store implements DataItem<Long> {
         purchasePolicies = SpringContext.getBean(PurchasePolicyRepository.class);
         policyFactory = SpringContext.getBean(PurchasePolicyFactory.class);
 
-        //TODO:: Update owners and managers and itemsCache with appropriate values
-        owners=new ArrayList<>();
-        managers=new ArrayList<>();
         itemsCache = new HashMap<>();
     }
 
