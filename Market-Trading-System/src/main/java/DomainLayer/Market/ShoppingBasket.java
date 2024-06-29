@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Cacheable
 @Entity
 public class ShoppingBasket implements DataItem<Long> {
     @Id

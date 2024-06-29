@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
 
+@Cacheable
 @Entity
 public class Store implements DataItem<Long> {
 

@@ -6,6 +6,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@Cacheable
 @Entity
 @Table(name = "basket_items")
 public class BasketItem {

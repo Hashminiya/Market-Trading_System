@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Entity
+@Cacheable
 @Component
 @Scope("prototype")
 public class User implements IUser,DataItem<String> {

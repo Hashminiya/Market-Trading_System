@@ -3,6 +3,7 @@ package DomainLayer.Market.Store.StorePurchasePolicy;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Entity
+@Cacheable
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class PurchasePolicy implements DataItem<Long> {
     ///TODO decide how to get relevant user data
