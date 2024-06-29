@@ -160,6 +160,7 @@ public class StoreController implements IStoreFacade{
         Store store = getStore(storeId);
         userFacade.assignStoreOwner(newOwnerId, storeId);
         store.assignOwner(newOwnerId);
+        storesRepo.save(store);
     }
 
     @Override
