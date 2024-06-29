@@ -157,10 +157,7 @@ public class Store implements DataItem<Long> {
         return products.findAll(Specification.where(ItemSpecifications.categoriesIn(categories)));
     }
     public List<String> getAllCategories(){
-        //return products.getAllCategoryValues();
-        //TODO:: enter Category to table of item and enable findAllCategories
-        //return products.findAllCategories();
-        return new ArrayList<>();
+        return products.findAllCategoriesByStoreId(id);
     }
 
     public boolean isAvailable(long itemId, int amount){

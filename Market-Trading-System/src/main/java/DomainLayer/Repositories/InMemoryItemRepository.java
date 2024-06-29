@@ -252,6 +252,16 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
+    public List<String> findCategoriesByItemId(Long itemId) {
+        return List.of();
+    }
+
+    @Override
+    public List<String> findAllCategoriesByStoreId(long storeId) {
+        return List.of();
+    }
+
+    @Override
     public List<Item> findByStoreIdAndNameContaining(long storeId, String name) {
         return List.of();
     }
