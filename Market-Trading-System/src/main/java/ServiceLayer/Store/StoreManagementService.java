@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
 import java.util.*;
@@ -55,6 +56,7 @@ public class StoreManagementService implements IStoreManagementService {
         instance = null;
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription) {
         try {
@@ -74,6 +76,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> addItemToStore(String token, long storeId, String itemName, String description, double itemPrice, int stockAmount, List<String> categories) {
         try {
@@ -92,6 +95,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> updateItem(String token, long storeId, long itemId, String newName, double newPrice, int newAmount) {
         try {
@@ -110,6 +114,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> deleteItem(String token, long storeId, long itemId) {
         try {
@@ -128,6 +133,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> changeStorePolicy(String token, long storeId) {
         try {
@@ -146,6 +152,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> changeDiscountType(String token, long storeId, String newType) {
         try {
@@ -164,6 +171,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> removeStore(String token, long storeId) {
         try {
@@ -233,6 +241,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> assignStoreOwner(String token, long storeId, String newOwnerId) {
         try {
@@ -251,6 +260,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> assignStoreManager(String token, long storeId, String newManagerI, List<String> permissions) {
         try {
@@ -269,6 +279,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails) {
         try {
@@ -287,6 +298,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> addPolicy(String token, long storeId, String policyDetails) {
         try {

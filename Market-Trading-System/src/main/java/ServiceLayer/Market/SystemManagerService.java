@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
 
@@ -86,6 +87,7 @@ public class SystemManagerService implements ISystemManagerService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> closeStore(String token, long storeId) {
         try {
@@ -106,6 +108,7 @@ public class SystemManagerService implements ISystemManagerService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> closeMarket(String token) {
         return null;

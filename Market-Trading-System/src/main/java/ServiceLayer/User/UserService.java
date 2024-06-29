@@ -15,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.List;
 
@@ -138,6 +140,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> modifyShoppingCart(String token, long basketId, long itemId, int newQuantity) {
         try {
@@ -157,6 +160,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> addItemToBasket(String token, long storeId, long itemId, int quantity) {
         try {
@@ -175,6 +179,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> addPermission(String token, String userToPermit, long storeId, String permission) {
         try {
@@ -194,6 +199,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> removePermission(String token, String userToUnPermit, long storeId, String permission) {
         try {
@@ -212,6 +218,7 @@ public class UserService implements IUserService {
             return ResponseEntity.status(500).body("Error removing permission");
         }
     }
+
 
     @Override
     public ResponseEntity<?> getShoppingCart(String token) {
@@ -232,6 +239,7 @@ public class UserService implements IUserService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @Override
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token) {
@@ -271,6 +279,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
         try {
