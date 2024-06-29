@@ -140,7 +140,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Transactional
     @Override
     public ResponseEntity<String> modifyShoppingCart(String token, long basketId, long itemId, int newQuantity) {
         try {
@@ -160,7 +159,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Transactional
     @Override
     public ResponseEntity<String> addItemToBasket(String token, long storeId, long itemId, int quantity) {
         try {
@@ -179,7 +177,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Transactional
     @Override
     public ResponseEntity<String> addPermission(String token, String userToPermit, long storeId, String permission) {
         try {
@@ -199,7 +196,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Transactional
     @Override
     public ResponseEntity<String> removePermission(String token, String userToUnPermit, long storeId, String permission) {
         try {
@@ -279,7 +275,6 @@ public class UserService implements IUserService {
         }
     }
 
-    @Transactional
     @Override
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
         try {
