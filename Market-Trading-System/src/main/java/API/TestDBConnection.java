@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class TestDBConnection {
     public static void main(String[] args) {
-        String jdbcUrl = "jdbc:mysql://34.172.134.83:3306/yagil_DB";
+        String jdbcUrl = "jdbc:mysql://34.172.134.83:3306/hashminia";
         String username = "dbManager";
         String password = "dbManager";
         try {
