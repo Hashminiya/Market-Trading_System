@@ -2,9 +2,7 @@ package DomainLayer.Market.Store;
 
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.DataItem;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +18,9 @@ public class Item implements DataItem<Long> {
     private int quantity;
     private double price;
 
-    @Transient
+    @ElementCollection
+    @CollectionTable(name = "item_categories", joinColumns = @JoinColumn(name = "item_id"))
+    @Column(name = "category")
     private List<String> categories;
 
     private static ReentrantLock lock = new ReentrantLock();
