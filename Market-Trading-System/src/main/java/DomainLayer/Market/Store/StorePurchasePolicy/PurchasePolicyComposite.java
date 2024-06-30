@@ -5,9 +5,7 @@ import DomainLayer.Market.Util.LogicalRule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +28,13 @@ public class PurchasePolicyComposite extends PurchasePolicy {
         put(LogicalRule.OR, false);
         put(LogicalRule.XOR, false);
     }};
-    @Transient
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "composite_policy_id")
     List<PurchasePolicy> policies;
-    @Transient
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "logical_rule")
     private LogicalRule logicalRule;
 
     @JsonCreator
