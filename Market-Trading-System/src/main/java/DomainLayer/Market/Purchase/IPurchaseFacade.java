@@ -5,14 +5,15 @@ import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.User.IUserFacade;
-import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Repositories.PurchaseRepository;
+//import DomainLayer.Market.Util.IRepository;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public interface IPurchaseFacade {
-    public static IPurchaseFacade getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy)
+    public static IPurchaseFacade getInstance(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy)
     {
         return PurchaseController.getInstance(purchaseRepo, paymentServiceProxy, supplyServiceProxy);
     }

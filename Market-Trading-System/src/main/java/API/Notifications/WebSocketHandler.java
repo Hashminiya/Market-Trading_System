@@ -3,6 +3,7 @@ package API.Notifications;
 import API.SpringContext;
 import DomainLayer.Market.Notifications.Event;
 import DomainLayer.Market.Notifications.Publisher;
+import ServiceLayer.Notifications.NotificationService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -12,6 +13,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
     private static WebSocketHandler instance;
+
     private static final Map<String, WebSocketSession> usersSessions = new ConcurrentHashMap<>();
     private WebSocketHandler(){
 
@@ -32,12 +35,22 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void handleMessage(String userName, WebSocketMessage<?> message) {
         String receivedMessage = (String) message.getPayload();
         WebSocketSession session = usersSessions.get(userName);
-        try {
-            session.sendMessage(new TextMessage("Received: " + receivedMessage));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (session == null){
+            saveMessage(userName,receivedMessage);
+        }
+        else {
+            try {
+                session.sendMessage(new TextMessage("Received: " + receivedMessage));
+            } catch (IOException e) {
+                //TODO write to log
+            }
         }
     }
+
+    private void saveMessage(String userName, String receivedMessage) {
+        ((NotificationService) SpringContext.getBean("NotificationService")).save(userName, receivedMessage, new Date());
+    }
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String userName = (String) session.getAttributes().get("username");

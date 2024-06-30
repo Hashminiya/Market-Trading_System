@@ -2,26 +2,40 @@ package DomainLayer.Market.Store;
 
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.DataItem;
-import DomainLayer.Market.Util.IRepository;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Entity
 public class Item implements DataItem<Long> {
-    private final Long id;
+
+    @Id
+    private Long id;
     private String name;
     private String description;
     private int quantity;
     private double price;
-    private List<String> categories;
-    private static ReentrantLock lock = new ReentrantLock();
 
-    public Item(Long id, String name,String description, List<String> categories){
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "item_categories", joinColumns = @JoinColumn(name = "item_id"))
+    @Column(name = "category")
+    private List<String> categories;
+
+    private static ReentrantLock lock = new ReentrantLock();
+    private long storeId;
+
+    public Item(Long id, String name,String description, List<String> categories, long storeId){
         this.id = id;
         this.name = name;
         this.description = description;
         this.categories = categories;
+        this.storeId = storeId;
+    }
+
+    public Item() {
+
     }
 
     @Override

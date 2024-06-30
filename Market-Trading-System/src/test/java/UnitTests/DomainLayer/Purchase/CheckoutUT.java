@@ -9,6 +9,7 @@ import DomainLayer.Market.Purchase.SupplyServiceProxy;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Repositories.PurchaseRepository;
 import ServiceLayer.ServiceFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,14 +29,14 @@ import static org.mockito.Mockito.*;
 
 public class CheckoutUT {
 
-    IRepository<Long, Purchase> purchaseRepo;
+    PurchaseRepository purchaseRepo;
     PaymentServiceProxy paymentServiceProxy;
     SupplyServiceProxy supplyServiceProxy;
     PurchaseController purchaseController;
 
     @BeforeEach
     public void setUp() {
-        purchaseRepo = mock(IRepository.class);
+        purchaseRepo = mock(PurchaseRepository.class);
         paymentServiceProxy = mock(PaymentServiceProxy.class);
         supplyServiceProxy = mock(SupplyServiceProxy.class);
         when(paymentServiceProxy.validateCreditCard(anyString(), any(Date.class), anyString(), anyDouble())).thenReturn(true);

@@ -6,8 +6,6 @@ import DomainLayer.Market.Notifications.Event;
 import DomainLayer.Market.Notifications.Publisher;
 import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
-import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
@@ -18,6 +16,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.List;
 import java.lang.reflect.Field;
@@ -112,11 +112,6 @@ public class UserService implements IUserService {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
-            if(Objects.equals(userName, "ido")) {
-                Event loginEvent = new Event(this, "logout occurd", new HashSet<>(Arrays.asList(userName)));
-                Publisher publisher = (Publisher) SpringContext.getBean("Publisher");
-                publisher.publish(loginEvent);
-            }
             if (userName != null && jwtService.isValid(token, userDetails)) {
                 userFacade.logout(userName);
                 logger.info("User logged out: {}", userName);
@@ -229,7 +224,6 @@ public class UserService implements IUserService {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
-                logger.info("Getting shopping cart for user: {}", userName);
                 ShoppingCart shoppingCart = userFacade.getShoppingCart(userName);
                 ShoppingCartDTO shoppingCartDTO = new ShoppingCartDTO(shoppingCart, SpringContext.getBean(StoreController.class));
                 logger.info("Shopping cart retrieved for user: {}", userName);
@@ -244,10 +238,8 @@ public class UserService implements IUserService {
         }
     }
 
-
-
     @Override
-    public ResponseEntity<List<Long>> viewUserStoresOwnership(String token){
+    public ResponseEntity<List<Long>> viewUserStoresOwnership(String token) {
         try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
@@ -255,13 +247,30 @@ public class UserService implements IUserService {
                 List<Long> ownedStoreIds = userFacade.viewUserStoresOwnership(userName);
                 logger.info("User store ownership: {}", ownedStoreIds);
                 return ResponseEntity.ok(ownedStoreIds);
-            }
-            else {
+            } else {
                 logger.warn("Invalid token for adding permission: {}", token);
                 return ResponseEntity.status(401).build();
             }
+        } catch (Exception e) {
+            logger.error("Error display user store ownership: {}", token, e);
+            return ResponseEntity.status(500).build();
         }
-        catch (Exception e) {
+    }
+
+    @Override
+    public ResponseEntity<List<String>> viewUserStoresNamesOwnership(String token) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if (userName != null && jwtService.isValid(token, userDetails)) {
+                List<String> ownedStoreNames = userFacade.viewUserStoresNamesOwnership(userName);
+                logger.info("User store ownership: {}", ownedStoreNames);
+                return ResponseEntity.ok(ownedStoreNames);
+            } else {
+                logger.warn("Invalid token for adding permission: {}", token);
+                return ResponseEntity.status(401).build();
+            }
+        } catch (Exception e) {
             logger.error("Error display user store ownership: {}", token, e);
             return ResponseEntity.status(500).build();
         }
@@ -283,25 +292,6 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             logger.error("Error during checkout", e);
             return ResponseEntity.status(500).body("Error during checkout");
-        }
-    }
-
-      
-    public ResponseEntity<List<String>> viewUserStoresNamesOwnership(String token) {
-      try {
-            String userName = jwtService.extractUsername(token);
-            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
-            if (userName != null && jwtService.isValid(token, userDetails)) {
-                List<String> ownedStoreNames = userFacade.viewUserStoresNamesOwnership(userName);
-                logger.info("User store ownership: {}", ownedStoreNames);
-                return ResponseEntity.ok(ownedStoreNames);
-            } else {
-                logger.warn("Invalid token for adding permission: {}", token);
-                return ResponseEntity.status(401).build();
-            }
-        } catch (Exception e) {
-            logger.error("Error display user store ownership: {}", token, e);
-            return ResponseEntity.status(500).build();
         }
     }
 }

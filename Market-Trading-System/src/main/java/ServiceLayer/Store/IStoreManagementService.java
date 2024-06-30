@@ -2,7 +2,7 @@ package ServiceLayer.Store;
 
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
-import DomainLayer.Market.Util.IRepository;
+//import DomainLayer.Market.Util.IRepository;
 import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;

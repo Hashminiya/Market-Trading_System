@@ -2,30 +2,44 @@ package DAL;
 
 import DomainLayer.Market.Util.DataItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
+import lombok.Getter;
 
 import java.util.List;
 
+@Entity
 public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
+
+    @Getter
+    @Id
     @JsonProperty("itemId")
-    private final long itemId;
+    private long itemId;
 
     @JsonProperty("itemName")
-    private final String itemName;
+    private String itemName;
 
+    @Getter
     @JsonProperty("quantity")
-    private final int quantity;
+    private int quantity;
 
+    @Getter
     @JsonProperty("storeId")
-    private final long storeId;
+    private long storeId;
 
+    @Getter
     @JsonProperty("totalPrice")
-    private final double totalPrice;
+    private double totalPrice;
 
+    @Getter
+    @Transient
     @JsonProperty("categories")
-    private final List<String> categories;
+    private List<String> categories;
 
+    @Getter
     @JsonProperty("description")
-    private final String description;
+    private String description;
 
     public ItemDTO(long itemId, String itemName, int quantity, long storeId, double totalPrice, List<String> categories, String description) {
         this.itemId = itemId;
@@ -37,36 +51,16 @@ public class ItemDTO implements DataItem<Long>, Comparable<ItemDTO> {
         this.description = description;
     }
 
-    public Long getId() {
-        return itemId;
+    public ItemDTO() {
+
     }
 
-    public long getItemId() {
+    public Long getId() {
         return itemId;
     }
 
     public String getName() {
         return itemName;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public long getStoreId() {
-        return storeId;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public List<String> getCategories() {
-        return categories;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     @Override

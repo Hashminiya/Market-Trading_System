@@ -2,8 +2,9 @@ package DomainLayer.Market.Purchase;
 
 import DAL.ItemDTO;
 import DomainLayer.Market.User.IUserFacade;
-import DomainLayer.Market.Util.IRepository;
+//import DomainLayer.Market.Util.IRepository;
 import DomainLayer.Market.Util.IdGenerator;
+import DomainLayer.Repositories.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -16,14 +17,15 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class PurchaseController implements IPurchaseFacade {
     private static PurchaseController purchaseControllerInstance;
     private BlockingQueue<ItemDTO> inventoryReduceItems; // queue to remove products from inventory
-    private IRepository<Long,Purchase> purchaseRepo;
+    private PurchaseRepository purchaseRepo;
 
     private PaymentServiceProxy paymentServiceProxy;
     private SupplyServiceProxy supplyServiceProxy;
     private IUserFacade userFacade;
 
     @Autowired
-    private PurchaseController(@Qualifier("InMemoryRepository") IRepository<Long,Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+    private PurchaseController(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+
         this.purchaseRepo = purchaseRepo;
         this.paymentServiceProxy = paymentServiceProxy;
         this.supplyServiceProxy = supplyServiceProxy;
@@ -31,7 +33,7 @@ public class PurchaseController implements IPurchaseFacade {
         inventoryReduceItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
     }
 
-    public static synchronized PurchaseController getInstance(IRepository<Long, Purchase> purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+    public static synchronized PurchaseController getInstance(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
         if (purchaseControllerInstance == null) {
             purchaseControllerInstance = new PurchaseController(purchaseRepo, paymentServiceProxy, supplyServiceProxy);
         }
@@ -92,7 +94,7 @@ public class PurchaseController implements IPurchaseFacade {
     }
     public void setSupplyServiceProxy(SupplyServiceProxy supplyServiceProxy) {this.supplyServiceProxy = supplyServiceProxy;}
 
-    public void setPurchaseRepo(IRepository<Long, Purchase> purchaseRepo) {
+    public void setPurchaseRepo(PurchaseRepository purchaseRepo) {
         this.purchaseRepo = purchaseRepo;
     }
 
@@ -100,7 +102,7 @@ public class PurchaseController implements IPurchaseFacade {
     public void clearPurchases(){
         List<Purchase> purchases = purchaseRepo.findAll();
         for(Purchase purchase: purchases)
-            purchaseRepo.delete(purchase.getId());
+            purchaseRepo.delete(purchase);
     }
 
     public void clear(){
