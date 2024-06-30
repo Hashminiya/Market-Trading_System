@@ -27,4 +27,8 @@ public interface IStoreManagementService {
     public ResponseEntity<?> addPolicy(String token, long storeId, String policyDetails);
     //public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate , String cvv, String discountCode);
     public ResponseEntity<?> viewInventoryByStoreNameAndToken(String token, String storeName);
+
+    ResponseEntity<?> viewCategoriesByStoreNameAndToken(String token, String storeName);
+
+    ResponseEntity<?> addPolicyByStoreNameAndToken(String token, String storeName, String policyDetails);
 }
