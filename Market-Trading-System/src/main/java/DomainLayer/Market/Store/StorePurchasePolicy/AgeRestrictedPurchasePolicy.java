@@ -1,17 +1,26 @@
 package DomainLayer.Market.Store.StorePurchasePolicy;
 
+import API.SpringContext;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.User.IUserFacade;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.Transient;
 
 import java.util.HashMap;
 import java.util.List;
 
+@Entity
+@DiscriminatorValue("AGE_RESTRICTED")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class AgeRestrictedPurchasePolicy extends PurchasePolicy {
-    private final int minAge;
+    private int minAge;
+
+    @Transient
     IUserFacade userFacade;
     @JsonCreator
     public AgeRestrictedPurchasePolicy(@JsonProperty("name") String name,
@@ -24,6 +33,16 @@ public class AgeRestrictedPurchasePolicy extends PurchasePolicy {
         this.minAge = minAge;
 
     }
+
+    public AgeRestrictedPurchasePolicy() {
+
+    }
+
+    @PostLoad
+    public void postLoad(){
+        userFacade = SpringContext.getBean(IUserFacade.class);
+    }
+
     @Override
     public boolean isValid(HashMap<Item,Integer> itemsInBasket, String userName) {
         if(userFacade.getUserAge(userName) < minAge) {

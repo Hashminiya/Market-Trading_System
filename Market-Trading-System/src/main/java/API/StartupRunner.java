@@ -56,6 +56,7 @@ public class StartupRunner implements CommandLineRunner {
         List<String> tokens = createUsers();
         List<Long> storeIds = createStores(tokens);
         List<Long> itemIds = createItems(tokens, storeIds);
+        createPolicy(tokens, storeIds, itemIds);
         initShoppingCart(tokens, storeIds, itemIds);
         createPurchase(tokens);
         logoutUsers(tokens);
@@ -69,36 +70,36 @@ public class StartupRunner implements CommandLineRunner {
 
     private List<String> createUsers() {
         userService.register("user1", "user1", 25);
-        userService.register("user2", "user2", 30);
-        userService.register("user3", "user3", 22);
-        userService.register("user4", "user4", 28);
-        userService.register("user5", "user5", 35);
+//        userService.register("user2", "user2", 30);
+//        userService.register("user3", "user3", 22);
+//        userService.register("user4", "user4", 28);
+//        userService.register("user5", "user5", 35);
 //        userService.register("user6", "user6", 26);
 //        userService.register("user7", "user7", 29);
 //        userService.register("user8", "user8", 31);
 //        userService.register("user9", "user9", 24);
 //        userService.register("user10", "user10", 27);
         ResponseEntity<String> response1 = userService.login("user1", "user1");
-        ResponseEntity<String> response2 = userService.login("user2", "user2");
-        ResponseEntity<String> response3 = userService.login("user3", "user3");
-        ResponseEntity<String> response4 = userService.login("user4", "user4");
-        ResponseEntity<String> response5 = userService.login("user5", "user5");
+//        ResponseEntity<String> response2 = userService.login("user2", "user2");
+//        ResponseEntity<String> response3 = userService.login("user3", "user3");
+//        ResponseEntity<String> response4 = userService.login("user4", "user4");
+//        ResponseEntity<String> response5 = userService.login("user5", "user5");
         List<String> tokens = new ArrayList<>();
         tokens.add(response1.getBody());
-        tokens.add(response2.getBody());
-        tokens.add(response3.getBody());
-        tokens.add(response4.getBody());
-        tokens.add(response5.getBody());
+//        tokens.add(response2.getBody());
+//        tokens.add(response3.getBody());
+//        tokens.add(response4.getBody());
+//        tokens.add(response5.getBody());
         return tokens;
     }
 
     private List<Long> createStores(List<String> tokens) {
         IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
         ResponseEntity<?> storeId1 = storeManagementService.createStore(tokens.get(0), "Electronics Store","High quality electronics and gadgets");
-        ResponseEntity<?> storeId2 = storeManagementService.createStore(tokens.get(1), "Camping Gear","All your camping essentials");
-        ResponseEntity<?> storeId3 = storeManagementService.createStore(tokens.get(2), "Art Supplies","Wide range of art supplies");
-        ResponseEntity<?> storeId4 = storeManagementService.createStore(tokens.get(3), "DIY Tools","Everything you need for your DIY projects");
-        ResponseEntity<?> storeId5 = storeManagementService.createStore(tokens.get(4), "Garden Center","All you need for your garden");
+//        ResponseEntity<?> storeId2 = storeManagementService.createStore(tokens.get(1), "Camping Gear","All your camping essentials");
+//        ResponseEntity<?> storeId3 = storeManagementService.createStore(tokens.get(2), "Art Supplies","Wide range of art supplies");
+//        ResponseEntity<?> storeId4 = storeManagementService.createStore(tokens.get(3), "DIY Tools","Everything you need for your DIY projects");
+//        ResponseEntity<?> storeId5 = storeManagementService.createStore(tokens.get(4), "Garden Center","All you need for your garden");
 //        ResponseEntity<?> storeId6 = storeManagementService.createStore(tokens.get(0), "Shoe Store", "Stylish and comfortable shoes");
 //        ResponseEntity<?> storeId7 = storeManagementService.createStore(tokens.get(1), "Audio Store", "High fidelity audio equipment");
 //        ResponseEntity<?> storeId8 = storeManagementService.createStore(tokens.get(2), "Home Goods", "Essentials for your home");
@@ -106,10 +107,10 @@ public class StartupRunner implements CommandLineRunner {
 //        ResponseEntity<?> storeId10 = storeManagementService.createStore(tokens.get(4), "Office Supplies", "Everything for your office");
         List<Long> storeIds = new ArrayList<>();
         storeIds.add((long) storeId1.getBody());
-        storeIds.add((long) storeId2.getBody());
-        storeIds.add((long) storeId3.getBody());
-        storeIds.add((long) storeId4.getBody());
-        storeIds.add((long) storeId5.getBody());
+//        storeIds.add((long) storeId2.getBody());
+//        storeIds.add((long) storeId3.getBody());
+//        storeIds.add((long) storeId4.getBody());
+//        storeIds.add((long) storeId5.getBody());
 //        storeIds.add((long) storeId6.getBody());
 //        storeIds.add((long) storeId7.getBody());
 //        storeIds.add((long) storeId8.getBody());
@@ -117,6 +118,46 @@ public class StartupRunner implements CommandLineRunner {
 //        storeIds.add((long) storeId10.getBody());
 //        storeManagementService.assignStoreOwner(tokens.get(0),(long) storeId1.getBody())
         return storeIds;
+    }
+
+    private void createPolicy(List<String> tokens,List<Long> storeIds, List<Long> itemIds){
+        IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
+        String policyDetails = "{\n" +
+                "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
+                "    \"name\": \"Alcohol 18 and above\",\n" +
+                "    \"id\": 10,\n" +
+                "    \"minAge\": 18,\n"+
+                "    \"items\": null,\n" +
+                "    \"categories\": [\"alcohol\"],\n" +
+                "    \"isStore\": false\n" +
+                "}";
+        storeManagementService.addPolicy(tokens.get(0),storeIds.get(0),policyDetails);
+        String AGE_POLICY_SPECIFIC_ITEM = String.format("{\n" +
+                "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
+                "    \"name\": \"Alcohol 18 and above\",\n" +
+                "    \"id\": 10,\n" +
+                "    \"minAge\": 16,\n"+
+                "    \"items\": [%s],\n" +
+                "    \"categories\": [\"alcohol\"],\n" +
+                "    \"isStore\": false\n" +
+                "}",itemIds.get(0));
+        String MAXIMUM_QUANTITY_POLICY = String.format("{\n" +
+                "    \"@type\": \"MaximumQuantityPurchasePolicy\",\n" +
+                "    \"name\": \"all store max amount policy\",\n" +
+                "    \"id\": 10,\n" +
+                "    \"maxAmount\": 15,\n"+
+                "    \"items\": null,\n" +
+                "    \"categories\": null ,\n" +
+                "    \"isStore\": true\n" +
+                "}");
+        policyDetails = String.format("{\n" +
+                "    \"@type\": \"PurchasePolicyComposite\",\n" +
+                "    \"id\": 1234,\n" +
+                "    \"name\": \"complex policy\",\n" +
+                "    \"policies\": [%s,%s] ,\n" +
+                "    \"logicalRole\": \"OR\"\n" +
+                "}",AGE_POLICY_SPECIFIC_ITEM,MAXIMUM_QUANTITY_POLICY);
+        storeManagementService.addPolicy(tokens.get(0),storeIds.get(0),policyDetails);
     }
 
     private void initShoppingCart(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {

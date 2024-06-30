@@ -5,25 +5,38 @@ import DomainLayer.Market.Util.LogicalRule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
+
+@Entity
+@DiscriminatorValue("COMPOSITE")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class PurchasePolicyComposite extends PurchasePolicy {
+    @Transient
     Map<LogicalRule, BiPredicate<Boolean, Boolean>> logicalOperators = new HashMap<>() {{
         put(LogicalRule.AND, (a, b) -> a && b);
         put(LogicalRule.OR, (a, b) -> a || b);
         put(LogicalRule.XOR, (a, b) -> a ^ b);
     }};
+    @Transient
     Map<LogicalRule, Boolean> initValues = new HashMap<>(){{
         put(LogicalRule.AND, true);
         put(LogicalRule.OR, false);
         put(LogicalRule.XOR, false);
     }};
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "composite_policy_id")
     List<PurchasePolicy> policies;
-    private final LogicalRule logicalRule;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "logical_rule")
+    private LogicalRule logicalRule;
+
     @JsonCreator
     public PurchasePolicyComposite(@JsonProperty("id") Long id, @JsonProperty("name") String name,
                 @JsonProperty("policies") List<PurchasePolicy> policies,
@@ -32,6 +45,11 @@ public class PurchasePolicyComposite extends PurchasePolicy {
         this.policies = policies;
         this.logicalRule = logicalRule;
     }
+
+    public PurchasePolicyComposite() {
+
+    }
+
     @Override
     public boolean isValid(HashMap<Item, Integer> itemsInBasket, String userDetails) {
         boolean answer = initValues.get(logicalRule);

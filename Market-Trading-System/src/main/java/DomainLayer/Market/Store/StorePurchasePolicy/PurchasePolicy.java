@@ -3,25 +3,28 @@ package DomainLayer.Market.Store.StorePurchasePolicy;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.DataItem;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "policy_type")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class PurchasePolicy implements DataItem<Long> {
     ///TODO decide how to get relevant user data
     @Id
     private Long id;
     private String name;
-    @Transient
+
+    @ElementCollection
     private List<Long> itemsList;
-    @Transient
+
+    @ElementCollection
     private List<String> categories;
+
     private boolean isStore;
     public PurchasePolicy(Long id, String name, List<Long> itemsList, List<String> categories, boolean isStore){
         this.id = id;
