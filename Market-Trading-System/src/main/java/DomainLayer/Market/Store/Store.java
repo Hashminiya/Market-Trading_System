@@ -27,6 +27,7 @@ public class Store implements DataItem<Long> {
     private Long id;
     private String founderId;
     private String name;
+    @Getter
     @Setter
     @Getter
     private String description;
@@ -50,8 +51,9 @@ public class Store implements DataItem<Long> {
     @JoinColumn(name = "store_id")
     private List<BaseDiscount> discounts= new ArrayList<>();;
 
-    @Transient
-    private PurchasePolicyRepository purchasePolicies;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "store_id")
+    private List<PurchasePolicy> purchasePolicies = new ArrayList<>();
 
     @Setter
     @Transient
@@ -60,14 +62,13 @@ public class Store implements DataItem<Long> {
     @Transient
     private Map<Long, ItemsCache> itemsCache;
 
-    public Store(Long id, String founderId, String name, String description, ItemRepository products,
-                 PurchasePolicyRepository purchasePolicies){
+    public Store(Long id, String founderId, String name, String description, ItemRepository products){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
         this.description = description;
         this.products = products;
-        this.purchasePolicies = purchasePolicies;
+        this.purchasePolicies = new ArrayList<>();
         owners = new ArrayList<>();
         managers = new ArrayList<>();
         itemsCache = new HashMap<>();
@@ -82,9 +83,7 @@ public class Store implements DataItem<Long> {
     @PostLoad
     private void loadItems() {
         products = SpringContext.getBean(ItemRepository.class);
-        purchasePolicies = SpringContext.getBean(PurchasePolicyRepository.class);
         policyFactory = SpringContext.getBean(PurchasePolicyFactory.class);
-
         itemsCache = new HashMap<>();
     }
 
@@ -257,7 +256,7 @@ public class Store implements DataItem<Long> {
             itemsCache.get(basket.getId()).addItem(item, pair.getValue());
             itemsCache.get(basket.getId()).unlock();
         }
-        for (PurchasePolicy policy:purchasePolicies.findAll()){
+        for (PurchasePolicy policy:purchasePolicies){
             if(!policy.isValid(itemsInBasket, userDetails))
                 //restoreStock(itemsInBasket);
                 return false;
@@ -289,12 +288,11 @@ public class Store implements DataItem<Long> {
         try {
             PurchasePolicy purchsePoilcy = objectMapper.readValue(policyDetails, PurchasePolicy.class);
             policyFactory.createPolicy(purchsePoilcy);
-            purchasePolicies.save(purchsePoilcy);
+            purchasePolicies.add(purchsePoilcy);
         }
         catch (Exception e){
             throw new Exception("Error while creating policy\n" + e.getMessage());
         }
-
     }
 
 

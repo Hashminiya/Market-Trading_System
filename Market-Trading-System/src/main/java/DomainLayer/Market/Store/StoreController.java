@@ -14,7 +14,6 @@ import DomainLayer.Repositories.*;
 import jdk.jshell.spi.ExecutionControl;
 import DomainLayer.Repositories.DiscountRepository;
 import DomainLayer.Repositories.ItemRepository;
-import DomainLayer.Repositories.PurchasePolicyRepository;
 import DomainLayer.Repositories.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -89,15 +88,12 @@ public class StoreController implements IStoreFacade{
     public long createStore(String founderId, String storeName, String storeDescription) throws Exception{
         if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
-        //IRepository<Long, PurchasePolicy> policyRepo = new InMemoryRepository<>();
-        PurchasePolicyRepository policyRepo = SpringContext.getBean(PurchasePolicyRepository.class);
         long storeId = generateStoreId();
-        //IRepository<Long, IDiscount> discounts = new InMemoryRepository<>();
         ItemRepository items = SpringContext.getBean(ItemRepository.class);
-        Store newStore = new Store(storeId, founderId, storeName, storeDescription, items, policyRepo);
+        Store newStore = new Store(storeId, founderId, storeName, storeDescription, items);
         newStore.setPolicyFactory(new PurchasePolicyFactory(userFacade));
         storesRepo.save(newStore);
-        userFacade.assignStoreOwner(founderId,storeId);
+        userFacade.assignStoreOwner(founderId, founderId, storeId);
         //locks.put(storeId, new ReentrantLock());
         return storeId;//for test purposes
     }
@@ -362,12 +358,14 @@ public class StoreController implements IStoreFacade{
         store.addDiscount(discountDetails);
         storesRepo.save(store);
     }
+
     @Override
     public void addPolicy(String userName, long storeId, String policyDetails) throws Exception{
         if(!userFacade.checkPermission(userName, storeId, ADD_POLICY))
             throw new Exception("User doesn't has permission to add policy");
         Store store = getStore(storeId);
         store.addPolicy(policyDetails);
+        storesRepo.save(store);
     }
 
     @Override

@@ -288,6 +288,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> addPolicy(String token, long storeId, String policyDetails) {
         try {
