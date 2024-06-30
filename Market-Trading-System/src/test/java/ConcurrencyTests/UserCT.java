@@ -7,7 +7,6 @@ import DomainLayer.Market.Purchase.Purchase;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
-import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
