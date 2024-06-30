@@ -71,6 +71,8 @@ public class User implements IUser,DataItem<String> {
 
         List<ShoppingBasket> baskets = shoppingCart.loadBasketsForUser(userName);
         shoppingCart.setShoppingBaskets(baskets);
+
+        this.assigners = new HashMap<>();
     }
 
     public String getUserName() {

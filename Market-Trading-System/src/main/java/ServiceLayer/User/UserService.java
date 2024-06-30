@@ -6,6 +6,7 @@ import DomainLayer.Market.Notifications.Event;
 import DomainLayer.Market.Notifications.Publisher;
 import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.Store.StoreController;
