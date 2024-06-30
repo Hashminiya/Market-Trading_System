@@ -1,5 +1,6 @@
 package DomainLayer.Market.Store.StorePurchasePolicy;
 
+import API.SpringContext;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.User.IUserFacade;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
 
 import java.util.HashMap;
@@ -34,6 +36,11 @@ public class AgeRestrictedPurchasePolicy extends PurchasePolicy {
 
     public AgeRestrictedPurchasePolicy() {
 
+    }
+
+    @PostLoad
+    public void postLoad(){
+        userFacade = SpringContext.getBean(IUserFacade.class);
     }
 
     @Override

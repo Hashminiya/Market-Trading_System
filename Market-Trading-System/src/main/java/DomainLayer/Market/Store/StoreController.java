@@ -365,7 +365,7 @@ public class StoreController implements IStoreFacade{
             throw new Exception("User doesn't has permission to add policy");
         Store store = getStore(storeId);
         store.addPolicy(policyDetails);
-        storesRepo.save(store);
+        //storesRepo.save(store);
     }
 
     @Override
