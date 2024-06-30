@@ -135,7 +135,7 @@ public class StartupRunner implements CommandLineRunner {
         String AGE_POLICY_SPECIFIC_ITEM = String.format("{\n" +
                 "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
                 "    \"name\": \"Alcohol 18 and above\",\n" +
-                "    \"id\": 10,\n" +
+                "    \"id\": 11,\n" +
                 "    \"minAge\": 16,\n"+
                 "    \"items\": [%s],\n" +
                 "    \"categories\": [\"alcohol\"],\n" +
@@ -144,7 +144,7 @@ public class StartupRunner implements CommandLineRunner {
         String MAXIMUM_QUANTITY_POLICY = String.format("{\n" +
                 "    \"@type\": \"MaximumQuantityPurchasePolicy\",\n" +
                 "    \"name\": \"all store max amount policy\",\n" +
-                "    \"id\": 10,\n" +
+                "    \"id\": 12,\n" +
                 "    \"maxAmount\": 15,\n"+
                 "    \"items\": null,\n" +
                 "    \"categories\": null ,\n" +
