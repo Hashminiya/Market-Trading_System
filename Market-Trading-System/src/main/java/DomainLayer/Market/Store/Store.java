@@ -10,7 +10,6 @@ import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Repositories.DiscountRepository;
 import DomainLayer.Repositories.ItemRepository;
 import DomainLayer.Repositories.ItemSpecifications;
-import DomainLayer.Repositories.PurchasePolicyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import jakarta.persistence.*;
