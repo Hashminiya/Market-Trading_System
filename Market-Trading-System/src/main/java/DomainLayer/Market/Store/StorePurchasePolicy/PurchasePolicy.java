@@ -18,10 +18,13 @@ public abstract class PurchasePolicy implements DataItem<Long> {
     @Id
     private Long id;
     private String name;
-    @Transient
+
+    @ElementCollection
     private List<Long> itemsList;
-    @Transient
+
+    @ElementCollection
     private List<String> categories;
+
     private boolean isStore;
     public PurchasePolicy(Long id, String name, List<Long> itemsList, List<String> categories, boolean isStore){
         this.id = id;
