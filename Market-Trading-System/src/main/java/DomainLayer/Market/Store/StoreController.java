@@ -19,6 +19,7 @@ import DomainLayer.Repositories.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;
@@ -90,12 +91,12 @@ public class StoreController implements IStoreFacade{
         if(!userFacade.isRegister(founderId))
             throw new Exception("User isn't registered, so can't create new store");
         //IRepository<Long, PurchasePolicy> policyRepo = new InMemoryRepository<>();
-        PurchasePolicyRepository policyRepo = SpringContext.getBean(PurchasePolicyRepository.class);
+        //PurchasePolicyRepository policyRepo = SpringContext.getBean(PurchasePolicyRepository.class);
         long storeId = generateStoreId();
         //IRepository<Long, IDiscount> discounts = new InMemoryRepository<>();
         DiscountRepository discounts = SpringContext.getBean(DiscountRepository.class);
         ItemRepository items = SpringContext.getBean(ItemRepository.class);
-        Store newStore = new Store(storeId, founderId, storeName, storeDescription, items, discounts, policyRepo);
+        Store newStore = new Store(storeId, founderId, storeName, storeDescription, items, discounts);
         newStore.setPolicyFactory(new PurchasePolicyFactory(userFacade));
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);
@@ -363,12 +364,14 @@ public class StoreController implements IStoreFacade{
         store.addDiscount(discountDetails);
         store.addDiscount(discountDetails);
     }
+
     @Override
     public void addPolicy(String userName, long storeId, String policyDetails) throws Exception{
         if(!userFacade.checkPermission(userName, storeId, ADD_POLICY))
             throw new Exception("User doesn't has permission to add policy");
         Store store = getStore(storeId);
         store.addPolicy(policyDetails);
+        storesRepo.save(store);
     }
 
     @Override
