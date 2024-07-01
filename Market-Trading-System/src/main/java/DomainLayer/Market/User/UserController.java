@@ -153,16 +153,29 @@ public class UserController implements IUserFacade {
     }
 
     @Override
-    public void assignStoreOwner(String userName, long storeId) {
-        User user = getUser(userName);
-        user.assignStoreOwner(storeId);
-        users.save(user);
+    public void assignStoreOwner(String assigner, String assignee, long storeId) {
+        User assigneeUser = getUser(assignee);
+        if(!assigner.equals(assignee)) {
+            User assignerUser = getUser(assigner);
+            Set<String> assigners = assignerUser.getAssigners(storeId);
+            assigners.add(assignerUser.getId());
+            assigneeUser.setAssigners(storeId, assigners);
+        }
+        else{
+            assigneeUser.setAssigners(storeId, new HashSet<>());
+        }
+        assigneeUser.assignStoreOwner(storeId);
+        users.save(assigneeUser);
     }
 
     @Override
-    public void assignStoreManager(String userName, long storeId,List<String> storePermissions) {
-        User user = getUser(userName);
-        user.assignStoreManager(storeId, storePermissions);
+    public void assignStoreManager(String assigner, String assignee, long storeId,List<String> storePermissions) {
+        User assigneeUser = getUser(assignee);
+        User assignerUser = getUser(assigner);
+        Set<String> assigners = assignerUser.getAssigners(storeId);
+        assigners.add(assignerUser.getId());
+        assigneeUser.setAssigners(storeId, assigners);
+        assigneeUser.assignStoreManager(storeId, storePermissions);
     }
 
     @Override
@@ -174,13 +187,27 @@ public class UserController implements IUserFacade {
     @Override
     public void addPermission(String userName, String userToPermit,long storeId, String permission) {
         User user = getUser(userToPermit);
-        user.addPermission(storeId, StorePermission.valueOf(permission));
+        if(user.getAssigners(storeId).contains(userName)) {
+            user.lock();
+            user.addPermission(storeId, StorePermission.valueOf(permission));
+            user.unlock();
+        }
+        else {
+            throw new RuntimeException("User can't assign permissions to this user.");
+        }
     }
 
     @Override
     public void removePermission(String userName, String userToUnPermit,long storeId, String permission) {
         User user = getUser(userToUnPermit);
-        user.removePermission(storeId, StorePermission.valueOf(permission));
+        if(user.getAssigners(storeId).contains(userName)) {
+            user.lock();
+            user.removePermission(storeId, StorePermission.valueOf(permission));
+            user.unlock();
+        }
+        else {
+            throw new RuntimeException("User can't assign permissions to this user.");
+        }
     }
 
     @Override

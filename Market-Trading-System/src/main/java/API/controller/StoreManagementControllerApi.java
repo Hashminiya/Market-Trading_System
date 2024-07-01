@@ -73,6 +73,15 @@ public class StoreManagementControllerApi {
     public ResponseEntity<?> viewInventoryByStoreNameAndToken(@RequestParam String token,@RequestParam String storeName) {
         return storeManagementService.viewInventoryByStoreNameAndToken(token,storeName);
     }
+    @GetMapping("storeManagement/viewCategoriesByStoreNameAndToken")
+    public ResponseEntity<?> viewCategoriesByStoreNameAndToken(@RequestParam String token,@RequestParam String storeName) {
+        return storeManagementService.viewCategoriesByStoreNameAndToken(token,storeName);
+    }
+
+    @PostMapping("storeManagement/addPolicyByStoreNameAndToken")
+    public ResponseEntity<?> addPolicyByStoreNameAndToken(@RequestParam String token,@RequestParam String storeName, @RequestParam String policyDetails) {
+        return storeManagementService.addPolicyByStoreNameAndToken(token,storeName, policyDetails);
+    }
 
     @GetMapping("storeManagement/viewPurchasesHistory")
     public ResponseEntity<?> viewPurchasesHistory(@RequestParam String token,@RequestParam long storeId) {

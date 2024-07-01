@@ -368,4 +368,53 @@ public class StoreManagementService implements IStoreManagementService {
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<?> viewCategoriesByStoreNameAndToken(String token, String storeName) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                List<Store> userStores = storeFacade.findStoresByOwner(userName);
+
+                for (Store store : userStores) {
+                    if (store.getName().equalsIgnoreCase(storeName)) {
+                        List<String> categories = store.getAllCategories();
+                        return ResponseEntity.ok(categories);
+                    }
+                }
+                return ResponseEntity.status(404).body("Store not found");
+            } else {
+                logger.warn("Invalid token for viewing inventory: {}", token);
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
+            }
+        } catch (Exception ex) {
+            logger.error("Error viewing inventory by store name and token", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> addPolicyByStoreNameAndToken(String token, String storeName, String policyDetails) {
+        try {
+            Long storeId;
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                List<Store> userStores = storeFacade.findStoresByOwner(userName);
+
+                for (Store store : userStores) {
+                    if (store.getName().equalsIgnoreCase(storeName)) {
+                        storeId = store.getId();
+                        return addPolicy(token, storeId, policyDetails);
+                    }
+                }
+                return ResponseEntity.status(404).body("Store not found");
+            } else {
+                logger.warn("Invalid token for viewing inventory: {}", token);
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
+            }
+        } catch (Exception ex) {
+            logger.error("Error viewing inventory by store name and token", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
 }
