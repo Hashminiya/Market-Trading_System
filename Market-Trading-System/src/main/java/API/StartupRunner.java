@@ -55,6 +55,7 @@ public class StartupRunner implements CommandLineRunner {
     private void runSystem() {
         List<String> tokens = createUsers();
         List<Long> storeIds = createStores(tokens);
+        assignManagers(tokens,storeIds);
         List<Long> itemIds = createItems(tokens, storeIds);
         createPolicy(tokens, storeIds, itemIds);
         initShoppingCart(tokens, storeIds, itemIds);
@@ -70,7 +71,7 @@ public class StartupRunner implements CommandLineRunner {
 
     private List<String> createUsers() {
         userService.register("user1", "user1", 25);
-//        userService.register("user2", "user2", 30);
+        userService.register("user2", "user2", 30);
 //        userService.register("user3", "user3", 22);
 //        userService.register("user4", "user4", 28);
 //        userService.register("user5", "user5", 35);
@@ -80,13 +81,13 @@ public class StartupRunner implements CommandLineRunner {
 //        userService.register("user9", "user9", 24);
 //        userService.register("user10", "user10", 27);
         ResponseEntity<String> response1 = userService.login("user1", "user1");
-//        ResponseEntity<String> response2 = userService.login("user2", "user2");
+        ResponseEntity<String> response2 = userService.login("user2", "user2");
 //        ResponseEntity<String> response3 = userService.login("user3", "user3");
 //        ResponseEntity<String> response4 = userService.login("user4", "user4");
 //        ResponseEntity<String> response5 = userService.login("user5", "user5");
         List<String> tokens = new ArrayList<>();
         tokens.add(response1.getBody());
-//        tokens.add(response2.getBody());
+        tokens.add(response2.getBody());
 //        tokens.add(response3.getBody());
 //        tokens.add(response4.getBody());
 //        tokens.add(response5.getBody());
@@ -118,6 +119,13 @@ public class StartupRunner implements CommandLineRunner {
 //        storeIds.add((long) storeId10.getBody());
 //        storeManagementService.assignStoreOwner(tokens.get(0),(long) storeId1.getBody())
         return storeIds;
+    }
+
+    public void assignManagers(List<String> tokens,List<Long> storeIds){
+        IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
+        List<String> permissions = new ArrayList<>();
+        permissions.add("REMOVE_STORE");
+        storeManagementService.assignStoreManager(tokens.get(0),storeIds.get(0),"user2", permissions);
     }
 
     private void createPolicy(List<String> tokens,List<Long> storeIds, List<Long> itemIds){
