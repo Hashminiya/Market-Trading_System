@@ -26,4 +26,8 @@ public interface IStoreManagementService {
     public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails);
     public ResponseEntity<?> addPolicy(String token, long storeId, String policyDetails);
     public ResponseEntity<?> viewInventoryByStoreNameAndToken(String token, String storeName);
+
+    ResponseEntity<?> viewCategoriesByStoreNameAndToken(String token, String storeName);
+
+    ResponseEntity<?> addPolicyByStoreNameAndToken(String token, String storeName, String policyDetails);
 }
