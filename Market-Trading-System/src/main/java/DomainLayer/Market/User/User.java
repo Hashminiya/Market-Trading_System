@@ -4,6 +4,7 @@ import API.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Converters.StoreEnumConverter;
 import DomainLayer.Converters.StoreEnumSetConverter;
+import DomainLayer.Converters.StringSetConverter;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Store;
@@ -34,7 +35,12 @@ public class User implements IUser,DataItem<String> {
     protected boolean loggedIn;
     @Transient
     private ShoppingCart shoppingCart;
-    @Transient
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_assigners", joinColumns = @JoinColumn(name = "user_name"))
+    @MapKeyColumn(name = "store_id")
+    @Column(name = "assigners")
+    @Convert(converter = StringSetConverter.class)
     private Map<Long, Set<String>> assigners;
 
     @ElementCollection(fetch = FetchType.EAGER)
