@@ -15,8 +15,8 @@ public class LogicalDiscountCompositeUT {
     private LogicalDiscountComposite orComposite;
     private LogicalDiscountComposite andComposite;
     private LogicalDiscountComposite xorComposite;
-    private IDiscount discount1;
-    private IDiscount discount2;
+    private BaseDiscount discount1;
+    private BaseDiscount discount2;
     private Item item1;
     private Item item2;
     private Map<Item, Double> itemsPrices;
@@ -24,8 +24,8 @@ public class LogicalDiscountCompositeUT {
 
     @BeforeEach
     public void setUp() {
-        discount1 = mock(IDiscount.class);
-        discount2 = mock(IDiscount.class);
+        discount1 = mock(BaseDiscount.class);
+        discount2 = mock(BaseDiscount.class);
         item1 = mock(Item.class);
         item2 = mock(Item.class);
 

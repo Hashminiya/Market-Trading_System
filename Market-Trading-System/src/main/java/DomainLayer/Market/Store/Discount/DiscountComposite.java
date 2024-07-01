@@ -1,12 +1,17 @@
 package DomainLayer.Market.Store.Discount;
 
 import DomainLayer.Market.Store.Item;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.awt.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@Entity
+@DiscriminatorValue("DiscountComposite")
+@NoArgsConstructor
 public abstract class DiscountComposite extends BaseDiscount {
 
     /*protected double percent;
@@ -15,11 +20,13 @@ public abstract class DiscountComposite extends BaseDiscount {
     /*protected List<Long> items;
     protected List<String> categories;
     protected boolean isStore;*/
-    protected List<IDiscount> discounts;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "discount_id")
+    protected List<BaseDiscount> discounts;
 
 
-    public DiscountComposite(Long id, List<IDiscount> discounts){
-        this.id = id;
+    public DiscountComposite(Long id, List<BaseDiscount> discounts){
+        super(id);
         this.discounts = discounts;
     }
 

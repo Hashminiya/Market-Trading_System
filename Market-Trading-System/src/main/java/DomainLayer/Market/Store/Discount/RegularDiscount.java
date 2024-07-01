@@ -9,11 +9,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("RegularDiscount")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class RegularDiscount extends Discount {
 
-    private ICondition conditions;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "condition_id")
+    private BaseCondition conditions;
 
 
     @JsonCreator
@@ -24,10 +31,11 @@ public class RegularDiscount extends Discount {
                            @JsonProperty("items") List<Long> items,
                            @JsonProperty("categories") List<String> categories,
                            @JsonProperty("isStore") boolean isStore,
-                           @JsonProperty("conditions") ICondition conditionItems){
+                           @JsonProperty("conditions") BaseCondition conditionItems){
         super(id, percent, expirationDate, storeId, items, categories, isStore);
         this.conditions = conditionItems;
     }
+
 
     @Override
     public boolean isValid(Map<Item, Integer> items, String code){

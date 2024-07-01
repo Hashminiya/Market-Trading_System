@@ -93,9 +93,8 @@ public class StoreController implements IStoreFacade{
         PurchasePolicyRepository policyRepo = SpringContext.getBean(PurchasePolicyRepository.class);
         long storeId = generateStoreId();
         //IRepository<Long, IDiscount> discounts = new InMemoryRepository<>();
-        DiscountRepository discounts = SpringContext.getBean(DiscountRepository.class);
         ItemRepository items = SpringContext.getBean(ItemRepository.class);
-        Store newStore = new Store(storeId, founderId, storeName, storeDescription, items, discounts, policyRepo);
+        Store newStore = new Store(storeId, founderId, storeName, storeDescription, items, policyRepo);
         newStore.setPolicyFactory(new PurchasePolicyFactory(userFacade));
         storesRepo.save(newStore);
         userFacade.assignStoreOwner(founderId,storeId);

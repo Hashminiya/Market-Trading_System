@@ -3,12 +3,20 @@ package DomainLayer.Market.Store.Discount;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("CONDITION")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public class Condition implements ICondition{
+public class Condition extends BaseCondition{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     //private Map<Long, Integer> conditionItem;
     //private double minCost;
     private Long itemId;

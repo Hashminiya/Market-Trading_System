@@ -36,30 +36,35 @@ public class Store implements DataItem<Long> {
     @CollectionTable(name = "store_managers", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
     @Column(name = "manager_username")
     private List<String> managers;
+
     @Transient
     private ItemRepository products;
-    @Transient
-    private DiscountRepository discounts;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "store_id")
+    private List<BaseDiscount> discounts;
+
     @Transient
     private PurchasePolicyRepository purchasePolicies;
+
     @Transient
     private PurchasePolicyFactory policyFactory;
+
     @Transient
     private Map<Long, ItemsCache> itemsCache;
 
     public Store(Long id, String founderId, String name, String description, ItemRepository products,
-                 DiscountRepository discounts,
                  PurchasePolicyRepository purchasePolicies){
         this.id = id;
         this.founderId = founderId;
         this.name = name;
         this.description = description;
         this.products = products;
-        this.discounts = discounts;
         this.purchasePolicies = purchasePolicies;
         owners = new ArrayList<>();
         managers = new ArrayList<>();
         itemsCache = new HashMap<>();
+        this.discounts = new ArrayList<>();;
         assignOwner(founderId);
     }
 
@@ -70,7 +75,6 @@ public class Store implements DataItem<Long> {
     @PostLoad
     private void loadItems() {
         products = SpringContext.getBean(ItemRepository.class);
-        discounts = SpringContext.getBean(DiscountRepository.class);
         purchasePolicies = SpringContext.getBean(PurchasePolicyRepository.class);
         policyFactory = SpringContext.getBean(PurchasePolicyFactory.class);
 
@@ -194,7 +198,7 @@ public class Store implements DataItem<Long> {
             itemsCount.put(getItem(itemId), basket.getItems().get(itemId));
         Map<Item, Double> itemsPrice = getItemsPrices(itemsCount.keySet().stream().toList());
         double price = 0;
-        for(IDiscount discount: discounts.findAll()){
+        for(IDiscount discount: discounts){
             if(discount.isValid(itemsCount, code)) {
                 try {
                     itemsPrice = discount.calculatePrice(itemsPrice, itemsCount, code);
@@ -240,7 +244,7 @@ public class Store implements DataItem<Long> {
 
         try {
             BaseDiscount discount = objectMapper.readValue(discountDetails, BaseDiscount.class);
-            discounts.save(discount);
+            discounts.add(discount);
         }
         catch (Exception e){
             throw new Exception("Error while creating discount\n" + e.getMessage());

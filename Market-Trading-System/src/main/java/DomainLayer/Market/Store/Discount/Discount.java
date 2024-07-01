@@ -1,41 +1,37 @@
 package DomainLayer.Market.Store.Discount;
 
 import DomainLayer.Market.Store.Item;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Entity
+@DiscriminatorValue("Discount")
+@NoArgsConstructor
 public abstract class Discount extends BaseDiscount {
 
     protected double percent;
     protected Date expirationDate;
-    protected Long storeId;
+    protected Long store_id;
     protected List<Long> items;
     protected List<String> categories;
     protected boolean isStore;
 
-    public Discount(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories, boolean isStore){
-        this.id = id;
+    public Discount(Long id, double percent, Date expirationDate, long store_id, List<Long> items, List<String> categories, boolean isStore){
+        super(id);
         this.percent = percent;
         this.expirationDate = expirationDate;
-        this.storeId = storeId;
+        this.store_id = store_id;
         this.items = items;
         this.categories = categories;
         this.isStore = isStore;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public String getName() {
-        return "";
-    }
 
     public abstract boolean isValid(Map<Item, Integer> items, String code);
 

@@ -21,10 +21,12 @@ import java.util.List;
 public class StartupRunner implements CommandLineRunner {
 
     private final IUserService userService;
+    private final IStoreManagementService storeManagementService;
 
 
     public StartupRunner() {
         userService = (IUserService) SpringContext.getBean("userService");
+        storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
     }
 
     @Override
@@ -58,6 +60,7 @@ public class StartupRunner implements CommandLineRunner {
         List<Long> itemIds = createItems(tokens, storeIds);
         initShoppingCart(tokens, storeIds, itemIds);
         createPurchase(tokens);
+        //createDiscounts(tokens, storeIds, itemIds);
         logoutUsers(tokens);
     }
 
@@ -117,6 +120,31 @@ public class StartupRunner implements CommandLineRunner {
 //        storeIds.add((long) storeId10.getBody());
 //        storeManagementService.assignStoreOwner(tokens.get(0),(long) storeId1.getBody())
         return storeIds;
+    }
+
+    private void createDiscounts(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
+        String discountDetails = "{\n" +
+                "    \"@type\": \"RegularDiscount\",\n" +
+                "    \"id\": 10,\n" +
+                "    \"percent\": 5.0,\n" +
+                "    \"expirationDate\": \"2024-12-31T23:59:59Z\",\n" +
+                "    \"storeId\": "+storeIds.get(0)+",\n" +
+                "    \"items\": ["+itemIds.get(0)+"],\n" +
+                "    \"categories\": [\"Electronics\"],\n" +
+                "    \"conditions\": {\n" +
+                "        \"@type\": \"ConditionComposite\",\n" +
+                "        \"conditions\": [\n" +
+                "            {\n" +
+                "                \"@type\": \"Condition\",\n" +
+                "                \"itemId\": "+itemIds.get(0)+",\n" +
+                "                \"count\": 2\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"rule\": \"AND\"\n" +
+                "    }\n" +
+                "}";
+        storeManagementService.addDiscount(tokens.get(0),storeIds.get(0),discountDetails);
+
     }
 
     private void initShoppingCart(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {

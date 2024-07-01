@@ -5,6 +5,8 @@ import DomainLayer.Market.Util.LogicalRule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 import org.yaml.snakeyaml.events.Event;
 
 import java.util.Date;
@@ -12,15 +14,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("LogicalDiscountComposite")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class LogicalDiscountComposite extends DiscountComposite{
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "logical_rule")
     private LogicalRule logicalRule;
+
     private int decision;
 
     @JsonCreator
     public LogicalDiscountComposite(@JsonProperty("id") Long id,
-                                    @JsonProperty("discounts") List<IDiscount> discounts,
+                                    @JsonProperty("discounts") List<BaseDiscount> discounts,
                                     @JsonProperty("logicalRule") String rule,
                                     @JsonProperty("decision") int decision) {
         super(id, discounts);

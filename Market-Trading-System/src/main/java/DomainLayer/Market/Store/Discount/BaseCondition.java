@@ -7,15 +7,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "BaseDiscount")
+@DiscriminatorColumn(name = "condition_type")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public abstract class BaseDiscount implements IDiscount{
+public abstract class BaseCondition implements ICondition{
     @Id
     protected Long id;
-
-    public BaseDiscount(Long id) {
-        this.id = id;
-    }
 
     @Override
     public Long getId() {

@@ -5,18 +5,25 @@ import DomainLayer.Market.Util.NumericRule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("NumericDiscountComposite")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class NumericDiscountComposite extends DiscountComposite{
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "numerical_rule")
     private NumericRule numericRule;
 
 
     @JsonCreator
     public NumericDiscountComposite(@JsonProperty("id") Long id,
-                                    @JsonProperty("discounts") List<IDiscount> discounts,
+                                    @JsonProperty("discounts") List<BaseDiscount> discounts,
                                     @JsonProperty("numericRule") String rule) {
         super(id, discounts);
         this.numericRule = NumericRule.valueOf(rule);
