@@ -176,6 +176,7 @@ public class UserController implements IUserFacade {
         assigners.add(assignerUser.getId());
         assigneeUser.setAssigners(storeId, assigners);
         assigneeUser.assignStoreManager(storeId, storePermissions);
+        users.save(assigneeUser);
     }
 
     @Override
