@@ -93,6 +93,10 @@ public class StoreManagementControllerApi {
     public ResponseEntity<?> addPolicy(@RequestParam String token,@RequestParam long storeId,@RequestParam String policyDetails){
         return storeManagementService.addPolicy(token, storeId, policyDetails);
     }
+    @GetMapping("storeManagement/viewAllPolicies")
+    public ResponseEntity<?> viewAllPolicies(@RequestParam String token,@RequestParam String storeName) {
+        return storeManagementService.viewAllPolicies(token, storeName);
+    }
 
    /* @PostMapping("/user/checkoutShoppingCart")
     public ResponseEntity<String> checkoutShoppingCart(@RequestParam String token, @RequestParam String creditCard, @RequestParam Date expiryDate, @RequestParam String cvv, @RequestParam String discountCode) {

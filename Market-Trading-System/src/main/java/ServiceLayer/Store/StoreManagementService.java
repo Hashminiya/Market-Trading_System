@@ -1,5 +1,6 @@
 package ServiceLayer.Store;
 
+import DAL.PolicyDTO;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
@@ -331,6 +332,30 @@ public class StoreManagementService implements IStoreManagementService {
                         }
 
                         return ResponseEntity.ok(itemDetails);
+                    }
+                }
+                return ResponseEntity.status(404).body("Store not found");
+            } else {
+                logger.warn("Invalid token for viewing inventory: {}", token);
+                return ResponseEntity.status(401).body(USER_NOT_VALID);
+            }
+        } catch (Exception ex) {
+            logger.error("Error viewing inventory by store name and token", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> viewAllPolicies(String token, String storeName) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                List<Store> userStores = storeFacade.findStoresByOwner(userName);
+
+                for (Store store : userStores) {
+                    if (store.getName().equalsIgnoreCase(storeName)) {
+                        List<PolicyDTO> policies = store.getPolicies();
+                        return ResponseEntity.ok(policies);
                     }
                 }
                 return ResponseEntity.status(404).body("Store not found");

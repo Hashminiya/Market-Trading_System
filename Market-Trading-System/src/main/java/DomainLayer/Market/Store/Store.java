@@ -2,6 +2,7 @@ package DomainLayer.Market.Store;
 import DAL.ItemDTO;
 
 import API.SpringContext;
+import DAL.PolicyDTO;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Store.StorePurchasePolicy.*;
@@ -312,4 +313,22 @@ public class Store implements DataItem<Long> {
     }
 
     public Map<Long, ItemsCache> getCache(){ return itemsCache; }
+
+    public List<PolicyDTO>  getPolicies() {
+        List<PolicyDTO> policyDTOS = new ArrayList<>();
+        for(PurchasePolicy policy: purchasePolicies){
+            String type = "";
+            if (policy instanceof AgeRestrictedPurchasePolicy){
+                type = "AgeRestrictedPurchasePolicy";
+            }
+            else if (policy instanceof MaximumQuantityPurchasePolicy){
+                type = "MaximumQuantityPurchasePolicy";
+            }
+            else if (policy instanceof PurchasePolicyComposite){
+                type = "PurchasePolicyComposite";
+            }
+            policyDTOS.add(new PolicyDTO(policy.getId(), policy.getName(), type));
+        }
+        return policyDTOS;
+    }
 }
