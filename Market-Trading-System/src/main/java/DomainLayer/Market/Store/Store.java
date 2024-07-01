@@ -31,17 +31,18 @@ public class Store implements DataItem<Long> {
     private Long id;
     private String founderId;
     private String name;
-
-    @Setter
+    
     @Getter
+    @Setter
     private String description;
 
-    @ElementCollection(fetch = FetchType.LAZY)
     @Getter
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "store_owners", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
     @Column(name = "owner_username")
     @BatchSize(size = 25)
     private List<String> owners;
+
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Getter
@@ -56,7 +57,7 @@ public class Store implements DataItem<Long> {
     @BatchSize(size = 25)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "store_id")
-    private List<BaseDiscount> discounts= new ArrayList<>();;
+    private List<BaseDiscount> discounts;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
@@ -183,7 +184,6 @@ public class Store implements DataItem<Long> {
         item.increase(toIncrease);
         products.save(item);
         item.unlock();
-
     }
 
     public Item getById(long itemId) {

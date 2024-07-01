@@ -53,5 +53,4 @@ public class ConditionComposite extends BaseCondition{
         }
         return result;
     }
-
 }

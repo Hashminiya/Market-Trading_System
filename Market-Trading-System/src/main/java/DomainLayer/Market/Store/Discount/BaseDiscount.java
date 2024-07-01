@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class BaseDiscount implements IDiscount{
     @Id
-    private Long id;
+    protected Long id;
 
     public BaseDiscount(Long id) {
         this.id = id;
