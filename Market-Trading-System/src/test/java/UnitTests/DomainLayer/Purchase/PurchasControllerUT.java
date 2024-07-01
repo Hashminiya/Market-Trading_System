@@ -91,8 +91,8 @@ public class PurchasControllerUT {
 
     private List<ItemDTO> createItemsList(long storeId) {
         List<ItemDTO> items = new ArrayList<>();
-        items.add(new ItemDTO(876123, "Chips",20,storeId,500));
-        items.add(new ItemDTO(98142, "Bamba",40,storeId,1000));
+        items.add(new ItemDTO(876123, "Chips",20,storeId,500, new ArrayList<>(), "description"));
+        items.add(new ItemDTO(98142, "Bamba",40,storeId,1000, new ArrayList<>(), "description"));
 
         return items;
     }

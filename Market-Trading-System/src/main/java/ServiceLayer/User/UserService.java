@@ -2,8 +2,13 @@ package ServiceLayer.User;
 
 import API.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Market.Notifications.Event;
+import DomainLayer.Market.Notifications.Publisher;
 import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
@@ -19,8 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.lang.reflect.Field;
 
 import java.util.*;
+
 
 @Service("userService")
 public class UserService implements IUserService {
@@ -215,7 +222,6 @@ public class UserService implements IUserService {
         }
     }
 
-
     @Override
     public ResponseEntity<?> getShoppingCart(String token) {
         try {
@@ -235,7 +241,6 @@ public class UserService implements IUserService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
     @Override
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token) {

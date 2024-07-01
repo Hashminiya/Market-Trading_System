@@ -3,6 +3,7 @@ package AcceptanceTests;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import javax.ws.rs.core.Response;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,13 +36,14 @@ public class StoreBuyerAT {
     static long ITEM_ID_3;
     static String STORE_NAME = "storeName";
     private static ServiceFactory serviceFactory;
+    private static IStoreFacade storeFacade;
 
 
     @BeforeAll
     public static void setUp() {
         SetUp.setUp();
         serviceFactory = ServiceFactory.getServiceFactory();
-        IStoreFacade storeFacade = serviceFactory.getStoreFacade();
+        storeFacade = serviceFactory.getStoreFacade();
         storeBuyerService = StoreBuyerService.getInstance(storeFacade);
         userService = serviceFactory.getUserService();
         try {
@@ -71,7 +74,13 @@ public class StoreBuyerAT {
         expectedProducts.put(ITEM_ID_2, "Phone");
         expectedProducts.put(ITEM_ID_3, "Headphones");
 
-        assertEquals(expectedProducts, response.getBody());
+        List<Item> items = new ArrayList<>();
+        for (Map.Entry<Long, String> entry : expectedProducts.entrySet()) {
+            Item item = storeFacade.getItem(entry.getKey());
+            items.add(item);
+        }
+
+        assertEquals(items, response.getBody());
     }
 
     @Test
@@ -141,7 +150,13 @@ public class StoreBuyerAT {
         Map<Long, String> expectedProducts = new HashMap<>();
         expectedProducts.put(ITEM_ID_1, "Laptop");
 
-        assertEquals(expectedProducts, response.getBody());
+        List<Item> items = new ArrayList<>();
+        for (Map.Entry<Long, String> entry : expectedProducts.entrySet()) {
+            Item item = storeFacade.getItem(entry.getKey());
+            items.add(item);
+        }
+
+        assertEquals(items, response.getBody());
     }
 
     @Test

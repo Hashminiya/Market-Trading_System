@@ -3,11 +3,13 @@ package UnitTests.DomainLayer;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.Item;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,6 @@ import org.mockito.MockitoAnnotations;
 
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Util.DataItem;
-import DomainLayer.Market.Util.IdGenerator;
 
 public class ShoppingBasketUT {
 
@@ -87,7 +87,7 @@ public class ShoppingBasketUT {
     }
 
     @Test
-    public void test_checkoutShoppingBasket_should_return_checked_out_items() {
+    public void test_checkoutShoppingBasket_should_return_checked_out_items() throws InterruptedException {
         int quantity = 2;
         double price = 5.0;
         String itemName = "Test Item";
@@ -100,16 +100,19 @@ public class ShoppingBasketUT {
         itemPrices.put(ITEM_ID, price);
         basket.setItemsPrice(itemPrices);
 
-        when(storeFacade.getAllProductsInfoByStore(1L)).thenReturn(productInfo);
+        Item item = new Item(ITEM_ID, itemName, "description", new ArrayList<>());
+        item.setPrice(price);
+        item.setQuantity(quantity);
+        when(storeFacade.getItem(ITEM_ID)).thenReturn(item);
 
         List<ItemDTO> checkoutItems = basket.checkoutShoppingBasket(storeFacade);
 
         assertEquals(1, checkoutItems.size());
-        ItemDTO item = checkoutItems.get(0);
-        assertEquals(ITEM_ID, item.getItemId());
-        assertEquals(quantity, item.getQuantity());
-        assertEquals(price, item.getTotalPrice());
-        assertEquals(itemName, item.getName());
+        ItemDTO itemDTO = checkoutItems.get(0);
+        assertEquals(ITEM_ID, itemDTO.getItemId());
+        assertEquals(quantity, itemDTO.getQuantity());
+        assertEquals(price, itemDTO.getTotalPrice());
+        assertEquals(itemName, itemDTO.getName());
     }
 
     @Test

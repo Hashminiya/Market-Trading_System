@@ -98,7 +98,7 @@ public class StoreController implements IStoreFacade{
         Store newStore = new Store(storeId, founderId, storeName, storeDescription, items, discounts);
         newStore.setPolicyFactory(new PurchasePolicyFactory(userFacade));
         storesRepo.save(newStore);
-        userFacade.assignStoreOwner(founderId,storeId);
+        userFacade.assignStoreOwner(founderId, founderId, storeId);
         //locks.put(storeId, new ReentrantLock());
         return storeId;//for test purposes
     }
@@ -158,7 +158,7 @@ public class StoreController implements IStoreFacade{
         if(!userFacade.checkPermission(userId, storeId, ASSIGN_OWNER))
             throw new Exception("User doesn't has permission to assign store owner");
         Store store = getStore(storeId);
-        userFacade.assignStoreOwner(newOwnerId, storeId);
+        userFacade.assignStoreOwner(userId, newOwnerId, storeId);
         store.assignOwner(newOwnerId);
         storesRepo.save(store);
     }
@@ -168,7 +168,7 @@ public class StoreController implements IStoreFacade{
         if(!userFacade.checkPermission(userId, storeId, ASSIGN_MANAGER))
             throw new Exception("User doesn't has permission to assign store manager");
         Store store = getStore(storeId);
-        userFacade.assignStoreManager(newManagerId, storeId, permissions);
+        userFacade.assignStoreManager(userId, newManagerId, storeId, permissions);
         store.assignManager(newManagerId);
         storesRepo.save(store);
     }
