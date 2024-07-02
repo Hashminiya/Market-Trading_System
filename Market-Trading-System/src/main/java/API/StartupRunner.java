@@ -22,7 +22,6 @@ public class StartupRunner implements CommandLineRunner {
 
     private final IUserService userService;
 
-
     public StartupRunner() {
         userService = (IUserService) SpringContext.getBean("userService");
     }
@@ -35,10 +34,7 @@ public class StartupRunner implements CommandLineRunner {
 
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
 
-
         //TODO: delete the following 3 lines before submission: the admin is always registered
-
-
         ResponseEntity<?> response = userService.register("admin", "admin", 25);
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
@@ -55,7 +51,7 @@ public class StartupRunner implements CommandLineRunner {
     private void runSystem() {
         List<String> tokens = createUsers();
         List<Long> storeIds = createStores(tokens);
-        assignManagers(tokens,storeIds);
+        assignManagers(tokens, storeIds);
         List<Long> itemIds = createItems(tokens, storeIds);
         createPolicy(tokens, storeIds, itemIds);
         initShoppingCart(tokens, storeIds, itemIds);
@@ -64,7 +60,7 @@ public class StartupRunner implements CommandLineRunner {
     }
 
     private void logoutUsers(List<String> tokens) {
-        for (String token: tokens) {
+        for (String token : tokens) {
             userService.logout(token);
         }
     }
@@ -72,7 +68,7 @@ public class StartupRunner implements CommandLineRunner {
     private List<String> createUsers() {
         userService.register("user1", "user1", 25);
         userService.register("user2", "user2", 30);
-//        userService.register("user3", "user3", 22);
+        userService.register("user3", "user3", 22);
 //        userService.register("user4", "user4", 28);
 //        userService.register("user5", "user5", 35);
 //        userService.register("user6", "user6", 26);
@@ -82,13 +78,13 @@ public class StartupRunner implements CommandLineRunner {
 //        userService.register("user10", "user10", 27);
         ResponseEntity<String> response1 = userService.login("user1", "user1");
         ResponseEntity<String> response2 = userService.login("user2", "user2");
-//        ResponseEntity<String> response3 = userService.login("user3", "user3");
+        ResponseEntity<String> response3 = userService.login("user3", "user3");
 //        ResponseEntity<String> response4 = userService.login("user4", "user4");
 //        ResponseEntity<String> response5 = userService.login("user5", "user5");
         List<String> tokens = new ArrayList<>();
         tokens.add(response1.getBody());
         tokens.add(response2.getBody());
-//        tokens.add(response3.getBody());
+        tokens.add(response3.getBody());
 //        tokens.add(response4.getBody());
 //        tokens.add(response5.getBody());
         return tokens;
@@ -96,11 +92,11 @@ public class StartupRunner implements CommandLineRunner {
 
     private List<Long> createStores(List<String> tokens) {
         IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
-        ResponseEntity<?> storeId1 = storeManagementService.createStore(tokens.get(0), "Electronics Store","High quality electronics and gadgets");
-//        ResponseEntity<?> storeId2 = storeManagementService.createStore(tokens.get(1), "Camping Gear","All your camping essentials");
-//        ResponseEntity<?> storeId3 = storeManagementService.createStore(tokens.get(2), "Art Supplies","Wide range of art supplies");
-//        ResponseEntity<?> storeId4 = storeManagementService.createStore(tokens.get(3), "DIY Tools","Everything you need for your DIY projects");
-//        ResponseEntity<?> storeId5 = storeManagementService.createStore(tokens.get(4), "Garden Center","All you need for your garden");
+        ResponseEntity<?> storeId1 = storeManagementService.createStore(tokens.get(0), "Electronics Store", "High quality electronics and gadgets");
+        ResponseEntity<?> storeId2 = storeManagementService.createStore(tokens.get(1), "Camping Gear", "All your camping essentials");
+        ResponseEntity<?> storeId3 = storeManagementService.createStore(tokens.get(2), "Art Supplies", "Wide range of art supplies");
+//        ResponseEntity<?> storeId4 = storeManagementService.createStore(tokens.get(3), "DIY Tools", "Everything you need for your DIY projects");
+//        ResponseEntity<?> storeId5 = storeManagementService.createStore(tokens.get(4), "Garden Center", "All you need for your garden");
 //        ResponseEntity<?> storeId6 = storeManagementService.createStore(tokens.get(0), "Shoe Store", "Stylish and comfortable shoes");
 //        ResponseEntity<?> storeId7 = storeManagementService.createStore(tokens.get(1), "Audio Store", "High fidelity audio equipment");
 //        ResponseEntity<?> storeId8 = storeManagementService.createStore(tokens.get(2), "Home Goods", "Essentials for your home");
@@ -108,8 +104,8 @@ public class StartupRunner implements CommandLineRunner {
 //        ResponseEntity<?> storeId10 = storeManagementService.createStore(tokens.get(4), "Office Supplies", "Everything for your office");
         List<Long> storeIds = new ArrayList<>();
         storeIds.add((long) storeId1.getBody());
-//        storeIds.add((long) storeId2.getBody());
-//        storeIds.add((long) storeId3.getBody());
+        storeIds.add((long) storeId2.getBody());
+        storeIds.add((long) storeId3.getBody());
 //        storeIds.add((long) storeId4.getBody());
 //        storeIds.add((long) storeId5.getBody());
 //        storeIds.add((long) storeId6.getBody());
@@ -121,39 +117,39 @@ public class StartupRunner implements CommandLineRunner {
         return storeIds;
     }
 
-    public void assignManagers(List<String> tokens,List<Long> storeIds){
+    public void assignManagers(List<String> tokens, List<Long> storeIds) {
         IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
         List<String> permissions = new ArrayList<>();
         permissions.add("REMOVE_STORE");
-        storeManagementService.assignStoreManager(tokens.get(0),storeIds.get(0),"user2", permissions);
+        storeManagementService.assignStoreManager(tokens.get(0), storeIds.get(0), "user2", permissions);
     }
 
-    private void createPolicy(List<String> tokens,List<Long> storeIds, List<Long> itemIds){
+    private void createPolicy(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
         IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
         String policyDetails = "{\n" +
                 "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
                 "    \"name\": \"Alcohol 18 and above\",\n" +
                 "    \"id\": 10,\n" +
-                "    \"minAge\": 18,\n"+
+                "    \"minAge\": 18,\n" +
                 "    \"items\": null,\n" +
                 "    \"categories\": [\"alcohol\"],\n" +
                 "    \"isStore\": false\n" +
                 "}";
-        storeManagementService.addPolicy(tokens.get(0),storeIds.get(0),policyDetails);
+        storeManagementService.addPolicy(tokens.get(0), storeIds.get(0), policyDetails);
         String AGE_POLICY_SPECIFIC_ITEM = String.format("{\n" +
                 "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
                 "    \"name\": \"Alcohol 18 and above\",\n" +
                 "    \"id\": 11,\n" +
-                "    \"minAge\": 16,\n"+
+                "    \"minAge\": 16,\n" +
                 "    \"items\": [%s],\n" +
                 "    \"categories\": [\"alcohol\"],\n" +
                 "    \"isStore\": false\n" +
-                "}",itemIds.get(0));
+                "}", itemIds.get(0));
         String MAXIMUM_QUANTITY_POLICY = String.format("{\n" +
                 "    \"@type\": \"MaximumQuantityPurchasePolicy\",\n" +
                 "    \"name\": \"all store max amount policy\",\n" +
                 "    \"id\": 12,\n" +
-                "    \"maxAmount\": 15,\n"+
+                "    \"maxAmount\": 15,\n" +
                 "    \"items\": null,\n" +
                 "    \"categories\": null ,\n" +
                 "    \"isStore\": true\n" +
@@ -164,15 +160,15 @@ public class StartupRunner implements CommandLineRunner {
                 "    \"name\": \"complex policy\",\n" +
                 "    \"policies\": [%s,%s] ,\n" +
                 "    \"logicalRole\": \"OR\"\n" +
-                "}",AGE_POLICY_SPECIFIC_ITEM,MAXIMUM_QUANTITY_POLICY);
-        storeManagementService.addPolicy(tokens.get(0),storeIds.get(0),policyDetails);
+                "}", AGE_POLICY_SPECIFIC_ITEM, MAXIMUM_QUANTITY_POLICY);
+        storeManagementService.addPolicy(tokens.get(0), storeIds.get(0), policyDetails);
     }
 
     private void initShoppingCart(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
         userService.addItemToBasket(tokens.get(0), storeIds.get(0), itemIds.get(0), 1);
-//        userService.addItemToBasket(tokens.get(1), storeIds.get(1), itemIds.get(1), 1);
-//        userService.addItemToBasket(tokens.get(2), storeIds.get(2), itemIds.get(2), 1);
-//        userService.addItemToBasket(tokens.get(3), storeIds.get(3), itemIds.get(3), 1);
+        userService.addItemToBasket(tokens.get(1), storeIds.get(1), itemIds.get(3), 1);
+        userService.addItemToBasket(tokens.get(2), storeIds.get(2), itemIds.get(6), 1);
+//        userService.addItemToBasket(tokens.get(3), storeIds.get(3), itemIds.get(9), 1);
 //        userService.addItemToBasket(tokens.get(4), storeIds.get(4), itemIds.get(4), 1);
     }
 
@@ -185,10 +181,10 @@ public class StartupRunner implements CommandLineRunner {
         itemIds.addAll(createElectronicsItems(tokens.get(0), storeIds.get(0), storeManagementService));
 
         // Camping Gear
-        //itemIds.addAll(createCampingItems(tokens.get(1), storeIds.get(1), storeManagementService));
+        itemIds.addAll(createCampingItems(tokens.get(1), storeIds.get(1), storeManagementService));
 
         // Art Supplies
-        //itemIds.addAll(createArtItems(tokens.get(2), storeIds.get(2), storeManagementService));
+        itemIds.addAll(createArtItems(tokens.get(2), storeIds.get(2), storeManagementService));
 
         // DIY Tools
         //itemIds.addAll(createDiyItems(tokens.get(3), storeIds.get(3), storeManagementService));
@@ -239,18 +235,18 @@ public class StartupRunner implements CommandLineRunner {
         itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Tent", "4-person tent", 100, 20, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
         itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Sleeping Bag", "Warm and comfortable sleeping bag", 60, 40, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
         itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Backpack", "50L hiking backpack", 80, 25, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camping Stove", "Portable camping stove", 40, 30, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Flashlight", "LED flashlight", 20, 50, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camping Chair", "Folding camping chair", 30, 35, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Water Bottle", "Insulated water bottle", 15, 60, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Multi-tool", "Multi-purpose tool", 25, 45, new ArrayList<>(Arrays.asList("Camping", "Tools"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camping Table", "Folding camping table", 50, 10, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Lantern", "Battery-powered lantern", 30, 25, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Hiking Boots", "Waterproof hiking boots", 100, 20, new ArrayList<>(Arrays.asList("Camping", "Shoes"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Compass", "Precision compass", 20, 30, new ArrayList<>(Arrays.asList("Camping", "Tools"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Portable Grill", "Compact portable grill", 70, 15, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Rain Jacket", "Waterproof rain jacket", 60, 25, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camping Hammock", "Lightweight camping hammock", 40, 20, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camping Stove", "Portable camping stove", 40, 30, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Flashlight", "LED flashlight", 20, 50, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camping Chair", "Folding camping chair", 30, 35, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Water Bottle", "Insulated water bottle", 15, 60, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Multi-tool", "Multi-purpose tool", 25, 45, new ArrayList<>(Arrays.asList("Camping", "Tools"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camping Table", "Folding camping table", 50, 10, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Lantern", "Battery-powered lantern", 30, 25, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Hiking Boots", "Waterproof hiking boots", 100, 20, new ArrayList<>(Arrays.asList("Camping", "Shoes"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Compass", "Precision compass", 20, 30, new ArrayList<>(Arrays.asList("Camping", "Tools"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Portable Grill", "Compact portable grill", 70, 15, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Rain Jacket", "Waterproof rain jacket", 60, 25, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camping Hammock", "Lightweight camping hammock", 40, 20, new ArrayList<>(Arrays.asList("Camping", "Outdoors"))).getBody());
         return itemIds;
     }
 
@@ -259,18 +255,18 @@ public class StartupRunner implements CommandLineRunner {
         itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Canvas", "Stretched canvas for painting", 20, 100, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
         itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Acrylic Paint", "Set of 12 acrylic paints", 30, 50, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
         itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Brushes", "Set of 10 brushes", 15, 60, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Sketchbook", "Hardcover sketchbook", 25, 40, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Easel", "Adjustable wooden easel", 50, 15, new ArrayList<>(Arrays.asList("Art", "Furniture"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Palette", "Wooden artist palette", 10, 70, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Markers", "Set of 24 markers", 25, 30, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Charcoal Pencils", "Set of 12 charcoal pencils", 15, 20, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Watercolor Set", "Watercolor paints and brushes", 35, 25, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Drawing Table", "Adjustable drawing table", 100, 10, new ArrayList<>(Arrays.asList("Art", "Furniture"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Oil Paint", "Set of 12 oil paints", 40, 35, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Pastels", "Set of 24 pastels", 30, 25, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Calligraphy Set", "Complete calligraphy set", 50, 15, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Ink", "Set of 5 inks", 20, 40, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
-        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Craft Paper", "Set of 50 craft papers", 15, 50, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Sketchbook", "Hardcover sketchbook", 25, 40, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Easel", "Adjustable wooden easel", 50, 15, new ArrayList<>(Arrays.asList("Art", "Furniture"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Palette", "Wooden artist palette", 10, 70, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Markers", "Set of 24 markers", 25, 30, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Charcoal Pencils", "Set of 12 charcoal pencils", 15, 20, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Watercolor Set", "Watercolor paints and brushes", 35, 25, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Drawing Table", "Adjustable drawing table", 100, 10, new ArrayList<>(Arrays.asList("Art", "Furniture"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Oil Paint", "Set of 12 oil paints", 40, 35, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Pastels", "Set of 24 pastels", 30, 25, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Calligraphy Set", "Complete calligraphy set", 50, 15, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Ink", "Set of 5 inks", 20, 40, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
+//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Craft Paper", "Set of 50 craft papers", 15, 50, new ArrayList<>(Arrays.asList("Art", "Supplies"))).getBody());
         return itemIds;
     }
 

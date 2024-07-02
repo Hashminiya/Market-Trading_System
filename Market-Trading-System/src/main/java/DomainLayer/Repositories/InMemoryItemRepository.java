@@ -266,5 +266,18 @@ public class InMemoryItemRepository implements ItemRepository {
         return List.of();
     }
 
-    // Implement other methods from JpaRepository as needed
+    //get list of items by store id
+    // InMemoryItemRepository.java
+    @Override
+    public List<Item> findAllByStoreId(Long storeId) {
+        List<Item> itemsByStoreId = new ArrayList<>();
+        for (Item item : storage.values()) {
+            if (Long.valueOf(item.getStoreId()).equals(storeId)) {
+                itemsByStoreId.add(item);
+            }
+        }
+        return itemsByStoreId;
+    }
+
+
 }

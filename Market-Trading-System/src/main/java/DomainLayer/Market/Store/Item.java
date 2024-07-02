@@ -121,4 +121,7 @@ public class Item implements DataItem<Long> {
         lock.unlock();
     }
 
+    public long getStoreId() {
+        return storeId;
+    }
 }
