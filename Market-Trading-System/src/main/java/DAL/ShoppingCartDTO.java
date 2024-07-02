@@ -1,38 +1,27 @@
 package DAL;
 
-import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.User.ShoppingCart;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ShoppingCartDTO {
-    private List<ItemDTO> items;
+
+    @JsonProperty("baskets")
+    private List<ShoppingBasketDTO> baskets;
+
+    @JsonProperty("totalPrice")
     private double totalPrice;
 
-    public ShoppingCartDTO() {
-    }
-
-    public ShoppingCartDTO(List<ItemDTO> items, double totalPrice) {
-        this.items = items;
+    public ShoppingCartDTO(List<ShoppingBasketDTO> baskets, double totalPrice) {
+        this.baskets = baskets;
         this.totalPrice = totalPrice;
     }
 
-    // Constructor to initialize from a ShoppingCart entity with storeFacade
-    public ShoppingCartDTO(ShoppingCart shoppingCart, IStoreFacade storeFacade) {
-        this.items = shoppingCart.getBaskets().stream()
-                .flatMap(basket -> basket.checkoutShoppingBasket(storeFacade).stream())
-                .collect(Collectors.toList());
-        this.totalPrice = shoppingCart.getShoppingCartPrice();
+    public List<ShoppingBasketDTO> getBaskets() {
+        return baskets;
     }
 
-    // Getters and Setters
-    public List<ItemDTO> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ItemDTO> items) {
-        this.items = items;
+    public void setBaskets(List<ShoppingBasketDTO> baskets) {
+        this.baskets = baskets;
     }
 
     public double getTotalPrice() {

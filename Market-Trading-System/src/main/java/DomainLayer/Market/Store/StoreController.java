@@ -420,4 +420,8 @@ public class StoreController implements IStoreFacade{
                 .collect(Collectors.toList());
     }
 
+    public String getStoreName(long storeId) {
+        return getStore(storeId).getName();
+    }
+
 }
