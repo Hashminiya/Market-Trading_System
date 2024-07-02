@@ -114,7 +114,7 @@ public class Store implements DataItem<Long> {
     }
 
     public List<Item> viewInventory(){
-        return products.findAll();
+        return products.findAllByStoreId(id);
     }
 
     public void addItem(Long itemId, String name, double price, int quantity, String description, List<String> categories)throws InterruptedException{
