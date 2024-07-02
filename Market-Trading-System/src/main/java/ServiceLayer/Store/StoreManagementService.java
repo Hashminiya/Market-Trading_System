@@ -328,6 +328,7 @@ public class StoreManagementService implements IStoreManagementService {
                             itemDetail.put("itemPrice", item.getPrice());
                             itemDetail.put("stockAmount", item.getQuantity());
                             itemDetail.put("category", item.getCategories());
+                            itemDetail.put("storeId", store.getId());
                             itemDetails.add(itemDetail);
                         }
 
