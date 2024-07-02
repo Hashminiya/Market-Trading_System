@@ -213,10 +213,10 @@ public class StartupRunner implements CommandLineRunner {
     private List<Long> createElectronicsItems(String token, Long storeId, IStoreManagementService storeManagementService) {
         List<Long> itemIds = new ArrayList<>();
         itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Smartphone", "Latest model smartphone", 700, 50, new ArrayList<>(Arrays.asList("Electronics", "Gadgets"))).getBody());
-//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Laptop", "High performance laptop", 1200, 30, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
-//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Tablet", "Lightweight and powerful tablet", 500, 20, new ArrayList<>(Arrays.asList("Electronics", "Gadgets"))).getBody());
-//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Smartwatch", "Feature-rich smartwatch", 200, 100, new ArrayList<>(Arrays.asList("Electronics", "Wearables"))).getBody());
-//        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Headphones", "Noise-cancelling headphones", 150, 40, new ArrayList<>(Arrays.asList("Electronics", "Audio"))).getBody());
+        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Laptop", "High performance laptop", 1200, 30, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
+        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Tablet", "Lightweight and powerful tablet", 500, 20, new ArrayList<>(Arrays.asList("Electronics", "Gadgets"))).getBody());
+        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Smartwatch", "Feature-rich smartwatch", 200, 100, new ArrayList<>(Arrays.asList("Electronics", "Wearables"))).getBody());
+        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Headphones", "Noise-cancelling headphones", 150, 40, new ArrayList<>(Arrays.asList("Electronics", "Audio"))).getBody());
 //        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Camera", "High resolution digital camera", 800, 15, new ArrayList<>(Arrays.asList("Electronics", "Photography"))).getBody());
 //        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Speaker", "Portable Bluetooth speaker", 100, 60, new ArrayList<>(Arrays.asList("Electronics", "Audio"))).getBody());
 //        itemIds.add((long) storeManagementService.addItemToStore(token, storeId, "Monitor", "4K Ultra HD monitor", 300, 25, new ArrayList<>(Arrays.asList("Electronics", "Computers"))).getBody());
