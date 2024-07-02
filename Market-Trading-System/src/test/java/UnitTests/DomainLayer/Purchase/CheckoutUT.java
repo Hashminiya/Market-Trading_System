@@ -1,4 +1,6 @@
 package UnitTests.DomainLayer.Purchase;
+import API.Application;
+import API.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
@@ -8,16 +10,14 @@ import DomainLayer.Market.Purchase.PurchaseController;
 import DomainLayer.Market.Purchase.SupplyServiceProxy;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.User.UserController;
-import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Repositories.PurchaseRepository;
+import DomainLayer.Repositories.*;
 import ServiceLayer.ServiceFactory;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.SpringApplication;
 
+import javax.print.StreamPrintService;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,9 +45,32 @@ public class CheckoutUT {
                 supplyServiceProxy);
     }
 
+    @BeforeAll
+    public static void springSetUp(){
+        SpringApplication.run(Application.class);
+    }
+
     @AfterEach
     void tearDown()throws Exception{
         resetPurchaseControllerInstance();
+    }
+
+    @AfterAll
+    public static void springTearDown(){
+        PurchaseRepository purchaseRepository  = SpringContext.getBean(PurchaseRepository.class);
+        purchaseRepository.deleteAll();
+        ItemDTORepository itemDTORepository  = SpringContext.getBean(ItemDTORepository.class);
+        itemDTORepository.deleteAll();
+        BasketItemRepository basketItemRepository  = SpringContext.getBean(BasketItemRepository.class);
+        basketItemRepository.deleteAll();
+        ItemRepository items = SpringContext.getBean(DbItemRepository.class);
+        items.deleteAll();
+        BasketRepository baskets = SpringContext.getBean(DbBasketRepository.class);
+        baskets.deleteAll();
+        StoreRepository stores = SpringContext.getBean(DbStoreRepository.class);
+        stores.deleteAll();
+        UserRepository users = SpringContext.getBean(DbUserRepository.class);
+        users.deleteAll();
     }
 
     private void resetPurchaseControllerInstance() throws Exception {
@@ -65,7 +88,6 @@ public class CheckoutUT {
         items.add(new ItemDTO(98142, "Bamba",40,8282,1000, new ArrayList<>(), "description"));
 
         assertDoesNotThrow(() -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 1500));
-
     }
 
 
@@ -105,4 +127,5 @@ public class CheckoutUT {
 
         assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
     }
+
 }
