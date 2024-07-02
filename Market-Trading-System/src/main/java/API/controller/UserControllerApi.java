@@ -8,6 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -78,8 +80,23 @@ public class UserControllerApi {
     }
 
     @PostMapping("/user/checkoutShoppingCart")
-    public ResponseEntity<String> checkoutShoppingCart(@RequestParam String token,@RequestParam String creditCard,@RequestParam Date expiryDate,@RequestParam String cvv,@RequestParam String discountCode) {
-        return userService.checkoutShoppingCart(token, creditCard, expiryDate, cvv, discountCode);
+    public ResponseEntity<String> checkoutShoppingCart(
+            @RequestParam String token,
+            @RequestParam String creditCard,
+            @RequestParam String expiryDate,
+            @RequestParam String cvv,
+            @RequestParam String discountCode) {
+
+        // Parse the expiryDate string into a Date object
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/yy");
+        Date parsedExpiryDate;
+        try {
+            parsedExpiryDate = sdf.parse(expiryDate);
+        } catch (ParseException e) {
+            return ResponseEntity.badRequest().body("Invalid expiry date format.");
+        }
+
+        return userService.checkoutShoppingCart(token, creditCard, parsedExpiryDate, cvv, discountCode);
     }
 
     @PutMapping("/user/addItemToBasket")
@@ -111,5 +128,11 @@ public class UserControllerApi {
     @PutMapping("/user/viewStoresByNameForUserOwnership")
     public ResponseEntity<List<String>> viewUserStoresNamesOwnership(@RequestParam String token) {
         return userService.viewUserStoresNamesOwnership(token);
+    }
+
+    //get shopping cart total price
+    @GetMapping("/user/getShoppingCartTotalPrice")
+    public ResponseEntity<Double> getShoppingCartTotalPrice(@RequestParam String token) {
+        return userService.getShoppingCartTotalPrice(token);
     }
 }
