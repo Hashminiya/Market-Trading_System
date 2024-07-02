@@ -24,4 +24,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificat
 
     List<Item> findByStoreIdAndNameContaining(long storeId, String name);
 
+    List<Item> findAllByStoreId(Long id);
 }
