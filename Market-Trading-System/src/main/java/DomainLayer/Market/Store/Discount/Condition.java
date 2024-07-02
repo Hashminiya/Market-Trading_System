@@ -10,13 +10,9 @@ import java.util.Map;
 
 @Entity
 @NoArgsConstructor
-@DiscriminatorValue("CONDITION")
+@DiscriminatorValue("Condition")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class Condition extends BaseCondition{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     //private Map<Long, Integer> conditionItem;
     //private double minCost;
     private Long itemId;

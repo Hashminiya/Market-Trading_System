@@ -21,7 +21,7 @@ public abstract class DiscountComposite extends BaseDiscount {
     protected List<String> categories;
     protected boolean isStore;*/
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "discount_id")
+    @JoinColumn(name = "parent_discount_id")
     protected List<BaseDiscount> discounts;
 
 

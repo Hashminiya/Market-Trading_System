@@ -14,13 +14,16 @@ import java.util.Map;
 @DiscriminatorValue("Discount")
 @NoArgsConstructor
 public abstract class Discount extends BaseDiscount {
-
+    protected boolean isStore;
     protected double percent;
     protected Date expirationDate;
     protected Long store_id;
+
+    @ElementCollection
     protected List<Long> items;
+
+    @ElementCollection
     protected List<String> categories;
-    protected boolean isStore;
 
     public Discount(Long id, double percent, Date expirationDate, long store_id, List<Long> items, List<String> categories, boolean isStore){
         super(id);

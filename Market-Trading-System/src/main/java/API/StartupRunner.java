@@ -60,7 +60,7 @@ public class StartupRunner implements CommandLineRunner {
         List<Long> itemIds = createItems(tokens, storeIds);
         initShoppingCart(tokens, storeIds, itemIds);
         createPurchase(tokens);
-        //createDiscounts(tokens, storeIds, itemIds);
+        createDiscounts(tokens, storeIds, itemIds);
         logoutUsers(tokens);
     }
 
@@ -123,7 +123,7 @@ public class StartupRunner implements CommandLineRunner {
     }
 
     private void createDiscounts(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
-        String discountDetails = "{\n" +
+        String discountDetails1 = "{\n" +
                 "    \"@type\": \"RegularDiscount\",\n" +
                 "    \"id\": 10,\n" +
                 "    \"percent\": 5.0,\n" +
@@ -133,17 +133,43 @@ public class StartupRunner implements CommandLineRunner {
                 "    \"categories\": [\"Electronics\"],\n" +
                 "    \"conditions\": {\n" +
                 "        \"@type\": \"ConditionComposite\",\n" +
+                "        \"id\": 978132,\n" +
                 "        \"conditions\": [\n" +
                 "            {\n" +
                 "                \"@type\": \"Condition\",\n" +
+                "                \"id\": 978132,\n" +
                 "                \"itemId\": "+itemIds.get(0)+",\n" +
-                "                \"count\": 2\n" +
+                "                \"count\": 1\n" +
                 "            }\n" +
                 "        ],\n" +
-                "        \"rule\": \"AND\"\n" +
+                "        \"rule\": \"OR\"\n" +
                 "    }\n" +
                 "}";
-        storeManagementService.addDiscount(tokens.get(0),storeIds.get(0),discountDetails);
+
+        String discountDetails2 = "{\n" +
+                "    \"@type\": \"RegularDiscount\",\n" +
+                "    \"id\": 10,\n" +
+                "    \"percent\": 5.0,\n" +
+                "    \"expirationDate\": \"2024-12-31T23:59:59Z\",\n" +
+                "    \"storeId\": "+storeIds.get(0)+",\n" +
+                "    \"items\": ["+itemIds.get(0)+"],\n" +
+                "    \"categories\": [\"Electronics\"],\n" +
+                "    \"conditions\": {\n" +
+                "        \"@type\": \"Condition\",\n" +
+                "        \"id\": 978132,\n" +
+                "        \"conditions\": [\n" +
+                "            {\n" +
+                "                \"@type\": \"Condition\",\n" +
+                "                \"id\": 978132,\n" +
+                "                \"itemId\": "+itemIds.get(0)+",\n" +
+                "                \"count\": 1\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"rule\": \"OR\"\n" +
+                "    }\n" +
+                "}";
+        storeManagementService.addDiscount(tokens.get(0),storeIds.get(0),discountDetails1);
+        storeManagementService.addDiscount(tokens.get(0),storeIds.get(0),discountDetails2);
 
     }
 
