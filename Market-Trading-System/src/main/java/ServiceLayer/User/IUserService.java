@@ -23,4 +23,5 @@ public interface IUserService{
 
     ResponseEntity<?> getShoppingCart(String token);
 
+    ResponseEntity<Double> getShoppingCartTotalPrice(String token);
 }

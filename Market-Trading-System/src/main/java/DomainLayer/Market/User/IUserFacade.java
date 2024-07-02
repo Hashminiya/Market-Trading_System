@@ -39,4 +39,6 @@ public interface IUserFacade {
     public List<String> viewUserStoresNamesOwnership(String userName);
 
     ShoppingCart getShoppingCart(String userName);
+
+    double getShoppingCartTotalPrice(String userName);
 }
