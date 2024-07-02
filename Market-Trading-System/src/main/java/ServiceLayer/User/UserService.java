@@ -4,6 +4,7 @@ import API.SpringContext;
 import DAL.ItemDTO;
 import DAL.ShoppingCartDTO;
 import DomainLayer.Market.ShoppingBasket;
+import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
@@ -255,7 +256,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
-   try {
+        try {
             String userName = jwtService.extractUsername(token);
             UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
             if (userName != null && jwtService.isValid(token, userDetails)) {
@@ -269,7 +270,8 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             logger.error("Error during checkout", e);
             return ResponseEntity.status(500).body("Error during checkout");
-   }
+        }
+    }
       
     public ResponseEntity<List<String>> viewUserStoresNamesOwnership(String token) {
       try {

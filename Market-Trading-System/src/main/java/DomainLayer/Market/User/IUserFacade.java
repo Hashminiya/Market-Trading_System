@@ -24,10 +24,10 @@ public interface IUserFacade {
     public void modifyShoppingCart(String userName, long storeId, long itemId, int newQuantity);
     public void checkoutShoppingCart(String userName, String creditCard, Date expiryDate , String cvv, String discountCode) throws Exception;
     public boolean checkPermission(String userName,long storeId, String permission);
-    public void assignStoreOwner(String userName, long storeId);
-    public void assignStoreManager(String userName, long storeId, List<String> storePermissions);
+    public void assignStoreOwner(String assigner, String assignee, long storeId);
+    public void assignStoreManager(String assigner, String assignee, long storeId, List<String> storePermissions);
     public List<String> getUserPermission(String userName,long storeId);
-    public Long addItemToBasket(String userName,long storeId, long itemId, int quantity)throws Exception;
+    public Long addItemToBasket(String userName, long storeId, long itemId, int quantity)throws Exception;
     public void addPermission(String userName, String userToPermit ,long storeId, String permission);
     public void removePermission(String userName, String userToUnPermit,long storeId, String permission);
     public boolean isRegister(String founderId);

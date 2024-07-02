@@ -3,6 +3,7 @@ package AcceptanceTests;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
@@ -18,16 +19,19 @@ import org.springframework.http.ResponseEntity;
 import javax.ws.rs.core.Response;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StoreBuyerAT {
 
     private static StoreBuyerService storeBuyerService;
     private static UserService userService;
+    private static IStoreFacade storeFacade;
     static long STORE_ID;
     static long ITEM_ID_1;
     static long ITEM_ID_2;
@@ -40,7 +44,7 @@ public class StoreBuyerAT {
     public static void setUp() {
         SetUp.setUp();
         serviceFactory = ServiceFactory.getServiceFactory();
-        IStoreFacade storeFacade = serviceFactory.getStoreFacade();
+        storeFacade = serviceFactory.getStoreFacade();
         storeBuyerService = StoreBuyerService.getInstance(storeFacade);
         userService = serviceFactory.getUserService();
         try {
@@ -66,12 +70,14 @@ public class StoreBuyerAT {
         ResponseEntity<?> response = storeBuyerService.getAllProductsInfoByStore(STORE_ID);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        Map<Long, String> expectedProducts = new HashMap<>();
-        expectedProducts.put(ITEM_ID_1, "Laptop");
-        expectedProducts.put(ITEM_ID_2, "Phone");
-        expectedProducts.put(ITEM_ID_3, "Headphones");
+        List<Item> expectedProducts = new ArrayList<>();
+        expectedProducts.add(storeFacade.getItem(ITEM_ID_3));
+        expectedProducts.add(storeFacade.getItem(ITEM_ID_2));
+        expectedProducts.add(storeFacade.getItem(ITEM_ID_1));
 
-        assertEquals(expectedProducts, response.getBody());
+        List<Item> ans = (List<Item>) response.getBody();
+
+        assertTrue(ans.containsAll(expectedProducts));
     }
 
     @Test
@@ -138,8 +144,8 @@ public class StoreBuyerAT {
         ResponseEntity<?> response = storeBuyerService.searchGenerallyByKeyWord("Laptop");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        Map<Long, String> expectedProducts = new HashMap<>();
-        expectedProducts.put(ITEM_ID_1, "Laptop");
+        List<Item> expectedProducts = new ArrayList<>();
+        expectedProducts.add(storeFacade.getItem(ITEM_ID_1));
 
         assertEquals(expectedProducts, response.getBody());
     }

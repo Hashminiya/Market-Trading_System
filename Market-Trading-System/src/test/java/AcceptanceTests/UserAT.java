@@ -16,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
@@ -145,6 +142,7 @@ public class UserAT {
     @Test
     @Order(7)
     public void test_addPermission_should_return_ok_status() {
+        storeSevice.assignStoreManager(USERNAME1_TOKEN, STOREID,USERNAME2, new ArrayList<>());
         ResponseEntity<String> response = userService.addPermission(USERNAME1_TOKEN, USERNAME2,STOREID, StorePermission.REMOVE_STORE.toString());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
