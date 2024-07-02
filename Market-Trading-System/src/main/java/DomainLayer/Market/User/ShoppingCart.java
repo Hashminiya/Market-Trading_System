@@ -1,11 +1,11 @@
 package DomainLayer.Market.User;
 
 import API.SpringContext;
-import DAL.BasketItem;
-import DAL.ItemDTO;
+import DAL.*;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
+import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -176,5 +177,30 @@ public class ShoppingCart {
             return bas.get();
         }
         return null;
+    }
+
+    public ShoppingCartDTO getShoppingCartDTO(IStoreFacade storeFacade) throws Exception {
+        List<ShoppingBasketDTO> basketDTOs = new ArrayList<>();
+        for (ShoppingBasket basket : shoppingBaskets) {
+            storeFacade.calculateBasketPrice(basket, null);
+            List<BasketItemDTO> itemDTOs = basket.getItems().entrySet().stream()
+                    .map(entry -> {
+                        long itemId = entry.getKey();
+                        int quantity = entry.getValue();
+                        double price = basket.getBasketTotalPrice();
+                        //basket.getItemsPrice() is a map of itemId to price after discount
+                        Map<Long, Double> itemIdToPriceAfterDiscount = basket.getItemsPrice();
+                        double priceAfterDiscount = itemIdToPriceAfterDiscount.get(itemId);
+                        Item item = storeFacade.getItem(itemId);
+
+                        return new BasketItemDTO(itemId, item.getName(), quantity, basket.getStoreId(), item.getPrice(), item.getCategories(), item.getDescription(), priceAfterDiscount);
+                    })
+                    .collect(Collectors.toList());
+
+            ShoppingBasketDTO basketDTO = new ShoppingBasketDTO(itemDTOs, basket.getBasketTotalPrice(), storeFacade.getStoreName(basket.getStoreId()), basket.getStoreId());
+            basketDTOs.add(basketDTO);
+        }
+        double totalPrice = basketDTOs.stream().mapToDouble(ShoppingBasketDTO::getPrice).sum();
+        return new ShoppingCartDTO(basketDTOs, totalPrice);
     }
 }

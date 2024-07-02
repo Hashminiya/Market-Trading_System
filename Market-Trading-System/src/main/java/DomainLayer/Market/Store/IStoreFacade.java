@@ -61,4 +61,6 @@ public interface IStoreFacade {
 
     public List<Store> findStoresByOwner(String userName);
     Item getItem(Long key);
+
+    String getStoreName(long storeId);
 }
