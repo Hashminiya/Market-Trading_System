@@ -13,6 +13,7 @@ import DomainLayer.Market.User.UserController;
 import DomainLayer.Repositories.*;
 import ServiceLayer.ServiceFactory;
 import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.SpringApplication;
@@ -45,32 +46,9 @@ public class CheckoutUT {
                 supplyServiceProxy);
     }
 
-    @BeforeAll
-    public static void springSetUp(){
-        SpringApplication.run(Application.class);
-    }
-
     @AfterEach
     void tearDown()throws Exception{
         resetPurchaseControllerInstance();
-    }
-
-    @AfterAll
-    public static void springTearDown(){
-        PurchaseRepository purchaseRepository  = SpringContext.getBean(PurchaseRepository.class);
-        purchaseRepository.deleteAll();
-        ItemDTORepository itemDTORepository  = SpringContext.getBean(ItemDTORepository.class);
-        itemDTORepository.deleteAll();
-        BasketItemRepository basketItemRepository  = SpringContext.getBean(BasketItemRepository.class);
-        basketItemRepository.deleteAll();
-        ItemRepository items = SpringContext.getBean(DbItemRepository.class);
-        items.deleteAll();
-        BasketRepository baskets = SpringContext.getBean(DbBasketRepository.class);
-        baskets.deleteAll();
-        StoreRepository stores = SpringContext.getBean(DbStoreRepository.class);
-        stores.deleteAll();
-        UserRepository users = SpringContext.getBean(DbUserRepository.class);
-        users.deleteAll();
     }
 
     private void resetPurchaseControllerInstance() throws Exception {
@@ -82,12 +60,14 @@ public class CheckoutUT {
     @Test
     @Order(1)
     void test_checkout_should_not_throw_exception_for_valid_info() {
-
         List<ItemDTO> items = new ArrayList<>();
         items.add(new ItemDTO(876123, "Chips",20,8282,500, new ArrayList<>(), "description"));
         items.add(new ItemDTO(98142, "Bamba",40,8282,1000, new ArrayList<>(), "description"));
 
-        assertDoesNotThrow(() -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 1500));
+        try (MockedStatic<SpringContext> mockedStatic = mockStatic(SpringContext.class)) {
+            mockedStatic.when(() -> SpringContext.getBean(ItemDTORepository.class)).thenReturn(new InMemoryDTORepository());
+            assertDoesNotThrow(() -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 1500));
+        }
     }
 
 
@@ -96,8 +76,10 @@ public class CheckoutUT {
     void test_checkout_should_throw_exception_for_empty_items_list() {
 
         List<ItemDTO> items = new ArrayList<>();
-
-        assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
+        try (MockedStatic<SpringContext> mockedStatic = mockStatic(SpringContext.class)) {
+            mockedStatic.when(() -> SpringContext.getBean(ItemDTORepository.class)).thenReturn(new InMemoryDTORepository());
+            assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
+        }
     }
 
     @Test
@@ -110,8 +92,10 @@ public class CheckoutUT {
         List<ItemDTO> items = new ArrayList<>();
         items.add(new ItemDTO(876123, "Chips",20,8282,500, new ArrayList<>(), "description"));
         items.add(new ItemDTO(98142, "Bamba",40,8282,1000, new ArrayList<>(), "description"));
-
-        assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
+        try (MockedStatic<SpringContext> mockedStatic = mockStatic(SpringContext.class)) {
+            mockedStatic.when(() -> SpringContext.getBean(ItemDTORepository.class)).thenReturn(new InMemoryDTORepository());
+            assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
+        }
     }
 
     @Test
@@ -124,8 +108,10 @@ public class CheckoutUT {
         List<ItemDTO> items = new ArrayList<>();
         items.add(new ItemDTO(876123, "Chips",20,8282,500, new ArrayList<>(), "description"));
         items.add(new ItemDTO(98142, "Bamba",40,8282,1000, new ArrayList<>(), "description"));
-
-        assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
+        try (MockedStatic<SpringContext> mockedStatic = mockStatic(SpringContext.class)) {
+            mockedStatic.when(() -> SpringContext.getBean(ItemDTORepository.class)).thenReturn(new InMemoryDTORepository());
+            assertThrows(RuntimeException.class, () -> purchaseController.checkout("userID", "1234567890123456", new Date(), "123", items, 300));
+        }
     }
 
 }

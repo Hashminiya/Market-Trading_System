@@ -8,8 +8,8 @@
 //import DomainLayer.Market.Store.StoreController;
 //import DomainLayer.Market.User.IUserFacade;
 //import DomainLayer.Market.User.UserController;
-//import DomainLayer.Market.Util.IRepository;
-//import DomainLayer.Market.Util.InMemoryRepository;
+//import DomainLayer.Repositories.InMemoryDiscountRepository;
+//import DomainLayer.Repositories.InMemoryStoreRepository;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
@@ -42,10 +42,10 @@
 //    private IPurchaseFacade purchaseFacadeMock;
 //
 //    @Mock
-//    private InMemoryRepository<Long, Store> storesRepoMock;
+//    private InMemoryStoreRepository storesRepoMock;
 //
 //    @Mock
-//    private IRepository<Long, IDiscount> discountRepoMock;
+//    private InMemoryDiscountRepository discountRepoMock;
 //
 //    @Mock
 //    private Store storeMock;
@@ -57,7 +57,7 @@
 //    void setUp() {
 //        MockitoAnnotations.openMocks(this);
 //
-//        storesRepoMock = mock(InMemoryRepository.class);
+//        storesRepoMock = mock(InMemoryStoreRepository.class);
 //        userFacadeMock = mock(UserController.class);
 //        purchaseFacadeMock = mock(PurchaseController.class);
 //        storeMock = mock(Store.class);
@@ -85,7 +85,7 @@
 //    @Test
 //    void test_addItemToStore_should_saveNewStore() throws Exception {
 //        Store store = mock(Store.class);
-//        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+//        when(storesRepoMock.findById(STORE_ID)).thenReturn(new Store());
 //        when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ADD_ITEM")).thenReturn(true);
 //
 //        storeFacade.addItemToStore(USER_ID, STORE_ID, ITEM_NAME, ITEM_PRICE, STOCK_AMOUNT, DESCRIPTION, CATEGORIES);

@@ -4,8 +4,8 @@
 //import DomainLayer.Market.ShoppingBasket;
 //import DomainLayer.Market.Store.IStoreFacade;
 //import DomainLayer.Market.User.ShoppingCart;
-//import DomainLayer.Market.Util.IRepository;
 //import DAL.ItemDTO;
+//import DomainLayer.Repositories.InMemoryBasketRepository;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.ArgumentCaptor;
@@ -20,7 +20,7 @@
 //
 //class ShoppingCartUT {
 //    private ShoppingCart shoppingCart;
-//    private IRepository<Long, ShoppingBasket> basketRepositoryMock;
+//    private InMemoryBasketRepository basketRepositoryMock;
 //    private IStoreFacade storeFacadeMock;
 //
 //    @BeforeEach
