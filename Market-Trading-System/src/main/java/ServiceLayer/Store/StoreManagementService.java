@@ -397,15 +397,14 @@ public class StoreManagementService implements IStoreManagementService {
     @Override
     public ResponseEntity<?> addPolicyByStoreNameAndToken(String token, String storeName, String policyDetails) {
         try {
-            Long storeId;
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 List<Store> userStores = storeFacade.findStoresByOwner(userName);
 
                 for (Store store : userStores) {
                     if (store.getName().equalsIgnoreCase(storeName)) {
-                        storeId = store.getId();
-                        return addPolicy(token, storeId, policyDetails);
+                        this.addPolicy(token, store.getId(), policyDetails);
+                        return ResponseEntity.ok("Policy added successfully");
                     }
                 }
                 return ResponseEntity.status(404).body("Store not found");
