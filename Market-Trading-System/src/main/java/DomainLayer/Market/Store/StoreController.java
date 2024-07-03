@@ -2,6 +2,8 @@ package DomainLayer.Market.Store;
 
 import API.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Market.Notifications.Event;
+import DomainLayer.Market.Notifications.Publisher;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicyFactory;
@@ -321,6 +323,9 @@ public class StoreController implements IStoreFacade{
         for(ShoppingBasket basket: baskets){
             Store store = getStore(basket.getStoreId());
             store.clearCache(basket.getId());
+            Event event = new Event(new Object(), "Item has been purchased from your store",new HashSet<>(store.getOwners()));
+            Publisher publisher = (Publisher) SpringContext.getBean("Publisher");
+            publisher.publish(event);
         }
     }
 
