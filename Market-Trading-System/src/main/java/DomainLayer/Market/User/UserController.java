@@ -315,4 +315,9 @@ public class UserController implements IUserFacade {
         return null;
     }
 
+    @Override
+    public double getShoppingCartTotalPrice(String userName) {
+        return getUser(userName).getShoppingCart().getShoppingCartPrice();
+    }
+
 }

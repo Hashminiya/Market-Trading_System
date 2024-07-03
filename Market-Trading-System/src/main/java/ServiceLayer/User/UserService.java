@@ -298,4 +298,25 @@ public class UserService implements IUserService {
             return ResponseEntity.status(500).body("Error during checkout");
         }
     }
+
+    //getShoppingCartTotalPrice
+    @Override
+    public ResponseEntity<Double> getShoppingCartTotalPrice(String token) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            UserDetails userDetails = this.userFacade.loadUserByUsername(userName);
+            if (userName != null && jwtService.isValid(token, userDetails)) {
+                double totalPrice = userFacade.getShoppingCartTotalPrice(userName);
+                logger.info("Total price of shopping cart for user: {}", userName);
+                return ResponseEntity.ok(totalPrice);
+            } else {
+                logger.warn("Invalid token for getting shopping cart total price: {}", token);
+                return ResponseEntity.status(401).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error getting shopping cart total price", e);
+            return ResponseEntity.status(500).build();
+        }
+    }
+
 }
