@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,10 @@ import javax.ws.rs.core.Response;
 @Service("SystemManagerService")
 public class SystemManagerService implements ISystemManagerService {
     private static final Logger logger = LogManager.getLogger(StoreManagementService.class);
+
+    @Value("${logging.include-exception:false}")
+    private boolean includeException;
+
     String USER_NOT_VALID = "Authentication failed";
     private static SystemManagerService instance;
     private IStoreFacade storeFacade;
@@ -83,6 +88,7 @@ public class SystemManagerService implements ISystemManagerService {
             }
         }
         catch (Exception exception){
+            logException("Exception in viewMarketPurchaseHistory", exception);
             return ResponseEntity.status(500).body(exception.getMessage());
         }
     }
@@ -103,6 +109,7 @@ public class SystemManagerService implements ISystemManagerService {
             }
         }
         catch (Exception exception){
+            logException("Exception in closeStore", exception);
             return ResponseEntity.status(500).body(exception.getMessage());
         }
     }
@@ -114,5 +121,13 @@ public class SystemManagerService implements ISystemManagerService {
 
     public void setJwtService(JwtService jwtService) {
         this.jwtService = jwtService;
+    }
+
+    private void logException(String message, Exception e) {
+        if (includeException) {
+            logger.error(message,e);
+        } else {
+            logger.error(message, e.getMessage());
+        }
     }
 }
