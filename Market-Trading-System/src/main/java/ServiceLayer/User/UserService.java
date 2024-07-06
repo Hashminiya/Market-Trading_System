@@ -14,6 +14,7 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,9 @@ import java.util.*;
 @Service("userService")
 public class UserService implements IUserService {
     private static final Logger logger = LogManager.getLogger(UserService.class);
+
+    @Value("${logging.include-exception:false}")
+    private boolean includeException;
 
     private IUserFacade userFacade;
     private JwtService jwtService;
@@ -66,7 +70,7 @@ public class UserService implements IUserService {
             logger.info("Guest session created for user: {}", userName);
             return ResponseEntity.ok(token);
         } catch (Exception e) {
-            logger.error("Error creating guest session", e);
+            logException("Error creating guest session", e);
             return ResponseEntity.status(500).body("Error creating guest session");
         }
     }
@@ -84,7 +88,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).body("Invalid token for guest exit");
             }
         } catch (Exception e) {
-            logger.error("Error terminating guest session", e);
+            logException("Error terminating guest session", e);
             return ResponseEntity.status(500).body("Error terminating guest session");
         }
     }
@@ -95,7 +99,7 @@ public class UserService implements IUserService {
             logger.info("User registered: {}", userName);
             return ResponseEntity.ok("User registered successfully");
         } catch (Exception e) {
-            logger.error("Error registering user: {}", userName, e);
+            logException("Error registering user: " + userName, e);
             return ResponseEntity.status(500).body("Error registering user");
         }
     }
@@ -107,7 +111,7 @@ public class UserService implements IUserService {
             logger.info("User logged in: {}", userName);
             return ResponseEntity.ok(token);
         } catch (Exception e) {
-            //logger.error("Error logging in user: {}", userName, e);
+            logException("Error logging in user: " + userName, e);
             return ResponseEntity.status(500).body(String.format("Error logging in user %s- %s", userName, e.getMessage()));
         }
     }
@@ -125,7 +129,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
-            logger.error("Error logging out user", e);
+            logException("Error logging out user", e);
             return ResponseEntity.status(500).body("Error logging out user");
         }
     }
@@ -142,7 +146,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
-            logger.error("Error viewing shopping cart", e);
+            logException("Error viewing shopping cart", e);
             return ResponseEntity.status(500).body("Error viewing shopping cart");
         }
     }
@@ -161,7 +165,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
-            logger.error("Error modifying shopping cart", e);
+            logException("Error modifying shopping cart", e);
             return ResponseEntity.status(500).body("Error modifying shopping cart");
         }
     }
@@ -179,7 +183,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
-            logger.error("Error adding item to basket", e);
+            logException("Error adding item to basket", e);
             return ResponseEntity.status(500).body("Error adding item to basket");
         }
     }
@@ -198,7 +202,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
-            logger.error("Error adding permission", e);
+            logException("Error adding permission", e);
             return ResponseEntity.status(500).body("Error adding permission");
         }
     }
@@ -217,7 +221,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
-            logger.error("Error removing permission", e);
+            logException("Error removing permission", e);
             return ResponseEntity.status(500).body("Error removing permission");
         }
     }
@@ -237,7 +241,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (Exception e) {
-            logger.error("Error getting shopping cart", e);
+            logException("Error getting shopping cart", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -256,7 +260,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).build();
             }
         } catch (Exception e) {
-            logger.error("Error display user store ownership: {}", token, e);
+            logException("Error display user store ownership for token: " + token, e);
             return ResponseEntity.status(500).build();
         }
     }
@@ -275,7 +279,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).build();
             }
         } catch (Exception e) {
-            logger.error("Error display user store ownership: {}", token, e);
+            logException("Error display user store ownership for token: " + token, e);
             return ResponseEntity.status(500).build();
         }
     }
@@ -294,7 +298,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception e) {
-            logger.error("Error during checkout", e);
+            logException("Error during checkout", e);
             return ResponseEntity.status(500).body("Error during checkout");
         }
     }
@@ -314,8 +318,16 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).build();
             }
         } catch (Exception e) {
-            logger.error("Error getting shopping cart total price", e);
+            logException("Error getting shopping cart total price", e);
             return ResponseEntity.status(500).build();
+        }
+    }
+
+    private void logException(String message, Exception e) {
+        if (includeException) {
+            logger.error(message,e);
+        } else {
+            logger.error(message, e.getMessage());
         }
     }
 
