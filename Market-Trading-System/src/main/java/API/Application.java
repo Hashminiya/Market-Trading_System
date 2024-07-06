@@ -44,7 +44,18 @@ public class Application {
                 System.out.println("\nInvalid credentials. Please try again.\n");
             }
         }
-        SpringApplication.run(Application.class, args);
+        try {
+            SpringApplication application = new SpringApplication(Application.class);
+            //application.addListeners(new ComprehensiveErrorHandler());
+            //application.setLogStartupInfo(true);
+            //System.setProperty("spring.boot.startup.log-errors", "false");
+            application.run(args);
+        } catch (Throwable t) {
+            System.err.println("\nApplication failed to start: " + t.getClass().getName() + " :\n" + t.getMessage());
+            // You can log the full stack trace here if needed for debugging
+            // t.printStackTrace();
+            System.exit(1);
+        }
     }
 
     private static Properties loadProperties() {
