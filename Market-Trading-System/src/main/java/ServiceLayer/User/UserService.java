@@ -99,7 +99,7 @@ public class UserService implements IUserService {
             logger.info("User registered: {}", userName);
             return ResponseEntity.ok("User registered successfully");
         } catch (Exception e) {
-            logException("Error registering user: " + userName, e);
+            logException(String.format("Error registering user: %s" ,userName), e);
             return ResponseEntity.status(500).body("Error registering user");
         }
     }
@@ -111,7 +111,7 @@ public class UserService implements IUserService {
             logger.info("User logged in: {}", userName);
             return ResponseEntity.ok(token);
         } catch (Exception e) {
-            logException("Error logging in user: " + userName, e);
+            logException(String.format("Error logging in user: %s", userName), e);
             return ResponseEntity.status(500).body(String.format("Error logging in user %s- %s", userName, e.getMessage()));
         }
     }
@@ -260,7 +260,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).build();
             }
         } catch (Exception e) {
-            logException("Error display user store ownership for token: " + token, e);
+            logException(String.format("Error display user store ownership for token: %s", token), e);
             return ResponseEntity.status(500).build();
         }
     }
@@ -279,7 +279,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(401).build();
             }
         } catch (Exception e) {
-            logException("Error display user store ownership for token: " + token, e);
+            logException(String.format("Error display user store ownership for token: %s", token), e);
             return ResponseEntity.status(500).build();
         }
     }
