@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -23,8 +24,14 @@ public class Application {
 
     public static void main(String[] args) {
         systemInitialize = false;
-        Scanner scanner = new Scanner(System.in);
+
+        if (!checkApplicationPropertiesFile()) {
+            System.err.println("application.properties file does not exist.\nThe server can't initialize, Exiting...");
+            System.exit(1);
+        }
+
         System.out.println("To initialize the server an admin verification is needed, please log in:\n");
+        Scanner scanner = new Scanner(System.in);
 
         Properties props = loadProperties();
         String adminUsername = props.getProperty("systemManager.username");
@@ -55,5 +62,11 @@ public class Application {
             e.printStackTrace();
         }
         return props;
+    }
+
+    private static boolean checkApplicationPropertiesFile() {
+        String filePath = "Market-Trading-System/src/main/resources/application.properties";
+        File file = new File(filePath);
+        return file.exists();
     }
 }
