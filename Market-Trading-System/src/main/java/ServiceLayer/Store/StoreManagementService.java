@@ -10,6 +10,7 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,10 @@ import java.util.*;
 @Service("StoreManagementService")
 public class StoreManagementService implements IStoreManagementService {
     private static final Logger logger = LogManager.getLogger(StoreManagementService.class);
+
+    @Value("${logging.include-exception:false}")
+    private boolean includeException;
+
     String USER_NOT_VALID = "Authentication failed";
     private static StoreManagementService instance;
     private final IStoreFacade storeFacade;
@@ -71,7 +76,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error creating store", ex);
+            logException("Error creating store", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -89,7 +94,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error adding item to store", ex);
+            logException("Error adding item to store", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -107,7 +112,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error updating item", ex);
+            logException("Error updating item", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -125,7 +130,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error deleting item", ex);
+            logException("Error deleting item", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -143,7 +148,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error changing store policy", ex);
+            logException("Error changing store policy", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -161,7 +166,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error changing discount type", ex);
+            logException("Error changing discount type", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -179,7 +184,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error removing store", ex);
+            logException("Error removing store", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -196,7 +201,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception ex) {
-            logger.error("Error viewing management info", ex);
+            logException("Error viewing management info", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -213,7 +218,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception ex) {
-            logger.error("Error viewing inventory", ex);
+            logException("Error viewing inventory", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -230,7 +235,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(token);
             }
         } catch (Exception ex) {
-            logger.error("Error viewing purchase history", ex);
+            logException("Error viewing purchase history", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -248,7 +253,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error assigning store owner", ex);
+            logException("Error assigning store owner", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -266,7 +271,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error assigning store manager", ex);
+            logException("Error assigning store manager", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -284,7 +289,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error adding discount", ex);
+            logException("Error adding discount", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -303,7 +308,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error adding policy", ex);
+            logException("Error adding policy", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -341,7 +346,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error viewing inventory by store name and token", ex);
+            logException("Error viewing inventory by store name and token", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -365,7 +370,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error viewing inventory by store name and token", ex);
+            logException("Error viewing inventory by store name and token", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -389,7 +394,7 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error viewing inventory by store name and token", ex);
+            logException("Error viewing inventory by store name and token", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -413,8 +418,16 @@ public class StoreManagementService implements IStoreManagementService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         } catch (Exception ex) {
-            logger.error("Error viewing inventory by store name and token", ex);
+            logException("Error viewing inventory by store name and token", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
+
+    private void logException(String message, Exception e) {
+        if (includeException) {
+            logger.error(message,e);
+        } else {
+            logger.error(message, e.getMessage());
         }
     }
 }

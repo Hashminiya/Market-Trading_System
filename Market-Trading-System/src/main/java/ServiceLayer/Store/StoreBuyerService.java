@@ -7,6 +7,7 @@ import DomainLayer.Market.Store.Store;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,10 @@ import java.util.*;
 @Service("StoreBuyerService")
 public class StoreBuyerService implements IStoreBuyerService {
     private static final Logger logger = LogManager.getLogger(StoreBuyerService.class);
+
+    @Value("${logging.include-exception:false}")
+    private boolean includeException;
+
     private static StoreBuyerService instance;
     private IStoreFacade storeFacade;
     private final String EMPTY_RESULT_ERROR = "Error: 0 results for search";
@@ -43,7 +48,7 @@ public class StoreBuyerService implements IStoreBuyerService {
             logger.info("Retrieved all products info for store: {}", storeId);
             return ResponseEntity.status(200).body(items);
         } catch (Exception ex) {
-            logger.error("Error retrieving products info for store: {}", storeId, ex);
+            logException("Error retrieving products info for store: " + storeId, ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -55,7 +60,7 @@ public class StoreBuyerService implements IStoreBuyerService {
             logger.info("Retrieved all store info");
             return ResponseEntity.status(200).body(result);
         } catch (Exception ex) {
-            logger.error("Error retrieving all store info", ex);
+            logException("Error retrieving all store info", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -69,7 +74,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                 return ResponseEntity.status(200).body(result);
             }
         } catch (Exception ex) {
-            logger.error("Error searching in store by category: {} for store: {}", category, storeId, ex);
+            logException(String.format("Error searching in store by category: %s for store: %d", category, storeId), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
         logger.warn("No results found for category: {} in store: {}", category, storeId);
@@ -85,7 +90,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                 return ResponseEntity.status(200).body(result);
             }
         } catch (Exception ex) {
-            logger.error("Error searching in store by keyword: {} for store: {}", keyWord, storeId, ex);
+            logException(String.format("Error searching in store by keyword: %s for store: %d", keyWord, storeId), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
         logger.warn("No results found for keyword: {} in store: {}", keyWord, storeId);
@@ -101,7 +106,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                 return ResponseEntity.status(200).body(result);
             }
         } catch (Exception ex) {
-            logger.error("Error searching in store by keyword: {} and category: {} for store: {}", keyWord, category, storeId, ex);
+            logException(String.format("Error searching in store by keyword: %s and category: %s for store: %d", keyWord, category, storeId), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
         logger.warn("No results found for keyword: {} and category: {} in store: {}", keyWord, category, storeId);
@@ -118,7 +123,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                 return ResponseEntity.status(200).body(result);
             }
         } catch (Exception ex) {
-            logger.error("Error in general search by category: {}", category, ex);
+            logException(String.format("Error searching in general search by category: %s", category), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
         logger.warn("No results found for general search by category: {}", category);
@@ -135,7 +140,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                 return ResponseEntity.status(200).body(items);
             }
         } catch (Exception ex) {
-            logger.error("Error in general search by keyword: {}", keyWord, ex);
+            logException(String.format("Error searching in general search by keyword: %s", keyWord), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
         logger.warn("No results found for general search by keyword: {}", keyWord);
@@ -151,7 +156,7 @@ public class StoreBuyerService implements IStoreBuyerService {
                 return ResponseEntity.status(200).body(result);
             }
         } catch (Exception ex) {
-            logger.error("Error in general search by keyword: {} and category: {}", keyWord, category, ex);
+            logException(String.format("Error searching in general search by keyword %s and category %s", keyWord, category), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
         logger.warn("No results found for general search by keyword: {} and category: {}", keyWord, category);
@@ -184,7 +189,7 @@ public class StoreBuyerService implements IStoreBuyerService {
             }
             return ResponseEntity.status(200).body(storesWithItems);
         } catch (Exception ex) {
-            logger.error("Error retrieving all stores with items", ex);
+            logException("Error retrieving all stores with items", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -196,7 +201,7 @@ public class StoreBuyerService implements IStoreBuyerService {
             logger.info("Retrieved all categories");
             return ResponseEntity.status(200).body(categories);
         } catch (Exception ex) {
-            logger.error("Error retrieving all categories", ex);
+            logException("Error retrieving all categories", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
@@ -209,5 +214,13 @@ public class StoreBuyerService implements IStoreBuyerService {
             items.add(item);
         }
         return items;
+    }
+
+    private void logException(String message, Exception e) {
+        if (includeException) {
+            logger.error(message,e);
+        } else {
+            logger.error(message, e.getMessage());
+        }
     }
 }
