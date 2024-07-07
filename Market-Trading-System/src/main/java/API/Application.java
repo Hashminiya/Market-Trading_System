@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -23,8 +24,14 @@ public class Application {
 
     public static void main(String[] args) {
         systemInitialize = false;
-        Scanner scanner = new Scanner(System.in);
+
+        if (!checkApplicationPropertiesFile()) {
+            System.err.println("application.properties file does not exist.\nThe server can't initialize, Exiting...");
+            System.exit(1);
+        }
+
         System.out.println("To initialize the server an admin verification is needed, please log in:\n");
+        Scanner scanner = new Scanner(System.in);
 
         Properties props = loadProperties();
         String adminUsername = props.getProperty("systemManager.username");
@@ -44,7 +51,18 @@ public class Application {
                 System.out.println("\nInvalid credentials. Please try again.\n");
             }
         }
-        SpringApplication.run(Application.class, args);
+        try {
+            SpringApplication application = new SpringApplication(Application.class);
+            //application.addListeners(new ComprehensiveErrorHandler());
+            //application.setLogStartupInfo(true);
+            //System.setProperty("spring.boot.startup.log-errors", "false");
+            application.run(args);
+        } catch (Throwable t) {
+            System.err.println("\nApplication failed to start: " + t.getClass().getName() + " :\n" + t.getMessage());
+            // You can log the full stack trace here if needed for debugging
+            // t.printStackTrace();
+            System.exit(1);
+        }
     }
 
     private static Properties loadProperties() {
@@ -55,5 +73,11 @@ public class Application {
             e.printStackTrace();
         }
         return props;
+    }
+
+    private static boolean checkApplicationPropertiesFile() {
+        String filePath = "Market-Trading-System/src/main/resources/application.properties";
+        File file = new File(filePath);
+        return file.exists();
     }
 }
