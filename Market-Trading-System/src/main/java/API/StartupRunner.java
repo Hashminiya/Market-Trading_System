@@ -7,6 +7,7 @@ import ServiceLayer.Store.IStoreManagementService;
 import ServiceLayer.User.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,12 @@ public class StartupRunner implements CommandLineRunner {
 
     private final IUserService userService;
 
+    @Value("${data.initialization:false}")
+    private boolean initData;
+
+    @Value("${data.admin.register:false}")
+    private boolean registerAdmin;
+
     public StartupRunner() {
         userService = (IUserService) SpringContext.getBean("userService");
     }
@@ -34,18 +41,27 @@ public class StartupRunner implements CommandLineRunner {
 
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
 
-        //TODO: delete the following 3 lines before submission: the admin is always registered
-        ResponseEntity<?> response = userService.register("admin", "admin", 25);
-        if(!response.getStatusCode().is2xxSuccessful()){
-            throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
+        if(registerAdmin){
+            ResponseEntity<?> response = userService.register("admin", "admin", 25);
+            if(!response.getStatusCode().is2xxSuccessful()){
+                //throw new ResponseStatusException(response.getStatusCode(),response.getBody().toString());
+                System.err.println("Failed to register admin:");
+                System.err.println(response.getBody());
+                System.err.println("Exiting...");
+                System.exit(1);
+            }
         }
+
 
         System.out.println("Payment and Supply external services connected successfully");
         System.out.println("The server is running...");
 
+        if(initData){
+            System.out.println("Initializing Market Trading System data...");
 //        CommandParserService commandParserService = SpringContext.getBean(CommandParserService.class);
 //        commandParserService.parseAndExecuteCommands();
-        runSystem();
+            runSystem();
+        }
     }
 
     private void runSystem() {
