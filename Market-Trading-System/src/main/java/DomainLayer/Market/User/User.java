@@ -138,7 +138,9 @@ public class User implements IUser,DataItem<String> {
     public void setAssigners(long storeId, Set<String> newAssigners) {
         if(!this.assigners.containsKey(storeId))
             assigners.put(storeId, newAssigners);
-        this.assigners.replace(storeId, newAssigners);
+        else{
+            throw new RuntimeException("The user already assigned to store management");
+        }
     }
 
 

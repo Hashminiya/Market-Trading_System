@@ -263,7 +263,7 @@ public class UserCT {
 
     @Test
     public void test_addPermission_should_addBothPermissions() throws Exception {
-        String user3 = "user3";
+        String user3 = "user5";
         userService.register(user3, password1, age1);
         String user3_token = userService.login(user3, password1).getBody();
 
@@ -309,5 +309,50 @@ public class UserCT {
         assertThat(userFacade.checkPermission(user4, store1, "VIEW_INVENTORY")).isEqualTo(true);
         assertThat(userFacade.checkPermission(user4, store1, "VIEW_STORE_MANAGEMENT_INFO")).isEqualTo(true);
 
+    }
+
+    @Test
+    public void test_assignManager_should_addDropOneAttemptToAssign() throws Exception {
+        String user5 = "user5";
+        userService.register(user5, password1, age1);
+        String user5_token = userService.login(user5, password1).getBody();
+
+        String user6 = "user6";
+        userService.register(user6, password1, age1);
+        String user6_token = userService.login(user6, password1).getBody();
+
+        List<String> permissions = new ArrayList<>();
+        permissions.add("ADD_ITEM");
+        permissions.add("ASSIGN_MANAGER");
+
+        storeSevice.assignStoreManager(user1_token, store1, user6, permissions);
+
+        int threadCount = 3;
+        CountDownLatch latch = new CountDownLatch(threadCount);
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        final boolean[] _throw = {false, false};
+
+        Future<Boolean> f1 = executor.submit(() -> {
+            ResponseEntity<String> response = storeSevice.assignStoreManager(user1_token, store1, user5, permissions);
+            latch.countDown();
+            return response.getStatusCode().value() == 500 || response.getStatusCode().value() == 401;
+        });
+        Future<Boolean> f2 = executor.submit(() -> {
+            ResponseEntity<String> response = storeSevice.assignStoreManager(user6_token, store1, user5, permissions);
+            latch.countDown();
+            return response.getStatusCode().value() == 500 || response.getStatusCode().value() == 401;
+        });
+
+        latch.await(5, TimeUnit.SECONDS);
+        executor.shutdown();
+
+        try {
+            if (f1.get()) _throw[0] = true;
+            if (f2.get()) _throw[1] = true;
+        } catch (Exception e) {
+            System.out.println("future get failed");
+        }
+
+        assertThat(_throw[0] ^ _throw[1]).isEqualTo(true);
     }
 }
