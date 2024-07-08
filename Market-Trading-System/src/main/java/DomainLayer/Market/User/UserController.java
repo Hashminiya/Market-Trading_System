@@ -159,7 +159,9 @@ public class UserController implements IUserFacade {
             User assignerUser = getUser(assigner);
             Set<String> assigners = assignerUser.getAssigners(storeId);
             assigners.add(assignerUser.getId());
+            assigneeUser.lock();
             assigneeUser.setAssigners(storeId, assigners);
+            assigneeUser.unlock();
         }
         else{
             assigneeUser.setAssigners(storeId, new HashSet<>());
@@ -174,7 +176,9 @@ public class UserController implements IUserFacade {
         User assignerUser = getUser(assigner);
         Set<String> assigners = assignerUser.getAssigners(storeId);
         assigners.add(assignerUser.getId());
+        assigneeUser.lock();
         assigneeUser.setAssigners(storeId, assigners);
+        assigneeUser.unlock();
         assigneeUser.assignStoreManager(storeId, storePermissions);
         users.save(assigneeUser);
     }
