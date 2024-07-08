@@ -107,6 +107,12 @@ public class StoreManagementControllerApi {
         return storeManagementService.viewAllPolicies(token, storeName);
     }
 
+    @GetMapping("storeManagement/getStoreIdByName")
+    public ResponseEntity<String> getStoreIdByName(@RequestParam String token,@RequestParam String storeName) {
+        ResponseEntity<String> result = storeManagementService.getStoreIdByName(token, storeName);
+        return result;
+    }
+
    /* @PostMapping("/user/checkoutShoppingCart")
     public ResponseEntity<String> checkoutShoppingCart(@RequestParam String token, @RequestParam String creditCard, @RequestParam Date expiryDate, @RequestParam String cvv, @RequestParam String discountCode) {
         return storeManagementService.checkoutShoppingCart(token, creditCard, expiryDate, cvv, discountCode);

@@ -63,4 +63,5 @@ public interface IStoreFacade {
     Item getItem(Long key);
 
     String getStoreName(long storeId);
+    Long getStoreIdByName(String userName, String storeName);
 }

@@ -430,4 +430,21 @@ public class StoreManagementService implements IStoreManagementService {
             logger.error(message, e.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<String> getStoreIdByName(String token, String storeName) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                logger.info("Get storeID info for store by user: {}", userName);
+                return ResponseEntity.status(200).body(storeFacade.getStoreIdByName(userName, storeName).toString());
+            } else {
+                logger.warn("Invalid token for getting storeID info: {}", token);
+                return ResponseEntity.status(401).body(token);
+            }
+        } catch (Exception ex) {
+            logger.error("Error getting storeID info", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
 }
