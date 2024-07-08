@@ -76,16 +76,22 @@ public class Purchase implements IPurchase, DataItem<Long> {
     }
 
     @Override
-    public void checkout(String creditCard, Date expiryDate, String CVV) {
-        Boolean isValidCard = paymentServiceProxy.validateCreditCard(creditCard,expiryDate,CVV,totalAmount);
-        Boolean canBeSupplied = supplyServiceProxy.validateCartSupply(purchasedItemsList);
-        if(isValidCard & canBeSupplied){
-            paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,totalAmount);
-            supplyServiceProxy.performCartSupply(purchasedItemsList);
+    public void checkout(String creditCard, Date expiryDate, String CVV) throws Exception {
+        System.out.println("creditCard: "+creditCard);
+        System.out.println("expiryDate: "+expiryDate);
+        System.out.println("CVV: "+CVV);
+        int paymentResult = paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,totalAmount);
+        int supplyResult = -1;
+        if(paymentResult != -1)
+            supplyResult = supplyServiceProxy.performCartSupply();
+        int cancelPaymentResult = -1;
+        if(supplyResult == -1 && paymentResult != -1) {
+            cancelPaymentResult = paymentServiceProxy.cancelPayment(supplyResult);
+            while(cancelPaymentResult == -1)
+                cancelPaymentResult = paymentServiceProxy.cancelPayment(supplyResult);
         }
-        else if(!isValidCard)
-            throw new RuntimeException("Checkout Failed\nTransaction cannot be made with that credit card");
-        else throw new RuntimeException("Checkout Failed\nOne of the items can not be supplied");
+        if(paymentResult == -1 || supplyResult == -1)
+            throw new RuntimeException("Checkout Failed");
     }
 
     public List<ItemDTO> getItemByStore(Long storeId){
