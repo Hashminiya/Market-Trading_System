@@ -249,12 +249,21 @@ public class StoreManagementAT{
 
     @Test
     @Order(12)
-    public void test_assignStoreOwner_should_returnOkStatus() {
+    public void test_assignStoreOwner_should_returnErrorStatus() {
         ResponseEntity<?> response = storeManagementService.assignStoreOwner(TOKEN, STORE_ID, MANAGER_ID);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
+
     @Test
     @Order(13)
+    public void test_assignStoreOwner_should_returnOkStatus() {
+        userService.register(USERNAME1, PASSWORD, AGE);
+        ResponseEntity<?> response = storeManagementService.assignStoreOwner(TOKEN, STORE_ID, USERNAME1);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @Order(14)
     public void test_removeStore_should_returnOkStatus() {
         ResponseEntity<?> response = storeManagementService.removeStore(TOKEN, STORE_ID);
         assertEquals(HttpStatus.OK, response.getStatusCode());
