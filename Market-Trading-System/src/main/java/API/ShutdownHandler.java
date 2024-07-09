@@ -12,6 +12,14 @@ public class ShutdownHandler {
     @EventListener(ContextClosedEvent.class)
     public void handleContextClosedEvent() {
         System.out.println("Application is shutting down!");
+        //cleerData();
+
+
+    }
+
+    private void cleerData(){
+        System.out.println("cleering data...");
+
 
         PurchaseRepository purchaseRepository  = SpringContext.getBean(PurchaseRepository.class);
         System.out.println("Deleting all purchases...");

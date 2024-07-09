@@ -1,5 +1,6 @@
 package DomainLayer.Market.Store;
 
+import DAL.ItemDTO;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.DataItem;
 import jakarta.persistence.*;
@@ -124,4 +125,10 @@ public class Item implements DataItem<Long> {
     public long getStoreId() {
         return storeId;
     }
+
+    public ItemDTO toDTO(){
+        return new ItemDTO(id, name, quantity, storeId, price, categories, description);
+    }
+
+
 }
