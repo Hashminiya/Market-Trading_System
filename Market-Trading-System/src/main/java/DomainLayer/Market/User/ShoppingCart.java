@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +35,18 @@ import java.util.stream.Stream;
 
 @Component
 public class ShoppingCart {
-    private final BasketRepository baskets;
-    private final BasketItemRepository basketItemRepository;
+
+    @Autowired
+    private BasketRepository baskets;
+
+    @Autowired
+    private BasketItemRepository basketItemRepository;
+
     private final List<ShoppingBasket> shoppingBaskets;
+
+    public ShoppingCart() {
+        this.shoppingBaskets = new ArrayList<>();
+    }
 
     @Autowired
     public ShoppingCart(BasketRepository baskets, BasketItemRepository basketItemRepository){
@@ -47,8 +57,7 @@ public class ShoppingCart {
 
     public String viewShoppingCart(IStoreFacade storeFacade) throws Exception{
         StringBuilder res = new StringBuilder();
-        //List<ShoppingBasket> l = baskets.findAll();
-        for(ShoppingBasket s : shoppingBaskets){
+        for (ShoppingBasket s : shoppingBaskets) {
             storeFacade.calculateBasketPrice(s, null);
             res.append(s.toString());
         }
