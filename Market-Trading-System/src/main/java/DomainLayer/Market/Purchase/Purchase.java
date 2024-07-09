@@ -77,9 +77,6 @@ public class Purchase implements IPurchase, DataItem<Long> {
 
     @Override
     public void checkout(String creditCard, Date expiryDate, String CVV) throws Exception {
-        System.out.println("creditCard: "+creditCard);
-        System.out.println("expiryDate: "+expiryDate);
-        System.out.println("CVV: "+CVV);
         int paymentResult = paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,totalAmount);
         int supplyResult = -1;
         if(paymentResult != -1)
