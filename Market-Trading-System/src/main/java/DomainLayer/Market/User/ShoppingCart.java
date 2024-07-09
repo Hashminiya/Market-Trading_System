@@ -57,7 +57,8 @@ public class ShoppingCart {
 
     public String viewShoppingCart(IStoreFacade storeFacade) throws Exception{
         StringBuilder res = new StringBuilder();
-        for (ShoppingBasket s : shoppingBaskets) {
+        //List<ShoppingBasket> l = baskets.findAll();
+        for(ShoppingBasket s : shoppingBaskets){
             storeFacade.calculateBasketPrice(s, null);
             res.append(s.toString());
         }
