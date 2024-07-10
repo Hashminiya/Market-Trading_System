@@ -1,5 +1,6 @@
 package ServiceLayer.Store;
 
+import API.InitCommand;
 import DAL.PolicyDTO;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
@@ -63,6 +64,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "createStore")
     public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription) {
         try {
             String userName = jwtService.extractUsername(founderToken);
@@ -81,6 +83,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @InitCommand(name = "addItemToStore")
     @Override
     public ResponseEntity<?> addItemToStore(String token, long storeId, String itemName, String description, double itemPrice, int stockAmount, List<String> categories) {
         try {
@@ -240,6 +243,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @InitCommand(name = "assignStoreOwner")
     @Override
     public ResponseEntity<String> assignStoreOwner(String token, long storeId, String newOwnerId) {
         try {
@@ -258,6 +262,7 @@ public class StoreManagementService implements IStoreManagementService {
         }
     }
 
+    @InitCommand(name = "assignStoreManager")
     @Override
     public ResponseEntity<String> assignStoreManager(String token, long storeId, String newManagerI, List<String> permissions) {
         try {

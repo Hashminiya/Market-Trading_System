@@ -1,5 +1,6 @@
 package ServiceLayer.User;
 
+import API.InitCommand;
 import API.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Notifications.Event;
@@ -93,6 +94,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @InitCommand(name = "register")
     public ResponseEntity<String> register(String userName, String password, int userAge) {
         try {
             userFacade.register(userName, password, userAge);
@@ -104,6 +106,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @InitCommand(name = "login")
     public ResponseEntity<String> login(String userName, String password) {
         try {
             userFacade.login(userName, password);
@@ -116,6 +119,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @InitCommand(name = "logout")
     public ResponseEntity<String> logout(String token) {
         try {
             String userName = jwtService.extractUsername(token);
