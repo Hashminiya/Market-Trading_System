@@ -62,6 +62,7 @@ public class UserService implements IUserService {
         this.jwtService = jwtService;
     }
 
+    @InitCommand(name = "guestEntry")
     public ResponseEntity<String> guestEntry() {
         try {
             String userName = userFacade.createGuestSession();
@@ -74,6 +75,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @InitCommand(name = "guestExit")
     public ResponseEntity<String> guestExit(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -154,6 +156,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @InitCommand(name = "modifyShoppingCart")
     public ResponseEntity<String> modifyShoppingCart(String token, long basketId, long itemId, int newQuantity) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -173,6 +176,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @InitCommand(name = "addItemToBasket")
     public ResponseEntity<String> addItemToBasket(String token, long storeId, long itemId, int quantity) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -191,6 +195,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @InitCommand(name = "addPermission")
     public ResponseEntity<String> addPermission(String token, String userToPermit, long storeId, String permission) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -210,6 +215,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @InitCommand(name = "removePermission")
     public ResponseEntity<String> removePermission(String token, String userToUnPermit, long storeId, String permission) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -287,6 +293,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @InitCommand(name = "checkoutShoppingCart")
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
         try {
             String userName = jwtService.extractUsername(token);
