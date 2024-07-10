@@ -21,12 +21,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -69,6 +65,14 @@ public class ShoppingCart {
         ShoppingBasket sb = getShoppingBasket(storeId,userName);
         boolean hasStock = storeFacade.addItemToShoppingBasket(sb, storeId, itemId, quantity);
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
+        List<BasketItem> basketItems = basketItemRepository.findAll();
+        for(BasketItem bi : basketItems){
+            if(Objects.equals(bi.getId().getBasketId(), sb.getId()) && bi.getId().getItemId() == itemId){
+                bi.setQuantity(bi.getQuantity() + quantity);
+                basketItemRepository.save(bi);
+                return sb.getId();
+            }
+        }
         BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
         basketItemRepository.save(basketItem);
 
