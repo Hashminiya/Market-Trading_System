@@ -1,5 +1,6 @@
 package ServiceLayer.Market;
 
+import API.InitCommand;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
@@ -94,6 +95,7 @@ public class SystemManagerService implements ISystemManagerService {
     }
 
     @Override
+    @InitCommand(name = "closeStore")
     public ResponseEntity<?> closeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
