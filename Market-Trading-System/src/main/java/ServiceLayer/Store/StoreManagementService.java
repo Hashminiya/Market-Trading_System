@@ -103,6 +103,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "updateItem")
     public ResponseEntity<String> updateItem(String token, long storeId, long itemId, String newName, double newPrice, int newAmount) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -121,6 +122,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "deleteItem")
     public ResponseEntity<String> deleteItem(String token, long storeId, long itemId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -175,6 +177,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "removeStore")
     public ResponseEntity<String> removeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -282,6 +285,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "addDiscount")
     public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -301,6 +305,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @Transactional
     @Override
+    @InitCommand(name = "addPolicy")
     public ResponseEntity<?> addPolicy(String token, long storeId, String policyDetails) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -405,6 +410,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "addPolicyByStoreNameAndToken")
     public ResponseEntity<?> addPolicyByStoreNameAndToken(String token, String storeName, String policyDetails) {
         try {
             String userName = jwtService.extractUsername(token);

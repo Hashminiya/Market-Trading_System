@@ -1,5 +1,6 @@
 package API;
 
+import ServiceLayer.Market.ISystemManagerService;
 import ServiceLayer.Store.IStoreManagementService;
 import ServiceLayer.User.IUserService;
 import org.springframework.aop.support.AopUtils;
@@ -26,9 +27,12 @@ public class CommandParserService {
     private final Map<String, Long> storeIds = new HashMap<>();
 
     @Autowired
-    public CommandParserService(IUserService userService, IStoreManagementService storeManagementService) {
+    public CommandParserService(IUserService userService,
+                                IStoreManagementService storeManagementService,
+                                ISystemManagerService systemManagerService) {
         services.put("userService", userService);
         services.put("storeManagementService", storeManagementService);
+        services.put("systemManagerService", systemManagerService);
         initCommandMethods();
     }
 
@@ -112,7 +116,7 @@ public class CommandParserService {
 
     private boolean needsTokenReplacement(String commandName) {
         // List of commands that need token replacement
-        return !Arrays.asList("register","login").contains(commandName);
+        return !Arrays.asList("register","login", "guestEntry").contains(commandName);
     }
 
     private void handleCommandResult(String commandName, List<String> args, Object result) {
