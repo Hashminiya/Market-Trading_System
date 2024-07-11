@@ -1,17 +1,15 @@
 package API;
 
+import API.Utils.SpringContext;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
-import ServiceLayer.Store.IStoreBuyerService;
 import ServiceLayer.Store.IStoreManagementService;
 import ServiceLayer.User.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +27,11 @@ public class StartupRunner implements CommandLineRunner {
     @Value("${data.admin.register:false}")
     private boolean registerAdmin;
 
-    public StartupRunner() {
-        userService = (IUserService) SpringContext.getBean("userService");
+    @Autowired
+    public StartupRunner(IUserService userService) {
+        //userService = (IUserService) SpringContext.getBean("userService");
+        this.userService = userService;
+
     }
 
     @Override

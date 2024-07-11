@@ -1,14 +1,7 @@
 package ServiceLayer.User;
 
-import API.SpringContext;
-import DAL.ItemDTO;
-import DomainLayer.Market.Notifications.Event;
-import DomainLayer.Market.Notifications.Publisher;
+import API.Utils.SpringContext;
 import DAL.ShoppingCartDTO;
-import DomainLayer.Market.ShoppingBasket;
-import DomainLayer.Market.Store.StoreController;
-import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
@@ -21,13 +14,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.lang.reflect.Field;
-
-import java.util.*;
 
 
 @Service("userService")

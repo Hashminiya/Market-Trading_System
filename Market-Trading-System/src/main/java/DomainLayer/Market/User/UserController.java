@@ -1,5 +1,5 @@
 package DomainLayer.Market.User;
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
@@ -7,11 +7,8 @@ import DomainLayer.Market.Util.StorePermission;
 
 
 import DomainLayer.Repositories.*;
-import jakarta.transaction.Transactional;
 
-import DomainLayer.Repositories.BasketRepository;
 import DomainLayer.Repositories.DbBasketRepository;
-import DomainLayer.Repositories.InMemoryBasketRepository;
 import DomainLayer.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +19,6 @@ import DAL.ItemDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Component("userController")
 public class UserController implements IUserFacade {
@@ -322,6 +318,14 @@ public class UserController implements IUserFacade {
     @Override
     public double getShoppingCartTotalPrice(String userName) {
         return getUser(userName).getShoppingCart().getShoppingCartPrice();
+    }
+
+    public List<String> getGuests(){
+        List<String> guestsNames = new ArrayList<>();
+        for (User guest : guests){
+            guestsNames.add(guest.getUserName());
+        }
+        return guestsNames;
     }
 
 }

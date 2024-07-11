@@ -1,37 +1,22 @@
 package DomainLayer.Market.User;
 
-import API.SpringContext;
 import DAL.*;
-import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
 
-import DomainLayer.Repositories.DbBasketRepository;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-
-import jakarta.persistence.PostLoad;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class ShoppingCart {

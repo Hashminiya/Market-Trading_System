@@ -1,13 +1,11 @@
 package DomainLayer.Market.User;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.ItemDTO;
-import DomainLayer.Converters.StoreEnumConverter;
 import DomainLayer.Converters.StoreEnumSetConverter;
 import DomainLayer.Converters.StringSetConverter;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;

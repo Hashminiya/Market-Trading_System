@@ -4,7 +4,7 @@
 //import DomainLayer.Market.Store.Store;
 //import DomainLayer.Market.Store.Item;
 //import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
-//import DomainLayer.Market.Util.IRepository;
+//import DomainLayer.Repositories.*;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.Mock;
@@ -24,16 +24,15 @@
 //    private final String STORE_DESCRIPTION = "Test Store Description";
 //
 //    @Mock
-//    private IRepository<Long, IDiscount> discountsMock;
+//    private DiscountRepository discountsMock;
 //    @Mock
-//    private IRepository<Long, PurchasePolicy> policiesMock;
-//
+//    private ItemRepository productsMock;
 //    private Store store;
 //
 //    @BeforeEach
 //    void setUp() {
 //        MockitoAnnotations.openMocks(this);
-//        store = new Store(STORE_ID, FOUNDER_ID, STORE_NAME, STORE_DESCRIPTION, discountsMock, policiesMock);
+//        store = new Store(STORE_ID, FOUNDER_ID, STORE_NAME, STORE_DESCRIPTION, productsMock, discountsMock);
 //    }
 //
 //    @Test

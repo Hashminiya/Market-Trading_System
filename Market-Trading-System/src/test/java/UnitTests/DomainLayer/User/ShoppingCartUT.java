@@ -1,5 +1,6 @@
 package UnitTests.DomainLayer.User;
 
+import SetUp.ApplicationTest;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest(classes = ApplicationTest.class)
+//@ActiveProfiles("test")
 class ShoppingCartUT {
 
     @Mock
