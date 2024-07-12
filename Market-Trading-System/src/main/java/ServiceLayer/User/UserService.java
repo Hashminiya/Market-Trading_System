@@ -1,5 +1,7 @@
 package ServiceLayer.User;
 
+import java.net.*;
+import java.sql.SQLException;
 import API.InitCommand;
 import API.SpringContext;
 import DAL.ItemDTO;
@@ -16,12 +18,14 @@ import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -69,6 +73,9 @@ public class UserService implements IUserService {
             String token = jwtService.generateToken(userName, "GUEST");
             logger.info("Guest session created for user: {}", userName);
             return ResponseEntity.ok(token);
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to create guest session due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error creating guest session", e);
             return ResponseEntity.status(500).body("Error creating guest session");
@@ -88,6 +95,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for guest exit: {}", token);
                 return ResponseEntity.status(401).body("Invalid token for guest exit");
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to terminate guest session due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error terminating guest session", e);
             return ResponseEntity.status(500).body("Error terminating guest session");
@@ -100,9 +110,12 @@ public class UserService implements IUserService {
             userFacade.register(userName, password, userAge);
             logger.info("User registered: {}", userName);
             return ResponseEntity.ok("User registered successfully");
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to register user due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException(String.format("Error registering user: %s" ,userName), e);
-            return ResponseEntity.status(500).body("Error registering user");
+            return ResponseEntity.status(500).body(String.format("Error registering user: %s\n%s", userName, e.getMessage()));
         }
     }
 
@@ -113,6 +126,9 @@ public class UserService implements IUserService {
             String token = jwtService.generateToken(userName, "REGISTERED");
             logger.info("User logged in: {}", userName);
             return ResponseEntity.ok(token);
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to login user due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException(String.format("Error logging in user: %s", userName), e);
             return ResponseEntity.status(500).body(String.format("Error logging in user %s- %s", userName, e.getMessage()));
@@ -132,6 +148,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for logout: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to logout user due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error logging out user", e);
             return ResponseEntity.status(500).body("Error logging out user");
@@ -149,6 +168,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for viewing shopping cart: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view shopping cart due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error viewing shopping cart", e);
             return ResponseEntity.status(500).body("Error viewing shopping cart");
@@ -169,6 +191,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for modifying shopping cart: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to modify shopping cart due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error modifying shopping cart", e);
             return ResponseEntity.status(500).body("Error modifying shopping cart");
@@ -188,6 +213,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for adding item to basket: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to add item to basket due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error adding item to basket", e);
             return ResponseEntity.status(500).body("Error adding item to basket");
@@ -208,6 +236,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for adding permission: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to add permission due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error adding permission", e);
             return ResponseEntity.status(500).body("Error adding permission");
@@ -228,6 +259,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for removing permission: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to remove permission due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error removing permission", e);
             return ResponseEntity.status(500).body("Error removing permission");
@@ -248,6 +282,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for getting shopping cart: {}", token);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to get shopping cart due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error getting shopping cart", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -267,6 +304,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for adding permission: {}", token);
                 return ResponseEntity.status(401).build();
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).build();
         } catch (Exception e) {
             logException(String.format("Error display user store ownership for token: %s", token), e);
             return ResponseEntity.status(500).build();
@@ -286,6 +326,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for adding permission: {}", token);
                 return ResponseEntity.status(401).build();
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).build();
         } catch (Exception e) {
             logException(String.format("Error display user store ownership for token: %s", token), e);
             return ResponseEntity.status(500).build();
@@ -306,6 +349,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for checkout: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to checkout shopping cart due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception e) {
             logException("Error during checkout", e);
             return ResponseEntity.status(500).body("Error during checkout");
@@ -326,6 +372,9 @@ public class UserService implements IUserService {
                 logger.warn("Invalid token for getting shopping cart total price: {}", token);
                 return ResponseEntity.status(401).build();
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).build();
         } catch (Exception e) {
             logException("Error getting shopping cart total price", e);
             return ResponseEntity.status(500).build();
@@ -336,8 +385,7 @@ public class UserService implements IUserService {
         if (includeException) {
             logger.error(message,e);
         } else {
-            logger.error(message, e.getMessage());
+            logger.error("{}, {}", message, e.getMessage());
         }
     }
-
 }
