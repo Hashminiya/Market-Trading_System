@@ -8,8 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 
 import java.util.*;
 
@@ -47,6 +49,9 @@ public class StoreBuyerService implements IStoreBuyerService {
             List<Item> items = getItemsFromItemIdToItemName(result);
             logger.info("Retrieved all products info for store: {}", storeId);
             return ResponseEntity.status(200).body(items);
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to get all products due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error retrieving products info for store: " + storeId, ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -59,6 +64,9 @@ public class StoreBuyerService implements IStoreBuyerService {
             HashMap<Long, String> result = storeFacade.getAllStoreInfo();
             logger.info("Retrieved all store info");
             return ResponseEntity.status(200).body(result);
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to get all store info due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error retrieving all store info", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -73,6 +81,9 @@ public class StoreBuyerService implements IStoreBuyerService {
                 logger.info("Search in store by category: {} for store: {}", category, storeId);
                 return ResponseEntity.status(200).body(result);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to search in store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException(String.format("Error searching in store by category: %s for store: %d", category, storeId), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -89,6 +100,9 @@ public class StoreBuyerService implements IStoreBuyerService {
                 logger.info("Search in store by keyword: {} for store: {}", keyWord, storeId);
                 return ResponseEntity.status(200).body(result);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to search in store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException(String.format("Error searching in store by keyword: %s for store: %d", keyWord, storeId), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -105,6 +119,9 @@ public class StoreBuyerService implements IStoreBuyerService {
                 logger.info("Search in store by keyword: {} and category: {} for store: {}", keyWord, category, storeId);
                 return ResponseEntity.status(200).body(result);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to search in store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException(String.format("Error searching in store by keyword: %s and category: %s for store: %d", keyWord, category, storeId), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -122,6 +139,9 @@ public class StoreBuyerService implements IStoreBuyerService {
                 logger.info("General search by category: {}", items);
                 return ResponseEntity.status(200).body(result);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to search in store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException(String.format("Error searching in general search by category: %s", category), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -139,6 +159,9 @@ public class StoreBuyerService implements IStoreBuyerService {
                 logger.info("General search by keyword: {}", keyWord);
                 return ResponseEntity.status(200).body(items);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to search in store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException(String.format("Error searching in general search by keyword: %s", keyWord), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -155,6 +178,9 @@ public class StoreBuyerService implements IStoreBuyerService {
                 logger.info("General search by keyword: {} and category: {}", keyWord, category);
                 return ResponseEntity.status(200).body(result);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to search in store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException(String.format("Error searching in general search by keyword %s and category %s", keyWord, category), ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -188,6 +214,9 @@ public class StoreBuyerService implements IStoreBuyerService {
                 storesWithItems.put(store.getId(), storeDetails);
             }
             return ResponseEntity.status(200).body(storesWithItems);
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to get all stores with items due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error retrieving all stores with items", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -200,6 +229,9 @@ public class StoreBuyerService implements IStoreBuyerService {
             Set<String> categories = storeFacade.getAllCategories();
             logger.info("Retrieved all categories");
             return ResponseEntity.status(200).body(categories);
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to get all categories due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error retrieving all categories", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -220,7 +252,7 @@ public class StoreBuyerService implements IStoreBuyerService {
         if (includeException) {
             logger.error(message,e);
         } else {
-            logger.error(message, e.getMessage());
+            logger.error("{}, {}", message, e.getMessage());
         }
     }
 }

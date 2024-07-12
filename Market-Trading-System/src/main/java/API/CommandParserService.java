@@ -21,6 +21,9 @@ public class CommandParserService {
     @Value("classpath:init-commands.txt")
     private Resource commandsFile;
 
+    @Value("${logging.include-exception:false}")
+    private boolean includeException;
+
     private final Map<String, Method> commandMethods = new HashMap<>();
     private final Map<String, Object> services = new HashMap<>();
     private final Map<String, String> tokens = new HashMap<>();
@@ -44,7 +47,7 @@ public class CommandParserService {
                 if (annotation != null) {
                     String commandName = annotation.name();
                     commandMethods.put(commandName, method);
-                    System.out.println("Added command: " + commandName); // Debug print
+                    //System.out.println("Added command: " + commandName); // Debug print
                 }
             }
         }
@@ -59,7 +62,11 @@ public class CommandParserService {
                 executeCommand(line.trim());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("errors raised while running initialization commands");
+            System.err.println(e.getMessage());
+            if (includeException) {
+                e.printStackTrace();
+            }
         }
         System.out.println("Finished parsing and executing initialization commands.");
     }

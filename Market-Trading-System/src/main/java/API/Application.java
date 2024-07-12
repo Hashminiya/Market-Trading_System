@@ -70,7 +70,9 @@ public class Application {
         try (FileInputStream fis = new FileInputStream("Market-Trading-System/src/main/resources/application.properties")) {
             props.load(fis);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("application.properties file failed to opened");
+            System.exit(1);
+            //e.printStackTrace();
         }
         return props;
     }
