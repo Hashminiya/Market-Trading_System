@@ -77,18 +77,21 @@ public class Purchase implements IPurchase, DataItem<Long> {
 
     @Override
     public void checkout(String creditCard, Date expiryDate, String CVV) throws Exception {
-        int paymentResult = paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,totalAmount);
-        int supplyResult = -1;
-        if(paymentResult != -1)
-            supplyResult = supplyServiceProxy.performCartSupply();
-        int cancelPaymentResult = -1;
-        if(supplyResult == -1 && paymentResult != -1) {
-            cancelPaymentResult = paymentServiceProxy.cancelPayment(supplyResult);
-            while(cancelPaymentResult == -1)
+        try {
+            int paymentResult = paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,totalAmount);
+            int supplyResult = -1;
+            if(paymentResult != -1)
+                supplyResult = supplyServiceProxy.performCartSupply();
+            int cancelPaymentResult = -1;
+            if(supplyResult == -1 && paymentResult != -1) {
                 cancelPaymentResult = paymentServiceProxy.cancelPayment(supplyResult);
+                while(cancelPaymentResult == -1)
+                    cancelPaymentResult = paymentServiceProxy.cancelPayment(supplyResult);
+            }
         }
-        if(paymentResult == -1 || supplyResult == -1)
-            throw new RuntimeException("Checkout Failed");
+        catch(Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public List<ItemDTO> getItemByStore(Long storeId){
