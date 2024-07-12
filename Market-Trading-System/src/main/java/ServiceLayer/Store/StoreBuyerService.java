@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
 
-import java.net.SocketTimeoutException;
-import java.sql.SQLException;
 import java.util.*;
 
 @Service("StoreBuyerService")

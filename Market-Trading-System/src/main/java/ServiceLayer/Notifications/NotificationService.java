@@ -10,8 +10,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 
 import java.util.Date;
 import java.util.List;
@@ -53,6 +55,9 @@ public class NotificationService implements INotificationService {
                 logger.warn("Invalid token for get messages: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to get messages due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error getting messages store", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -71,6 +76,9 @@ public class NotificationService implements INotificationService {
                 logger.warn("Invalid token for get messages: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to clear messages due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error getting messages store", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -81,7 +89,7 @@ public class NotificationService implements INotificationService {
         if (includeException) {
             logger.error(message,e);
         } else {
-            logger.error(message, e.getMessage());
+            logger.error("{}, {}", message, e.getMessage());
         }
     }
 }
