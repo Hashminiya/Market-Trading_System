@@ -69,6 +69,7 @@ public class UserService implements IUserService {
     }
 
     @InitCommand(name = "guestEntry")
+    @Transactional
     public ResponseEntity<String> guestEntry() {
         try {
             String userName = userFacade.createGuestSession();
@@ -85,6 +86,7 @@ public class UserService implements IUserService {
     }
 
     @InitCommand(name = "guestExit")
+    @Transactional
     public ResponseEntity<String> guestExit(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -123,6 +125,7 @@ public class UserService implements IUserService {
     }
 
     @InitCommand(name = "login")
+    @Transactional
     public ResponseEntity<String> login(String userName, String password) {
         try {
             userFacade.login(userName, password);
@@ -139,6 +142,7 @@ public class UserService implements IUserService {
     }
 
     @InitCommand(name = "logout")
+    @Transactional
     public ResponseEntity<String> logout(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -277,6 +281,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> getShoppingCart(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -300,6 +305,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<List<Long>> viewUserStoresOwnership(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -322,6 +328,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<List<String>> viewUserStoresNamesOwnership(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -369,6 +376,7 @@ public class UserService implements IUserService {
 
     //getShoppingCartTotalPrice
     @Override
+    @Transactional
     public ResponseEntity<Double> getShoppingCartTotalPrice(String token) {
         try {
             String userName = jwtService.extractUsername(token);

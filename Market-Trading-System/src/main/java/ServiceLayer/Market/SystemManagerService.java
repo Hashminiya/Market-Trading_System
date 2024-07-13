@@ -79,6 +79,7 @@ public class SystemManagerService implements ISystemManagerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> viewMarketPurchaseHistory(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -104,6 +105,7 @@ public class SystemManagerService implements ISystemManagerService {
 
     @Override
     @InitCommand(name = "closeStore")
+    @Transactional
     public ResponseEntity<?> closeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
