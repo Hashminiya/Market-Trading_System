@@ -9,20 +9,25 @@ import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Repositories.*;
+import SetUp.ApplicationTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class StoreControllerUT {
 
     private final long STORE_ID = 1L;
@@ -152,11 +157,14 @@ public class StoreControllerUT {
 
     @Test
     void test_removeStore_should_removeStore() throws Exception {
+        Store store = mock(Store.class);
+
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "REMOVE_STORE")).thenReturn(true);
+        when(storesRepoMock.findById(STORE_ID)).thenReturn(Optional.ofNullable(store));
 
         storeFacade.removeStore(USER_ID, STORE_ID);
 
-        //verify(storesRepoMock).delete(STORE_ID);
+        verify(storesRepoMock).delete(store);
     }
 
     @Test

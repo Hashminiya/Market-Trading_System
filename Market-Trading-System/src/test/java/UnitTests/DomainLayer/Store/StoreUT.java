@@ -1,16 +1,13 @@
 package UnitTests.DomainLayer.Store;
 
 import API.Utils.SpringContext;
-import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
 import DomainLayer.Repositories.*;
 import SetUp.ApplicationTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
@@ -28,9 +25,7 @@ public class StoreUT {
     private final String STORE_NAME = "Test Store";
     private final String STORE_DESCRIPTION = "Test Store Description";
 
-//    @Mock
     private DiscountRepository discountsMock;
-//    @Mock
     private ItemRepository productsMock;
     private Store store;
 
@@ -42,6 +37,15 @@ public class StoreUT {
 //        MockitoAnnotations.openMocks(this);
 
         store = new Store(STORE_ID, FOUNDER_ID, STORE_NAME, STORE_DESCRIPTION, productsMock, discountsMock);
+    }
+
+    @AfterEach
+    void tearDown() {
+        try {
+            store.deleteItem(ITEM_ID_1);
+            store.deleteItem(ITEM_ID_2);
+        }
+        catch (Exception ignored){}
     }
 
     @Test
