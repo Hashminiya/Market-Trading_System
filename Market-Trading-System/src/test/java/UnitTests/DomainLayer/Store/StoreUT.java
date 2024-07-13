@@ -1,5 +1,6 @@
 package UnitTests.DomainLayer.Store;
 
+import API.Utils.SpringContext;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.Item;
@@ -35,7 +36,7 @@ public class StoreUT {
 
     @BeforeEach
     void setUp() {
-        productsMock = mock(ItemRepository.class);
+        productsMock = SpringContext.getBean(ItemRepository.class);
         discountsMock = mock(DiscountRepository.class);
 
 //        MockitoAnnotations.openMocks(this);
@@ -156,8 +157,8 @@ public class StoreUT {
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2", "Category3"));
 
         List<String> categories = store.getAllCategories();
-        assertTrue(categories.contains("category1"));
-        assertTrue(categories.contains("category2"));
-        assertTrue(categories.contains("category3"));
+        assertTrue(categories.contains("Category1"));
+        assertTrue(categories.contains("Category2"));
+        assertTrue(categories.contains("Category3"));
     }
 }
