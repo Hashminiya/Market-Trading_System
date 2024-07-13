@@ -1,5 +1,6 @@
 package API.Utils;
 
+import API.InitCommand;
 import ServiceLayer.Market.ISystemManagerService;
 import ServiceLayer.Store.IStoreManagementService;
 import ServiceLayer.User.IUserService;

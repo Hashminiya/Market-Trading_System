@@ -3,7 +3,7 @@ package ServiceLayer.User;
 import java.net.*;
 import java.sql.SQLException;
 import API.InitCommand;
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Notifications.Event;
 import DomainLayer.Market.Notifications.Publisher;
@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
