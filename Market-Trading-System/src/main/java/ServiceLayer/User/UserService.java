@@ -46,7 +46,7 @@ public class UserService implements IUserService {
     private JwtService jwtService;
     private static UserService instance;
 
-    private UserService(@Qualifier("userController") IUserFacade userFacade) {
+    public UserService(@Qualifier("userController") IUserFacade userFacade) {
         this.userFacade = userFacade;
         this.jwtService = new JwtService();
 
@@ -107,6 +107,7 @@ public class UserService implements IUserService {
     }
 
     @InitCommand(name = "register")
+    @Transactional
     public ResponseEntity<String> register(String userName, String password, int userAge) {
         try {
             userFacade.register(userName, password, userAge);
@@ -159,6 +160,7 @@ public class UserService implements IUserService {
         }
     }
 
+    @Transactional
     public ResponseEntity<String> viewShoppingCart(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -181,6 +183,7 @@ public class UserService implements IUserService {
 
     @Override
     @InitCommand(name = "modifyShoppingCart")
+    @Transactional
     public ResponseEntity<String> modifyShoppingCart(String token, long basketId, long itemId, int newQuantity) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -204,6 +207,7 @@ public class UserService implements IUserService {
 
     @Override
     @InitCommand(name = "addItemToBasket")
+    @Transactional
     public ResponseEntity<String> addItemToBasket(String token, long storeId, long itemId, int quantity) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -226,6 +230,7 @@ public class UserService implements IUserService {
 
     @Override
     @InitCommand(name = "addPermission")
+    @Transactional
     public ResponseEntity<String> addPermission(String token, String userToPermit, long storeId, String permission) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -249,6 +254,7 @@ public class UserService implements IUserService {
 
     @Override
     @InitCommand(name = "removePermission")
+    @Transactional
     public ResponseEntity<String> removePermission(String token, String userToUnPermit, long storeId, String permission) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -339,6 +345,7 @@ public class UserService implements IUserService {
 
     @Override
     @InitCommand(name = "checkoutShoppingCart")
+    @Transactional
     public ResponseEntity<String> checkoutShoppingCart(String token, String creditCard, Date expiryDate, String cvv, String discountCode) {
         try {
             String userName = jwtService.extractUsername(token);
