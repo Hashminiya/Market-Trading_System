@@ -64,7 +64,9 @@ public class Application {
         try (InputStream input = new ClassPathResource("application.properties").getInputStream()) {
             props.load(input);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("application.properties file failed to opened");
+            System.exit(1);
+            //e.printStackTrace();
         }
         return props;
     }

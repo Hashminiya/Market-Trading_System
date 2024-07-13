@@ -1,5 +1,6 @@
 package ServiceLayer.Store;
 
+import API.InitCommand;
 import DAL.PolicyDTO;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
@@ -11,14 +12,18 @@ import DomainLayer.Market.Util.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
+import java.net.SocketTimeoutException;
+import java.sql.SQLException;
 import java.util.*;
 
 @Service("StoreManagementService")
@@ -63,6 +68,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "createStore")
     public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription) {
         try {
             String userName = jwtService.extractUsername(founderToken);
@@ -75,12 +81,16 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for creating store: {}", founderToken);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to create store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error creating store", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
+    @InitCommand(name = "addItemToStore")
     @Override
     public ResponseEntity<?> addItemToStore(String token, long storeId, String itemName, String description, double itemPrice, int stockAmount, List<String> categories) {
         try {
@@ -93,6 +103,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for adding item to store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to add item to store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error adding item to store", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -100,6 +113,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "updateItem")
     public ResponseEntity<String> updateItem(String token, long storeId, long itemId, String newName, double newPrice, int newAmount) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -111,6 +125,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for updating item: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to update item due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error updating item", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -118,6 +135,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "deleteItem")
     public ResponseEntity<String> deleteItem(String token, long storeId, long itemId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -129,6 +147,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for deleting item: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to delete item due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error deleting item", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -147,6 +168,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for changing store policy: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to change store policy due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error changing store policy", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -165,6 +189,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for changing discount type: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to change discount type due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error changing discount type", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -172,6 +199,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "removeStore")
     public ResponseEntity<String> removeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -183,6 +211,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for removing store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to remove store due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error removing store", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -200,6 +231,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for viewing management info: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view management info due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error viewing management info", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -217,6 +251,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for viewing inventory: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view inventory due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error viewing inventory", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -234,12 +271,16 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for viewing purchase history: {}", token);
                 return ResponseEntity.status(401).body(token);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view purchases history due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error viewing purchase history", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
+    @InitCommand(name = "assignStoreOwner")
     @Override
     public ResponseEntity<String> assignStoreOwner(String token, long storeId, String newOwnerId) {
         try {
@@ -252,12 +293,16 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for assigning store owner: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to assign store owner due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error assigning store owner", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
+    @InitCommand(name = "assignStoreManager")
     @Override
     public ResponseEntity<String> assignStoreManager(String token, long storeId, String newManagerI, List<String> permissions) {
         try {
@@ -270,6 +315,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for assigning store manager: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to assign store manager due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error assigning store manager", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -277,6 +325,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "addDiscount")
     public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -288,6 +337,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for adding discount to store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to add discount due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error adding discount", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -296,6 +348,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @Transactional
     @Override
+    @InitCommand(name = "addPolicy")
     public ResponseEntity<?> addPolicy(String token, long storeId, String policyDetails) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -307,6 +360,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for adding discount to store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to add policy due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error adding policy", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -345,6 +401,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for viewing inventory: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view inventory due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error viewing inventory by store name and token", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -369,6 +428,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for viewing inventory: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view all policies due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error viewing inventory by store name and token", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -393,6 +455,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for viewing inventory: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view categories due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error viewing inventory by store name and token", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -400,6 +465,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @InitCommand(name = "addPolicyByStoreNameAndToken")
     public ResponseEntity<?> addPolicyByStoreNameAndToken(String token, String storeName, String policyDetails) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -417,6 +483,9 @@ public class StoreManagementService implements IStoreManagementService {
                 logger.warn("Invalid token for viewing inventory: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        } catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to add policy due to database connectivity issue\nError message: %s", e.getMessage()));
         } catch (Exception ex) {
             logException("Error viewing inventory by store name and token", ex);
             return ResponseEntity.status(500).body(ex.getMessage());
@@ -427,7 +496,7 @@ public class StoreManagementService implements IStoreManagementService {
         if (includeException) {
             logger.error(message,e);
         } else {
-            logger.error(message, e.getMessage());
+            logger.error("{}, {}", message, e.getMessage());
         }
     }
 }

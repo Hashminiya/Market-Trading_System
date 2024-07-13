@@ -1,14 +1,19 @@
 package UnitTests.DomainLayer.Store;
 
 import API.Utils.SpringContext;
+import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
 import DomainLayer.Repositories.*;
 import SetUp.ApplicationTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+
 
 import java.util.List;
 
@@ -31,11 +36,9 @@ public class StoreUT {
 
     @BeforeEach
     void setUp() {
-        productsMock = SpringContext.getBean(ItemRepository.class);
         discountsMock = mock(DiscountRepository.class);
-
+        productsMock = SpringContext.getBean(ItemRepository.class);
 //        MockitoAnnotations.openMocks(this);
-
         store = new Store(STORE_ID, FOUNDER_ID, STORE_NAME, STORE_DESCRIPTION, productsMock, discountsMock);
     }
 
