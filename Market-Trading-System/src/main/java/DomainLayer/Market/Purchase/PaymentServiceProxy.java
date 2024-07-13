@@ -27,13 +27,12 @@ public class PaymentServiceProxy implements IPaymentService {
     }
 
     @Override
-    public boolean validateCreditCard(String cardNumber, Date expiryDate, String cvv,double amount) {
-        return paymentService.validateCreditCard(cardNumber, expiryDate, cvv,amount);
-    }
-
-    @Override
-    public boolean chargeCreditCard(String cardNumber, Date expiryDate, String cvv, double amount) {
+    public int chargeCreditCard(String cardNumber, Date expiryDate, String cvv, double amount) throws Exception {
         return paymentService.chargeCreditCard(cardNumber, expiryDate, cvv, amount);
     }
 
+    @Override
+    public int cancelPayment(int transactionId) throws Exception {
+        return paymentService.cancelPayment(transactionId);
+    }
 }

@@ -6,5 +6,5 @@ import java.util.Date;
 import java.util.List;
 
 public interface IPurchase {
-    void checkout(String creditCard, Date expiryDate, String CVV);
+    void checkout(String creditCard, Date expiryDate, String CVV) throws Exception;
 }
