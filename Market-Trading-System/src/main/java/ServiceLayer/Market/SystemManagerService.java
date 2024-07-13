@@ -1,5 +1,6 @@
 package ServiceLayer.Market;
 
+import API.InitCommand;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
@@ -12,11 +13,15 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
+import java.net.SocketTimeoutException;
+import java.sql.SQLException;
 
 @Service("SystemManagerService")
 public class SystemManagerService implements ISystemManagerService {
@@ -87,6 +92,10 @@ public class SystemManagerService implements ISystemManagerService {
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
         }
+        catch (CannotCreateTransactionException | DataAccessException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view market purchase history due to database connectivity issue\nError message: %s", e.getMessage()));
+        }
         catch (Exception exception){
             logException("Exception in viewMarketPurchaseHistory", exception);
             return ResponseEntity.status(500).body(exception.getMessage());
@@ -94,6 +103,7 @@ public class SystemManagerService implements ISystemManagerService {
     }
 
     @Override
+    @InitCommand(name = "closeStore")
     public ResponseEntity<?> closeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -107,6 +117,10 @@ public class SystemManagerService implements ISystemManagerService {
                 logger.warn("Invalid token for removing store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
+        }
+        catch (CannotCreateTransactionException | DataAccessException | SocketTimeoutException | SQLException e) {
+            logException("Database connection error: ", e);
+            return ResponseEntity.status(500).body(String.format("Database connection error: Unable to close store due to database connectivity issue\nError message: %s", e.getMessage()));
         }
         catch (Exception exception){
             logException("Exception in closeStore", exception);
@@ -127,7 +141,7 @@ public class SystemManagerService implements ISystemManagerService {
         if (includeException) {
             logger.error(message,e);
         } else {
-            logger.error(message, e.getMessage());
+            logger.error("{}, {}", message, e.getMessage());
         }
     }
 }

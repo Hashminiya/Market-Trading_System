@@ -77,6 +77,8 @@ public class User implements IUser,DataItem<String> {
         shoppingCart.setShoppingBaskets(baskets);
 
         this.assigners = new HashMap<>();
+
+        this.lock = new ReentrantLock();
     }
 
     public String getUserName() {
