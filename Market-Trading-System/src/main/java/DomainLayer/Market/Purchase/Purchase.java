@@ -10,6 +10,8 @@ import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.ItemDTORepository;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Purchase implements IPurchase, DataItem<Long> {
 
     @Transient
@@ -36,7 +40,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
             joinColumns = @JoinColumn(name = "purchase_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
-
+    @BatchSize(size = 25)
     private List<ItemDTO> purchasedItemsList;
 
     private double totalAmount;
