@@ -3,6 +3,7 @@ package API;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -18,6 +19,7 @@ import java.util.Scanner;
 @EnableJpaRepositories(basePackages = {"API", "ServiceLayer", "DomainLayer", "DAL"})
 @EntityScan(basePackages = {"API", "ServiceLayer", "DomainLayer", "DAL"})
 @DependsOn("startupListener")
+@EnableCaching
 public class Application {
 
     public static boolean systemInitialize;
