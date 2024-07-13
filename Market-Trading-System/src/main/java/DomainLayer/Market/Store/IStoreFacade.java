@@ -40,6 +40,7 @@ public interface IStoreFacade {
     public HashMap<Long,String> searchGenerallyByKeyWord(String keyWord);
     public HashMap<Long,String> searchGenerallyByKeyWordAndCategory(String category, String keyWord);
     public boolean addItemToShoppingBasket(ShoppingBasket basket, long storeId, long itemId, int quantity);
+    public boolean checkStockAvailability(ShoppingBasket basket, long storeId, long itemId, int quantity);
     public void purchaseOccurs(List<ShoppingBasket> baskets)throws InterruptedException;
     public void calculateBasketPrice(ShoppingBasket basket, String code)throws Exception;
 

@@ -63,8 +63,9 @@ public class ShoppingCart {
 
     public Long addItemBasket(long storeId, long itemId, int quantity, IStoreFacade storeFacade, String userName) throws Exception {
         ShoppingBasket sb = getShoppingBasket(storeId,userName);
-        boolean hasStock = storeFacade.addItemToShoppingBasket(sb, storeId, itemId, quantity);
+        boolean hasStock = storeFacade.checkStockAvailability(sb, storeId, itemId, quantity);
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
+        sb.addItem(itemId,quantity);
         List<BasketItem> basketItems = basketItemRepository.findAll();
         for(BasketItem bi : basketItems){
             if(Objects.equals(bi.getId().getBasketId(), sb.getId()) && bi.getId().getItemId() == itemId){
