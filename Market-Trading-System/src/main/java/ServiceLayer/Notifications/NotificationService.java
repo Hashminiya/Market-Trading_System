@@ -14,6 +14,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,7 @@ public class NotificationService implements INotificationService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> getMessages(String token) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -65,6 +67,7 @@ public class NotificationService implements INotificationService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> clear(String token) {
         try {
             String userName = jwtService.extractUsername(token);
