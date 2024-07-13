@@ -27,7 +27,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     private IStoreFacade storeFacade;
     private final String EMPTY_RESULT_ERROR = "Error: 0 results for search";
 
-    private StoreBuyerService(@Qualifier("StoreController") IStoreFacade storeFacade) {
+    public StoreBuyerService(@Qualifier("StoreController") IStoreFacade storeFacade) {
         this.storeFacade = storeFacade;
     }
 
