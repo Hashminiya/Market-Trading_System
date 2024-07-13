@@ -47,8 +47,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
     @Transient
     private ItemDTORepository itemsRepo;
 
-    String purchaseDate;
-
+    private String purchaseDate;
 
     public Purchase(String userId,double totalAmount,Long purchaseId,List<ItemDTO> purchasedItemsList, PaymentServiceProxy paymentService, SupplyServiceProxy supplyService) {
             paymentServiceProxy = paymentService;
@@ -114,7 +113,15 @@ public class Purchase implements IPurchase, DataItem<Long> {
         return null;
     }
 
+    public List<ItemDTO> getPurchasedItemsList() {
+        return purchasedItemsList;
+    }
 
+    public double getTotalAmount() {
+        return totalAmount;
+    }
 
+    public String getPurchaseDate() {
+        return purchaseDate;
+    }
 }
-
