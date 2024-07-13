@@ -38,7 +38,7 @@ public class SystemManagerService implements ISystemManagerService {
     private JwtService jwtService;
 
     @Autowired
-    private SystemManagerService(@Qualifier("purchaseController") IPurchaseFacade purchaseFacade,
+    public SystemManagerService(@Qualifier("purchaseController") IPurchaseFacade purchaseFacade,
                                  @Qualifier("StoreController") IStoreFacade storeFacade,
                                  @Qualifier("userController") IUserFacade userFacade) {
         //SystemManager systemManager = SystemManager.getInstance();
