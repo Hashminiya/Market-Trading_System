@@ -12,6 +12,7 @@ public class SetUp {
     public static void setUp(){
         ServiceFactory serviceFactory = ServiceFactory.getServiceFactory();
         if(!serviceFactory.systemAvailable()) {
+//            serviceFactory.getUserService().register(ADMIN_USER_NAME, ADMIN_PASSWORD, 23);
             ResponseEntity<String> loginResponse = serviceFactory.getUserService().login(ADMIN_USER_NAME, ADMIN_PASSWORD);
             ADMIN_TOKEN = loginResponse.getBody();
             serviceFactory.initFactory(ADMIN_TOKEN);
