@@ -3,12 +3,16 @@ package DomainLayer.Market.Store;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Util.DataItem;
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Item implements DataItem<Long> {
 
     @Id
@@ -21,6 +25,7 @@ public class Item implements DataItem<Long> {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "item_categories", joinColumns = @JoinColumn(name = "item_id"))
     @Column(name = "category")
+    @BatchSize(size = 25)
     private List<String> categories;
 
     private static ReentrantLock lock = new ReentrantLock();

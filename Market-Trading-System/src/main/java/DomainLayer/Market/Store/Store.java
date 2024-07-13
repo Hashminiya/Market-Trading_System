@@ -14,6 +14,8 @@ import DomainLayer.Repositories.ItemSpecifications;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,38 +23,44 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.*;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Store implements DataItem<Long> {
 
     @Id
     private Long id;
     private String founderId;
     private String name;
-    @Getter
+
     @Setter
     @Getter
     private String description;
 
+    @ElementCollection(fetch = FetchType.LAZY)
     @Getter
-    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "store_owners", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
     @Column(name = "owner_username")
+    @BatchSize(size = 25)
     private List<String> owners;
 
+    @ElementCollection(fetch = FetchType.LAZY)
     @Getter
-    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "store_managers", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
     @Column(name = "manager_username")
+    @BatchSize(size = 25)
     private List<String> managers;
 
     @Transient
     private ItemRepository products;
 
+    @BatchSize(size = 25)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "store_id")
     private List<BaseDiscount> discounts= new ArrayList<>();;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
+    @BatchSize(size = 25)
     private List<PurchasePolicy> purchasePolicies = new ArrayList<>();
 
     @Setter

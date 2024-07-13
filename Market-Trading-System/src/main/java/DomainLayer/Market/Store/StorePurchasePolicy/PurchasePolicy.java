@@ -5,6 +5,8 @@ import DomainLayer.Market.Util.DataItem;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +17,8 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "policy_type")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public abstract class PurchasePolicy implements DataItem<Long> {
     ///TODO decide how to get relevant user data
     @Id
@@ -22,9 +26,11 @@ public abstract class PurchasePolicy implements DataItem<Long> {
     private String name;
 
     @ElementCollection
+    @BatchSize(size = 25)
     private List<Long> itemsList;
 
     @ElementCollection
+    @BatchSize(size = 25)
     private List<String> categories;
 
     private boolean isStore;
