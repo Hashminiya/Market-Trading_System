@@ -87,6 +87,7 @@ public class SystemManagerService implements ISystemManagerService {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                if (userFacade.isAdmin(userName)) {
                 List<Purchase> purchases = purchaseFacade.getPurchaseHistory(userName);
                 List<PurchaseDTO> purchaseDTOs = purchases.stream()
                         .map(purchase -> new PurchaseDTO(
@@ -99,6 +100,10 @@ public class SystemManagerService implements ISystemManagerService {
 
                 logger.info("View market purchase history by: {}", userName);
                 return ResponseEntity.ok(purchaseDTOs);
+                } else {
+                    logger.warn("User is not an admin: {}", userName);
+                    return ResponseEntity.status(401).body("User is not an admin");
+                }
             } else {
                 logger.warn("Invalid token for creating store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);

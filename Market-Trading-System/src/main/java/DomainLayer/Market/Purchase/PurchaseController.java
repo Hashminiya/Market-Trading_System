@@ -62,12 +62,7 @@ public class PurchaseController implements IPurchaseFacade {
 
     @Override
     public List<Purchase> getPurchaseHistory(String userName) {
-        if(userFacade.isAdmin(userName)) {
-            return purchaseRepo.findAll();
-        }
-        else{
-            throw new RuntimeException(String.format("%s unauthorized to preform this action",userName));
-        }
+       return purchaseRepo.findAll();
     }
 
     public void setUserFacade(IUserFacade userFacade) {
