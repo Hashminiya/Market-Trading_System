@@ -43,7 +43,7 @@ public class StoreController implements IStoreFacade{
     private String ADD_POLICY = "ADD_POLICY";
 
     @Autowired
-    private StoreController(StoreRepository storesRepo,
+    public StoreController(StoreRepository storesRepo,
                             @Qualifier("purchaseController") IPurchaseFacade purchaseFacadeInstance) {
         this.storesRepo = storesRepo;
         this.purchaseFacade = purchaseFacadeInstance;

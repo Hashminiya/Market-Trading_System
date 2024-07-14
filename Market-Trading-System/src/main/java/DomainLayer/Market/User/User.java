@@ -82,7 +82,8 @@ public class User implements IUser,DataItem<String> {
         List<ShoppingBasket> baskets = shoppingCart.loadBasketsForUser(userName);
         shoppingCart.setShoppingBaskets(baskets);
 
-        this.assigners = new HashMap<>();
+        // TODO : Shurki need to check
+//        this.assigners = new HashMap<>();
 
         this.lock = new ReentrantLock();
     }

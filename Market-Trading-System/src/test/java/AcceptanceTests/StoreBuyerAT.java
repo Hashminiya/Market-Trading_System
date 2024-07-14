@@ -53,7 +53,7 @@ public class StoreBuyerAT {
         storeFacade = SpringContext.getBean(IStoreFacade.class);
         storeBuyerService = SpringContext.getBean(StoreBuyerService.class);
         userService = SpringContext.getBean(UserService.class);
-
+        userService.clear();
         try {
             userService.register("founderId","12345678",30);
             STORE_ID = storeFacade.createStore("founderId", STORE_NAME, "Store for electronic devices");

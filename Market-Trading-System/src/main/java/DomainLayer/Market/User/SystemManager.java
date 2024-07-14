@@ -25,7 +25,7 @@ public class SystemManager extends User{
     private static SystemManager systemManager;
 
     @Autowired
-    private SystemManager(@Value("${systemManager.username}") String userName, @Value("${systemManager.password}") String password, @Value("${systemManager.userAge}") int userAge, @Qualifier("registered") Istate state, @Value("${systemManager.loggedIn}") boolean loggedIn, ShoppingCart shoppingCart){
+    public SystemManager(@Value("${systemManager.username}") String userName, @Value("${systemManager.password}") String password, @Value("${systemManager.userAge}") int userAge, @Qualifier("registered") Istate state, @Value("${systemManager.loggedIn}") boolean loggedIn, ShoppingCart shoppingCart){
         super(userName, password, userAge, state, loggedIn, shoppingCart);
         SHOPPING_CART = shoppingCart;
     }

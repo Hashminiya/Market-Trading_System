@@ -32,7 +32,7 @@ public class UserController implements IUserFacade {
     private List<User> guests = new ArrayList<>();
 
     @Autowired
-    private UserController(UserRepository users,
+    public UserController(UserRepository users,
                            @Qualifier("SystemManager") SystemManager admin,
                            @Qualifier("StoreController") IStoreFacade storeFacade,
                            @Qualifier("purchaseController") IPurchaseFacade purchaseFacade) {

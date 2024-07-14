@@ -12,6 +12,7 @@ import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
@@ -39,6 +40,7 @@ public class UserService implements IUserService {
     private JwtService jwtService;
     private static UserService instance;
 
+    @Autowired
     public UserService(@Qualifier("userController") IUserFacade userFacade) {
         this.userFacade = userFacade;
         this.jwtService = new JwtService();

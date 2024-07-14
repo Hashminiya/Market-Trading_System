@@ -43,7 +43,7 @@ public class StoreManagementService implements IStoreManagementService {
     private IUserFacade userFacade;
 
     @Autowired
-    private StoreManagementService(@Qualifier("StoreController") IStoreFacade storeFacade,
+    public StoreManagementService(@Qualifier("StoreController") IStoreFacade storeFacade,
                                   @Qualifier("userController") IUserFacade userFacade) {
         this.storeFacade = storeFacade;
         this.userFacade = userFacade;

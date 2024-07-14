@@ -22,7 +22,7 @@ public class PurchaseController implements IPurchaseFacade {
     private IUserFacade userFacade;
 
     @Autowired
-    private PurchaseController(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+    public PurchaseController(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
         this.purchaseRepo = purchaseRepo;
         this.paymentServiceProxy = paymentServiceProxy;
         this.supplyServiceProxy = supplyServiceProxy;

@@ -22,7 +22,7 @@ public class PaymentServiceProxy implements IPaymentService {
     }
 
     @Autowired
-    private PaymentServiceProxy(PaymentServiceImpl paymentService) {
+    public PaymentServiceProxy(PaymentServiceImpl paymentService) {
         this.paymentService = paymentService;
     }
 
