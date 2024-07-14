@@ -1,13 +1,16 @@
 package ServiceLayer.Store;
 
 import API.InitCommand;
+import API.Utils.SpringContext;
 import DAL.PolicyDTO;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.Store;
+import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
+import DomainLayer.Market.User.UserController;
 import DomainLayer.Market.Util.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,11 +43,17 @@ public class StoreManagementService implements IStoreManagementService {
     private IUserFacade userFacade;
 
     @Autowired
-    public StoreManagementService(@Qualifier("StoreController") IStoreFacade storeFacade,@Qualifier("userController") IUserFacade userFacade) {
+    private StoreManagementService(@Qualifier("StoreController") IStoreFacade storeFacade,
+                                  @Qualifier("userController") IUserFacade userFacade) {
         this.storeFacade = storeFacade;
-        this.jwtService = new JwtService();
         this.userFacade = userFacade;
-        StoreManagementService.instance = this;
+        this.jwtService = new JwtService();
+    }
+
+    public StoreManagementService(){
+        this.storeFacade = SpringContext.getBean(StoreController.class);
+        this.userFacade = SpringContext.getBean(UserController.class);
+        this.jwtService = new JwtService();
     }
 
     public void setJwtService(JwtService jwtService) {
