@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -26,7 +27,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     private IStoreFacade storeFacade;
     private final String EMPTY_RESULT_ERROR = "Error: 0 results for search";
 
-    private StoreBuyerService(@Qualifier("StoreController") IStoreFacade storeFacade) {
+    public StoreBuyerService(@Qualifier("StoreController") IStoreFacade storeFacade) {
         this.storeFacade = storeFacade;
     }
 
@@ -43,6 +44,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> getAllProductsInfoByStore(long storeId) {
         try {
             HashMap<Long, String> result = storeFacade.getAllProductsInfoByStore(storeId);
@@ -59,6 +61,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> getAllStoreInfo() {
         try {
             HashMap<Long, String> result = storeFacade.getAllStoreInfo();
@@ -74,6 +77,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> searchInStoreByCategory(long storeId, String category) {
         try {
             HashMap<Long, String> result = storeFacade.searchInStoreByCategory(storeId, category);
@@ -93,6 +97,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> searchInStoreByKeyWord(long storeId, String keyWord) {
         try {
             HashMap<Long, String> result = storeFacade.searchInStoreByKeyWord(storeId, keyWord);
@@ -112,6 +117,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> searchInStoreByKeyWordAndCategory(long storeId, String category, String keyWord) {
         try {
             HashMap<Long, String> result = storeFacade.searchInStoreByKeyWordAndCategory(storeId, category, keyWord);
@@ -131,6 +137,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> searchGenerallyByCategory(String category) {
         try {
             HashMap<Long, String> result = storeFacade.searchGenerallyByCategory(category);
@@ -151,6 +158,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> searchGenerallyByKeyWord(String keyWord) {
         try {
             HashMap<Long, String> itemIdToItemName = storeFacade.searchGenerallyByKeyWord(keyWord);//this is map of itemId to itemName
@@ -171,6 +179,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> searchGenerallyByKeyWordAndCategory(String category, String keyWord) {
         try {
             HashMap<Long, String> result = storeFacade.searchGenerallyByKeyWordAndCategory(category, keyWord);
@@ -190,6 +199,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> getAllStoresWithItems() {
         try {
             List<Store> stores = storeFacade.findAll();
@@ -224,6 +234,7 @@ public class StoreBuyerService implements IStoreBuyerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> getAllCategories() {
         try {
             Set<String> categories = storeFacade.getAllCategories();

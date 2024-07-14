@@ -428,4 +428,14 @@ public class StoreController implements IStoreFacade{
         return getStore(storeId).getName();
     }
 
+    @Override
+    public Long getStoreIdByName(String userName, String storeName){
+        List<Store> stores = storesRepo.findAll();
+        for(Store store: stores) {
+            if(store.getOwners().contains(userName) && store.getName().equals(storeName))
+                return store.getId();
+        }
+        return null;
+    }
+
 }

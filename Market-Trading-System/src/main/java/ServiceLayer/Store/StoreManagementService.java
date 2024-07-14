@@ -72,6 +72,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @Override
     @InitCommand(name = "createStore")
+    @Transactional
     public ResponseEntity<?> createStore(String founderToken, String storeName, String storeDescription) {
         try {
             String userName = jwtService.extractUsername(founderToken);
@@ -95,6 +96,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @InitCommand(name = "addItemToStore")
     @Override
+    @Transactional
     public ResponseEntity<?> addItemToStore(String token, long storeId, String itemName, String description, double itemPrice, int stockAmount, List<String> categories) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -117,6 +119,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @Override
     @InitCommand(name = "updateItem")
+    @Transactional
     public ResponseEntity<String> updateItem(String token, long storeId, long itemId, String newName, double newPrice, int newAmount) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -139,6 +142,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @Override
     @InitCommand(name = "deleteItem")
+    @Transactional
     public ResponseEntity<String> deleteItem(String token, long storeId, long itemId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -160,6 +164,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> changeStorePolicy(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -181,6 +186,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> changeDiscountType(String token, long storeId, String newType) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -203,6 +209,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @Override
     @InitCommand(name = "removeStore")
+    @Transactional
     public ResponseEntity<String> removeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -224,6 +231,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> viewManagementInfo(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -244,6 +252,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> viewInventory(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -264,6 +273,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> viewPurchasesHistory(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -285,6 +295,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @InitCommand(name = "assignStoreOwner")
     @Override
+    @Transactional
     public ResponseEntity<String> assignStoreOwner(String token, long storeId, String newOwnerId) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -307,6 +318,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @InitCommand(name = "assignStoreManager")
     @Override
+    @Transactional
     public ResponseEntity<String> assignStoreManager(String token, long storeId, String newManagerI, List<String> permissions) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -329,6 +341,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @Override
     @InitCommand(name = "addDiscount")
+    @Transactional
     public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -374,6 +387,7 @@ public class StoreManagementService implements IStoreManagementService {
 
 
     @Override
+    @Transactional
     public ResponseEntity<?> viewInventoryByStoreNameAndToken(String token, String storeName) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -414,6 +428,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> viewAllPolicies(String token, String storeName) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -441,6 +456,7 @@ public class StoreManagementService implements IStoreManagementService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> viewCategoriesByStoreNameAndToken(String token, String storeName) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -469,6 +485,7 @@ public class StoreManagementService implements IStoreManagementService {
 
     @Override
     @InitCommand(name = "addPolicyByStoreNameAndToken")
+    @Transactional
     public ResponseEntity<?> addPolicyByStoreNameAndToken(String token, String storeName, String policyDetails) {
         try {
             String userName = jwtService.extractUsername(token);
@@ -500,6 +517,23 @@ public class StoreManagementService implements IStoreManagementService {
             logger.error(message,e);
         } else {
             logger.error("{}, {}", message, e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> getStoreIdByName(String token, String storeName) {
+        try {
+            String userName = jwtService.extractUsername(token);
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                logger.info("Get storeID info for store by user: {}", userName);
+                return ResponseEntity.status(200).body(storeFacade.getStoreIdByName(userName, storeName).toString());
+            } else {
+                logger.warn("Invalid token for getting storeID info: {}", token);
+                return ResponseEntity.status(401).body(token);
+            }
+        } catch (Exception ex) {
+            logger.error("Error getting storeID info", ex);
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 }

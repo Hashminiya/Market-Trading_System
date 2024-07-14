@@ -3,6 +3,6 @@ package DomainLayer.Market.Purchase.Abstractions;
 import java.util.Date;
 
 public interface IPaymentService {
-    boolean validateCreditCard(String cardNumber, Date expiryDate, String cvv,double amount);
-    boolean chargeCreditCard(String cardNumber, Date expiryDate, String cvv, double amount);
+    int chargeCreditCard(String cardNumber, Date expiryDate, String cvv, double amount) throws Exception;
+    int cancelPayment(int transactionId) throws Exception;
 }

@@ -14,6 +14,8 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @Entity
 @Component
 @Scope("prototype")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User implements IUser,DataItem<String> {
     @Id
     private String userName;
@@ -34,18 +38,20 @@ public class User implements IUser,DataItem<String> {
     @Transient
     private ShoppingCart shoppingCart;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "user_assigners", joinColumns = @JoinColumn(name = "user_name"))
     @MapKeyColumn(name = "store_id")
     @Column(name = "assigners")
     @Convert(converter = StringSetConverter.class)
+    @BatchSize(size = 25)
     private Map<Long, Set<String>> assigners;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "user_store_permissions", joinColumns = @JoinColumn(name = "user_name"))
     @MapKeyColumn(name = "store_id")
     @Column(name = "permission", length = 500)
     @Convert(converter = StoreEnumSetConverter.class)
+    @BatchSize(size = 25)
     private Map<Long, Set<StoreEnum>> storePermissionsAndRole;
     @Transient
     private ReentrantLock lock;

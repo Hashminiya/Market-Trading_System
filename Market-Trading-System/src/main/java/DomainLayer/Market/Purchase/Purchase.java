@@ -2,19 +2,28 @@ package DomainLayer.Market.Purchase;
 
 import API.Utils.SpringContext;
 import DAL.ItemDTO;
+import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
+import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
+import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
 import DomainLayer.Market.Util.DataItem;
+import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.ItemDTORepository;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Purchase implements IPurchase, DataItem<Long> {
 
     @Transient
@@ -32,7 +41,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
             joinColumns = @JoinColumn(name = "purchase_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
-
+    @BatchSize(size = 25)
     private List<ItemDTO> purchasedItemsList;
 
     private double totalAmount;
@@ -43,8 +52,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
     @Transient
     private ItemDTORepository itemsRepo;
 
-    String purchaseDate;
-
+    private String purchaseDate;
 
     public Purchase(String userId,double totalAmount,Long purchaseId,List<ItemDTO> purchasedItemsList, PaymentServiceProxy paymentService, SupplyServiceProxy supplyService) {
             paymentServiceProxy = paymentService;
@@ -70,16 +78,22 @@ public class Purchase implements IPurchase, DataItem<Long> {
     }
 
     @Override
-    public void checkout(String creditCard, Date expiryDate, String CVV) {
-        Boolean isValidCard = paymentServiceProxy.validateCreditCard(creditCard,expiryDate,CVV,totalAmount);
-        Boolean canBeSupplied = supplyServiceProxy.validateCartSupply(purchasedItemsList);
-        if(isValidCard & canBeSupplied){
-            paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,totalAmount);
-            supplyServiceProxy.performCartSupply(purchasedItemsList);
+    public void checkout(String creditCard, Date expiryDate, String CVV) throws Exception {
+        try {
+            int paymentResult = paymentServiceProxy.chargeCreditCard(creditCard,expiryDate,CVV,totalAmount);
+            int supplyResult = -1;
+            if(paymentResult != -1)
+                supplyResult = supplyServiceProxy.performCartSupply();
+            int cancelPaymentResult = -1;
+            if(supplyResult == -1 && paymentResult != -1) {
+                cancelPaymentResult = paymentServiceProxy.cancelPayment(supplyResult);
+                while(cancelPaymentResult == -1)
+                    cancelPaymentResult = paymentServiceProxy.cancelPayment(supplyResult);
+            }
         }
-        else if(!isValidCard)
-            throw new RuntimeException("Checkout Failed\nTransaction cannot be made with that credit card");
-        else throw new RuntimeException("Checkout Failed\nOne of the items can not be supplied");
+        catch(Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public List<ItemDTO> getItemByStore(Long storeId){
@@ -102,7 +116,15 @@ public class Purchase implements IPurchase, DataItem<Long> {
         return null;
     }
 
+    public List<ItemDTO> getPurchasedItemsList() {
+        return purchasedItemsList;
+    }
 
+    public double getTotalAmount() {
+        return totalAmount;
+    }
 
+    public String getPurchaseDate() {
+        return purchaseDate;
+    }
 }
-

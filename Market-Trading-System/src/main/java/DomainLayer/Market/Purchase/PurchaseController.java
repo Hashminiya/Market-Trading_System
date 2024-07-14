@@ -16,21 +16,17 @@ import java.util.concurrent.PriorityBlockingQueue;
 @Component("purchaseController")
 public class PurchaseController implements IPurchaseFacade {
     private static PurchaseController purchaseControllerInstance;
-    private BlockingQueue<ItemDTO> inventoryReduceItems; // queue to remove products from inventory
     private PurchaseRepository purchaseRepo;
-
     private PaymentServiceProxy paymentServiceProxy;
     private SupplyServiceProxy supplyServiceProxy;
     private IUserFacade userFacade;
 
     @Autowired
     private PurchaseController(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
-
         this.purchaseRepo = purchaseRepo;
         this.paymentServiceProxy = paymentServiceProxy;
         this.supplyServiceProxy = supplyServiceProxy;
 
-        inventoryReduceItems = new PriorityBlockingQueue<ItemDTO>(); //protected queue
     }
 
     public static synchronized PurchaseController getInstance(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
@@ -41,7 +37,7 @@ public class PurchaseController implements IPurchaseFacade {
     }
 
     @Override
-    public void checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList,double totalAmount) {
+    public void checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList,double totalAmount) throws Exception {
         if(purchaseItemsList.isEmpty())
             throw new RuntimeException("No items for checkout");
 
@@ -49,7 +45,6 @@ public class PurchaseController implements IPurchaseFacade {
         Purchase purchase = new Purchase(userID,totalAmount,purchaseId,purchaseItemsList,paymentServiceProxy, supplyServiceProxy);
         purchase.checkout(creditCard, expiryDate, cvv);
         purchaseRepo.save(purchase);
-        inventoryReduceItems.addAll(purchaseItemsList);
     }
 
     @Override
@@ -66,23 +61,8 @@ public class PurchaseController implements IPurchaseFacade {
     }
 
     @Override
-    public synchronized List<ItemDTO> getPurchasedItems() {
-        List<ItemDTO> purchasedItems = new ArrayList<>();
-        if (inventoryReduceItems.isEmpty())
-            throw new RuntimeException("There are no purchased items waiting to reduce from inventory");
-        while (!inventoryReduceItems.isEmpty())
-            purchasedItems.add(inventoryReduceItems.remove());
-        return purchasedItems;
-    }
-
-    @Override
     public List<Purchase> getPurchaseHistory(String userName) {
-        if(userFacade.isAdmin(userName)) {
-            return purchaseRepo.findAll();
-        }
-        else{
-            throw new RuntimeException(String.format("%s unauthorized to preform this action",userName));
-        }
+       return purchaseRepo.findAll();
     }
 
     public void setUserFacade(IUserFacade userFacade) {
@@ -107,7 +87,6 @@ public class PurchaseController implements IPurchaseFacade {
 
     public void clear(){
         purchaseControllerInstance = null;
-        inventoryReduceItems = null; // queue to remove products from inventory
         purchaseRepo = null;
 
         paymentServiceProxy = null;

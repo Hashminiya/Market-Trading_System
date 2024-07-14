@@ -17,15 +17,11 @@ public interface IPurchaseFacade {
     {
         return PurchaseController.getInstance(purchaseRepo, paymentServiceProxy, supplyServiceProxy);
     }
-    void checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList,double totalAmount);
+    void checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList,double totalAmount) throws Exception;
     HashMap<Long,List<ItemDTO>> getPurchasesByStore(long storeId);
-    //HashMap<Long,List<ItemDTO>> getPurchasesByUser(String UserId); Not For this version
-    List<ItemDTO> getPurchasedItems();
     List<Purchase> getPurchaseHistory(String userName);
     public void setUserFacade(IUserFacade userFacade);
-
     void clearPurchases();
-
     public void clear();
     public void setPaymentServiceProxy(PaymentServiceProxy paymentServiceProxy);
 

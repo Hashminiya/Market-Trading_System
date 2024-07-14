@@ -1,7 +1,9 @@
 package ServiceLayer.Market;
 
 import API.InitCommand;
+import DAL.PurchaseDTO;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
+import DomainLayer.Market.Purchase.Purchase;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.SystemManager;
@@ -22,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.ws.rs.core.Response;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("SystemManagerService")
 public class SystemManagerService implements ISystemManagerService {
@@ -38,7 +42,7 @@ public class SystemManagerService implements ISystemManagerService {
     private JwtService jwtService;
 
     @Autowired
-    private SystemManagerService(@Qualifier("purchaseController") IPurchaseFacade purchaseFacade,
+    public SystemManagerService(@Qualifier("purchaseController") IPurchaseFacade purchaseFacade,
                                  @Qualifier("StoreController") IStoreFacade storeFacade,
                                  @Qualifier("userController") IUserFacade userFacade) {
         //SystemManager systemManager = SystemManager.getInstance();
@@ -79,24 +83,36 @@ public class SystemManagerService implements ISystemManagerService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> viewMarketPurchaseHistory(String token) {
         try {
             String userName = jwtService.extractUsername(token);
-            if(jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
-                ResponseEntity<?> response = ResponseEntity.ok(purchaseFacade.getPurchaseHistory(userName));
+            if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
+                if (userFacade.isAdmin(userName)) {
+                List<Purchase> purchases = purchaseFacade.getPurchaseHistory(userName);
+                List<PurchaseDTO> purchaseDTOs = purchases.stream()
+                        .map(purchase -> new PurchaseDTO(
+                                purchase.getPurchaseId(),
+                                purchase.getPurchasedItemsList(),
+                                purchase.getTotalAmount(),
+                                purchase.getUserId(),
+                                purchase.getPurchaseDate()))
+                        .collect(Collectors.toList());
+
                 logger.info("View market purchase history by: {}", userName);
-                return response;
-            }
-            else {
+                return ResponseEntity.ok(purchaseDTOs);
+                } else {
+                    logger.warn("User is not an admin: {}", userName);
+                    return ResponseEntity.status(401).body("User is not an admin");
+                }
+            } else {
                 logger.warn("Invalid token for creating store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
             }
-        }
-        catch (CannotCreateTransactionException | DataAccessException e) {
+        } catch (CannotCreateTransactionException | DataAccessException e) {
             logException("Database connection error: ", e);
             return ResponseEntity.status(500).body(String.format("Database connection error: Unable to view market purchase history due to database connectivity issue\nError message: %s", e.getMessage()));
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             logException("Exception in viewMarketPurchaseHistory", exception);
             return ResponseEntity.status(500).body(exception.getMessage());
         }
@@ -104,6 +120,7 @@ public class SystemManagerService implements ISystemManagerService {
 
     @Override
     @InitCommand(name = "closeStore")
+    @Transactional
     public ResponseEntity<?> closeStore(String token, long storeId) {
         try {
             String userName = jwtService.extractUsername(token);

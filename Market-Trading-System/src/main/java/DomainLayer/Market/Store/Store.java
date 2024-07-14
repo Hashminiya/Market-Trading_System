@@ -13,11 +13,15 @@ import DomainLayer.Repositories.ItemSpecifications;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Store implements DataItem<Long> {
 
     @Id
@@ -26,14 +30,16 @@ public class Store implements DataItem<Long> {
     private String name;
     private String description;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "store_owners", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
     @Column(name = "owner_username")
+    @BatchSize(size = 25)
     private List<String> owners;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "store_managers", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
     @Column(name = "manager_username")
+    @BatchSize(size = 25)
     private List<String> managers;
     @Transient
     private ItemRepository products;
@@ -42,8 +48,9 @@ public class Store implements DataItem<Long> {
     //@Transient
     //private PurchasePolicyRepository purchasePolicies;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
+    @BatchSize(size = 25)
     private List<PurchasePolicy> purchasePolicies = new ArrayList<>();
 
     @Transient
