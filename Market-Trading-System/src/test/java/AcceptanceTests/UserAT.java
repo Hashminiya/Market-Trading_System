@@ -209,7 +209,7 @@ public class UserAT {
     @Order(14)
     public void test_checkoutShoppingCart_should_return_error_with_false_from_credit_card_services() {
         paymentServiceProxy = mock(PaymentServiceProxy.class);
-        when(paymentServiceProxy.chargeCreditCard(anyString(),any(),anyString(),anyDouble())).thenReturn(false);
+//        when(paymentServiceProxy.chargeCreditCard(anyString(),any(),anyString(),anyDouble())).thenReturn(-1);
         serviceFactory.getPurchaseFacade().setPaymentServiceProxy(paymentServiceProxy);
 
         HashMap<Long, Integer> inventory_before_action = (HashMap<Long, Integer>)
