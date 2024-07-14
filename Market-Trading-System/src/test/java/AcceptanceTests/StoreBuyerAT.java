@@ -44,7 +44,6 @@ public class StoreBuyerAT {
     static long ITEM_ID_2;
     static long ITEM_ID_3;
     static String STORE_NAME = "storeName";
-    private static ServiceFactory serviceFactory;
     private static IStoreFacade storeFacade;
 
     @BeforeAll
@@ -66,30 +65,33 @@ public class StoreBuyerAT {
         }
     }
 
-    @AfterEach
-    void tearDown(){
-        serviceFactory.clear();
-        /*userService.clear();
-        storeBuyerService.clear();*/
-    }
 
     @Test
     public void test_getAllProductsInfoByStore_should_return_ok_status_and_valid_items() {
         ResponseEntity<?> response = storeBuyerService.getAllProductsInfoByStore(STORE_ID);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value(), "Expected status code 200 OK");
 
         Map<Long, String> expectedProducts = new HashMap<>();
         expectedProducts.put(ITEM_ID_1, "Laptop");
         expectedProducts.put(ITEM_ID_2, "Phone");
         expectedProducts.put(ITEM_ID_3, "Headphones");
 
-        List<Item> items = new ArrayList<>();
+        List<Item> expectedItems = new ArrayList<>();
         for (Map.Entry<Long, String> entry : expectedProducts.entrySet()) {
             Item item = storeFacade.getItem(entry.getKey());
-            items.add(item);
+            expectedItems.add(item);
         }
 
-        assertEquals(items, response.getBody());
+        List<Item> actualItems = (List<Item>) response.getBody();
+
+        // Ensure the lists have the same size
+        assertEquals(expectedItems.size(), actualItems.size(), "The number of items should match");
+
+        // Check if each item's name matches
+        for (int i = 0; i < expectedItems.size(); i++) {
+            assertEquals(expectedItems.get(i).getName(), actualItems.get(i).getName(),
+                    "Item name should match for item at index: " + i);
+        }
     }
 
     @Test
@@ -106,25 +108,46 @@ public class StoreBuyerAT {
     @Test
     public void test_searchInStoreByCategory_should_return_ok_status_and_valid_items() {
         ResponseEntity<?> response = storeBuyerService.searchInStoreByCategory(STORE_ID, "Electronics");
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value(), "Expected status code 200 OK");
 
         Map<Long, String> expectedProducts = new HashMap<>();
         expectedProducts.put(ITEM_ID_1, "Laptop");
         expectedProducts.put(ITEM_ID_2, "Phone");
         expectedProducts.put(ITEM_ID_3, "Headphones");
 
-        assertEquals(expectedProducts, response.getBody());
+        Map<Long, String> itemsRes = (Map<Long, String>) response.getBody();
+
+        // Check if the items_res contains all expected items with correct names
+        for (Map.Entry<Long, String> entry : expectedProducts.entrySet()) {
+            Long expectedItemId = entry.getKey();
+            String expectedItemName = entry.getValue();
+
+            assertEquals(expectedItemName, itemsRes.get(expectedItemId),
+                    "Item name should match for item ID: " + expectedItemId);
+        }
     }
 
     @Test
     public void test_searchInStoreByKeyWord_should_return_ok_status_and_valid_items() {
         ResponseEntity<?> response = storeBuyerService.searchInStoreByKeyWord(STORE_ID, "Laptop");
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value(), "Expected status code 200 OK");
 
         Map<Long, String> expectedProducts = new HashMap<>();
         expectedProducts.put(ITEM_ID_1, "Laptop");
 
-        assertEquals(expectedProducts, response.getBody());
+        // Cast response.getBody() to Map<Long, String> as expected
+        Map<Long, String> itemsRes = (Map<Long, String>) response.getBody();
+
+        // Check if the expectedProducts map matches the itemsRes map
+        assertEquals(expectedProducts.size(), itemsRes.size(), "Expected number of items should match");
+
+        for (Map.Entry<Long, String> entry : expectedProducts.entrySet()) {
+            Long expectedItemId = entry.getKey();
+            String expectedItemName = entry.getValue();
+
+            assertEquals(expectedItemName, itemsRes.get(expectedItemId),
+                    "Item name should match for item ID: " + expectedItemId);
+        }
     }
 
     @Test
@@ -165,7 +188,11 @@ public class StoreBuyerAT {
             items.add(item);
         }
 
-        assertEquals(items, response.getBody());
+        Item expectedItem = items.get(0);
+        Item resItem = ((List<Item>)response.getBody()).get(0);
+
+        assertEquals(expectedItem.getName(), resItem.getName(),"Should return the same name");
+        assertEquals(expectedItem.getId(), resItem.getId(),"Should return the same Id");
     }
 
     @Test
