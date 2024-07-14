@@ -50,12 +50,6 @@ public class StoreManagementService implements IStoreManagementService {
         this.jwtService = new JwtService();
     }
 
-    public StoreManagementService(){
-        this.storeFacade = SpringContext.getBean(StoreController.class);
-        this.userFacade = SpringContext.getBean(UserController.class);
-        this.jwtService = new JwtService();
-    }
-
     public void setJwtService(JwtService jwtService) {
         this.jwtService = jwtService;
     }
