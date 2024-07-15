@@ -1,22 +1,34 @@
 package UnitTests.DomainLayer.User;
 
+import API.Utils.SpringContext;
 import DomainLayer.Market.User.User;
 import DomainLayer.Repositories.InMemoryUserRepository;
+import DomainLayer.Repositories.UserRepository;
+import SetUp.ApplicationTest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest(classes = ApplicationTest.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InMemoryUserRepositoryTest {
 
-    private InMemoryUserRepository userRepository;
+    private static InMemoryUserRepository userRepository;
 
+    @BeforeAll
+    public static void init() {
+        userRepository = SpringContext.getBean(InMemoryUserRepository.class);
+    }
     @BeforeEach
     public void setUp() {
-        userRepository = new InMemoryUserRepository();
+        userRepository.deleteAll();
     }
 
     @Test

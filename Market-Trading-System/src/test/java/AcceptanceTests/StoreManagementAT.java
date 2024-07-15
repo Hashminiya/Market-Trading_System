@@ -5,6 +5,7 @@ import DomainLayer.Market.Purchase.PaymentServiceProxy;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.UserController;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
@@ -88,9 +89,9 @@ public class StoreManagementAT{
 
     @BeforeAll
     public static void setUp() {
-        SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
-        storeManagementService = SpringContext.getBean(StoreManagementService.class);
         userService = SpringContext.getBean(UserService.class);
+        SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
+        storeManagementService = SpringContext.getBean(StoreManagementService.class);
 
 //        storeManagementService.setUserFacade(serviceFactory.getUserFacade());
         userService.register(FOUNDER_ID, PASSWORD, AGE);
