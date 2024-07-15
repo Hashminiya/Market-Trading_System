@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import DomainLayer.Market.Store.Item;
 import org.springframework.context.annotation.Profile;
@@ -21,6 +22,43 @@ public class InMemoryItemRepository implements ItemRepository {
 
     private ConcurrentHashMap<Long, Item> storage = new ConcurrentHashMap<>();
     private AtomicLong idCounter = new AtomicLong();
+
+
+    @Override
+    public List<String> findCategoriesByItemId(Long itemId) {
+        return storage.values().stream()
+                .filter(item -> item.getId().equals(itemId))
+                .findFirst()
+                .map(Item::getCategories)
+                .orElse(List.of());
+    }
+
+    @Override
+    public List<String> findAllCategoriesByStoreId(long storeId) {
+        return storage.values().stream()
+                .filter(item -> item.getStoreId() == storeId)
+                .flatMap(item -> item.getCategories().stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> findByStoreIdAndNameContaining(long storeId, String name) {
+        return storage.values().stream()
+                .filter(item -> item.getStoreId() == storeId && item.getName().contains(name))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return storage.containsKey(id);
+    }
+
+    @Override
+    public Item save(Item entity) {
+        storage.put(entity.getId(), entity);
+        return entity;
+    }
 
     //@Override
     public List<String> findAllCategories() {
@@ -54,20 +92,6 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public Optional<Item> findById(Long id) {
         return Optional.ofNullable(storage.get(id));
-    }
-
-    @Override
-    public boolean existsById(Long aLong) {
-        return false;
-    }
-
-    @Override
-    public Item save(Item item) {
-//        if (item.getId() == null) {
-//            item.setId(idCounter.incrementAndGet());
-//        }
-//        storage.put(item.getId(), item);
-        return item;
     }
 
     @Override
@@ -249,21 +273,6 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public Page<Item> findAll(Pageable pageable) {
         return null;
-    }
-
-    @Override
-    public List<String> findCategoriesByItemId(Long itemId) {
-        return List.of();
-    }
-
-    @Override
-    public List<String> findAllCategoriesByStoreId(long storeId) {
-        return List.of();
-    }
-
-    @Override
-    public List<Item> findByStoreIdAndNameContaining(long storeId, String name) {
-        return List.of();
     }
 
     //get list of items by store id

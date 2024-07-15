@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 @Profile("db")
 @Scope("prototype")
 public interface BasketItemRepository extends JpaRepository<BasketItem, BasketItemId> {
+    //TODO : Maybe need to add Db repo and in-mem repo ?
 }

@@ -16,6 +16,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
+import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.context.annotation.Scope;
@@ -36,6 +37,7 @@ public class User implements IUser,DataItem<String> {
     private int userAge;
     @Transient
     private Istate state;
+    @Getter
     protected boolean loggedIn;
     @Transient
     private ShoppingCart shoppingCart;

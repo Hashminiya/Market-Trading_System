@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -16,6 +17,9 @@ import java.util.function.Function;
 @Repository
 @Profile("in-memory")
 public class InMemoryPurchaseRepository implements PurchaseRepository {
+
+    private final List<Purchase> purchases = new ArrayList<>();
+
     @Override
     public void flush() {
 
@@ -52,8 +56,11 @@ public class InMemoryPurchaseRepository implements PurchaseRepository {
     }
 
     @Override
-    public Purchase getById(Long aLong) {
-        return null;
+    public Purchase getById(Long id) {
+        return purchases.stream()
+                .filter(purchase -> purchase.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -97,28 +104,13 @@ public class InMemoryPurchaseRepository implements PurchaseRepository {
     }
 
     @Override
-    public <S extends Purchase> S save(S entity) {
+    public <S extends Purchase> List<S> saveAll(Iterable<S> entities) {
         return null;
     }
 
     @Override
-    public <S extends Purchase> List<S> saveAll(Iterable<S> entities) {
-        return List.of();
-    }
-
-    @Override
-    public Optional<Purchase> findById(Long aLong) {
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean existsById(Long aLong) {
-        return false;
-    }
-
-    @Override
     public List<Purchase> findAll() {
-        return List.of();
+        return purchases;
     }
 
     @Override
@@ -132,13 +124,31 @@ public class InMemoryPurchaseRepository implements PurchaseRepository {
     }
 
     @Override
-    public void deleteById(Long aLong) {
+    public Purchase save(Purchase entity) {
+        purchases.add(entity);
+        return entity;
+    }
 
+    @Override
+    public Optional<Purchase> findById(Long id) {
+        return purchases.stream()
+                .filter(purchase -> purchase.getId().equals(id))
+                .findFirst();
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return purchases.stream().anyMatch(purchase -> purchase.getId().equals(id));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        purchases.removeIf(purchase -> purchase.getId().equals(id));
     }
 
     @Override
     public void delete(Purchase entity) {
-
+        purchases.remove(entity);
     }
 
     @Override
@@ -153,7 +163,7 @@ public class InMemoryPurchaseRepository implements PurchaseRepository {
 
     @Override
     public void deleteAll() {
-
+        purchases.clear();
     }
 
     @Override

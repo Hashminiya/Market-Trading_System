@@ -21,7 +21,6 @@ import java.util.function.Function;
 public class InMemoryBasketRepository implements BasketRepository {
     @Override
     public void flush() {
-
     }
 
     @Override
