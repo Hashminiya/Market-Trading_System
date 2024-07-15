@@ -19,10 +19,12 @@ public class LogicalDiscountComposite extends DiscountComposite{
     private int decision;
 
     @JsonCreator
-    public LogicalDiscountComposite(@JsonProperty("id") Long id,
-                                    @JsonProperty("discounts") List<IDiscount> discounts,
-                                    @JsonProperty("logicalRule") String rule,
-                                    @JsonProperty("decision") int decision) {
+    public LogicalDiscountComposite(
+            @JsonProperty("id") Long id,
+            @JsonProperty("name") String name,
+            @JsonProperty("discounts") List<IDiscount> discounts,
+            @JsonProperty("logicalRule") String rule,
+            @JsonProperty("decision") int decision) {
         super(id, discounts);
         this.logicalRule = LogicalRule.valueOf(rule);
         this.decision = decision;

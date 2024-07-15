@@ -242,7 +242,8 @@ public class Store implements DataItem<Long> {
     public ItemRepository getProductRepo() {
         return products;
     }
-    public void addDiscount(String discountDetails) throws Exception{
+
+    public void addDiscount(String discountDetails) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerSubtypes(new NamedType(RegularDiscount.class, "RegularDiscount"));
         objectMapper.registerSubtypes(new NamedType(HiddenDiscount.class, "HiddenDiscount"));
@@ -254,12 +255,11 @@ public class Store implements DataItem<Long> {
         try {
             BaseDiscount discount = objectMapper.readValue(discountDetails, BaseDiscount.class);
             discounts.save(discount);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Error while creating discount\n" + e.getMessage());
         }
-
     }
+
     public boolean checkValidBasket(ShoppingBasket basket, String userDetails) throws InterruptedException{
         HashMap<Item, Integer> itemsInBasket = new HashMap<>();
         //Map<Item, Integer> decreasedItems = new HashMap<>();
