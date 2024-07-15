@@ -15,10 +15,10 @@ import java.util.Properties;
 import java.util.Scanner;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
-@EnableJpaRepositories(basePackages = {"API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
-@EntityScan(basePackages = {"API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
-//@DependsOn("startupListener")
+@ComponentScan(basePackages = {"API.controller","API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
+@EnableJpaRepositories(basePackages = {"API.controller", "API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
+@EntityScan(basePackages = {"API.controller", "API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
+@DependsOn("startupListener")
 public class ApplicationTest {
     public static void main(String[] args) throws Exception {
 

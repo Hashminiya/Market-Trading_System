@@ -17,12 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Component("userController")
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
+    @Autowired
     private UserRepository users;
     private SystemManager admin;
     private IStoreFacade storeFacade;
@@ -211,6 +213,7 @@ public class UserController implements IUserFacade {
         }
     }
 
+    @Transactional
     @Override
     public boolean checkPermission(String userName, long storeId, String permission) {
         User user = getUser(userName);
@@ -327,5 +330,7 @@ public class UserController implements IUserFacade {
         }
         return guestsNames;
     }
+
+    public void setUserRepository(UserRepository userRepository) { users = userRepository;}
 
 }

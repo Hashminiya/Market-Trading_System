@@ -62,7 +62,7 @@ public class ShoppingCart {
         boolean hasStock = storeFacade.addItemToShoppingBasket(sb, storeId, itemId, quantity);
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
         List<BasketItem> basketItems = basketItemRepository.findAll();
-        for(BasketItem bi : basketItems){
+        /*for(BasketItem bi : basketItems){
             if(Objects.equals(bi.getId().getBasketId(), sb.getId()) && bi.getId().getItemId() == itemId){
                 bi.setQuantity(bi.getQuantity() + quantity);
                 basketItemRepository.save(bi);
@@ -70,7 +70,7 @@ public class ShoppingCart {
             }
         }
         BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
-        basketItemRepository.save(basketItem);
+        basketItemRepository.save(basketItem);*/
 
         return sb.getId();
     }
@@ -150,6 +150,10 @@ public class ShoppingCart {
         return totalPrice;
     }
     public void clear(){
+        for(ShoppingBasket sb: shoppingBaskets){
+            baskets.deleteById(sb.getId());
+            basketItemRepository.deleteByBasket(sb.getId());
+        }
         shoppingBaskets.clear();
         //TODO:: Delete all from DB
 //        List<Long> ids = baskets.findAll().stream().map(ShoppingBasket::getId).toList();

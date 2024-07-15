@@ -37,7 +37,7 @@ public class UserAT {
     private static final int AGE = 25;
     private static final int AGE_UNDER_18 = 15;
     private static final String CREDIT_CARD = "1234-5678-9876-5432";
-    private static final Date EXPIRY_DATE = new Date(); // Set an appropriate expiry date
+    private static final Date EXPIRY_DATE = new Date("07/07/27"); // Set an appropriate expiry date
     private static final String CVV = "123";
     private static final String DISCOUNT_CODE = "DISCOUNT10";
     private static long ITEM2_ID;
@@ -143,9 +143,10 @@ public class UserAT {
     public void test_addPermission_should_return_ok_status() {
         List<String> permissions = new ArrayList<>();
         permissions.add("REMOVE_STORE");
-        userService.login(USERNAME2,PASSWORD);
+        USERNAME2_TOKEN = userService.login(USERNAME2,PASSWORD).getBody();
         storeManagementSevice.assignStoreManager(USERNAME1_TOKEN, STOREID, USERNAME2,permissions);
         ResponseEntity<String> response = userService.addPermission(USERNAME1_TOKEN, USERNAME2,STOREID, StorePermission.REMOVE_STORE.toString());
+        userService.logout(USERNAME2_TOKEN);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
