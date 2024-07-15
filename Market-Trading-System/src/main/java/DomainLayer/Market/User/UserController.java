@@ -1,5 +1,5 @@
 package DomainLayer.Market.User;
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
@@ -7,11 +7,8 @@ import DomainLayer.Market.Util.StorePermission;
 
 
 import DomainLayer.Repositories.*;
-import jakarta.transaction.Transactional;
 
-import DomainLayer.Repositories.BasketRepository;
 import DomainLayer.Repositories.DbBasketRepository;
-import DomainLayer.Repositories.InMemoryBasketRepository;
 import DomainLayer.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,13 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import DAL.ItemDTO;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Component("userController")
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
+    @Autowired
     private UserRepository users;
     private SystemManager admin;
     private IStoreFacade storeFacade;
@@ -36,7 +34,7 @@ public class UserController implements IUserFacade {
     private List<User> guests = new ArrayList<>();
 
     @Autowired
-    private UserController(UserRepository users,
+    public UserController(UserRepository users,
                            @Qualifier("SystemManager") SystemManager admin,
                            @Qualifier("StoreController") IStoreFacade storeFacade,
                            @Qualifier("purchaseController") IPurchaseFacade purchaseFacade) {
@@ -215,6 +213,7 @@ public class UserController implements IUserFacade {
         }
     }
 
+    @Transactional
     @Override
     public boolean checkPermission(String userName, long storeId, String permission) {
         User user = getUser(userName);
@@ -323,5 +322,15 @@ public class UserController implements IUserFacade {
     public double getShoppingCartTotalPrice(String userName) {
         return getUser(userName).getShoppingCart().getShoppingCartPrice();
     }
+
+    public List<String> getGuests(){
+        List<String> guestsNames = new ArrayList<>();
+        for (User guest : guests){
+            guestsNames.add(guest.getUserName());
+        }
+        return guestsNames;
+    }
+
+    public void setUserRepository(UserRepository userRepository) { users = userRepository;}
 
 }

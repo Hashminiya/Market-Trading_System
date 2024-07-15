@@ -1,14 +1,12 @@
 package DomainLayer.Market;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.BasketItem;
 import DAL.BasketItemId;
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StoreController;
-import DomainLayer.Market.User.Istate;
-import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.BasketItemRepository;

@@ -1,7 +1,6 @@
 package DomainLayer.Market.Store;
-import DAL.ItemDTO;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.PolicyDTO;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;

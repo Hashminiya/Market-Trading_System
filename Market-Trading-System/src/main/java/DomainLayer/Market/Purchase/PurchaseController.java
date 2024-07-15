@@ -6,12 +6,9 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 
 @Component("purchaseController")
 public class PurchaseController implements IPurchaseFacade {
@@ -22,7 +19,7 @@ public class PurchaseController implements IPurchaseFacade {
     private IUserFacade userFacade;
 
     @Autowired
-    private PurchaseController(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
+    public PurchaseController(PurchaseRepository purchaseRepo, PaymentServiceProxy paymentServiceProxy, SupplyServiceProxy supplyServiceProxy) {
         this.purchaseRepo = purchaseRepo;
         this.paymentServiceProxy = paymentServiceProxy;
         this.supplyServiceProxy = supplyServiceProxy;
@@ -74,6 +71,7 @@ public class PurchaseController implements IPurchaseFacade {
     }
     public void setSupplyServiceProxy(SupplyServiceProxy supplyServiceProxy) {this.supplyServiceProxy = supplyServiceProxy;}
 
+    @Override
     public void setPurchaseRepo(PurchaseRepository purchaseRepo) {
         this.purchaseRepo = purchaseRepo;
     }
@@ -81,8 +79,7 @@ public class PurchaseController implements IPurchaseFacade {
     @Override
     public void clearPurchases(){
         List<Purchase> purchases = purchaseRepo.findAll();
-        for(Purchase purchase: purchases)
-            purchaseRepo.delete(purchase);
+        purchaseRepo.deleteAll();
     }
 
     public void clear(){

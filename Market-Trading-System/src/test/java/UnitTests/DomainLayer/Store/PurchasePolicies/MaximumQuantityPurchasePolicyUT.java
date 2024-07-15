@@ -2,8 +2,10 @@ package UnitTests.DomainLayer.Store.PurchasePolicies;
 
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StorePurchasePolicy.MaximumQuantityPurchasePolicy;
+import SetUp.ApplicationTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class MaximumQuantityPurchasePolicyUT {
 
     private static final long POLICY_ID = 1L;
@@ -26,8 +29,8 @@ public class MaximumQuantityPurchasePolicyUT {
 
     @BeforeAll
     static void setUp() {
-        item1 = new Item(1L, "item1", "item1 description", List.of("category1"));
-        item2 = new Item(2L, "item2", "item2 description", List.of("category2"));
+        item1 = new Item(1L, "item1", "item1 description", List.of("category1"), 1L);
+        item2 = new Item(2L, "item2", "item2 description", List.of("category2"), 1L);
         maximumQuantityPurchasePolicy = new MaximumQuantityPurchasePolicy(POLICY_NAME, POLICY_ID, MAX_AMOUNT, ITEM_IDS, CATEGORIES, IS_STORE);
     }
 
@@ -57,7 +60,7 @@ public class MaximumQuantityPurchasePolicyUT {
 
     @Test
     void test_isValid_should_return_true_for_items_not_in_policy_list() {
-        Item item3 = new Item(3L, "item3", "item3 description", List.of("category3"));
+        Item item3 = new Item(3L, "item3", "item3 description", List.of("category3"), 1L);
         HashMap<Item, Integer> itemsInBasket = new HashMap<>();
         itemsInBasket.put(item3, 10);
 

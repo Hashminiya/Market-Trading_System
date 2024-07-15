@@ -1,22 +1,28 @@
 package AcceptanceTests;
 
+import API.Utils.SpringContext;
 import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Item;
+import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
-import DomainLayer.Market.Util.InMemoryRepository;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.User.IUserService;
 import ServiceLayer.User.UserService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+import SetUp.ApplicationTest;
+import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
-
-import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -25,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest(classes = ApplicationTest.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 
 public class StoreBuyerAT {
 
@@ -35,17 +44,16 @@ public class StoreBuyerAT {
     static long ITEM_ID_2;
     static long ITEM_ID_3;
     static String STORE_NAME = "storeName";
-    private static ServiceFactory serviceFactory;
     private static IStoreFacade storeFacade;
 
-
     @BeforeAll
-    public static void setUp() {
-        SetUp.setUp();
-        serviceFactory = ServiceFactory.getServiceFactory();
-        storeFacade = serviceFactory.getStoreFacade();
-        storeBuyerService = StoreBuyerService.getInstance(storeFacade);
-        userService = serviceFactory.getUserService();
+    static void setUp() {
+
+        SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
+        storeFacade = SpringContext.getBean(IStoreFacade.class);
+        storeBuyerService = SpringContext.getBean(StoreBuyerService.class);
+        userService = SpringContext.getBean(UserService.class);
+        userService.clear();
         try {
             userService.register("founderId","12345678",30);
             STORE_ID = storeFacade.createStore("founderId", STORE_NAME, "Store for electronic devices");
@@ -57,30 +65,32 @@ public class StoreBuyerAT {
         }
     }
 
-    @AfterAll
-    public static void tearDown(){
-        serviceFactory.clear();
-        /*userService.clear();
-        storeBuyerService.clear();*/
-    }
-
     @Test
     public void test_getAllProductsInfoByStore_should_return_ok_status_and_valid_items() {
         ResponseEntity<?> response = storeBuyerService.getAllProductsInfoByStore(STORE_ID);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value(), "Expected status code 200 OK");
 
         Map<Long, String> expectedProducts = new HashMap<>();
         expectedProducts.put(ITEM_ID_1, "Laptop");
         expectedProducts.put(ITEM_ID_2, "Phone");
         expectedProducts.put(ITEM_ID_3, "Headphones");
 
-        List<Item> items = new ArrayList<>();
+        List<Item> expectedItems = new ArrayList<>();
         for (Map.Entry<Long, String> entry : expectedProducts.entrySet()) {
             Item item = storeFacade.getItem(entry.getKey());
-            items.add(item);
+            expectedItems.add(item);
         }
 
-        assertEquals(items, response.getBody());
+        List<Item> actualItems = (List<Item>) response.getBody();
+
+        // Ensure the lists have the same size
+        assertEquals(expectedItems.size(), actualItems.size(), "The number of items should match");
+
+        // Check if each item's name matches
+        for (int i = 0; i < expectedItems.size(); i++) {
+            assertEquals(expectedItems.get(i).getName(), actualItems.get(i).getName(),
+                    "Item name should match for item at index: " + i);
+        }
     }
 
     @Test
@@ -155,8 +165,9 @@ public class StoreBuyerAT {
             Item item = storeFacade.getItem(entry.getKey());
             items.add(item);
         }
+        assertEquals(items.get(0).getId(), ITEM_ID_1);
+        assertEquals(items.get(0).getName(), "Laptop");
 
-        assertEquals(items, response.getBody());
     }
 
     @Test

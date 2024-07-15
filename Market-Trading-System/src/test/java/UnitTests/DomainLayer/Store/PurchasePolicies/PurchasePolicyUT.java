@@ -2,9 +2,11 @@ package UnitTests.DomainLayer.Store.PurchasePolicies;
 
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
+import SetUp.ApplicationTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class PurchasePolicyUT {
     private static final long POLICY_ID = 1L;
     private static final String POLICY_NAME = "Test Policy";
@@ -26,14 +29,13 @@ public class PurchasePolicyUT {
     private static Item item2;
     private static Item item3;
 
-    @Mock
     private static PurchasePolicy policy;
 
     @BeforeAll
     static void setUp() {
-        item1 = new Item(ITEM_ID1, "item1", "item1 description", List.of("c1", "c3"));
-        item2 = new Item(ITEM_ID2, "item2", "item2 description", List.of("c2"));
-        item3 = new Item(3L, "item3", "item3 description", List.of("c4"));
+        item1 = new Item(ITEM_ID1, "item1", "item1 description", List.of("c1", "c3"), 1L);
+        item2 = new Item(ITEM_ID2, "item2", "item2 description", List.of("c2"), 1L);
+        item3 = new Item(3L, "item3", "item3 description", List.of("c4"), 1L);
 
         policy = new PurchasePolicy(POLICY_ID, POLICY_NAME, ITEM_IDS, CATEGORIES, IS_STORE) {
             @Override
@@ -63,7 +65,7 @@ public class PurchasePolicyUT {
 
     @Test
     void test_isIncluded_should_return_false_for_item_not_in_categories_or_itemsList() {
-        Item itemNotIncluded = new Item(4L, "itemNotIncluded", "description", List.of("c5"));
+        Item itemNotIncluded = new Item(4L, "itemNotIncluded", "description", List.of("c5"), 1L);
         assertFalse(policy.isIncluded(itemNotIncluded));
     }
 

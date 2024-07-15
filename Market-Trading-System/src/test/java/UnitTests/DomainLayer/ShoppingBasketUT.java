@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import API.Utils.SpringContext;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Item;
+import DomainLayer.Repositories.BasketItemRepository;
+import SetUp.ApplicationTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +21,9 @@ import org.mockito.MockitoAnnotations;
 
 import DAL.ItemDTO;
 import DomainLayer.Market.Store.IStoreFacade;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class ShoppingBasketUT {
 
     @Mock
@@ -26,13 +31,15 @@ public class ShoppingBasketUT {
 
     private ShoppingBasket basket;
 
+
+    private final String userName = "userName";
     private final long ITEM_ID = 10L;
     private final long STORE_ID = 1L;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        basket = new ShoppingBasket(STORE_ID);
+        basket = new ShoppingBasket(STORE_ID, userName);
     }
 
     @AfterEach
@@ -100,7 +107,7 @@ public class ShoppingBasketUT {
         itemPrices.put(ITEM_ID, price);
         basket.setItemsPrice(itemPrices);
 
-        Item item = new Item(ITEM_ID, itemName, "description", new ArrayList<>());
+        Item item = new Item(ITEM_ID, itemName, "description", new ArrayList<>(), STORE_ID);
         item.setPrice(price);
         item.setQuantity(quantity);
         when(storeFacade.getItem(ITEM_ID)).thenReturn(item);

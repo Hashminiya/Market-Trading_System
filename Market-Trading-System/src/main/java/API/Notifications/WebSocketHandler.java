@@ -1,6 +1,6 @@
 package API.Notifications;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DomainLayer.Market.Notifications.Event;
 import DomainLayer.Market.Notifications.Publisher;
 import ServiceLayer.Notifications.NotificationService;

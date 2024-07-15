@@ -3,19 +3,16 @@ package ServiceLayer.User;
 import java.net.*;
 import java.sql.SQLException;
 import API.InitCommand;
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Notifications.Event;
 import DomainLayer.Market.Notifications.Publisher;
 import DAL.ShoppingCartDTO;
-import DomainLayer.Market.ShoppingBasket;
-import DomainLayer.Market.Store.StoreController;
-import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.Util.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
@@ -30,9 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.lang.reflect.Field;
-
-import java.util.*;
 
 
 @Service("userService")
@@ -46,6 +40,7 @@ public class UserService implements IUserService {
     private JwtService jwtService;
     private static UserService instance;
 
+    @Autowired
     public UserService(@Qualifier("userController") IUserFacade userFacade) {
         this.userFacade = userFacade;
         this.jwtService = new JwtService();
