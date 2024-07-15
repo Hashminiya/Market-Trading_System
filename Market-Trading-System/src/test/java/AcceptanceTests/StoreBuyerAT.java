@@ -6,6 +6,7 @@ import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StoreController;
+import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.UserController;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreBuyerService;
@@ -39,6 +40,7 @@ public class StoreBuyerAT {
 
     private static StoreBuyerService storeBuyerService;
     private static UserService userService;
+    private static IUserFacade userController;
     static long STORE_ID;
     static long ITEM_ID_1;
     static long ITEM_ID_2;
@@ -53,7 +55,7 @@ public class StoreBuyerAT {
         storeFacade = SpringContext.getBean(IStoreFacade.class);
         storeBuyerService = SpringContext.getBean(StoreBuyerService.class);
         userService = SpringContext.getBean(UserService.class);
-        userService.clear();
+//        userService.clear();
         try {
             userService.register("founderId","12345678",30);
             STORE_ID = storeFacade.createStore("founderId", STORE_NAME, "Store for electronic devices");
