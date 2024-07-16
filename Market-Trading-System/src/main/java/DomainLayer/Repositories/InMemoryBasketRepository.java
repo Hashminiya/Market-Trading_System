@@ -11,14 +11,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 @Repository
 @Profile("in-memory")
 @Scope("prototype")
 public class InMemoryBasketRepository implements BasketRepository {
+
+    Map<Long, ShoppingBasket> shoppingBaskets = new HashMap<>();
+
+
     @Override
     public void flush() {
 
@@ -56,7 +59,7 @@ public class InMemoryBasketRepository implements BasketRepository {
 
     @Override
     public ShoppingBasket getById(Long aLong) {
-        return null;
+        return shoppingBaskets.get(aLong);
     }
 
     @Override
@@ -101,6 +104,7 @@ public class InMemoryBasketRepository implements BasketRepository {
 
     @Override
     public <S extends ShoppingBasket> S save(S entity) {
+        shoppingBaskets.put(entity.getId(), entity);
         return null;
     }
 
@@ -111,6 +115,10 @@ public class InMemoryBasketRepository implements BasketRepository {
 
     @Override
     public Optional<ShoppingBasket> findById(Long aLong) {
+        ShoppingBasket basket = shoppingBaskets.get(aLong);
+        if (basket != null) {
+            return Optional.of(basket);
+        }
         return Optional.empty();
     }
 
@@ -121,7 +129,7 @@ public class InMemoryBasketRepository implements BasketRepository {
 
     @Override
     public List<ShoppingBasket> findAll() {
-        return List.of();
+        return shoppingBaskets.values().stream().toList();
     }
 
     @Override
@@ -136,12 +144,12 @@ public class InMemoryBasketRepository implements BasketRepository {
 
     @Override
     public void deleteById(Long aLong) {
-
+        shoppingBaskets.remove(aLong);
     }
 
     @Override
     public void delete(ShoppingBasket entity) {
-
+        shoppingBaskets.remove(entity.getId());
     }
 
     @Override
@@ -156,7 +164,7 @@ public class InMemoryBasketRepository implements BasketRepository {
 
     @Override
     public void deleteAll() {
-
+        shoppingBaskets.clear();
     }
 
     @Override
@@ -171,7 +179,13 @@ public class InMemoryBasketRepository implements BasketRepository {
 
     @Override
     public List<ShoppingBasket> findByUserName(String userName) {
-        return List.of();
+        List<ShoppingBasket> result = new ArrayList<>();
+        for(ShoppingBasket sb : shoppingBaskets.values()){
+            if(sb.getUserName().equals(userName)){
+                result.add(sb);
+            }
+        }
+        return result;
     }
 
 }
