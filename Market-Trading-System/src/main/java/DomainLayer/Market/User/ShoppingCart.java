@@ -151,17 +151,12 @@ public class ShoppingCart {
         return totalPrice;
     }
     public void clear(){
-        for(ShoppingBasket sb: shoppingBaskets){
-            baskets.deleteById(sb.getId());
-            basketItemRepository.deleteByBasket(sb.getId());
+        for (ShoppingBasket sb: shoppingBaskets) {
+            long id = sb.getId();
+            baskets.deleteById(id);
+            basketItemRepository.deleteByBasketId(id);
         }
         shoppingBaskets.clear();
-        //TODO:: Delete all from DB
-//        List<Long> ids = baskets.findAll().stream().map(ShoppingBasket::getId).toList();
-//        for (long id: ids
-//             ) {
-//            baskets.deleteById(id);
-//        }
     }
 
 
