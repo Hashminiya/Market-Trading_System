@@ -9,6 +9,14 @@
 4. [Correctness Constraints](#correctness-constraints)
 5. [Configuration files](#configuration-files)
     - [Properties file](#properties-file)
+        - [Database Configuration](#database-configuration)
+        - [Datasource Credentials](#datasource-credentials)
+        - [JPA Configuration](#jpa-configuration)
+        - [Connection Pooling](#connection-pooling)
+        - [Caching](#caching)
+        - [Logging Configuration](#logging-configuration)
+        - [Profile Management](#profile-management)
+        - [Initialization Properties](#initialization-properties)
     - [Initialize data](#initialize-data)
 6. [Service Level Requirements](#service-level-requirements)
 7. [Glossary](#glossary)
@@ -141,6 +149,7 @@ Set the active profile with:
 
 ```properties
 spring.profiles.active=db
+```
 
 This specifies the active configuration profile, which can be used to differentiate settings for various environments (e.g., development, production).
 
