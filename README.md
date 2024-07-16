@@ -175,6 +175,7 @@ Where:
 
 Here is an example `init-commands.txt` file:
 
+```properties
 register(u2, u2, 20)
 register(u3, u3, 20)
 register(u4, u4, 20)
@@ -187,6 +188,7 @@ assignStoreManager(u2, s1, u3, [UPDATE_ITEM])
 assignStoreOwner(u2, s1, u4)
 assignStoreOwner(u2, s1, u5)
 logout(u2)
+```
 
 #### Example Commands
 
