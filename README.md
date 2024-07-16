@@ -31,22 +31,22 @@ The Market Trading System (Market) allows for trading infrastructure between sel
 ## System Features
 
 1. **User Management**:
-   - **Visitors**: Users can visit the marketplace as guests or registered members (subscribers).
+   - **Guests**: Users can visit the marketplace as guests or registered members (subscribers).
    - **Subscribers**: Users can register and log in to become subscribers. Subscribers can assume roles such as buyers, sellers, and store managers.
 
 2. **Store Management**:
    - **Store Creation**: Subscribers can create stores and become store owners.
-   - **Inventory Management**: Store owners can manage their store's inventory, including adding, removing, and updating products.
+   - **Inventory Management**: Store owners can manage their store's inventory, including adding, removing, and updating items.
    - **Policy Management**: Store owners can set and modify purchase and discount policies.
    - **Role Assignment**: Store owners can appoint other subscribers as co-owners or store managers with specific permissions.
 
 3. **Trade Operations**:
-   - **Product Search**: Users can search for products by various criteria such as name, category, keywords, price range, and ratings.
-   - **Shopping Cart**: Each buyer has a unique shopping cart for each store.
+   - **Product Search**: Users can search for items by various criteria such as name, category and keywords.
+   - **Shopping Cart**: Each buyer has a unique shopping cart.
    - **Purchases**: Users can purchase items in their cart, adhering to the store's purchase and discount policies.
 
 4. **Notifications**:
-   - **Real-Time Alerts**: The system provides real-time notifications to users for important events such as purchase confirmations, store status changes, and messages.
+   - **Real-Time Alerts**: The system provides real-time notifications to users for important events such as purchase confirmations and messages for store managers.
    - **Delayed Notifications**: Notifications for subscribers who are not online are stored and presented upon their next login.
 
 5. **External Services**:
