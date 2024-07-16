@@ -1,5 +1,6 @@
 package API;
 
+import API.Utils.SpringContext;
 import DomainLayer.Market.Purchase.ExternalApiUtil;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
@@ -30,8 +31,10 @@ public class StartupRunner implements CommandLineRunner {
     @Value("${data.admin.register:false}")
     private boolean registerAdmin;
 
-    public StartupRunner() {
-        userService = (IUserService) SpringContext.getBean("userService");
+    @Autowired
+    public StartupRunner(IUserService userService) {
+//        userService = (IUserService) SpringContext.getBean("userService");
+        this.userService = userService;
     }
 
     @Override
@@ -460,6 +463,6 @@ public class StartupRunner implements CommandLineRunner {
 
     private void createPurchase(List<String> tokens) {
         IUserService userService = (IUserService) SpringContext.getBean("userService");
-        userService.checkoutShoppingCart(tokens.get(0), "2222333344445555", new Date(2025), "982", "");
+        userService.checkoutShoppingCart(tokens.get(0), "2222333344445555", new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000), "984", "");
     }
 }
