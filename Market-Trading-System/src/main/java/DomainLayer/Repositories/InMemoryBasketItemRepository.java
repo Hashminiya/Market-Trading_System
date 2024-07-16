@@ -62,16 +62,6 @@ public class InMemoryBasketItemRepository implements BasketItemRepository {
     }
 
     @Override
-    public void deleteByBasket(Long id) {
-        List<BasketItemId> keysToRemove = basketItems.keySet().stream()
-                .filter(key -> key.getBasketId().equals(id))
-                .toList();
-        for (BasketItemId key : keysToRemove) {
-            basketItems.remove(key);
-        }
-    }
-
-    @Override
     public long count() {
         return basketItems.size();
     }
@@ -189,5 +179,15 @@ public class InMemoryBasketItemRepository implements BasketItemRepository {
     @Override
     public Page<BasketItem> findAll(Pageable pageable) {
         return null;
+    }
+
+    @Override
+    public void deleteByBasketId(long basketId) {
+        List<BasketItemId> keysToRemove = basketItems.keySet().stream()
+                .filter(key -> key.getBasketId().equals(basketId))
+                .toList();
+        for (BasketItemId key : keysToRemove) {
+            basketItems.remove(key);
+        }
     }
 }
