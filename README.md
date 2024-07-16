@@ -1,5 +1,5 @@
 
-# Market Trading System - README
+# Hashminia - Market Trading System
 
 ## Table of Contents
 
