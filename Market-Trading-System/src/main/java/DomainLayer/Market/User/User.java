@@ -1,5 +1,6 @@
 package DomainLayer.Market.User;
 
+import API.SpringContext;
 import API.Utils.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Converters.StoreEnumSetConverter;
@@ -84,8 +85,7 @@ public class User implements IUser,DataItem<String> {
         List<ShoppingBasket> baskets = shoppingCart.loadBasketsForUser(userName);
         shoppingCart.setShoppingBaskets(baskets);
 
-        // TODO : Shurki need to check
-//        this.assigners = new HashMap<>();
+        //this.assigners = new HashMap<>();
 
         this.lock = new ReentrantLock();
     }
