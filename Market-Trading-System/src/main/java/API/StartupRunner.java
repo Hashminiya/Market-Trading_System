@@ -463,6 +463,6 @@ public class StartupRunner implements CommandLineRunner {
 
     private void createPurchase(List<String> tokens) {
         IUserService userService = (IUserService) SpringContext.getBean("userService");
-        userService.checkoutShoppingCart(tokens.get(0), "2222333344445555", new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000), "984", "");
+        userService.checkoutShoppingCart(tokens.get(0), "2222333344445555", new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000), "982", "");
     }
 }
