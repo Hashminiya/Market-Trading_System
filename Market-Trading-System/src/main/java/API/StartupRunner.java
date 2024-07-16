@@ -1,15 +1,18 @@
 package API;
 
-import API.Utils.SpringContext;
+import DomainLayer.Market.Purchase.ExternalApiUtil;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
+import ServiceLayer.Store.IStoreBuyerService;
 import ServiceLayer.Store.IStoreManagementService;
 import ServiceLayer.User.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,11 +30,8 @@ public class StartupRunner implements CommandLineRunner {
     @Value("${data.admin.register:false}")
     private boolean registerAdmin;
 
-    @Autowired
-    public StartupRunner(IUserService userService) {
-        //userService = (IUserService) SpringContext.getBean("userService");
-        this.userService = userService;
-
+    public StartupRunner() {
+        userService = (IUserService) SpringContext.getBean("userService");
     }
 
     @Override
@@ -41,6 +41,18 @@ public class StartupRunner implements CommandLineRunner {
         System.out.println("-----------------------------------------------------------------------");
 
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
+
+        boolean connected;
+        try{
+            connected = ExternalApiUtil.performHandshake();
+        }
+        catch (Exception e){
+            connected = false;
+        }
+        if(!connected){
+            System.err.println("Failed to connect to external systems\nExiting...");
+            System.exit(1);
+        }
 
         if(registerAdmin){
             ResponseEntity<?> response = userService.register("admin", "admin", 25);

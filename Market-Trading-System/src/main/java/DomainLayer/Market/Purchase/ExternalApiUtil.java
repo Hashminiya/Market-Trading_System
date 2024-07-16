@@ -10,7 +10,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ExternalApiUtil {
-    private static final String API_URL = "https://damp-lynna-wsep-1984852e.koyeb.app/";
+    private static String API_URL;
 
     public static String sendPostRequest(Map<String, String> params) throws Exception {
         // Perform handshake before proceeding with any other request
@@ -45,7 +45,7 @@ public class ExternalApiUtil {
     }
 
     // Private method to perform the handshake
-    private static boolean performHandshake() throws Exception {
+    public static boolean performHandshake() throws Exception {
         Map<String, String> handshakeParams = Map.of("action_type", "handshake");
         URL url = new URL(API_URL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -73,5 +73,9 @@ public class ExternalApiUtil {
         boolean statusOK = con.getResponseCode() == HttpURLConnection.HTTP_OK;
         boolean codeOK  = new String(con.getInputStream().readAllBytes()).equals("OK");
         return statusOK && codeOK;
+    }
+
+    public static void setApiUrl(String apiUrl) {
+        API_URL = apiUrl;
     }
 }

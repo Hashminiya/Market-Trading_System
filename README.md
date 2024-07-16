@@ -16,6 +16,7 @@
         - [Logging Configuration](#logging-configuration)
         - [Profile Management](#profile-management)
         - [Initialization Properties](#initialization-properties)
+        - [External services](#external-services)
     - [Initialize data](#initialize-data)
 5. [Security](#security)
 6. [Glossary](#glossary)
@@ -154,8 +155,13 @@ data.delete.on_shutdown=true
 These properties control data initialization at startup, whether to register an admin user, and if data should be deleted on shutdown.
 
 
+#### External services
 
+set the URL for connection to external services:
 
+```properties
+api.external_system.url = https://damp-lynna-wsep-1984852e.koyeb.app/
+```
 
 ### Initialize data
 
