@@ -24,7 +24,6 @@ public class InMemoryBasketRepository implements BasketRepository {
 
     @Override
     public void flush() {
-
     }
 
     @Override

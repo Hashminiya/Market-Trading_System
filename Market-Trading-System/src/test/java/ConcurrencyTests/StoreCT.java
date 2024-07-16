@@ -3,35 +3,39 @@ package ConcurrencyTests;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import API.Utils.SpringContext;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.ItemsCache;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
-import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Market.Util.InMemoryRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import DomainLayer.Repositories.DiscountRepository;
+import DomainLayer.Repositories.ItemRepository;
+import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
+@SpringBootTest(classes = ApplicationTest.class)
+//@SpringBootTest(classes = ApplicationTest.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestPropertySource(locations = "classpath:application.properties")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StoreCT {
 
-    @Mock
-    private IRepository<Long , IDiscount> discounts;
-    private IRepository<Long, PurchasePolicy> purchasePolicies;
+    //@Mock
+    //private IRepository<Long , IDiscount> discounts;
+    //private  purchasePolicies;
 
     //@InjectMocks
     private Store store;
@@ -42,16 +46,21 @@ public class StoreCT {
     @BeforeEach
     public void setUp() throws Exception{
         //MockitoAnnotations.openMocks(this);
-        discounts = mock(InMemoryRepository.class);
-        purchasePolicies = mock(InMemoryRepository.class);
+        //discounts = mock(InMemoryRepository.class);
+        //purchasePolicies = mock(InMemoryRepository.class);
         if(!done) {
-            store = new Store(1L, "userName", "name", "descriptin",discounts, purchasePolicies);
+            store = new Store(1L, "userName", "name", "descriptin", SpringContext.getBean(ItemRepository.class), SpringContext.getBean(DiscountRepository.class));
             store.addItem(123L, "item1", 33.5, 3, "description", new ArrayList<>());
             store.addItem(1234L, "item2", 30.0, 2, "description", new ArrayList<>());
             store.addItem(12345L, "item3", 20.5, 1, "description", new ArrayList<>());
             done = true;
         }
 
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        cleanUpDB.clearDB();
     }
 
     @AfterEach
@@ -69,7 +78,7 @@ public class StoreCT {
 
         executor.submit(() -> {
             try{
-                store.updateItem(123L, "updated", 33.5, 3);
+                store.updateItem(123L, "updated", 23.5, 3);
             }catch (InterruptedException e) {}
             finally {
                 latch.countDown();
@@ -87,8 +96,8 @@ public class StoreCT {
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdown();
 
-        assertThat(store.getProductRepo().findById(123L).getName()).isEqualTo("updated");
-        assertThat(store.getProductRepo().findById(123L).getPrice()).isEqualTo(23.5);
+        assertThat(store.getProductRepo().findById(123L).get().getName()).isEqualTo("updated");
+        assertThat(store.getProductRepo().findById(123L).get().getPrice()).isEqualTo(23.5);
     }
 
     @Test
@@ -96,7 +105,7 @@ public class StoreCT {
         int threadCount = 2;
         CountDownLatch latch = new CountDownLatch(threadCount);
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-        when(purchasePolicies.findAll()).thenReturn(new ArrayList<>());
+        //when(purchasePolicies.findAll()).thenReturn(new ArrayList<>());
         ShoppingBasket basket1 = mock(ShoppingBasket.class);
         ShoppingBasket basket2 = mock(ShoppingBasket.class);
         when(basket1.getId()).thenReturn(111L);
@@ -110,30 +119,32 @@ public class StoreCT {
         items2.put(12345L, 1);
         when(basket1.getItems()).thenReturn(items1);
         when(basket2.getItems()).thenReturn(items2);
+        final boolean[] success = {true, true};
 
-        executor.submit(() -> {
-            try{
-                assertThat(store.checkValidBasket(basket1, "")).isEqualTo(true);
-            }catch (InterruptedException e) {}
-            finally {
-                latch.countDown();
-            }
+        Future<Boolean> f1 = executor.submit(() -> {
+            boolean b = store.checkValidBasket(basket1, "");
+            latch.countDown();
+            return b;
         });
-        executor.submit(() -> {
-            try{
-                assertThat(store.checkValidBasket(basket2, "")).isEqualTo(true);
-            }catch (InterruptedException e) {}
-            finally {
-                latch.countDown();
-            }
+        Future<Boolean> f2 = executor.submit(() -> {
+            boolean b = store.checkValidBasket(basket2, "");
+            latch.countDown();
+            return b;
         });
 
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdown();
 
-        assertThat(store.getProductRepo().findById(123L).getQuantity()).isEqualTo(0);
-        assertThat(store.getProductRepo().findById(1234L).getQuantity()).isEqualTo(0);
-        assertThat(store.getProductRepo().findById(12345L).getQuantity()).isEqualTo(0);
+        try {
+            if (!f1.get()) success[0] = false;
+            if (!f2.get()) success[1] = false;
+        } catch (Exception e) {
+            System.out.println("future get failed");
+        }
+        assertThat(success[0] && success[1]).isEqualTo(true);
+        assertThat(store.getProductRepo().findById(123L).get().getQuantity()).isEqualTo(0);
+        assertThat(store.getProductRepo().findById(1234L).get().getQuantity()).isEqualTo(0);
+        assertThat(store.getProductRepo().findById(12345L).get().getQuantity()).isEqualTo(0);
     }
 
     @Test
@@ -141,7 +152,7 @@ public class StoreCT {
         int threadCount = 2;
         CountDownLatch latch = new CountDownLatch(threadCount);
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-        when(purchasePolicies.findAll()).thenReturn(new ArrayList<>());
+        //when(purchasePolicies.findAll()).thenReturn(new ArrayList<>());
         ShoppingBasket basket1 = mock(ShoppingBasket.class);
         ShoppingBasket basket2 = mock(ShoppingBasket.class);
         when(basket1.getId()).thenReturn(111L);
@@ -176,17 +187,17 @@ public class StoreCT {
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdown();
 
-        int item1CurrentQuantity = store.getProductRepo().findById(123L).getQuantity();
+        int item1CurrentQuantity = store.getProductRepo().findById(123L).get().getQuantity();
         int item1Basket1Cache = store.getCache().containsKey(111L) && store.getCache().get(111L).isItemExist(123L) ? store.getCache().get(111L).getQuantity(123L) : 0;
         int item1Basket2Cache = store.getCache().containsKey(222L) && store.getCache().get(222L).isItemExist(123L) ? store.getCache().get(222L).getQuantity(123L) : 0;
         assertThat(item1CurrentQuantity + item1Basket1Cache + item1Basket2Cache).isEqualTo(3);
 
-        int item2CurrentQuantity = store.getProductRepo().findById(1234L).getQuantity();
+        int item2CurrentQuantity = store.getProductRepo().findById(1234L).get().getQuantity();
         int item2Basket1Cache = store.getCache().containsKey(111L) && store.getCache().get(111L).isItemExist(1234L) ? store.getCache().get(111L).getQuantity(1234L) : 0;
         int item2Basket2Cache = store.getCache().containsKey(222L) && store.getCache().get(222L).isItemExist(1234L) ? store.getCache().get(222L).getQuantity(1234L) : 0;
         assertThat(item2CurrentQuantity + item2Basket1Cache + item2Basket2Cache).isEqualTo(2);
 
-        int item3CurrentQuantity = store.getProductRepo().findById(12345L).getQuantity();
+        int item3CurrentQuantity = store.getProductRepo().findById(12345L).get().getQuantity();
         int item3Basket1Cache = store.getCache().containsKey(111L) && store.getCache().get(111L).isItemExist(12345L) ? store.getCache().get(111L).getQuantity(12345L) : 0;
         int item3Basket2Cache = store.getCache().containsKey(222L) && store.getCache().get(222L).isItemExist(12345L) ? store.getCache().get(222L).getQuantity(12345L) : 0;
         assertThat(item3CurrentQuantity + item3Basket1Cache + item3Basket2Cache).isEqualTo(1);

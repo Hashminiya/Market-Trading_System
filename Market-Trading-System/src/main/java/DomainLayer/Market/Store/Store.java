@@ -1,7 +1,6 @@
 package DomainLayer.Market.Store;
-import DAL.ItemDTO;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.PolicyDTO;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.Discount.*;
@@ -153,23 +152,23 @@ public class Store implements DataItem<Long> {
     }
     public List<Item> search(String keyWord){
         //return products.search(null ,keyWord,false);
-        return products.findAll(Specification.where(ItemSpecifications.nameContains(keyWord)));
+        return  products.findByNameContaining(keyWord);
     }
 
     public List<Item> searchKeyWordWithCategory(String category,String keyWord){
         //return products.search(category ,keyWord,true);
         List<String> categories = new ArrayList<>();
         categories.add(category);
-        return products.findAll(Specification.where(ItemSpecifications.nameContains(keyWord))
-                .and(ItemSpecifications.categoriesIn(categories)));
+        return products.findByNameContainingAndCategories(categories, keyWord);
     }
     public List<Item> searchByCategory(String category){
         /* Empty string for fetching all result with the relevant category */
         //return products.search(category,"",true);
         List<String> categories = new ArrayList<>();
         categories.add(category);
-        return products.findAll(Specification.where(ItemSpecifications.categoriesIn(categories)));
+        return products.findByCategories(categories);
     }
+
     public List<String> getAllCategories(){
         return products.findAllCategoriesByStoreId(id);
     }

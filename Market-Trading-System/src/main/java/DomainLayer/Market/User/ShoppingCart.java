@@ -1,38 +1,34 @@
 package DomainLayer.Market.User;
 
-import API.SpringContext;
 import DAL.*;
-import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Store.Item;
-import DomainLayer.Market.Util.IdGenerator;
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
 
-import DomainLayer.Repositories.DbBasketRepository;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-
-import jakarta.persistence.PostLoad;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class ShoppingCart {
-    private final BasketRepository baskets;
-    private final BasketItemRepository basketItemRepository;
+
+    @Autowired  // TODO : Guz check if need with or withour autowired..
+    private BasketRepository baskets;
+
+    @Autowired
+    private BasketItemRepository basketItemRepository;
+
     private final List<ShoppingBasket> shoppingBaskets;
+
+    public ShoppingCart() {
+        this.shoppingBaskets = new ArrayList<>();
+    }
 
     @Autowired
     public ShoppingCart(BasketRepository baskets, BasketItemRepository basketItemRepository){
@@ -67,7 +63,7 @@ public class ShoppingCart {
         if(!hasStock) throw new Exception("Item's quantity isn't in stock");
         sb.addItem(itemId,quantity);
         List<BasketItem> basketItems = basketItemRepository.findAll();
-        for(BasketItem bi : basketItems){
+        /*for(BasketItem bi : basketItems){
             if(Objects.equals(bi.getId().getBasketId(), sb.getId()) && bi.getId().getItemId() == itemId){
                 bi.setQuantity(bi.getQuantity() + quantity);
                 basketItemRepository.save(bi);
@@ -75,7 +71,7 @@ public class ShoppingCart {
             }
         }
         BasketItem basketItem = new BasketItem(sb.getId(), itemId, quantity);
-        basketItemRepository.save(basketItem);
+        basketItemRepository.save(basketItem);*/
 
         return sb.getId();
     }

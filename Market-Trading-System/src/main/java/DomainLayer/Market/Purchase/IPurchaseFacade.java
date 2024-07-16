@@ -21,6 +21,9 @@ public interface IPurchaseFacade {
     HashMap<Long,List<ItemDTO>> getPurchasesByStore(long storeId);
     List<Purchase> getPurchaseHistory(String userName);
     public void setUserFacade(IUserFacade userFacade);
+
+    void setPurchaseRepo(PurchaseRepository purchaseRepo);
+
     void clearPurchases();
     public void clear();
     public void setPaymentServiceProxy(PaymentServiceProxy paymentServiceProxy);

@@ -1,19 +1,26 @@
 package UnitTests.DomainLayer.Store;
 
+import API.Utils.SpringContext;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
-import DomainLayer.Market.Util.IRepository;
+import DomainLayer.Repositories.*;
+import SetUp.ApplicationTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class StoreUT {
 
     private final long STORE_ID = 1L;
@@ -23,17 +30,25 @@ public class StoreUT {
     private final String STORE_NAME = "Test Store";
     private final String STORE_DESCRIPTION = "Test Store Description";
 
-    @Mock
-    private IRepository<Long, IDiscount> discountsMock;
-    @Mock
-    private IRepository<Long, PurchasePolicy> policiesMock;
-
+    private DiscountRepository discountsMock;
+    private ItemRepository productsMock;
     private Store store;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        store = new Store(STORE_ID, FOUNDER_ID, STORE_NAME, STORE_DESCRIPTION, discountsMock, policiesMock);
+        discountsMock = mock(DiscountRepository.class);
+        productsMock = SpringContext.getBean(ItemRepository.class);
+//        MockitoAnnotations.openMocks(this);
+        store = new Store(STORE_ID, FOUNDER_ID, STORE_NAME, STORE_DESCRIPTION, productsMock, discountsMock);
+    }
+
+    @AfterEach
+    void tearDown() {
+        try {
+            store.deleteItem(ITEM_ID_1);
+            store.deleteItem(ITEM_ID_2);
+        }
+        catch (Exception ignored){}
     }
 
     @Test
@@ -149,8 +164,8 @@ public class StoreUT {
         store.addItem(ITEM_ID_2, "Another Item", 20.0, 20, "Another Description", List.of("Category2", "Category3"));
 
         List<String> categories = store.getAllCategories();
-        assertTrue(categories.contains("category1"));
-        assertTrue(categories.contains("category2"));
-        assertTrue(categories.contains("category3"));
+        assertTrue(categories.contains("Category1"));
+        assertTrue(categories.contains("Category2"));
+        assertTrue(categories.contains("Category3"));
     }
 }

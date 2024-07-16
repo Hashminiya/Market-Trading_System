@@ -14,7 +14,7 @@ public class SupplyServiceProxy implements ISupplyService {
     private SupplyServiceImpl supplyService;
 
     @Autowired
-    private SupplyServiceProxy(SupplyServiceImpl supplyService) {
+    public SupplyServiceProxy(SupplyServiceImpl supplyService) {
         this.supplyService = supplyService;
     }
 

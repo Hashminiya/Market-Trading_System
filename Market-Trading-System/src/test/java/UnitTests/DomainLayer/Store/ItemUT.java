@@ -4,17 +4,19 @@ import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.HiddenDiscount;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.Discount.RegularDiscount;
-import DomainLayer.Market.Util.InMemoryRepository;
+import SetUp.ApplicationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class ItemUT {
 
     private final long ITEM_ID = 1L;
@@ -26,16 +28,16 @@ public class ItemUT {
     private final String CODE = "code";
     private final List<String> ITEM_CATEGORIES = List.of("Category1", "Category2");
 
-    @Mock
-    private InMemoryRepository<Long, Discount> discountsMock;
+//    @Mock
+//    private InMemoryRepository<Long, Discount> discountsMock;
 
     private Item item;
 
     @BeforeEach
     void setUp() throws InterruptedException {
         MockitoAnnotations.openMocks(this);
-        discountsMock = new InMemoryRepository<Long,Discount>();
-        item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, ITEM_CATEGORIES);
+        //discountsMock = new InMemoryRepository<Long,Discount>();
+        item = new Item(ITEM_ID, ITEM_NAME, ITEM_DESCRIPTION, ITEM_CATEGORIES, 1L);
         item.setPrice(ITEM_PRICE);
         item.setQuantity(ITEM_QUANTITY);
     }

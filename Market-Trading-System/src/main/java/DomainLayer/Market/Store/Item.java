@@ -29,6 +29,7 @@ public class Item implements DataItem<Long> {
     private List<String> categories;
 
     private static ReentrantLock lock = new ReentrantLock();
+    @Column(name = "store_id")
     private long storeId;
 
     public Item(Long id, String name,String description, List<String> categories, long storeId){

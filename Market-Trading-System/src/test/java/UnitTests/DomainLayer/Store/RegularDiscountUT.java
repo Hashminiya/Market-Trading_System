@@ -4,9 +4,11 @@ import DomainLayer.Market.Store.Discount.HiddenDiscount;
 import DomainLayer.Market.Store.Discount.ICondition;
 import DomainLayer.Market.Store.Discount.RegularDiscount;
 import DomainLayer.Market.Store.Item;
+import SetUp.ApplicationTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.security.cert.CertificateExpiredException;
 import java.util.Date;
@@ -18,6 +20,7 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class RegularDiscountUT {
     private static final long DISCOUNT_ID = 1L;
     private static final double DISCOUNT_PERCENT = 0.2;  // 20% discount
@@ -35,8 +38,8 @@ public class RegularDiscountUT {
     @BeforeAll
     static void setUp() {
         condition = mock(ICondition.class);
-        item1 = new Item(1L, "item1", "item1 description", List.of("c1","c2", "c3"));
-        item2 = new Item(2L, "item2", "item2 description", List.of("c2"));
+        item1 = new Item(1L, "item1", "item1 description", List.of("c1","c2", "c3"), STORE_ID);
+        item2 = new Item(2L, "item2", "item2 description", List.of("c2"), STORE_ID);
         validDiscount = new RegularDiscount(DISCOUNT_ID, DISCOUNT_PERCENT, FUTURE_EXPIRATION, STORE_ID, List.of(1L, 2L), null,false, condition);
     }
 

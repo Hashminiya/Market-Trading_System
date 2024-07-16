@@ -8,21 +8,28 @@ import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.UserController;
-import DomainLayer.Market.Util.IRepository;
-import DomainLayer.Market.Util.InMemoryRepository;
+import DomainLayer.Repositories.*;
+import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class StoreControllerUT {
 
     private final long STORE_ID = 1L;
@@ -42,10 +49,10 @@ public class StoreControllerUT {
     private IPurchaseFacade purchaseFacadeMock;
 
     @Mock
-    private InMemoryRepository<Long, Store> storesRepoMock;
+    private StoreRepository storesRepoMock;
 
     @Mock
-    private IRepository<Long, IDiscount> discountRepoMock;
+    private DiscountRepository discountRepoMock;
 
     @Mock
     private Store storeMock;
@@ -57,7 +64,7 @@ public class StoreControllerUT {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        storesRepoMock = mock(InMemoryRepository.class);
+        storesRepoMock = mock(StoreRepository.class);
         userFacadeMock = mock(UserController.class);
         purchaseFacadeMock = mock(PurchaseController.class);
         storeMock = mock(Store.class);
@@ -73,6 +80,11 @@ public class StoreControllerUT {
         storeFacade.clear();
     }
 
+    @AfterAll
+    public static void tearDownAll() {
+        cleanUpDB.clearDB();
+    }
+
     @Test
     void test_createStore_should_saveNewStore() throws Exception {
         when(userFacadeMock.isRegister(FOUNDER_ID)).thenReturn(true);
@@ -85,7 +97,7 @@ public class StoreControllerUT {
     @Test
     void test_addItemToStore_should_saveNewStore() throws Exception {
         Store store = mock(Store.class);
-        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+        when(storesRepoMock.findById(STORE_ID)).thenReturn(Optional.ofNullable(store));
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ADD_ITEM")).thenReturn(true);
 
         storeFacade.addItemToStore(USER_ID, STORE_ID, ITEM_NAME, ITEM_PRICE, STOCK_AMOUNT, DESCRIPTION, CATEGORIES);
@@ -96,7 +108,7 @@ public class StoreControllerUT {
     @Test
     void test_updateItem_should_updateStoreItem() throws Exception {
         Store store = mock(Store.class);
-        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+        when(storesRepoMock.findById(STORE_ID)).thenReturn(Optional.ofNullable(store));
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "UPDATE_ITEM")).thenReturn(true);
 
         storeFacade.updateItem(USER_ID, STORE_ID, ITEM_ID, "newName", 20.0, 200);
@@ -107,7 +119,7 @@ public class StoreControllerUT {
     @Test
     void test_deleteItem_should_deleteStoreItem() throws Exception {
         Store store = mock(Store.class);
-        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+        when(storesRepoMock.findById(STORE_ID)).thenReturn(Optional.ofNullable(store));
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "DELETE_ITEM")).thenReturn(true);
 
         storeFacade.deleteItem(USER_ID, STORE_ID, ITEM_ID);
@@ -118,7 +130,7 @@ public class StoreControllerUT {
     @Test
     void test_viewInventoryByStoreOwner_should_returnInventory() throws Exception {
         Store store = mock(Store.class);
-        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+        when(storesRepoMock.findById(STORE_ID)).thenReturn(Optional.ofNullable(store));
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "VIEW_INVENTORY")).thenReturn(true);
 
         HashMap<Long, Integer> inventory = new HashMap<>();
@@ -131,7 +143,7 @@ public class StoreControllerUT {
 
     @Test
     void test_assignStoreOwner_should_assignNewOwner() throws Exception {
-        when(storesRepoMock.findById(anyLong())).thenReturn(storeMock);
+        when(storesRepoMock.findById(anyLong())).thenReturn(Optional.ofNullable(storeMock));
         doNothing().when(storeMock).assignOwner("newOwnerId");
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ASSIGN_OWNER")).thenReturn(true);
 
@@ -142,7 +154,7 @@ public class StoreControllerUT {
     @Test
     void test_assignStoreManager_should_assignNewManager() throws Exception {
         Store store = mock(Store.class);
-        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+        when(storesRepoMock.findById(STORE_ID)).thenReturn(Optional.ofNullable(store));
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "ASSIGN_MANAGER")).thenReturn(true);
 
         storeFacade.assignStoreManager(USER_ID, STORE_ID, "newManagerId", List.of("permission"));
@@ -152,17 +164,20 @@ public class StoreControllerUT {
 
     @Test
     void test_removeStore_should_removeStore() throws Exception {
+        Store store = mock(Store.class);
+
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "REMOVE_STORE")).thenReturn(true);
+        when(storesRepoMock.findById(STORE_ID)).thenReturn(Optional.ofNullable(store));
 
         storeFacade.removeStore(USER_ID, STORE_ID);
 
-        verify(storesRepoMock).delete(STORE_ID);
+        verify(storesRepoMock).delete(store);
     }
 
     @Test
     void test_viewStoreManagementInfo_should_returnManagementInfo() throws Exception {
         Store store = mock(Store.class);
-        when(storesRepoMock.findById(STORE_ID)).thenReturn(store);
+        when(storesRepoMock.findById(STORE_ID)).thenReturn(Optional.ofNullable(store));
         when(userFacadeMock.checkPermission(USER_ID, STORE_ID, "VIEW_STORE_MANAGEMENT_INFO")).thenReturn(true);
 
         HashMap<String, List<String>> managementInfo = new HashMap<>();

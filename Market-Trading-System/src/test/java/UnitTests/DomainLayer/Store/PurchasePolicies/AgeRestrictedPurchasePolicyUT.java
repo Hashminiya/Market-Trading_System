@@ -4,10 +4,12 @@ package UnitTests.DomainLayer.Store.PurchasePolicies;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.Store.StorePurchasePolicy.AgeRestrictedPurchasePolicy;
 import DomainLayer.Market.User.IUserFacade;
+import SetUp.ApplicationTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class AgeRestrictedPurchasePolicyUT {
 
     private static final long POLICY_ID = 1L;
@@ -37,8 +40,8 @@ public class AgeRestrictedPurchasePolicyUT {
     @BeforeAll
     static void setUp() {
         userFacade = mock(IUserFacade.class);
-        item1 = new Item(1L, "item1", "item1 description", List.of("alcohol"));
-        item2 = new Item(2L, "item2", "item2 description", List.of("non-alcohol"));
+        item1 = new Item(1L, "item1", "item1 description", List.of("alcohol"), 1L);
+        item2 = new Item(2L, "item2", "item2 description", List.of("non-alcohol"), 1L);
         ageRestrictedPurchasePolicy = new AgeRestrictedPurchasePolicy(POLICY_NAME, POLICY_ID, MIN_AGE, ITEM_IDS, CATEGORIES, IS_STORE);
         ageRestrictedPurchasePolicy.setUserFacade(userFacade);
 
