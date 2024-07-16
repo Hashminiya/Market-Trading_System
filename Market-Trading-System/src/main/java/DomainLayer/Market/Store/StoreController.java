@@ -366,7 +366,7 @@ public class StoreController implements IStoreFacade{
             throw new Exception("User doesn't has permission to add discount");
         Store store = getStore(storeId);
         store.addDiscount(discountDetails);
-        store.addDiscount(discountDetails);
+        storesRepo.save(store);
     }
 
     @Override
