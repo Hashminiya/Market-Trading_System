@@ -1,5 +1,6 @@
 package API;
 
+import DomainLayer.Market.Purchase.ExternalApiUtil;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
 import ServiceLayer.Store.IStoreBuyerService;
@@ -40,6 +41,18 @@ public class StartupRunner implements CommandLineRunner {
         System.out.println("-----------------------------------------------------------------------");
 
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
+
+        boolean connected;
+        try{
+            connected = ExternalApiUtil.performHandshake();
+        }
+        catch (Exception e){
+            connected = false;
+        }
+        if(!connected){
+            System.err.println("Failed to connect to external systems\nExiting...");
+            System.exit(1);
+        }
 
         if(registerAdmin){
             ResponseEntity<?> response = userService.register("admin", "admin", 25);

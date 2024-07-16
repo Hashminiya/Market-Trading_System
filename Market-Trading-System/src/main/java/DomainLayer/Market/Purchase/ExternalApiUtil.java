@@ -45,7 +45,7 @@ public class ExternalApiUtil {
     }
 
     // Private method to perform the handshake
-    private static boolean performHandshake() throws Exception {
+    public static boolean performHandshake() throws Exception {
         Map<String, String> handshakeParams = Map.of("action_type", "handshake");
         URL url = new URL(API_URL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
