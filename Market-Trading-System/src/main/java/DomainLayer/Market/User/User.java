@@ -1,6 +1,5 @@
 package DomainLayer.Market.User;
 
-import API.SpringContext;
 import API.Utils.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Converters.StoreEnumSetConverter;

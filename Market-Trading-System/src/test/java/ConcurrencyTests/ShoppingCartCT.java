@@ -63,6 +63,7 @@ public class ShoppingCartCT {
     @BeforeEach
     public void setUpAll(){
         MockitoAnnotations.openMocks(this);
+        SpringContext.getBean(IStoreFacade.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
         storeFacade = SpringContext.getBean(IStoreFacade.class);
     }
 

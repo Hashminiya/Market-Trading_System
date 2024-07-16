@@ -135,14 +135,32 @@ public class InMemoryItemRepository implements ItemRepository {
         return List.of();
     }
 
-    //@Override
+    @Override
     public List<Item> findByNameContaining(String keyword) {
-        return List.of();
+        return storage.values().stream()
+                .filter(item -> item.getName().contains(keyword))
+                .collect(Collectors.toList());
     }
 
-    //@Override
-    public List<Item> findByCategoriesIn(List<String> categories) {
-        return List.of();
+    @Override
+    public List<Item> findByNameContainingAndCategory(String category, String keyWord) {
+        return storage.values().stream()
+                .filter(item -> item.getName().contains(keyWord) && item.getCategories().contains(category))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> findByCategory(String category) {
+        return storage.values().stream()
+                .filter(item -> item.getCategories().contains(category))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> findByCategories(List<String> categories) {
+        return storage.values().stream()
+                .filter(item -> item.getCategories().stream().anyMatch(categories::contains))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -287,6 +305,15 @@ public class InMemoryItemRepository implements ItemRepository {
         }
         return itemsByStoreId;
     }
+
+    @Override
+    public List<Item> findByNameContainingAndCategories(List<String> categories, String keyWord) {
+        return storage.values().stream()
+                .filter(item -> categories.stream().anyMatch(item.getCategories()::contains)) // Filter by categories
+                .filter(item -> item.getName().contains(keyWord)) // Filter by name containing keyword
+                .collect(Collectors.toList());
+    }
+
 
 
 }
