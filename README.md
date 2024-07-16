@@ -63,7 +63,7 @@ This project uses a Spring Boot configuration file named `application.properties
 
 - **Datasource URL**: 
   ```properties
-  spring.datasource.url=jdbc:mysql://34.172.134.83:3306/noam_DB
+  spring.datasource.url=jdbc:mysql://34.172.134.83:3306/hashminia
 
 Specifies the URL to connect to the MySQL database. Replace the IP and database name with your own as needed.
 
