@@ -70,6 +70,7 @@ public class StartupRunner implements CommandLineRunner {
         assignManagers(tokens, storeIds);
         List<Long> itemIds = createItems(tokens, storeIds);
         createPolicy(tokens, storeIds, itemIds);
+        createDiscounts(tokens, storeIds, itemIds);
         initShoppingCart(tokens, storeIds, itemIds);
         createPurchase(tokens);
         logoutUsers(tokens);
@@ -178,6 +179,24 @@ public class StartupRunner implements CommandLineRunner {
                 "    \"logicalRole\": \"OR\"\n" +
                 "}", AGE_POLICY_SPECIFIC_ITEM, MAXIMUM_QUANTITY_POLICY);
         storeManagementService.addPolicy(tokens.get(0), storeIds.get(0), policyDetails);
+    }
+    private void createDiscounts(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
+        IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
+
+        String hiddenDiscount = "{\n" +
+                "    \"@type\": \"HiddenDiscount\",\n" +
+                "    \"id\": 50,\n" +
+                "    \"name\": \"Hidden Discount\",\n" +
+                "    \"percent\": 15.0,\n" +
+                "    \"code\": 110,\n" +
+                "    \"expirationDate\": \"2026-12-31T23:59:59Z\",\n" +
+                "    \"storeId\": " + storeIds.get(0) + ",\n" +
+                "    \"items\": [" + itemIds.get(0) + "],\n" +
+                "    \"isStore\": false,\n" +
+                "    \"categories\": [\"Electronics\"]\n" +
+                "}";
+
+        storeManagementService.addDiscount(tokens.get(0),storeIds.get(0),hiddenDiscount);
     }
 
     private void initShoppingCart(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
@@ -428,6 +447,6 @@ public class StartupRunner implements CommandLineRunner {
 
     private void createPurchase(List<String> tokens) {
         IUserService userService = (IUserService) SpringContext.getBean("userService");
-        userService.checkoutShoppingCart(tokens.get(0), "2222333344445555", new Date(2025), "982", null);
+        userService.checkoutShoppingCart(tokens.get(0), "2222333344445555", new Date(2025), "982", "");
     }
 }

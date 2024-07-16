@@ -1,41 +1,54 @@
 package DomainLayer.Market.Store.Discount;
 
 import DomainLayer.Market.Store.Item;
-import jakarta.persistence.Entity;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Entity
+@NoArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class Discount extends BaseDiscount {
-
+    protected boolean isStore;
     protected double percent;
     protected Date expirationDate;
-    protected Long storeId;
-    protected List<Long> items;
-    protected List<String> categories;
-    protected boolean isStore;
+    protected Long store_id;
 
-    public Discount(Long id, double percent, Date expirationDate, long storeId, List<Long> items, List<String> categories, boolean isStore){
-        this.id = id;
+    @ElementCollection
+    @BatchSize(size = 25)
+    protected List<Long> items;
+
+    @ElementCollection
+    @BatchSize(size = 25)
+    protected List<String> categories;
+
+    @JsonCreator
+    public Discount(@JsonProperty("id")Long id,
+                    @JsonProperty("name") String name,
+                    @JsonProperty("percent") double percent,
+                    @JsonProperty("expirationDate")Date expirationDate,
+                    @JsonProperty("store_id")long store_id,
+                    @JsonProperty("items")List<Long> items,
+                    @JsonProperty("categories")List<String> categories,
+                    @JsonProperty("isStore") boolean isStore){
+        super(id,name);
         this.percent = percent;
         this.expirationDate = expirationDate;
-        this.storeId = storeId;
+        this.store_id = store_id;
         this.items = items;
         this.categories = categories;
         this.isStore = isStore;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public String getName() {
-        return "";
-    }
 
     public abstract boolean isValid(Map<Item, Integer> items, String code);
 
@@ -57,8 +70,8 @@ public abstract class Discount extends BaseDiscount {
             else if(isStore)
                 newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent) * newItemsPrices.get(item));
             else
-                if(items.contains(item.getId()))
-                    newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent) * newItemsPrices.get(item));
+            if(items.contains(item.getId()))
+                newItemsPrices.replace(item, newItemsPrices.get(item),(1-percent) * newItemsPrices.get(item));
 
         }
         return newItemsPrices;
