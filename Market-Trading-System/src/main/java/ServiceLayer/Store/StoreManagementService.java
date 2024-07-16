@@ -339,13 +339,13 @@ public class StoreManagementService implements IStoreManagementService {
     @Override
     @InitCommand(name = "addDiscount")
     @Transactional
-    public ResponseEntity<?> addDiscount(String token, long storeId, String discountDetails) {
+    public ResponseEntity<String> addDiscount(String token, long storeId, String discountDetails) {
         try {
             String userName = jwtService.extractUsername(token);
             if (jwtService.isValid(token, userFacade.loadUserByUsername(userName))) {
                 storeFacade.addDiscount(userName, storeId, discountDetails);
                 logger.info("Discount added by user: {}", userName);
-                return ResponseEntity.ok().body(String.format("Discount added by user %s", userName));
+                return ResponseEntity.status(200).body("Discount added successfully");
             } else {
                 logger.warn("Invalid token for adding discount to store: {}", token);
                 return ResponseEntity.status(401).body(USER_NOT_VALID);
@@ -358,6 +358,12 @@ public class StoreManagementService implements IStoreManagementService {
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
+    /*
+
+       ResponseEntity<Long> response = ResponseEntity.status(200).body(storeFacade.addItemToStore(userName, storeId, itemName, itemPrice, stockAmount, description, categories));
+                logger.info("Item added to store by user: {}", userName);
+                return response;
+     */
 
     @Transactional
     @Override

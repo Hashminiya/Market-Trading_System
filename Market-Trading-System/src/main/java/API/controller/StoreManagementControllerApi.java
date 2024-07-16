@@ -78,21 +78,7 @@ public class StoreManagementControllerApi {
                 "    \"isStore\": false,\n" +
                 "    \"categories\": [\"Electronics\"]\n" +
                 "}";
-        storeManagementService.addDiscount(token, storeId, decodedDiscountDetails);
-
-        // Convert discountDetails to appropriate object if needed
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode discountNode = mapper.readTree(decodedDiscountDetails);
-            // Handle the discountNode as needed
-        } catch (JsonProcessingException e) {
-            return ResponseEntity.badRequest().body("Invalid discount details");
-        }
-
-        // Add your logic to save the discount
-        // storeManagementService.addDiscount(token, storeId, decodedDiscountDetails);
-
-        return ResponseEntity.ok("Discount added successfully");
+        return storeManagementService.addDiscount(token, storeId, decodedDiscountDetails);
     }
 
     @PatchMapping("storeManagement/changeDiscountType")
