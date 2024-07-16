@@ -10,7 +10,6 @@ import java.util.Map;
 
 @Entity
 @NoArgsConstructor
-@DiscriminatorValue("Condition")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class Condition extends BaseCondition{
     //private Map<Long, Integer> conditionItem;
@@ -20,7 +19,9 @@ public class Condition extends BaseCondition{
 
     @JsonCreator
     public Condition(@JsonProperty("itemId") Long itemId,
-                     @JsonProperty("count") int count){
+                     @JsonProperty("count") int count,
+                     @JsonProperty("id") Long id){
+        super(id);
         this.itemId = itemId;
         this.count = count;
     }

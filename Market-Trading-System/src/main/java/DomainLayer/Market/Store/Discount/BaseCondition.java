@@ -3,6 +3,8 @@ package DomainLayer.Market.Store.Discount;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 
 @Entity
 @NoArgsConstructor
@@ -13,6 +15,9 @@ public abstract class BaseCondition implements ICondition{
     @Id
     protected Long id;
 
+    public BaseCondition(Long id) {
+        this.id = id;
+    }
     @Override
     public Long getId() {
         return id;

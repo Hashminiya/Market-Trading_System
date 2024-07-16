@@ -360,6 +360,7 @@ public class StoreController implements IStoreFacade{
             throw new Exception("User doesn't has permission to add discount");
         Store store = getStore(storeId);
         store.addDiscount(discountDetails);
+        storesRepo.save(store);
     }
     @Override
     public void addPolicy(String userName, long storeId, String policyDetails) throws Exception{

@@ -14,12 +14,11 @@ import java.util.Map;
 
 @Entity
 @NoArgsConstructor
-@DiscriminatorValue("ConditionComposite")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class ConditionComposite extends BaseCondition{
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "condition_id")
+    @JoinColumn(name = "parent_condition_id")
     private List<BaseCondition> conditions;
 
     @Enumerated(EnumType.STRING)
@@ -28,7 +27,9 @@ public class ConditionComposite extends BaseCondition{
 
     @JsonCreator
     public ConditionComposite(@JsonProperty("conditions") List<BaseCondition> conditions,
-                              @JsonProperty("rule") LogicalRule rule){
+                              @JsonProperty("rule") LogicalRule rule,
+                              @JsonProperty("id") Long id){
+        super(id);
         this.conditions = conditions;
         this.rule = rule;
     }

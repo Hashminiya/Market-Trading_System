@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@DiscriminatorValue("DiscountComposite")
 @NoArgsConstructor
 public abstract class DiscountComposite extends BaseDiscount {
 
@@ -30,10 +29,6 @@ public abstract class DiscountComposite extends BaseDiscount {
         this.discounts = discounts;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
 
     @Override
     public String getName() {

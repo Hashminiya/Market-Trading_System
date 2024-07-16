@@ -14,6 +14,8 @@ import DomainLayer.Repositories.PurchasePolicyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.*;
@@ -25,13 +27,17 @@ public class Store implements DataItem<Long> {
     private Long id;
     private String founderId;
     private String name;
+    @Setter
+    @Getter
     private String description;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "store_owners", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
     @Column(name = "owner_username")
     private List<String> owners;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "store_managers", joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"))
     @Column(name = "manager_username")
@@ -42,11 +48,12 @@ public class Store implements DataItem<Long> {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "store_id")
-    private List<BaseDiscount> discounts;
+    private List<BaseDiscount> discounts= new ArrayList<>();;
 
     @Transient
     private PurchasePolicyRepository purchasePolicies;
 
+    @Setter
     @Transient
     private PurchasePolicyFactory policyFactory;
 
@@ -64,7 +71,7 @@ public class Store implements DataItem<Long> {
         owners = new ArrayList<>();
         managers = new ArrayList<>();
         itemsCache = new HashMap<>();
-        this.discounts = new ArrayList<>();;
+        this.discounts = new ArrayList<>();
         assignOwner(founderId);
     }
 
@@ -91,24 +98,12 @@ public class Store implements DataItem<Long> {
         return name;
     }
 
-    public List<String> getOwners(){
-        return owners;
-    }
-
-    public List<String> getManagers(){
-        return managers;
-    }
-
     public void assignOwner(String newOwnerId){
         owners.add(newOwnerId);
     }
 
     public void assignManager(String newManagerId){
         managers.add(newManagerId);
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<Item> viewInventory(){
@@ -188,10 +183,6 @@ public class Store implements DataItem<Long> {
         return getItem(itemId);
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public void calculateBasketPrice(ShoppingBasket basket, String code) throws Exception{
         Map<Item,Integer> itemsCount = new HashMap<>();
         for(Long itemId: basket.getItems().keySet())
@@ -224,10 +215,6 @@ public class Store implements DataItem<Long> {
             itemPrice.put(item, item.getPrice());
         }
         return itemPrice;
-    }
-
-    public void setPolicyFactory(PurchasePolicyFactory policyFactory) {
-        this.policyFactory = policyFactory;
     }
 
     public ItemRepository getProductRepo() {

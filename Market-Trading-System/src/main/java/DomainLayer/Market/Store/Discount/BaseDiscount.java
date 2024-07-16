@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "BaseDiscount")
+@DiscriminatorColumn(name = "discount_type")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class BaseDiscount implements IDiscount{
     @Id
-    protected Long id;
+    private Long id;
 
     public BaseDiscount(Long id) {
         this.id = id;

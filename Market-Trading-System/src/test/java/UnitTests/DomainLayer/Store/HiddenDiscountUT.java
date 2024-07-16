@@ -40,7 +40,7 @@ public class HiddenDiscountUT {
         condition = mock(ICondition.class);
         item1 = new Item(1L, "item1", "item1 description", List.of("c1","c2", "c3"));
         item2 = new Item(2L, "item2", "item2 description", List.of("c2"));
-        validDiscount = new HiddenDiscount(DISCOUNT_ID, DISCOUNT_PERCENT, FUTURE_EXPIRATION, STORE_ID, List.of(1L, 2L), null,false,CODE);
+        validDiscount = new HiddenDiscount(DISCOUNT_ID, DISCOUNT_PERCENT, FUTURE_EXPIRATION, List.of(1L, 2L), null,false,CODE);
     }
 
     @Test

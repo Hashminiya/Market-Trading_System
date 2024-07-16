@@ -25,7 +25,7 @@ public class HiddenDiscount extends Discount {
     public HiddenDiscount(@JsonProperty("id") Long id,
                           @JsonProperty("percent") double percent,
                           @JsonProperty("expirationDate") Date expirationDate,
-                          @JsonProperty("storeId") long storeId,
+                          @JsonProperty("store_id") long storeId,
                           @JsonProperty("items") List<Long> items,
                           @JsonProperty("categories") List<String> categories,
                           @JsonProperty("isStore") boolean isStore,

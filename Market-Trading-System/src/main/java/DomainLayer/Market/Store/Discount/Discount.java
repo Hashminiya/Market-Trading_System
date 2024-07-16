@@ -1,6 +1,9 @@
 package DomainLayer.Market.Store.Discount;
 
 import DomainLayer.Market.Store.Item;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@DiscriminatorValue("Discount")
 @NoArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public abstract class Discount extends BaseDiscount {
     protected boolean isStore;
     protected double percent;
@@ -25,7 +28,14 @@ public abstract class Discount extends BaseDiscount {
     @ElementCollection
     protected List<String> categories;
 
-    public Discount(Long id, double percent, Date expirationDate, long store_id, List<Long> items, List<String> categories, boolean isStore){
+    @JsonCreator
+    public Discount(@JsonProperty("id")Long id,
+                    @JsonProperty("percent") double percent,
+                    @JsonProperty("expirationDate")Date expirationDate,
+                    @JsonProperty("store_id")long store_id,
+                    @JsonProperty("items")List<Long> items,
+                    @JsonProperty("categories")List<String> categories,
+                    @JsonProperty("isStore") boolean isStore){
         super(id);
         this.percent = percent;
         this.expirationDate = expirationDate;
