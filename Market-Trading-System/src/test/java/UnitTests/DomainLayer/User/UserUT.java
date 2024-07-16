@@ -6,17 +6,22 @@ import DomainLayer.Market.User.*;
 import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Market.Util.StoreRole;
+import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class UserUT {
     private User user;
     private final String USERNAME_TEST = "testUser";
@@ -42,6 +47,11 @@ public class UserUT {
     void tearDown() {
         // Reset the singleton instance or any shared state here
         storeFacade.clear();  // Ensure resetInstance() method is available in StoreController
+    }
+
+    @AfterAll
+    public static void tearDownAll() {
+        cleanUpDB.clearDB();
     }
 
     @Test
@@ -175,7 +185,7 @@ public class UserUT {
     public void test_addItemToBasket_should_call_ShppingCart_once() throws Exception{
         user.setLoggedIn(true);
         user.addItemToBasket(1L, 2L, 3, storeFacade);
-        verify(shoppingCart, times(1)).addItemBasket(1L, 2L, 3, storeFacade);
+        verify(shoppingCart, times(1)).addItemBasket(1L, 2L, 3, storeFacade, USERNAME_TEST);
     }
 
     @Test

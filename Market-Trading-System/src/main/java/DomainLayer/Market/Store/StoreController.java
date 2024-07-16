@@ -1,26 +1,20 @@
 package DomainLayer.Market.Store;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Notifications.Event;
 import DomainLayer.Market.Notifications.Publisher;
-import DomainLayer.Market.Store.Discount.IDiscount;
-import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
 import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicyFactory;
-import DomainLayer.Market.Util.*;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.Util.IdGenerator;
-import DomainLayer.Repositories.*;
-import jdk.jshell.spi.ExecutionControl;
 import DomainLayer.Repositories.DiscountRepository;
 import DomainLayer.Repositories.ItemRepository;
 import DomainLayer.Repositories.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;
@@ -49,7 +43,7 @@ public class StoreController implements IStoreFacade{
     private String ADD_POLICY = "ADD_POLICY";
 
     @Autowired
-    private StoreController(StoreRepository storesRepo,
+    public StoreController(StoreRepository storesRepo,
                             @Qualifier("purchaseController") IPurchaseFacade purchaseFacadeInstance) {
         this.storesRepo = storesRepo;
         this.purchaseFacade = purchaseFacadeInstance;
@@ -421,7 +415,7 @@ public class StoreController implements IStoreFacade{
         return storeNames;
     }
 
-    private Store getStore(long storeId){
+    public Store getStore(long storeId){
         Optional<Store> store = storesRepo.findById(storeId);
         if(store.isEmpty())
             throw new RuntimeException("there is no store with id " + storeId);

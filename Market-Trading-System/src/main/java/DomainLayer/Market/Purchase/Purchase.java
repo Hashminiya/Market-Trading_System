@@ -1,6 +1,6 @@
 package DomainLayer.Market.Purchase;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.Abstractions.IPaymentService;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -61,9 +62,7 @@ public class Purchase implements IPurchase, DataItem<Long> {
             this.totalAmount = totalAmount;
             this.userId = userId;
             itemsRepo = SpringContext.getBean(ItemDTORepository.class);
-            for (ItemDTO item:purchasedItemsList) {
-                itemsRepo.save(item);
-            }
+            itemsRepo.saveAll(purchasedItemsList);
             purchaseDate =LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
 
@@ -98,9 +97,9 @@ public class Purchase implements IPurchase, DataItem<Long> {
     }
 
     public List<ItemDTO> getItemByStore(Long storeId){
-       List<ItemDTO> allItems =  itemsRepo.findAll();
+       //List<ItemDTO> allItems =  purchasedItemsList;
         List<ItemDTO> toRet =  new ArrayList<>();
-        for (ItemDTO item:allItems) {
+        for (ItemDTO item:purchasedItemsList) {
             if(storeId.equals(item.getStoreId()))
                 toRet.add(item);
         }

@@ -65,9 +65,9 @@ public abstract class PurchasePolicy implements DataItem<Long> {
         if(categories != null) {
             List<String> itemCategories = new ArrayList<>(item.getCategories());
             itemCategories.retainAll(categories);
-            return itemCategories.size() > 0;
+            return !itemCategories.isEmpty();
         }
-        else if (itemsList != null) {
+        if (itemsList != null) {
             return itemsList.contains(item.getId());
         }
         return false;

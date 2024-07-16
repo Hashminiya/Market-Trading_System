@@ -1,13 +1,11 @@
 package DomainLayer.Market.User;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DAL.ItemDTO;
-import DomainLayer.Converters.StoreEnumConverter;
 import DomainLayer.Converters.StoreEnumSetConverter;
 import DomainLayer.Converters.StringSetConverter;
 import DomainLayer.Market.ShoppingBasket;
 import DomainLayer.Market.Store.IStoreFacade;
-import DomainLayer.Market.Store.Store;
 import DomainLayer.Market.Util.DataItem;
 import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
@@ -16,6 +14,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
+import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.context.annotation.Scope;
@@ -36,6 +35,7 @@ public class User implements IUser,DataItem<String> {
     private int userAge;
     @Transient
     private Istate state;
+    @Getter
     protected boolean loggedIn;
     @Transient
     private ShoppingCart shoppingCart;

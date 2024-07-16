@@ -5,11 +5,14 @@ import static org.mockito.Mockito.*;
 
 import DomainLayer.Market.Store.Discount.*;
 import DomainLayer.Market.Store.Item;
+import SetUp.ApplicationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
+@SpringBootTest(classes = ApplicationTest.class)
 public class NumericDiscountCompositeUT {
 
     private NumericDiscountComposite maxComposite;

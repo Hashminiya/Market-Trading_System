@@ -1,6 +1,6 @@
 package DomainLayer.Market.Store.StorePurchasePolicy;
 
-import API.SpringContext;
+import API.Utils.SpringContext;
 import DomainLayer.Market.Store.Item;
 import DomainLayer.Market.User.IUserFacade;
 import com.fasterxml.jackson.annotation.JsonCreator;
