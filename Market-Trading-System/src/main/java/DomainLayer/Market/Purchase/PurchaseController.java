@@ -37,11 +37,32 @@ public class PurchaseController implements IPurchaseFacade {
     public void checkout(String userID, String creditCard, Date expiryDate, String cvv, List<ItemDTO> purchaseItemsList,double totalAmount) throws Exception {
         if(purchaseItemsList.isEmpty())
             throw new RuntimeException("No items for checkout");
-
+        if (!isCreditCardValid(creditCard, expiryDate, cvv)) {
+            throw new RuntimeException("Invalid credit card details.");
+        }
         Long purchaseId = IdGenerator.generateId();
         Purchase purchase = new Purchase(userID,totalAmount,purchaseId,purchaseItemsList,paymentServiceProxy, supplyServiceProxy);
         purchase.checkout(creditCard, expiryDate, cvv);
         purchaseRepo.save(purchase);
+    }
+
+    public boolean isCreditCardValid(String creditCard, Date expiryDate, String cvv) {
+        return isCardNumberBasicValid(creditCard) && isExpiryDateValid(expiryDate) && isCvvValid(cvv);
+    }
+
+    public boolean isCvvValid(String cvv) {
+        return cvv.matches("\\d{3,4}");
+    }
+
+    private boolean isExpiryDateValid(Date expiryDate) {
+        Calendar current = Calendar.getInstance();
+        Calendar expiry = Calendar.getInstance();
+        expiry.setTime(expiryDate);
+        return expiry.after(current);
+    }
+
+    private boolean isCardNumberBasicValid(String creditCard) {
+        return creditCard.matches("\\d{16}");
     }
 
     @Override

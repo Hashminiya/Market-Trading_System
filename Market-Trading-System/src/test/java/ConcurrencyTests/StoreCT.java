@@ -13,6 +13,7 @@ import DomainLayer.Market.Store.StorePurchasePolicy.PurchasePolicy;
 import DomainLayer.Repositories.DiscountRepository;
 import DomainLayer.Repositories.ItemRepository;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -55,6 +56,11 @@ public class StoreCT {
             done = true;
         }
 
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        cleanUpDB.clearDB();
     }
 
     @AfterEach

@@ -10,6 +10,7 @@ import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -98,6 +99,14 @@ public class StoreManagementAT{
         ResponseEntity<String> response1 = userService.login(FOUNDER_ID, PASSWORD);
         TOKEN = response1.getBody();
         TOKEN = TOKEN.trim();
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if(!cleanUpDB.clearDB()) {
+            storeManagementService.clear();
+            userService.clear();
+        }
     }
 
     @Test

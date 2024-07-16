@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,15 @@ public class StoreBuyerAT {
             ITEM_ID_3 = storeFacade.addItemToStore("founderId", STORE_ID, "Headphones", 50,25,"Noise-cancelling headphones", List.of("Electronics", "Audio"));
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if(!cleanUpDB.clearDB()) {
+            storeBuyerService.clear();
+            userService.clear();
+            storeFacade.clear();
         }
     }
 

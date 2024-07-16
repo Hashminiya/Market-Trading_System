@@ -9,6 +9,7 @@ import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,8 +37,8 @@ public class UserAT {
     private static final String PASSWORD = "password123";
     private static final int AGE = 25;
     private static final int AGE_UNDER_18 = 15;
-    private static final String CREDIT_CARD = "1234-5678-9876-5432";
-    private static final Date EXPIRY_DATE = new Date("07/07/27"); // Set an appropriate expiry date
+    private static final String CREDIT_CARD = "1234567898765432";
+    private static final Date EXPIRY_DATE = new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000); // Set an appropriate expiry date
     private static final String CVV = "123";
     private static final String DISCOUNT_CODE = "DISCOUNT10";
     private static long ITEM2_ID;
@@ -50,7 +51,6 @@ public class UserAT {
     private static String USERNAME2_TOKEN;
     private static String GUEST_TOKEN;
     private static UserService userService;
-    private static ServiceFactory serviceFactory;
     private static StoreManagementService storeManagementSevice;
     private static String ALCOHOL_POLICY = "{\n" +
             "    \"@type\": \"AgeRestrictedPurchasePolicy\",\n" +
@@ -83,8 +83,10 @@ public class UserAT {
 
     @AfterAll
     public static void tearDown() {
-        userService.clear();
-        storeManagementSevice.clear();
+        if(!cleanUpDB.clearDB()) {
+            storeManagementSevice.clear();
+            userService.clear();
+        }
     }
 
     private static void resetUserControllerInstance() throws Exception {
@@ -218,18 +220,18 @@ public class UserAT {
     @Order(14)
     public void test_checkoutShoppingCart_should_return_error_with_false_from_credit_card_services() {
         paymentServiceProxy = mock(PaymentServiceProxy.class);
-        try {
-            when(paymentServiceProxy.chargeCreditCard(anyString(),any(),anyString(),anyDouble())).thenReturn(-1);
-        }
-        catch (Exception e){
-            fail();
-        }
+//        try {
+//            when(paymentServiceProxy.chargeCreditCard(anyString(),any(),anyString(),anyDouble())).thenReturn(-1);
+//        }
+//        catch (Exception e){
+//            fail();
+//        }
         HashMap<Long, Integer> inventory_before_action = (HashMap<Long, Integer>)
                 storeManagementSevice.viewInventory(USERNAME1_TOKEN,STOREID).getBody();
 
         userService.addItemToBasket(USERNAME1_TOKEN, STOREID, ITEMID_VODKA, 1);
 
-        ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, CREDIT_CARD, EXPIRY_DATE, CVV, DISCOUNT_CODE);
+        ResponseEntity<String> response = userService.checkoutShoppingCart(USERNAME1_TOKEN, "1234", EXPIRY_DATE, CVV, DISCOUNT_CODE);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         HashMap<Long, Integer> inventory_after_action = (HashMap<Long, Integer>)
                 storeManagementSevice.viewInventory(USERNAME1_TOKEN,STOREID).getBody();

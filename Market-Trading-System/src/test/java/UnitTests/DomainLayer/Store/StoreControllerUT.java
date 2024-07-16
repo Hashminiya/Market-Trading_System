@@ -10,6 +10,8 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Repositories.*;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,6 +78,11 @@ public class StoreControllerUT {
     @AfterEach
     void tearDown() {
         storeFacade.clear();
+    }
+
+    @AfterAll
+    public static void tearDownAll() {
+        cleanUpDB.clearDB();
     }
 
     @Test

@@ -11,6 +11,7 @@ import ServiceLayer.Market.SystemManagerService;
 import ServiceLayer.ServiceFactory;
 import ServiceLayer.User.UserService;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,7 @@ public class SystemManagerAT {
 
    private static final String ADMIN_TOKEN = "adminToken"; // Replace with actual admin token
 
-    private static ISystemManagerService systemManagerService;
-    private static ServiceFactory serviceFactory;
+    private static SystemManagerService systemManagerService;
     private static UserService userService;
     private static final String ADMIN_USER_NAME ="admin" ;
     private static final String ADMIN_PASSWORD = "admin";
@@ -40,6 +40,14 @@ public class SystemManagerAT {
         SpringContext.getBean(PurchaseController.class).setUserFacade(SpringContext.getBean(UserController.class));
         userService.register(ADMIN_USER_NAME, ADMIN_PASSWORD, 25);
         MANAGER_TOKEN = userService.login(ADMIN_USER_NAME, ADMIN_PASSWORD).getBody();
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if(!cleanUpDB.clearDB()) {
+            systemManagerService.clear();
+            userService.clear();
+        }
     }
 
     @Test

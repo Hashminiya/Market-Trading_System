@@ -7,6 +7,8 @@ import DomainLayer.Market.Util.StoreEnum;
 import DomainLayer.Market.Util.StorePermission;
 import DomainLayer.Market.Util.StoreRole;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +47,11 @@ public class UserUT {
     void tearDown() {
         // Reset the singleton instance or any shared state here
         storeFacade.clear();  // Ensure resetInstance() method is available in StoreController
+    }
+
+    @AfterAll
+    public static void tearDownAll() {
+        cleanUpDB.clearDB();
     }
 
     @Test

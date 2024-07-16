@@ -6,6 +6,8 @@ import DomainLayer.Market.Store.IStoreFacade;
 import DomainLayer.Market.Purchase.IPurchaseFacade;
 import DAL.ItemDTO;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,11 +53,16 @@ public class UserControllerUT {
     }
 
     @AfterEach
-    void tearDown()throws Exception{
+    void tearDown() throws Exception{
         // Reset the singleton instance or any shared state here
         userController.clear();
         storeFacade.clear();
         purchaseFacade.clear();
+    }
+
+    @AfterAll
+    public static void tearDownAll() {
+        cleanUpDB.clearDB();
     }
 
     private void resetUserControllerInstance() throws Exception {

@@ -16,6 +16,7 @@ import ServiceLayer.ServiceFactory;
 import ServiceLayer.Store.StoreManagementService;
 import ServiceLayer.User.UserService;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
 import org.assertj.core.api.AbstractIntegerAssert;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +135,12 @@ public class UserCT {
 
     @AfterAll
     public static void tearDown() {
-        /*serviceFactory.clear();*/
+        if(!cleanUpDB.clearDB()) {
+            userService.clear();
+            storeSevice.clear();
+            storeFacade.clear();
+            purchaseFacade.clear();
+        }
     }
 
     @Test

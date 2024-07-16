@@ -8,6 +8,8 @@ import DomainLayer.Market.User.ShoppingCart;
 import DAL.ItemDTO;
 import DomainLayer.Repositories.BasketItemRepository;
 import DomainLayer.Repositories.BasketRepository;
+import SetUp.cleanUpDB;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,6 +45,11 @@ class ShoppingCartUT {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        cleanUpDB.clearDB();
     }
 
     @Test

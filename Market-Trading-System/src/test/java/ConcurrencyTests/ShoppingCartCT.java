@@ -13,6 +13,7 @@ import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Repositories.StoreRepository;
 import SetUp.ApplicationTest;
+import SetUp.cleanUpDB;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -63,6 +64,7 @@ public class ShoppingCartCT {
     @BeforeEach
     public void setUpAll(){
         MockitoAnnotations.openMocks(this);
+        SpringContext.getBean(IStoreFacade.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
         storeFacade = SpringContext.getBean(IStoreFacade.class);
     }
 
@@ -120,7 +122,9 @@ public class ShoppingCartCT {
 
     @AfterAll
     public static void tearDown() {
-        storeFacade.clear();
+        if(!cleanUpDB.clearDB()) {
+            storeFacade.clear();
+        }
     }
 
     @Test
