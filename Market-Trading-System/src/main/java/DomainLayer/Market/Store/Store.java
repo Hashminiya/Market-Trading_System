@@ -44,8 +44,11 @@ public class Store implements DataItem<Long> {
     private List<String> managers;
     @Transient
     private ItemRepository products;
-    @Transient
-    private DiscountRepository discounts;
+
+    @BatchSize(size = 25)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    private List<BaseDiscount> discounts;
     //@Transient
     //private PurchasePolicyRepository purchasePolicies;
 
@@ -66,7 +69,7 @@ public class Store implements DataItem<Long> {
         this.name = name;
         this.description = description;
         this.products = products;
-        this.discounts = discounts;
+        this.discounts = new ArrayList<>();
         //this.purchasePolicies = purchasePolicies;
         this.purchasePolicies = new ArrayList<>();
         owners = new ArrayList<>();
@@ -82,7 +85,6 @@ public class Store implements DataItem<Long> {
     @PostLoad
     private void loadItems() {
         products = SpringContext.getBean(ItemRepository.class);
-        discounts = SpringContext.getBean(DiscountRepository.class);
         //purchasePolicies = SpringContext.getBean(PurchasePolicyRepository.class);
         //purchasePolicies = new ArrayList<>();
         policyFactory = SpringContext.getBean(PurchasePolicyFactory.class);
@@ -207,7 +209,7 @@ public class Store implements DataItem<Long> {
             itemsCount.put(getItem(itemId), basket.getItems().get(itemId));
         Map<Item, Double> itemsPrice = getItemsPrices(itemsCount.keySet().stream().toList());
         double price = 0;
-        for(IDiscount discount: discounts.findAll()){
+        for(IDiscount discount: discounts){
             if(discount.isValid(itemsCount, code)) {
                 try {
                     itemsPrice = discount.calculatePrice(itemsPrice, itemsCount, code);
@@ -253,7 +255,7 @@ public class Store implements DataItem<Long> {
 
         try {
             BaseDiscount discount = objectMapper.readValue(discountDetails, BaseDiscount.class);
-            discounts.save(discount);
+            discounts.add(discount);
         }
         catch (Exception e){
             throw new Exception("Error while creating discount\n" + e.getMessage());
