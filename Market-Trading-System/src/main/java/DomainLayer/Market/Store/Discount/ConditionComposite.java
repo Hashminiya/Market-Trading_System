@@ -4,19 +4,33 @@ import DomainLayer.Market.Util.LogicalRule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
 
+@Entity
+@NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public class ConditionComposite implements ICondition{
+public class ConditionComposite extends BaseCondition{
 
-    private List<ICondition> conditions;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "parent_condition_id")
+    private List<BaseCondition> conditions;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "logical_rule")
     private LogicalRule rule;
 
     @JsonCreator
-    public ConditionComposite(@JsonProperty("conditions") List<ICondition> conditions,
-                              @JsonProperty("rule") LogicalRule rule){
+    public ConditionComposite(@JsonProperty("conditions") List<BaseCondition> conditions,
+                              @JsonProperty("rule") LogicalRule rule,
+                              @JsonProperty("id") Long id,
+                              @JsonProperty("name") String name){
+        super(id,name);
         this.conditions = conditions;
         this.rule = rule;
     }

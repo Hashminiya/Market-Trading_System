@@ -10,12 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @NoRepositoryBean
 public interface BasketItemRepository extends JpaRepository<BasketItem, BasketItemId> {
-
     @Modifying
-    @Query("DELETE FROM BasketItem i WHERE i.id.basketId = :id")
-    void deleteByBasket(@Param ("id") Long id);
-    //TODO : Maybe need to add Db repo and in-mem repo ?
+    @Transactional
+    @Query(value = "DELETE FROM basket_items WHERE basket_id = :basketId", nativeQuery = true)
+    void deleteByBasketId(@Param("basketId") long basketId);
 }

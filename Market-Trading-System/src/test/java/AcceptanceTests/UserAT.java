@@ -31,7 +31,6 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-
 public class UserAT {
     private static final String ADMIN_USER_NAME ="admin" ;
     private static final String ADMIN_PASSWORD = "admin";

@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-
 public class SystemManagerAT {
 
    private static final String ADMIN_TOKEN = "adminToken"; // Replace with actual admin token

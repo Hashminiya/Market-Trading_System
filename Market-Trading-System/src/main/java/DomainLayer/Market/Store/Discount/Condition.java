@@ -3,12 +3,15 @@ package DomainLayer.Market.Store.Discount;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
+@Entity
+@NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-public class Condition implements ICondition{
-
+public class Condition extends BaseCondition{
     //private Map<Long, Integer> conditionItem;
     //private double minCost;
     private Long itemId;
@@ -16,7 +19,10 @@ public class Condition implements ICondition{
 
     @JsonCreator
     public Condition(@JsonProperty("itemId") Long itemId,
-                     @JsonProperty("count") int count){
+                     @JsonProperty("count") int count,
+                     @JsonProperty("id") Long id,
+                     @JsonProperty("name") String name){
+        super(id, name);
         this.itemId = itemId;
         this.count = count;
     }

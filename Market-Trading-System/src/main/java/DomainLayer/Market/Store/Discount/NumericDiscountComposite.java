@@ -5,20 +5,28 @@ import DomainLayer.Market.Util.NumericRule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("NumericDiscountComposite")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public class NumericDiscountComposite extends DiscountComposite{
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "numerical_rule")
     private NumericRule numericRule;
 
 
     @JsonCreator
     public NumericDiscountComposite(@JsonProperty("id") Long id,
-                                    @JsonProperty("discounts") List<IDiscount> discounts,
+                                    @JsonProperty("name") String name,
+                                    @JsonProperty("discounts") List<BaseDiscount> discounts,
                                     @JsonProperty("numericRule") String rule) {
-        super(id, discounts);
+        super(id, discounts,name);
         this.numericRule = NumericRule.valueOf(rule);
     }
 
@@ -63,7 +71,7 @@ public class NumericDiscountComposite extends DiscountComposite{
         }
         return itemsPercent;
     }
-        @Override
+    @Override
     public Map<Item, Double> calculatePrice(Map<Item, Double> itemsPrices, Map<Item, Integer> itemsCount, String code) throws Exception{
         return switch (numericRule) {
             case MAX -> maxCalculatePrice(itemsPrices, itemsCount, code);

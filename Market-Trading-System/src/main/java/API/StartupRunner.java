@@ -1,15 +1,19 @@
 package API;
 
 import API.Utils.SpringContext;
+import DomainLayer.Market.Purchase.ExternalApiUtil;
 import DomainLayer.Market.Store.StoreController;
 import DomainLayer.Market.User.UserController;
+import ServiceLayer.Store.IStoreBuyerService;
 import ServiceLayer.Store.IStoreManagementService;
 import ServiceLayer.User.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,9 +33,8 @@ public class StartupRunner implements CommandLineRunner {
 
     @Autowired
     public StartupRunner(IUserService userService) {
-        //userService = (IUserService) SpringContext.getBean("userService");
+//        userService = (IUserService) SpringContext.getBean("userService");
         this.userService = userService;
-
     }
 
     @Override
@@ -41,6 +44,18 @@ public class StartupRunner implements CommandLineRunner {
         System.out.println("-----------------------------------------------------------------------");
 
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(UserController.class));
+
+        boolean connected;
+        try{
+            connected = ExternalApiUtil.performHandshake();
+        }
+        catch (Exception e){
+            connected = false;
+        }
+        if(!connected){
+            System.err.println("Failed to connect to external systems\nExiting...");
+            System.exit(1);
+        }
 
         if(registerAdmin){
             ResponseEntity<?> response = userService.register("admin", "admin", 25);
@@ -71,6 +86,7 @@ public class StartupRunner implements CommandLineRunner {
         assignManagers(tokens, storeIds);
         List<Long> itemIds = createItems(tokens, storeIds);
         createPolicy(tokens, storeIds, itemIds);
+        createDiscounts(tokens, storeIds, itemIds);
         initShoppingCart(tokens, storeIds, itemIds);
         createPurchase(tokens);
         logoutUsers(tokens);
@@ -179,6 +195,24 @@ public class StartupRunner implements CommandLineRunner {
                 "    \"logicalRole\": \"OR\"\n" +
                 "}", AGE_POLICY_SPECIFIC_ITEM, MAXIMUM_QUANTITY_POLICY);
         storeManagementService.addPolicy(tokens.get(0), storeIds.get(0), policyDetails);
+    }
+    private void createDiscounts(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
+        IStoreManagementService storeManagementService = (IStoreManagementService) SpringContext.getBean("StoreManagementService");
+
+        String hiddenDiscount = "{\n" +
+                "    \"@type\": \"HiddenDiscount\",\n" +
+                "    \"id\": 50,\n" +
+                "    \"name\": \"Hidden Discount\",\n" +
+                "    \"percent\": 15.0,\n" +
+                "    \"code\": 110,\n" +
+                "    \"expirationDate\": \"2026-12-31T23:59:59Z\",\n" +
+                "    \"storeId\": " + storeIds.get(0) + ",\n" +
+                "    \"items\": [" + itemIds.get(0) + "],\n" +
+                "    \"isStore\": false,\n" +
+                "    \"categories\": [\"Electronics\"]\n" +
+                "}";
+
+        storeManagementService.addDiscount(tokens.get(0),storeIds.get(0),hiddenDiscount);
     }
 
     private void initShoppingCart(List<String> tokens, List<Long> storeIds, List<Long> itemIds) {
@@ -429,6 +463,6 @@ public class StartupRunner implements CommandLineRunner {
 
     private void createPurchase(List<String> tokens) {
         IUserService userService = (IUserService) SpringContext.getBean("userService");
-        userService.checkoutShoppingCart(tokens.get(0), "2222333344445555", new Date(2025), "982", null);
+        userService.checkoutShoppingCart(tokens.get(0), "2222333344445555", new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000), "982", "");
     }
 }

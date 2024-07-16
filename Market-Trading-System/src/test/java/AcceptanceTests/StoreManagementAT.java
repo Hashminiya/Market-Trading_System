@@ -34,7 +34,6 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-
 public class StoreManagementAT{
 
     private static final String ADMIN_USER_NAME = "admin";
@@ -93,7 +92,6 @@ public class StoreManagementAT{
 
     @BeforeAll
     public static void setUp() {
-
         userService = SpringContext.getBean(UserService.class);
         SpringContext.getBean(StoreController.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
         storeManagementService = SpringContext.getBean(StoreManagementService.class);
@@ -109,8 +107,8 @@ public class StoreManagementAT{
     @AfterAll
     public static void tearDown() {
         if(!cleanUpDB.clearDB()) {
-//            storeManagementService.clear();
-//            userService.clear();
+            storeManagementService.clear();
+            userService.clear();
         }
     }
 
