@@ -31,7 +31,7 @@ public class Store implements DataItem<Long> {
     private Long id;
     private String founderId;
     private String name;
-    
+
     @Getter
     @Setter
     private String description;
@@ -81,7 +81,7 @@ public class Store implements DataItem<Long> {
         owners = new ArrayList<>();
         managers = new ArrayList<>();
         itemsCache = new HashMap<>();
-        this.discounts = new ArrayList<>();
+        this.discounts = new ArrayList<>();;
         assignOwner(founderId);
     }
 
