@@ -6,8 +6,7 @@
 1. [Introduction](#introduction)
 2. [System Description](#system-description)
 3. [System Features](#system-features)
-4. [Correctness Constraints](#correctness-constraints)
-5. [Configuration files](#configuration-files)
+4. [Configuration files](#configuration-files)
     - [Properties file](#properties-file)
         - [Database Configuration](#database-configuration)
         - [Datasource Credentials](#datasource-credentials)
@@ -18,8 +17,8 @@
         - [Profile Management](#profile-management)
         - [Initialization Properties](#initialization-properties)
     - [Initialize data](#initialize-data)
-6. [Service Level Requirements](#service-level-requirements)
-7. [Glossary](#glossary)
+5. [Security](#security)
+6. [Glossary](#glossary)
 
 ## Introduction
 
@@ -53,15 +52,6 @@ The Market Trading System (Market) allows for trading infrastructure between sel
 5. **External Services**:
    - **Payment Services**: Integration with external payment services to process transactions.
    - **Delivery Services**: Integration with external delivery services to handle product shipments.
-
-## Correctness Constraints
-
-The system ensures the following constraints for correct operation:
-
-- Unique identifiers for stores and products
-- Consistent state management for user roles and permissions
-- Proper handling of transactions and inventory updates
-- Secure authentication and authorization mechanisms
 
 ## Configuration files
 
@@ -212,12 +202,13 @@ logout(u2)
 
 Ensure that the commands and their arguments match the expected format and data types required by the system to avoid any execution errors.
 
-## Service Level Requirements
+## Security
 
-- **Availability**: The system should be available 99.9% of the time
-- **Performance**: The system should handle up to 1000 concurrent users
-- **Scalability**: The system should be able to scale to accommodate increased load
-- **Security**: The system must comply with industry-standard security practices
+- The system encrypt the users passwords
+- Unique identifiers for stores and products
+- Consistent state management for user roles and permissions
+- Proper handling of transactions and inventory updates
+- Secure authentication and authorization mechanisms
 
 ## Glossary
 
