@@ -40,7 +40,7 @@ public class Application {
         String adminPassword = props.getProperty("systemManager.password");
 
         boolean loggedIn = false;
-        while (loggedIn) {
+        while (!loggedIn) {
             System.out.print("Enter a Admin user name: ");
             String username = scanner.nextLine();
             System.out.print("Enter a Admin password: ");
