@@ -24,7 +24,7 @@ import java.util.*;
 @Component("userController")
 public class UserController implements IUserFacade {
     private static UserController userControllerInstance;
-    @Autowired
+
     private UserRepository users;
     private SystemManager admin;
     private IStoreFacade storeFacade;
@@ -82,9 +82,9 @@ public class UserController implements IUserFacade {
         long id = generateId();
         String userName = "guest" + id;
         Istate guest = new Guest();
-        DbBasketRepository dbMemoryBasketRepository = SpringContext.getBean(DbBasketRepository.class);
+        BasketRepository basketRepository = SpringContext.getBean(BasketRepository.class);
         BasketItemRepository basketItemRepository = SpringContext.getBean(BasketItemRepository.class);
-        User user = new User(userName, null, 0, guest, true, new ShoppingCart(dbMemoryBasketRepository, basketItemRepository));//TODO: Shopping cart should get IRepository as parameter.
+        User user = new User(userName, null, 0, guest, true, new ShoppingCart(basketRepository, basketItemRepository));//TODO: Shopping cart should get IRepository as parameter.
         guests.add(user);
         return userName;
     }
@@ -100,7 +100,7 @@ public class UserController implements IUserFacade {
         }
         String encodedPassword = passwordEncoder.encode(password);
         Istate registered = new Registered();
-        DbBasketRepository baskets = SpringContext.getBean(DbBasketRepository.class);
+        BasketRepository baskets = SpringContext.getBean(BasketRepository.class);
         BasketItemRepository basketItemRepository = SpringContext.getBean(BasketItemRepository.class);
         User user = new User(userName, encodedPassword, userAge, registered, false, new ShoppingCart(baskets, basketItemRepository));//TODO: Shopping cart should get IRepository as parameter.
         users.save(user);
@@ -156,9 +156,10 @@ public class UserController implements IUserFacade {
         if(!assigner.equals(assignee)) {
             User assignerUser = getUser(assigner);
             Set<String> assigners = assignerUser.getAssigners(storeId);
-            assigners.add(assignerUser.getId());
+            Set<String> assignersCopy = new HashSet<>(assigners);
+            assignersCopy.add(assignerUser.getId());
             assigneeUser.lock();
-            assigneeUser.setAssigners(storeId, assigners);
+            assigneeUser.setAssigners(storeId, assignersCopy);
             assigneeUser.unlock();
         }
         else{
@@ -173,9 +174,10 @@ public class UserController implements IUserFacade {
         User assigneeUser = getUser(assignee);
         User assignerUser = getUser(assigner);
         Set<String> assigners = assignerUser.getAssigners(storeId);
-        assigners.add(assignerUser.getId());
+        Set<String> assignersCopy = new HashSet<>(assigners);
+        assignersCopy.add(assignerUser.getId());
         assigneeUser.lock();
-        assigneeUser.setAssigners(storeId, assigners);
+        assigneeUser.setAssigners(storeId, assignersCopy);
         assigneeUser.unlock();
         assigneeUser.assignStoreManager(storeId, storePermissions);
         users.save(assigneeUser);

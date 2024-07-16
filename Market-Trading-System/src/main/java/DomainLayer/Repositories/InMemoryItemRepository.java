@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import DomainLayer.Market.Store.Item;
 import org.springframework.context.annotation.Profile;
@@ -21,6 +22,43 @@ public class InMemoryItemRepository implements ItemRepository {
 
     private ConcurrentHashMap<Long, Item> storage = new ConcurrentHashMap<>();
     private AtomicLong idCounter = new AtomicLong();
+
+
+    @Override
+    public List<String> findCategoriesByItemId(Long itemId) {
+        return storage.values().stream()
+                .filter(item -> item.getId().equals(itemId))
+                .findFirst()
+                .map(Item::getCategories)
+                .orElse(List.of());
+    }
+
+    @Override
+    public List<String> findAllCategoriesByStoreId(long storeId) {
+        return storage.values().stream()
+                .filter(item -> item.getStoreId() == storeId)
+                .flatMap(item -> item.getCategories().stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> findByStoreIdAndNameContaining(long storeId, String name) {
+        return storage.values().stream()
+                .filter(item -> item.getStoreId() == storeId && item.getName().contains(name))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return storage.containsKey(id);
+    }
+
+    @Override
+    public Item save(Item entity) {
+        storage.put(entity.getId(), entity);
+        return entity;
+    }
 
     //@Override
     public List<String> findAllCategories() {
@@ -54,20 +92,6 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public Optional<Item> findById(Long id) {
         return Optional.ofNullable(storage.get(id));
-    }
-
-    @Override
-    public boolean existsById(Long aLong) {
-        return false;
-    }
-
-    @Override
-    public Item save(Item item) {
-//        if (item.getId() == null) {
-//            item.setId(idCounter.incrementAndGet());
-//        }
-//        storage.put(item.getId(), item);
-        return item;
     }
 
     @Override
@@ -111,14 +135,32 @@ public class InMemoryItemRepository implements ItemRepository {
         return List.of();
     }
 
-    //@Override
+    @Override
     public List<Item> findByNameContaining(String keyword) {
-        return List.of();
+        return storage.values().stream()
+                .filter(item -> item.getName().contains(keyword))
+                .collect(Collectors.toList());
     }
 
-    //@Override
-    public List<Item> findByCategoriesIn(List<String> categories) {
-        return List.of();
+    @Override
+    public List<Item> findByNameContainingAndCategory(String category, String keyWord) {
+        return storage.values().stream()
+                .filter(item -> item.getName().contains(keyWord) && item.getCategories().contains(category))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> findByCategory(String category) {
+        return storage.values().stream()
+                .filter(item -> item.getCategories().contains(category))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> findByCategories(List<String> categories) {
+        return storage.values().stream()
+                .filter(item -> item.getCategories().stream().anyMatch(categories::contains))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -251,21 +293,6 @@ public class InMemoryItemRepository implements ItemRepository {
         return null;
     }
 
-    @Override
-    public List<String> findCategoriesByItemId(Long itemId) {
-        return List.of();
-    }
-
-    @Override
-    public List<String> findAllCategoriesByStoreId(long storeId) {
-        return List.of();
-    }
-
-    @Override
-    public List<Item> findByStoreIdAndNameContaining(long storeId, String name) {
-        return List.of();
-    }
-
     //get list of items by store id
     // InMemoryItemRepository.java
     @Override
@@ -278,6 +305,15 @@ public class InMemoryItemRepository implements ItemRepository {
         }
         return itemsByStoreId;
     }
+
+    @Override
+    public List<Item> findByNameContainingAndCategories(List<String> categories, String keyWord) {
+        return storage.values().stream()
+                .filter(item -> categories.stream().anyMatch(item.getCategories()::contains)) // Filter by categories
+                .filter(item -> item.getName().contains(keyWord)) // Filter by name containing keyword
+                .collect(Collectors.toList());
+    }
+
 
 
 }

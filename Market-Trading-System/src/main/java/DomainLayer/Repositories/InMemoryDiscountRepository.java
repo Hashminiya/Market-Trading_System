@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -19,6 +20,7 @@ import java.util.function.Function;
 @Profile("in-memory")
 @Scope("prototype")
 public class InMemoryDiscountRepository implements DiscountRepository {
+    private final List<BaseDiscount> discounts = new ArrayList<>();
 
     @Override
     public void flush() {
@@ -56,8 +58,11 @@ public class InMemoryDiscountRepository implements DiscountRepository {
     }
 
     @Override
-    public BaseDiscount getById(Long aLong) {
-        return null;
+    public BaseDiscount getById(Long id) {
+        return discounts.stream()
+                .filter(discount -> discount.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -101,28 +106,13 @@ public class InMemoryDiscountRepository implements DiscountRepository {
     }
 
     @Override
-    public <S extends BaseDiscount> S save(S entity) {
-        return null;
-    }
-
-    @Override
     public <S extends BaseDiscount> List<S> saveAll(Iterable<S> entities) {
         return List.of();
     }
 
     @Override
-    public Optional<BaseDiscount> findById(Long aLong) {
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean existsById(Long aLong) {
-        return false;
-    }
-
-    @Override
     public List<BaseDiscount> findAll() {
-        return List.of();
+        return discounts;
     }
 
     @Override
@@ -136,13 +126,31 @@ public class InMemoryDiscountRepository implements DiscountRepository {
     }
 
     @Override
-    public void deleteById(Long aLong) {
+    public BaseDiscount save(BaseDiscount entity) {
+        discounts.add(entity);
+        return entity;
+    }
 
+    @Override
+    public Optional<BaseDiscount> findById(Long id) {
+        return discounts.stream()
+                .filter(discount -> discount.getId().equals(id))
+                .findFirst();
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return discounts.stream().anyMatch(discount -> discount.getId().equals(id));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        discounts.removeIf(discount -> discount.getId().equals(id));
     }
 
     @Override
     public void delete(BaseDiscount entity) {
-
+        discounts.remove(entity);
     }
 
     @Override
@@ -157,7 +165,7 @@ public class InMemoryDiscountRepository implements DiscountRepository {
 
     @Override
     public void deleteAll() {
-
+        discounts.clear();
     }
 
     @Override

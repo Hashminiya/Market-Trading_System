@@ -313,6 +313,12 @@ public class StoreController implements IStoreFacade{
         return false;
     }
 
+    @Override
+    public boolean checkStockAvailability(ShoppingBasket basket, long storeId, long itemId, int quantity) {
+        Store store = getStore(storeId);
+        return store.isAvailable(itemId, quantity);
+    }
+
     public void purchaseOccurs(List<ShoppingBasket> baskets)throws InterruptedException{
         /*List<ItemDTO> purchasedItems = purchaseFacade.getPurchasedItems();
         for (ItemDTO itemDto: purchasedItems){

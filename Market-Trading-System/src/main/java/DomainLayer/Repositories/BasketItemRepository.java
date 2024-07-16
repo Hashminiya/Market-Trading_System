@@ -17,4 +17,5 @@ public interface BasketItemRepository extends JpaRepository<BasketItem, BasketIt
     @Modifying
     @Query("DELETE FROM BasketItem i WHERE i.id.basketId = :id")
     void deleteByBasket(@Param ("id") Long id);
+    //TODO : Maybe need to add Db repo and in-mem repo ?
 }
