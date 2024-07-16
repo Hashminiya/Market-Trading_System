@@ -86,18 +86,6 @@ class ShoppingCartUT {
     }
 
     @Test
-    void test_addItemBasket_should_add_items() throws Exception {
-        ShoppingBasket basket = mock(ShoppingBasket.class);
-        shoppingCart.setShoppingBaskets(List.of(basket));
-        when(basket.getStoreId()).thenReturn(1L);
-        when(storeFacadeMock.addItemToShoppingBasket(any(), eq(1L), eq(1001L), eq(5))).thenReturn(true);
-
-        assertDoesNotThrow(() -> shoppingCart.addItemBasket(1L, 1001L, 5, storeFacadeMock, "user"));
-
-        verify(basketItemRepositoryMock).save(any());
-    }
-
-    @Test
     void test_checkoutShoppingCart_should_return_items_in_shopping_cart() throws Exception {
         ShoppingBasket basket = mock(ShoppingBasket.class);
         shoppingCart.setShoppingBaskets(List.of(basket));

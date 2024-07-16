@@ -30,17 +30,18 @@ import java.util.concurrent.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ShoppingCartCT {
 
-//    @Mock
+    //    @Mock
     private StoreRepository storesRepo;
-//    @Mock
+    //    @Mock
 //    private IRepository<Long, PurchasePolicy> purchasePolicies;
 //    @Mock
-//    private IUserFacade userFacadeMock;
+    private IUserFacade userFacade;
 //    @Mock
 //    private IPurchaseFacade purchaseFacadeMock;
 //    private InMemoryRepository<Long, Store> storesRepo;
 
     private String user1 = "user1";
+    //private String user1_token;
     private String user2 = "user2";
 
 
@@ -64,10 +65,16 @@ public class ShoppingCartCT {
     @BeforeEach
     public void setUpAll(){
         MockitoAnnotations.openMocks(this);
-        SpringContext.getBean(IStoreFacade.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
         storeFacade = SpringContext.getBean(IStoreFacade.class);
+        userFacade = SpringContext.getBean(IUserFacade.class);
     }
 
+//    @AfterAll
+//    public static void tearDown() {
+//        if(!cleanUpDB.clearDB()) {
+//            storeFacade.clear();
+//        }
+//    }
 
     @BeforeEach
     public void setUp() throws Exception{
@@ -75,7 +82,9 @@ public class ShoppingCartCT {
         MockitoAnnotations.openMocks(this);
         //userFacadeMock = mock(UserController.class);
         //purchaseFacadeMock = mock(PurchaseController.class);
+        SpringContext.getBean(IStoreFacade.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
         storeFacade = SpringContext.getBean(IStoreFacade.class);
+        userFacade = SpringContext.getBean(IUserFacade.class);
         //storeFacade.setUserFacade(userFacadeMock);
         //storeFacade.setStoersRepo(storesRepo);
         //storeFacade.setPurchaseFacade(purchaseFacadeMock);
@@ -84,7 +93,8 @@ public class ShoppingCartCT {
         //purchasePolicies = mock(InMemoryRepository.class);
 
         if(!done){
-            //when(userFacadeMock.isRegister(user1)).thenReturn(true);
+            userFacade.register(user1, "123", 23);
+            userFacade.register(user2, "123", 23);
             //when(userFacadeMock.isRegister(user2)).thenReturn(true);
             store1 = storeFacade.createStore(user1, "store1", "description1");
             store2 = storeFacade.createStore(user2, "store2", "description2");
@@ -120,12 +130,6 @@ public class ShoppingCartCT {
         shoppingCart2.clear();
     }
 
-    @AfterAll
-    public static void tearDown() {
-        if(!cleanUpDB.clearDB()) {
-            storeFacade.clear();
-        }
-    }
 
     @Test
     public void test_checkoutShoppingCart_should_endPurchaseSuccessfully() throws Exception {

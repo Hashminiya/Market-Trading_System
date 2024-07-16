@@ -79,7 +79,7 @@ public class UserCT {
     private static Long item21;
     private static Long item22;
     private static Long item23;
-    private static final String credit_card = "1234-5678-9876-5432";
+    private static final String credit_card = "1234567898765432";
     private static final String expire_date_string = "07/26"; // Set an appropriate expiry date
     private static final Date expire_date = new Date("07/07/27"); // Set an appropriate expiry date
     private static final String cvv = "123";
