@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
@@ -29,6 +30,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = ApplicationTest.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+
 public class UserAT {
     private static final String ADMIN_USER_NAME ="admin" ;
     private static final String ADMIN_PASSWORD = "admin";
