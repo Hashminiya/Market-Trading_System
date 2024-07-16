@@ -4,15 +4,23 @@ import DomainLayer.Market.Store.Discount.Discount;
 import DomainLayer.Market.Store.Discount.IDiscount;
 import ServiceLayer.Store.StoreBuyerService;
 import ServiceLayer.Store.IStoreManagementService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 public class StoreManagementControllerApi {
@@ -47,6 +55,32 @@ public class StoreManagementControllerApi {
     @PatchMapping("storeManagement/changeStorePolicy")
     public ResponseEntity<String> changeStorePolicy(@RequestParam String token,@RequestParam long storeId) {
         return storeManagementService.changeStorePolicy(token, storeId);
+    }
+
+
+
+    @PutMapping("storeManagement/addDiscount")
+    public ResponseEntity<?> addDiscount(@RequestParam String token, @RequestParam long storeId, @RequestParam String discountDetails) {
+        // Decode the discountDetails
+        String decodedDiscountDetails;
+        try {
+            decodedDiscountDetails = URLDecoder.decode(discountDetails, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            return ResponseEntity.badRequest().body("Invalid discount details encoding");
+        }
+        String test =  "{\n" +
+                "    \"@type\": \"HiddenDiscount\",\n" +
+                "    \"id\": 50,\n" +
+                "    \"name\": \"Hidden Discount\",\n" +
+                "    \"percent\": 15.0,\n" +
+                "    \"code\": 110,\n" +
+                "    \"expirationDate\": \"2026-12-31T23:59:59Z\",\n" +
+                "    \"storeId\": " + 11111 + ",\n" +
+                "    \"items\": [" + 11111 + "],\n" +
+                "    \"isStore\": false,\n" +
+                "    \"categories\": [\"Electronics\"]\n" +
+                "}";
+        return storeManagementService.addDiscount(token, storeId, decodedDiscountDetails);
     }
 
     @PatchMapping("storeManagement/changeDiscountType")
