@@ -57,6 +57,8 @@ public class StoreManagementControllerApi {
         return storeManagementService.changeStorePolicy(token, storeId);
     }
 
+
+
     @PutMapping("storeManagement/addDiscount")
     public ResponseEntity<?> addDiscount(@RequestParam String token, @RequestParam long storeId, @RequestParam String discountDetails) {
         // Decode the discountDetails
