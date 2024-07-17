@@ -18,7 +18,7 @@ import java.util.Scanner;
 @ComponentScan(basePackages = {"API.controller","API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
 @EnableJpaRepositories(basePackages = {"API.controller", "API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
 @EntityScan(basePackages = {"API.controller", "API.Utils", "ServiceLayer", "DomainLayer", "DAL"})
-@DependsOn("startupListener")
+//@DependsOn("startupListener") // TODO : Liran, check if need to be removed
 public class ApplicationTest {
     public static void main(String[] args) throws Exception {
 

@@ -71,7 +71,6 @@ public class CheckoutUT {
 
     }
 
-
     @Test
     @Order(2)
     void test_checkout_should_throw_exception_for_empty_items_list() {

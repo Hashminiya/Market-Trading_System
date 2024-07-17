@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 @Component
 public class ShoppingCart {
 
-    @Autowired  // TODO : Guz check if need with or withour autowired..
+//    @Autowired  // TODO : Liran check if need with or withour autowired..
     private BasketRepository baskets;
 
-    @Autowired
+//    @Autowired
     private BasketItemRepository basketItemRepository;
 
     private final List<ShoppingBasket> shoppingBaskets;

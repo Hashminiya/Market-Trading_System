@@ -1,4 +1,5 @@
 package ConcurrencyTests;
+import static java.lang.Thread.sleep;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,12 +13,14 @@ import DomainLayer.Market.User.IUserFacade;
 import DomainLayer.Market.User.ShoppingCart;
 import DomainLayer.Market.User.UserController;
 import DomainLayer.Repositories.StoreRepository;
+import ServiceLayer.Store.StoreManagementService;
 import SetUp.ApplicationTest;
 import SetUp.cleanUpDB;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import javax.swing.*;
@@ -28,26 +31,29 @@ import java.util.concurrent.*;
 //@SpringBootTest(classes = ApplicationTest.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "classpath:application.properties")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+//TODO : Liran , may cause problems..
+//@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class ShoppingCartCT {
 
     //    @Mock
-    private StoreRepository storesRepo;
+    private static StoreRepository storesRepo;
     //    @Mock
 //    private IRepository<Long, PurchasePolicy> purchasePolicies;
 //    @Mock
-    private IUserFacade userFacade;
+    private static IUserFacade userFacade;
 //    @Mock
 //    private IPurchaseFacade purchaseFacadeMock;
 //    private InMemoryRepository<Long, Store> storesRepo;
 
-    private String user1 = "user1";
+    private static String user1 = "user1";
     //private String user1_token;
-    private String user2 = "user2";
+    private static String user2 = "user2";
 
 
     //@InjectMocks
-    private Long store1;
-    private Long store2;
+    private static Long store1;
+    private static Long store2;
     private Long item11;
     private Long item12;
     private Long item13;
@@ -62,29 +68,40 @@ public class ShoppingCartCT {
 
     private boolean done = false;
 
-    @BeforeEach
-    public void setUpAll(){
-        MockitoAnnotations.openMocks(this);
-        storeFacade = SpringContext.getBean(IStoreFacade.class);
-        userFacade = SpringContext.getBean(IUserFacade.class);
-    }
-
-//    @AfterAll
-//    public static void tearDown() {
-//        if(!cleanUpDB.clearDB()) {
-//            storeFacade.clear();
-//        }
-//    }
-
-    @BeforeEach
-    public void setUp() throws Exception{
-        storesRepo = SpringContext.getBean(StoreRepository.class);
-        MockitoAnnotations.openMocks(this);
-        //userFacadeMock = mock(UserController.class);
-        //purchaseFacadeMock = mock(PurchaseController.class);
+    @BeforeAll
+    public static void setUpAll() throws Exception {
+//        MockitoAnnotations.openMocks(this);
         SpringContext.getBean(IStoreFacade.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
         storeFacade = SpringContext.getBean(IStoreFacade.class);
         userFacade = SpringContext.getBean(IUserFacade.class);
+        storesRepo = SpringContext.getBean(StoreRepository.class);
+        StoreManagementService storeManagementService = SpringContext.getBean(StoreManagementService.class);
+        userFacade.register(user1, "123", 23);
+        userFacade.register(user2, "123", 23);
+        userFacade.login(user1,"123" );
+        userFacade.login(user2,"123");
+        //when(userFacadeMock.isRegister(user2)).thenReturn(true);
+        store1 = storeFacade.createStore(user1, "store1", "description1");
+        store2 = storeFacade.createStore(user2, "store2", "description2");
+
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if(!cleanUpDB.clearDB()) {
+//            storeFacade.clear();
+        }
+    }
+
+    @BeforeEach
+    public void setUp() throws Exception{
+//        storesRepo = SpringContext.getBean(StoreRepository.class);
+//        MockitoAnnotations.openMocks(this);
+        //userFacadeMock = mock(UserController.class);
+        //purchaseFacadeMock = mock(PurchaseController.class);
+//        SpringContext.getBean(IStoreFacade.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
+//        storeFacade = SpringContext.getBean(IStoreFacade.class);
+//        userFacade = SpringContext.getBean(IUserFacade.class);
         //storeFacade.setUserFacade(userFacadeMock);
         //storeFacade.setStoersRepo(storesRepo);
         //storeFacade.setPurchaseFacade(purchaseFacadeMock);
@@ -93,11 +110,6 @@ public class ShoppingCartCT {
         //purchasePolicies = mock(InMemoryRepository.class);
 
         if(!done){
-            userFacade.register(user1, "123", 23);
-            userFacade.register(user2, "123", 23);
-            //when(userFacadeMock.isRegister(user2)).thenReturn(true);
-            store1 = storeFacade.createStore(user1, "store1", "description1");
-            store2 = storeFacade.createStore(user2, "store2", "description2");
             //when(userFacadeMock.checkPermission(user1, store1, "ADD_ITEM")).thenReturn(true);
             //when(userFacadeMock.checkPermission(user2, store2, "ADD_ITEM")).thenReturn(true);
             //when(userFacadeMock.checkPermission(user1, store1, "UPDATE_ITEM")).thenReturn(true);
@@ -111,9 +123,8 @@ public class ShoppingCartCT {
             done = true;
         }
 
-        shoppingCart1 = new ShoppingCart();
-        shoppingCart2 = new ShoppingCart();
-
+        shoppingCart1 = userFacade.getShoppingCart(user1);
+        shoppingCart2 = userFacade.getShoppingCart(user2);
     }
 
     @AfterEach
@@ -128,6 +139,7 @@ public class ShoppingCartCT {
         storesRepo.findById(store2).get().clearCache();
         shoppingCart1.clear();
         shoppingCart2.clear();
+        sleep(1000);
     }
 
 
