@@ -201,7 +201,6 @@ public class UserCT {
             assertThat(storeFacade.viewInventoryByStoreOwner(user2, store2).get(item21)).isEqualTo(1);
             assertThat(storeFacade.viewInventoryByStoreOwner(user2, store2).get(item22)).isEqualTo(1);
             assertThat(storeFacade.viewInventoryByStoreOwner(user2, store2).get(item23)).isEqualTo(0);
-/*
             List<Purchase> purchases= purchaseFacade.getPurchaseHistory(ADMIN_USER_NAME);
             for(Purchase purchase: purchases){
                 List<ItemDTO> items_store1 = purchase.getItemByStore(store1);
@@ -235,7 +234,6 @@ public class UserCT {
                 }
 
             }
-            */
         }
         catch (Exception e){ throw new Exception(e.getMessage()); }
 
@@ -293,7 +291,7 @@ public class UserCT {
                 assertThat(storeFacade.viewInventoryByStoreOwner(user2, store2).get(item22)).isEqualTo(1);
                 assertThat(storeFacade.viewInventoryByStoreOwner(user2, store2).get(item23)).isEqualTo(0);
             }
-            /*List<Purchase> purchases = purchaseFacade.getPurchaseHistory(ADMIN_USER_NAME);
+            List<Purchase> purchases = purchaseFacade.getPurchaseHistory(ADMIN_USER_NAME);
             assertThat(purchases.size()).isEqualTo(1);
             Purchase purchase = purchases.get(0);
             List<ItemDTO> items_store1 = purchase.getItemByStore(store1);
@@ -315,13 +313,13 @@ public class UserCT {
                 } else {
                     assertThat(item.getQuantity()).isEqualTo(1);
                 }
-            }*/
+            }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    /*@Test
+    @Test
     public void test_addPermission_should_addBothPermissions() throws Exception {
         String user3 = "user5";
         userService.register(user3, password1, age1);
@@ -369,7 +367,7 @@ public class UserCT {
         assertThat(userFacade.checkPermission(user4, store1, "VIEW_INVENTORY")).isEqualTo(true);
         assertThat(userFacade.checkPermission(user4, store1, "VIEW_STORE_MANAGEMENT_INFO")).isEqualTo(true);
 
-    }*/
+    }
 
     @Test
     public void test_assignManager_should_addDropOneAttemptToAssign() throws Exception {
@@ -417,7 +415,7 @@ public class UserCT {
         } catch (CancellationException e) {
             System.out.println("Future get cancelled: " + e.getMessage());
         }
-        assertThat(true).isEqualTo(true);
-        //assertThat(_throw[0] ^ _throw[1]).isEqualTo(true);
+        //assertThat(true).isEqualTo(true);
+        assertThat(_throw[0] ^ _throw[1]).isEqualTo(true);
     }
 }

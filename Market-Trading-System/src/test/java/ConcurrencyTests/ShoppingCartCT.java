@@ -54,14 +54,14 @@ public class ShoppingCartCT {
     //@InjectMocks
     private static Long store1;
     private static Long store2;
-    private Long item11;
-    private Long item12;
-    private Long item13;
-    private Long item21;
-    private Long item22;
-    private Long item23;
-    private ShoppingCart shoppingCart1;
-    private ShoppingCart shoppingCart2;
+    private static Long item11;
+    private static Long item12;
+    private static Long item13;
+    private static Long item21;
+    private static Long item22;
+    private static Long item23;
+    private static ShoppingCart shoppingCart1;
+    private static ShoppingCart shoppingCart2;
 
 
     private static IStoreFacade storeFacade;
@@ -83,6 +83,13 @@ public class ShoppingCartCT {
         //when(userFacadeMock.isRegister(user2)).thenReturn(true);
         store1 = storeFacade.createStore(user1, "store1", "description1");
         store2 = storeFacade.createStore(user2, "store2", "description2");
+        item11 = storeFacade.addItemToStore(user1, store1, "item11", 33.5, 3, "description", new ArrayList<>());
+        item12 = storeFacade.addItemToStore(user1, store1, "item12", 30.0, 2, "description", new ArrayList<>());
+        item13 = storeFacade.addItemToStore(user1, store1, "item13", 20.5, 1, "description", new ArrayList<>());
+        item21 = storeFacade.addItemToStore(user2, store2, "item21", 33.5, 3, "description", new ArrayList<>());
+        item22 = storeFacade.addItemToStore(user2, store2, "item22", 30.0, 2, "description", new ArrayList<>());
+        item23 = storeFacade.addItemToStore(user2, store2, "item23", 20.5, 1, "description", new ArrayList<>());
+
 
     }
 
@@ -95,33 +102,6 @@ public class ShoppingCartCT {
 
     @BeforeEach
     public void setUp() throws Exception{
-//        storesRepo = SpringContext.getBean(StoreRepository.class);
-//        MockitoAnnotations.openMocks(this);
-        //userFacadeMock = mock(UserController.class);
-        //purchaseFacadeMock = mock(PurchaseController.class);
-//        SpringContext.getBean(IStoreFacade.class).setUserFacade(SpringContext.getBean(IUserFacade.class));
-//        storeFacade = SpringContext.getBean(IStoreFacade.class);
-//        userFacade = SpringContext.getBean(IUserFacade.class);
-        //storeFacade.setUserFacade(userFacadeMock);
-        //storeFacade.setStoersRepo(storesRepo);
-        //storeFacade.setPurchaseFacade(purchaseFacadeMock);
-
-        //discounts = mock(InMemoryRepository.class);
-        //purchasePolicies = mock(InMemoryRepository.class);
-
-        if(!done){
-            //when(userFacadeMock.checkPermission(user1, store1, "ADD_ITEM")).thenReturn(true);
-            //when(userFacadeMock.checkPermission(user2, store2, "ADD_ITEM")).thenReturn(true);
-            //when(userFacadeMock.checkPermission(user1, store1, "UPDATE_ITEM")).thenReturn(true);
-            //when(userFacadeMock.checkPermission(user2, store2, "UPDATE_ITEM")).thenReturn(true);
-            item11 = storeFacade.addItemToStore(user1, store1, "item11", 33.5, 3, "description", new ArrayList<>());
-            item12 = storeFacade.addItemToStore(user1, store1, "item12", 30.0, 2, "description", new ArrayList<>());
-            item13 = storeFacade.addItemToStore(user1, store1, "item13", 20.5, 1, "description", new ArrayList<>());
-            item21 = storeFacade.addItemToStore(user2, store2, "item21", 33.5, 3, "description", new ArrayList<>());
-            item22 = storeFacade.addItemToStore(user2, store2, "item22", 30.0, 2, "description", new ArrayList<>());
-            item23 = storeFacade.addItemToStore(user2, store2, "item23", 20.5, 1, "description", new ArrayList<>());
-            done = true;
-        }
 
         shoppingCart1 = userFacade.getShoppingCart(user1);
         shoppingCart2 = userFacade.getShoppingCart(user2);
@@ -178,6 +158,7 @@ public class ShoppingCartCT {
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdown();
 
+        storesRepo = SpringContext.getBean(StoreRepository.class);
         assertThat(storesRepo.findById(store1).get().getById(item11).getQuantity()).isEqualTo(0);
         assertThat(storesRepo.findById(store1).get().getById(item12).getQuantity()).isEqualTo(1);
         assertThat(storesRepo.findById(store1).get().getById(item13).getQuantity()).isEqualTo(1);
