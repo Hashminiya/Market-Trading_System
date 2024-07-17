@@ -47,7 +47,8 @@ public class OutServicesUT {
     void test_cancel_transaction() throws Exception {
         int transactionId = paymentServiceImpl.chargeCreditCard( "1234567890123456",
                 new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000),
-                "123",200 );
+                "982",200 );
+        assertNotEquals(-1,transactionId);
         assertNotEquals(-1, paymentServiceImpl.cancelPayment(transactionId));
     }
 
