@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.security.cert.CertificateExpiredException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +42,30 @@ public class HiddenDiscountUT {
     @BeforeAll
     static void setUp() {
         condition = mock(ICondition.class);
-        item1 = new Item(1L, "item1", "item1 description", List.of("c1","c2", "c3"), STORE_ID);
+        item1 = new Item(1L, "item1", "item1 description", List.of("c1", "c2", "c3"), STORE_ID);
         item2 = new Item(2L, "item2", "item2 description", List.of("c2"), STORE_ID);
-        validDiscount = new HiddenDiscount(DISCOUNT_ID, DISCOUNT_PERCENT, FUTURE_EXPIRATION, STORE_ID, List.of(1L, 2L), null,false,CODE);
+
+        // Create future expiration date (December 31, 2025)
+        Calendar futureCalendar = Calendar.getInstance();
+        futureCalendar.set(2025, Calendar.DECEMBER, 31, 23, 59, 59);
+        FUTURE_EXPIRATION = futureCalendar.getTime();
+
+        // Create past expiration date (January 1, 2020)
+        Calendar pastCalendar = Calendar.getInstance();
+        pastCalendar.set(2020, Calendar.JANUARY, 1, 0, 0, 0);
+        PAST_EXPIRATION = pastCalendar.getTime();
+
+        validDiscount = new HiddenDiscount(
+                DISCOUNT_ID,
+                "Valid Discount", // name
+                DISCOUNT_PERCENT,
+                FUTURE_EXPIRATION,
+                STORE_ID,
+                List.of(1L, 2L),
+                null, // categories
+                false,
+                CODE
+        );
     }
 
     @Test

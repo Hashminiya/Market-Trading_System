@@ -18,8 +18,8 @@ public class LogicalDiscountCompositeUT {
     private LogicalDiscountComposite orComposite;
     private LogicalDiscountComposite andComposite;
     private LogicalDiscountComposite xorComposite;
-    private IDiscount discount1;
-    private IDiscount discount2;
+    private BaseDiscount discount1;
+    private BaseDiscount discount2;
     private Item item1;
     private Item item2;
     private Map<Item, Double> itemsPrices;
@@ -27,8 +27,8 @@ public class LogicalDiscountCompositeUT {
 
     @BeforeEach
     public void setUp() {
-        discount1 = mock(IDiscount.class);
-        discount2 = mock(IDiscount.class);
+        discount1 = mock(BaseDiscount.class);
+        discount2 = mock(BaseDiscount.class);
         item1 = mock(Item.class);
         item2 = mock(Item.class);
 
@@ -40,9 +40,13 @@ public class LogicalDiscountCompositeUT {
         itemsCount.put(item1, 1);
         itemsCount.put(item2, 2);
 
-        orComposite = new LogicalDiscountComposite(1L, Arrays.asList(discount1, discount2), "OR", 0);
-        andComposite = new LogicalDiscountComposite(2L, Arrays.asList(discount1, discount2), "AND", 0);
-        xorComposite = new LogicalDiscountComposite(3L, Arrays.asList(discount1, discount2), "XOR", 0);
+        List<BaseDiscount> discounts = new ArrayList<>();
+        discounts.add(discount1);
+        discounts.add(discount2);
+
+        orComposite = new LogicalDiscountComposite(1L, "OR",discounts, "OR", 0);
+        andComposite = new LogicalDiscountComposite(2L, "AND", discounts, "AND", 0);
+        xorComposite = new LogicalDiscountComposite(3L, "XOR", discounts, "XOR", 0);
     }
 
     @Test

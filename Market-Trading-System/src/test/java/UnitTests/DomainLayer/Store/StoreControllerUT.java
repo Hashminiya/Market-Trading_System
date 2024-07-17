@@ -11,10 +11,7 @@ import DomainLayer.Market.User.UserController;
 import DomainLayer.Repositories.*;
 import SetUp.ApplicationTest;
 import SetUp.cleanUpDB;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -30,6 +27,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = ApplicationTest.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StoreControllerUT {
 
     private final long STORE_ID = 1L;

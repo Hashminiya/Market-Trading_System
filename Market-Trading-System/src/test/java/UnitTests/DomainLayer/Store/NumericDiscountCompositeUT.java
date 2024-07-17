@@ -17,8 +17,8 @@ public class NumericDiscountCompositeUT {
 
     private NumericDiscountComposite maxComposite;
     private NumericDiscountComposite addComposite;
-    private IDiscount discount1;
-    private IDiscount discount2;
+    private BaseDiscount discount1;
+    private BaseDiscount discount2;
     private Item item1;
     private Item item2;
     private Map<Item, Double> itemsPrices;
@@ -26,8 +26,8 @@ public class NumericDiscountCompositeUT {
 
     @BeforeEach
     public void setUp() {
-        discount1 = mock(IDiscount.class);
-        discount2 = mock(IDiscount.class);
+        discount1 = mock(BaseDiscount.class);
+        discount2 = mock(BaseDiscount.class);
         item1 = mock(Item.class);
         item2 = mock(Item.class);
 
@@ -39,8 +39,12 @@ public class NumericDiscountCompositeUT {
         itemsCount.put(item1, 1);
         itemsCount.put(item2, 2);
 
-        maxComposite = new NumericDiscountComposite(1L, Arrays.asList(discount1, discount2), "MAX");
-        addComposite = new NumericDiscountComposite(2L, Arrays.asList(discount1, discount2), "ADD");
+        List<BaseDiscount> discounts = new ArrayList<>();
+        discounts.add(discount1);
+        discounts.add(discount2);
+
+        maxComposite = new NumericDiscountComposite(1L, "MAX", discounts, "MAX");
+        addComposite = new NumericDiscountComposite(2L, "ADD", discounts, "ADD");
     }
 
     @Test

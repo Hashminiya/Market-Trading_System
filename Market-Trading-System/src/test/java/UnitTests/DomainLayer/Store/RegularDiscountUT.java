@@ -1,5 +1,6 @@
 package UnitTests.DomainLayer.Store;
 
+import DomainLayer.Market.Store.Discount.BaseCondition;
 import DomainLayer.Market.Store.Discount.HiddenDiscount;
 import DomainLayer.Market.Store.Discount.ICondition;
 import DomainLayer.Market.Store.Discount.RegularDiscount;
@@ -30,17 +31,27 @@ public class RegularDiscountUT {
     static Date PAST_EXPIRATION = new Date(120, 0, 1, 0, 0, 0); // January 1, 2020
     private static RegularDiscount validDiscount;
 
-    private static ICondition condition;
+    private static BaseCondition condition;
 
     static Item item1;
     static Item item2;
 
     @BeforeAll
     static void setUp() {
-        condition = mock(ICondition.class);
-        item1 = new Item(1L, "item1", "item1 description", List.of("c1","c2", "c3"), STORE_ID);
+        condition = mock(BaseCondition.class);
+        item1 = new Item(1L, "item1", "item1 description", List.of("c1", "c2", "c3"), STORE_ID);
         item2 = new Item(2L, "item2", "item2 description", List.of("c2"), STORE_ID);
-        validDiscount = new RegularDiscount(DISCOUNT_ID, DISCOUNT_PERCENT, FUTURE_EXPIRATION, STORE_ID, List.of(1L, 2L), null,false, condition);
+        validDiscount = new RegularDiscount(
+                DISCOUNT_ID,
+                "Valid Discount", // name
+                DISCOUNT_PERCENT,
+                FUTURE_EXPIRATION,
+                STORE_ID,
+                List.of(1L, 2L),
+                null, // categories
+                false,
+                condition
+        );
     }
 
     @Test
