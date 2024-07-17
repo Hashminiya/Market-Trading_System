@@ -1,23 +1,13 @@
 package UnitTests.DomainLayer.Purchase;
 import API.Utils.SpringContext;
-import DAL.ItemDTO;
 import DomainLayer.Market.Purchase.OutServices.PaymentServiceImpl;
 import DomainLayer.Market.Purchase.OutServices.SupplyServiceImpl;
-import DomainLayer.Market.Purchase.PurchaseController;
-import DomainLayer.Repositories.PurchaseRepository;
 import SetUp.ApplicationTest;
 import SetUp.cleanUpDB;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = ApplicationTest.class)
 public class OutServicesUT {
@@ -31,20 +21,9 @@ public class OutServicesUT {
         supplyServiceImpl = SpringContext.getBean(SupplyServiceImpl.class);
     }
 
-    @AfterEach
-    void tearDown()throws Exception{
-        resetPurchaseControllerInstance();
-    }
-
     @AfterAll
     public static void tearDownAll() {
         cleanUpDB.clearDB();
-    }
-
-    private void resetPurchaseControllerInstance() throws Exception {
-        Field instance = PurchaseController.class.getDeclaredField("purchaseControllerInstance");
-        instance.setAccessible(true);
-        instance.set(null, null);
     }
 
     @Test
