@@ -19,10 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -90,6 +87,11 @@ public class ShoppingBasket implements DataItem<Long> {
 
     public void addItem(long itemId, int quantity) {
         itemsQuantity.put(itemId, itemsQuantity.getOrDefault(itemId, 0) + quantity);
+        BasketItemId basketItemId = new BasketItemId(basketId, itemId);
+        Optional<BasketItem> basketItem = basketItemRepository.findById(basketItemId);
+        if(basketItem.isPresent()) {
+            quantity += basketItem.get().getQuantity();
+        }
         basketItemRepository.save(new BasketItem(basketId,itemId,quantity));
 
         // Ensure itemsPrice has a default value or is set elsewhere in your logic
